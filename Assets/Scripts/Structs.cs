@@ -11,22 +11,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-
-
-public interface IInteractiveItem
-{
-    /// <summary>
-    /// Interact with item
-    /// </summary>
-    /// <returns>bool means success of interaction</returns>
-    bool Interact();
-}
-
-
+using RotaryHeart;
+using RotaryHeart.Lib.SerializableDictionary;
 
 public delegate void SimpleEventsHandler();
-public delegate void FocusEventHandler(BaseStats component, bool isSelect);
-
+public delegate void SimpleEventsHandler<T>(T arg);
 
 
 public enum Allegiance
@@ -42,35 +31,126 @@ public class MovementDebugData
     public Vector3 _animVector;
 }
 
-public enum WeaponSpecial
-{
-    Projectile,
-    Knockback
-}
-public enum WeaponType
-{
-    Melee,
-    Ranged
-}
 
 [Serializable]
-public struct WeaponStats
+public class StatContainer
 {
-    string Name;
-    public WeaponType Type;
-    public int Damage;
-    public WeaponSpecial Special;
-    public int ID;
-    public WeaponStats(string name, WeaponType type, int dmg, WeaponSpecial spec, int id)
+    /// <summary>
+    /// keeps the current modifiers to a stat and its maximum value
+    /// </summary>
+    private LinkedList<StatModData> _statMods = new LinkedList<StatModData>();
+
+    [SerializeField]
+    private float _defaultValue;
+
+    public StatRange Range;
+
+    public float GetCurrentValue { get; private set; }
+
+    public void UpdateStatValue()
     {
-        Name = name;
-        Type = type;
-        Damage = dmg;
-        Special = spec;
-        ID = id;
+        // gets the sum of all mods in the list
+        if (_statMods == null)
+        {
+            GetCurrentValue = _defaultValue;
+        }
+        else
+        {
+            GetCurrentValue = _defaultValue + _statMods.Sum(t => t.Value);
+        }         
+    }
+    public void AddStatMod(StatModData data)
+    {
+        _statMods.AddLast(data);
+        UpdateStatValue();
+    }
+    public void RemoveStatMod(string ID)
+    {
+        var stat = _statMods.First(t => t.ID == ID);
+        _statMods.Remove(stat);
+        UpdateStatValue();
+    }
+    public StatContainer(StatRange range)
+    {
+        Range.Max = range.Max;
+        Range.Min = range.Min;
+        _defaultValue = range.Max;
+        Debug.Log("Test");
+    }
+
+}
+//this is used by stat handler
+[Serializable]
+public struct StatModData
+{
+    public StatType Type;
+    public float Value;
+    public string ID;
+    public StatModData(StatType type, float value, string id)
+    {
+        Type = type; Value = value; ID = id;
+    }
+}
+[Serializable]
+public struct StatRange
+{
+    [SerializeField]
+    public float Min;
+    [SerializeField]
+    public float Max;
+    public StatRange(float min, float max)
+    {
+        Min = min; Max = max;
+    }
+    public override string ToString()
+    {
+        return string.Concat($"Min: {Min} Max: {Max}");
+    }
+    public override bool Equals(object obj)
+    {
+        if (!(obj is StatRange)) return false;
+        var _range = (StatRange)obj;
+        return _range.Max == Max && _range.Min == Min;
+    }
+    public override int GetHashCode()
+    {
+        var hashCode = -1998946679;
+        hashCode = hashCode * -1521134295 + Min.GetHashCode();
+        hashCode = hashCode * -1521134295 + Max.GetHashCode();
+        return hashCode;
     }
 }
 
 
+public enum StatType
+{
+    Health,
+    Shield,
+    MoveSpeed,
+    CritMult,
+    DashRange,
+    Heat,
+    HealthRegen,
+    ShieldRegen,
+    HeatRegen
+}
 
+
+// this is applied by weapons items etc
+[Serializable]
+public struct EffectData
+{
+    public float Duration;
+    public string ID;
+    public Sprite Sprite;
+
+    public EffectData(float dur, string id, Sprite sp)
+    {
+        Duration = dur; ID = id; Sprite = sp;
+    }
+}
+
+
+[Serializable]
+public class StatsDictionary : SerializableDictionaryBase<StatType,StatContainer>{}
 

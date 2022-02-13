@@ -10,11 +10,13 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class MovementDebugText : MonoBehaviour
 {
     private Text text;
-
+    [Inject]
+    private PlayerUnit _player;
 
     private void OnEnable()
     {
@@ -22,12 +24,11 @@ public class MovementDebugText : MonoBehaviour
     }
     private void Update()
     {
-        var _unit = GameManager._self.GetPlayerUnit;
-        if (_unit == null) return;
+        if (_player == null) return;
         text.text = $"X Y Z " +
-            $"\nFacing {_unit.GetDebugData._facing} " +
-            $"\nMoving {_unit.GetDebugData._movement} " +
-            $"\nAnimVector{_unit.GetDebugData._animVector}";
+            $"\nFacing {_player.GetDebugData._facing} " +
+            $"\nMoving {_player.GetDebugData._movement} " +
+            $"\nAnimVector{_player.GetDebugData._animVector}";
     }
 }
 

@@ -17,34 +17,25 @@ public class TargetInfoPanel : InterfaceComp
     private Text _nameT;
     [SerializeField]
     private Slider _hpBar;
-    [SerializeField]
-    public BaseStats LoadedStats {get;set;}
+    //[SerializeField]
+    //public BaseStats LoadedStats {get;set;}
 
-    private void Start()
-    {
-        if (LoadedStats== null)
-        {
-            ToggleActiveState();
-        }
-    }
+    //private void Start()
+    //{
+    //    if (LoadedStats== null)
+    //    {
+    //        ToggleActiveState();
+    //    }
+    //}
 
-    private void Update()
-    {
-        if (LoadedStats is UnitStats s)
-        {
-            _hpBar.enabled = true;
-            _nameT.text = s.Name;
-            _hpBar.maxValue = s.maxHP;
-            _hpBar.value = s.currHP;
-        }
-        if (LoadedStats is BaseTrigger t)
-        {
-            _nameT.text = t.Name;
-            _hpBar.enabled = false;
-        }
-    }
-
-
-
+    //private void Update()
+    //{
+    //    if (LoadedStats is UnitStats s)
+    //    {
+    //        _hpBar.enabled = true;
+    //        _nameT.text = s.Name;
+    //        _hpBar.maxValue = s.maxHP;
+    //        _hpBar.value = s.currHP;
+    //    }
+    //}
 }
-

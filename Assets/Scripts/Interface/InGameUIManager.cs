@@ -23,32 +23,32 @@ public class InGameUIManager : MonoBehaviour
         if (_targetPanel == null) Debug.LogError("Missing TargetInfoPanel comp");
     }
 
-    public void SubscriveToEventsInBaseStats(IEnumerable statsArray)
-    {
-        foreach (BaseStats item in statsArray)
-        {
-            item.OnFocusEventHandler += BaseStatsMouseOverEvent;
-        }
-    }
+    //public void SubscriveToEventsInBaseStats(IEnumerable statsArray)
+    //{
+    //    foreach (BaseStats item in statsArray)
+    //    {
+    //        item.OnFocusEventHandler += BaseStatsMouseOverEvent;
+    //    }
+    //}
 
-    // for Basestats objects events subs
-    private void BaseStatsMouseOverEvent(BaseStats component, bool isSelect)
-    {
-        if (!isSelect)
-        {
-            _targetPanel.ToggleActiveState();
-        }
-        else
-        {
-            if(!_targetPanel.IsVisible)
-            {
-                _targetPanel.ToggleActiveState();
-                _targetPanel.LoadedStats = component;
-            }
-            _targetPanel.LoadedStats = component;
-        }
+    //// for Basestats objects events subs
+    //private void BaseStatsMouseOverEvent(BaseStats component, bool isSelect)
+    //{
+    //    if (!isSelect)
+    //    {
+    //        _targetPanel.ToggleActiveState();
+    //    }
+    //    else
+    //    {
+    //        if(!_targetPanel.IsVisible)
+    //        {
+    //            _targetPanel.ToggleActiveState();
+    //            _targetPanel.LoadedStats = component;
+    //        }
+    //        _targetPanel.LoadedStats = component;
+    //    }
 
-    }
+    //}
 
 
 
