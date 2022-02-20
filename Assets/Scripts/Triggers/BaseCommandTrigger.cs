@@ -10,10 +10,13 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Zenject;
 
-public class NPCUnit : Unit
+public abstract class BaseCommandTrigger : BaseTriggerComp
 {
-    [SerializeField]
-    public Allegiance Side;
+   [Inject]
+   protected TriggersManager _manager;
+
+
 }
 

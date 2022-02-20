@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using static BaseCommand;
 
 public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
 {
@@ -17,7 +18,7 @@ public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
     public float InitialValue { get; private set; }
     public float RepeatedValue { get; private set; }
     public float Delay { get; private set; }
-
+    
     /// <summary>
     /// change health 
     /// </summary>
@@ -38,6 +39,7 @@ public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
     public void OnStartCommand()
     {
         Target.GetUnitState.CurrentHP += InitialValue;
+        _delayCurrent = Delay;
     }
 
     public void OnUpdateCommand(float delta)
@@ -48,6 +50,13 @@ public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
             Target.GetUnitState.CurrentHP += RepeatedValue;
             _delayCurrent = Delay;
         }
+    }
+
+
+    public override BaseCommand Clone()
+    {
+        return new ChangeHealthCommand
+            (InitialValue, RepeatedValue, Delay, new EffectData(Duration, ID, Sprite));
     }
 
 }

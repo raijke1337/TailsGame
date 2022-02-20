@@ -17,13 +17,13 @@ using RotaryHeart.Lib.SerializableDictionary;
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 
-
+//side
 public enum Allegiance
 {
     Ally,
     Enemy
 }
-
+//for anim debug
 public class MovementDebugData
 {
     public Vector3 _facing;
@@ -32,20 +32,59 @@ public class MovementDebugData
 }
 
 
+// dictionary for statshandler
+// stores default stat values
+[Serializable]
+public class StatsDictionary : SerializableDictionaryBase<StatType, StatContainer> {}
+
+// all used stats 
+public enum StatType
+{
+    Health,
+    Shield,
+    MoveSpeed,
+    CritChance,
+    CritMult,
+    DashRange,
+    DashCount,
+    Heat,
+    HealthRegen,
+    ShieldRegen,
+    HeatRegen
+}
+// todo separate stats for all, stats only for player and stats only for enemies
+
+// contains:
+// stat range data
+// current and default value
+// all stat modifiers
 [Serializable]
 public class StatContainer
 {
-    /// <summary>
-    /// keeps the current modifiers to a stat and its maximum value
-    /// </summary>
-    private LinkedList<StatModData> _statMods = new LinkedList<StatModData>();
-
     [SerializeField]
     private float _defaultValue;
+    // set in editor
 
     public StatRange Range;
 
+
     public float GetCurrentValue { get; private set; }
+    // returns result of all mods applied
+    // recalculated often
+
+    private LinkedList<StatModData> _statMods = new LinkedList<StatModData>();
+
+    public void AddStatMod(StatModData data)
+    {
+        _statMods.AddLast(data);
+        UpdateStatValue();
+    }
+    public void RemoveStatMod(string ID)
+    {
+        var stat = _statMods.First(t => t.ID == ID);
+        _statMods.Remove(stat);
+        UpdateStatValue();
+    }
 
     public void UpdateStatValue()
     {
@@ -59,26 +98,10 @@ public class StatContainer
             GetCurrentValue = _defaultValue + _statMods.Sum(t => t.Value);
         }         
     }
-    public void AddStatMod(StatModData data)
-    {
-        _statMods.AddLast(data);
-        UpdateStatValue();
-    }
-    public void RemoveStatMod(string ID)
-    {
-        var stat = _statMods.First(t => t.ID == ID);
-        _statMods.Remove(stat);
-        UpdateStatValue();
-    }
-    public StatContainer(StatRange range)
-    {
-        Range.Max = range.Max;
-        Range.Min = range.Min;
-        _defaultValue = range.Max;
-        Debug.Log("Test");
-    }
-
 }
+
+
+
 //this is used by stat handler
 [Serializable]
 public struct StatModData
@@ -91,16 +114,20 @@ public struct StatModData
         Type = type; Value = value; ID = id;
     }
 }
-[Serializable]
+
+
+// not implemented for now
+// todo make an editor to use range info for editor setting
 public struct StatRange
 {
-    [SerializeField]
     public float Min;
-    [SerializeField]
     public float Max;
+    public bool IsInit;
+
+
     public StatRange(float min, float max)
     {
-        Min = min; Max = max;
+        Min = min; Max = max; IsInit = true;
     }
     public override string ToString()
     {
@@ -122,21 +149,8 @@ public struct StatRange
 }
 
 
-public enum StatType
-{
-    Health,
-    Shield,
-    MoveSpeed,
-    CritMult,
-    DashRange,
-    Heat,
-    HealthRegen,
-    ShieldRegen,
-    HeatRegen
-}
 
-
-// this is applied by weapons items etc
+// used by commands applied by weapons traps healing etc
 [Serializable]
 public struct EffectData
 {
@@ -150,7 +164,4 @@ public struct EffectData
     }
 }
 
-
-[Serializable]
-public class StatsDictionary : SerializableDictionaryBase<StatType,StatContainer>{}
 

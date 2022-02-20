@@ -10,8 +10,9 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using static BaseCommand;
 
-public abstract class BaseCommand
+public abstract class BaseCommand : IClonable<BaseCommand>
 {
     private float _duration;
     public Unit Target { get; set; }
@@ -29,18 +30,23 @@ public abstract class BaseCommand
         Duration = data.Duration; Sprite = data.Sprite; ID = data.ID;
     }
 
-}
+    public abstract BaseCommand Clone();
 
 
-public interface IStartCommand
-{
-    void OnStartCommand();
-}
-public interface IEndCommand
-{
-    void OnEndCommand();
-}
-public interface IUpdateCommand
-{
-    void OnUpdateCommand(float delta);
+    public interface IStartCommand
+    {
+        void OnStartCommand();
+    }
+    public interface IEndCommand
+    {
+        void OnEndCommand();
+    }
+    public interface IUpdateCommand
+    {
+        void OnUpdateCommand(float delta);
+    }
+    public interface IClonable<T> where T : class
+    {
+        T Clone();
+    }
 }

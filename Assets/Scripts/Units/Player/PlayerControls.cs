@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Characters/Player/PlayerControls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Units/Player/PlayerControls.inputactions'
 
 using System;
 using System.Collections;
@@ -38,6 +38,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""PauseEditor"",
                     ""type"": ""Button"",
                     ""id"": ""fe54560b-7bd0-45b7-bf9c-f5d72f3ea0eb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""dc59ae78-b565-45db-9c63-afd7d5a4a4a6"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -120,6 +128,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""PauseEditor"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea33ecec-6802-494f-9532-7a0b46e38fce"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -158,6 +177,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Movement_WASD = m_Movement.FindAction("WASD", throwIfNotFound: true);
         m_Movement_Q = m_Movement.FindAction("Q", throwIfNotFound: true);
         m_Movement_PauseEditor = m_Movement.FindAction("PauseEditor", throwIfNotFound: true);
+        m_Movement_Dash = m_Movement.FindAction("Dash", throwIfNotFound: true);
         // 2h
         m__2h = asset.FindActionMap("2h", throwIfNotFound: true);
         m__2h_Attack = m__2h.FindAction("Attack", throwIfNotFound: true);
@@ -213,6 +233,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Movement_WASD;
     private readonly InputAction m_Movement_Q;
     private readonly InputAction m_Movement_PauseEditor;
+    private readonly InputAction m_Movement_Dash;
     public struct MovementActions
     {
         private @PlayerControls m_Wrapper;
@@ -220,6 +241,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @WASD => m_Wrapper.m_Movement_WASD;
         public InputAction @Q => m_Wrapper.m_Movement_Q;
         public InputAction @PauseEditor => m_Wrapper.m_Movement_PauseEditor;
+        public InputAction @Dash => m_Wrapper.m_Movement_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -238,6 +260,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @PauseEditor.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnPauseEditor;
                 @PauseEditor.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnPauseEditor;
                 @PauseEditor.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnPauseEditor;
+                @Dash.started -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_MovementActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_MovementActionsCallbackInterface = instance;
             if (instance != null)
@@ -251,6 +276,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @PauseEditor.started += instance.OnPauseEditor;
                 @PauseEditor.performed += instance.OnPauseEditor;
                 @PauseEditor.canceled += instance.OnPauseEditor;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
         }
     }
@@ -293,6 +321,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnWASD(InputAction.CallbackContext context);
         void OnQ(InputAction.CallbackContext context);
         void OnPauseEditor(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
     public interface I_2hActions
     {

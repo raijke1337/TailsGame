@@ -10,9 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class Unit : MonoBehaviour
 {
+    //[Inject]
+    protected UnitsManager _unitsMan;
 
     protected bool _isInAtkAnimation = false;
 
@@ -24,11 +27,7 @@ public class Unit : MonoBehaviour
     [SerializeField]
     public int EquippedWeaponID;
 
-    public MovementDebugData GetDebugData { get;private set; }   
 
-    [SerializeField]
-    private Transform _targetPoint;
-    public Transform GetBullshotTarget => _targetPoint;
 
     public UnitState GetUnitState => _state;
 
@@ -44,14 +43,6 @@ public class Unit : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         Binds();
 
-
-        if (_inputs == null) return;
-
-        #region debug
-#if UNITY_EDITOR
-        GetDebugData = new MovementDebugData();
-#endif
-        #endregion
     }
 
     protected virtual void Update()
@@ -96,13 +87,6 @@ public class Unit : MonoBehaviour
             transform.position += movement * Time.deltaTime * _state.CurrentMoveSpeed;
             CalcAnimVector(movement);
         }
-        #region debug
-#if UNITY_EDITOR
-        GetDebugData._movement = movement;
-        GetDebugData._facing = transform.forward;
-        GetDebugData._animVector = CalcAnimVector(movement);
-#endif
-        #endregion
     }
 
     //  calculates the vector which is used to set values in animator

@@ -13,35 +13,33 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
-public class UnitStatsHandler : ICommandsAssistant , IStatChangeAssistant
+public class UnitStatsHandler : ICommandsAssistant , IStatusAssistant
 {
-
+    [SerializeField]
+    public string OwnerName;
     [SerializeField]
     private StatsDictionary _dict;
-
     public IReadOnlyDictionary<StatType,StatContainer> GetStats => _dict;
 
-    [SerializeField]
-    public string OwnerName { get; set; }
 
 
-    #region commands
+
+#region commands
+
     LinkedList<BaseCommand> _currentCommands = new LinkedList<BaseCommand>();
     public IReadOnlyCollection<BaseCommand> GetAllCurrentlyActiveCommands => _currentCommands;
-    public event SimpleEventsHandler<BaseCommand> OnEffectEventHandler;
+    public event SimpleEventsHandler<BaseCommand> OnCommandAppliedHandler;
 
-    public void AddStatChangeCommand(BaseCommand effect)
+    public void AddCommand(BaseCommand effect)
     {
         _currentCommands.AddLast(effect);
-        OnEffectEventHandler?.Invoke(effect);
+        OnCommandAppliedHandler?.Invoke(effect);
     }
-
-    public void AddStatChangeCommands(IEnumerable<BaseCommand> effects)
+    public void AddCommands(IEnumerable<BaseCommand> effects)
     {
         foreach (var ef in effects)
         {
-            _currentCommands.AddLast(ef);
-            OnEffectEventHandler?.Invoke(ef);
+            AddCommand(ef);
         }
     }
 }
@@ -49,7 +47,7 @@ public class UnitStatsHandler : ICommandsAssistant , IStatChangeAssistant
 
 // NYI for permanent changes
 // ex move speed boost max health boost etc
-public interface IStatChangeAssistant
+public interface IStatusAssistant
 {
 
 }
@@ -57,8 +55,8 @@ public interface IStatChangeAssistant
 // for effects that change stats - take dmg, heal, trap etc
 public interface ICommandsAssistant
 {
-    void AddStatChangeCommand(BaseCommand effect);
-    void AddStatChangeCommands(IEnumerable<BaseCommand> effects);
+    void AddCommand(BaseCommand effect);
+    void AddCommands(IEnumerable<BaseCommand> effects);
     IReadOnlyCollection<BaseCommand> GetAllCurrentlyActiveCommands { get; }
-    event SimpleEventsHandler<BaseCommand> OnEffectEventHandler;
+    event SimpleEventsHandler<BaseCommand> OnCommandAppliedHandler;
 }

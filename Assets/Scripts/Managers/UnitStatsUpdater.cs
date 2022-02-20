@@ -10,14 +10,17 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using static BaseCommand;
 
 public class UnitStatsUpdater
 {
     private float _deltaTime;
     private LinkedList<NPCUnit> _unitsNPCs;
+
+
     private PlayerUnit _playerUnit;
 
-    // initialize in unitmanager
+    // initialized and stored in unitmanager
     public UnitStatsUpdater(LinkedList<NPCUnit> npcs , PlayerUnit player)
     {
         _playerUnit = player; _unitsNPCs = npcs;
@@ -28,7 +31,10 @@ public class UnitStatsUpdater
     public void CalculateStatsOnUpdate(float deltatime)
     {
         _deltaTime = deltatime;
+
         UpdateAllStatCommands(_playerUnit.GetUnitState.GetCommandsAssistant.GetAllCurrentlyActiveCommands);
+
+
         RegenerateStatValues(_playerUnit.GetUnitState);
         foreach (var unit in _unitsNPCs)
         {
@@ -42,11 +48,11 @@ public class UnitStatsUpdater
     {
         if (bind)
         {
-            unit.GetUnitState.GetCommandsAssistant.OnEffectEventHandler += GetCommandsAssistant_OnEffectEventHandler;
+            unit.GetUnitState.GetCommandsAssistant.OnCommandAppliedHandler += GetCommandsAssistant_OnEffectEventHandler;
         }
         else
         {
-            unit.GetUnitState.GetCommandsAssistant.OnEffectEventHandler -= GetCommandsAssistant_OnEffectEventHandler;
+            unit.GetUnitState.GetCommandsAssistant.OnCommandAppliedHandler -= GetCommandsAssistant_OnEffectEventHandler;
         }
     }    
     //calls effect's start on application to unit
@@ -78,20 +84,21 @@ public class UnitStatsUpdater
     // regenerate stats
     private void RegenerateStatValues(UnitState state)
     {
+        // todo use range here maybe?
         if (state == null) return;
+        var cond = state.GetStatContainer(StatType.Health);
+        var up = state.GetStatContainer(StatType.HealthRegen);
+        state.CurrentHP = Mathf.Min(state.CurrentHP + up.GetCurrentValue * Time.deltaTime,cond.GetCurrentValue);
 
-        var cond = state.GetStatValueForCalculations(StatType.Health);
-        var regen = state.GetStatValueForCalculations(StatType.HealthRegen);
-        state.CurrentHP = Mathf.Min(state.CurrentHP + regen.GetCurrentValue 
-            * _deltaTime, cond.GetCurrentValue);
-         cond = state.GetStatValueForCalculations(StatType.Shield);
-         regen = state.GetStatValueForCalculations(StatType.ShieldRegen);
-        state.CurrentHP = Mathf.Min(state.CurrentHP + regen.GetCurrentValue
-            * _deltaTime, cond.GetCurrentValue);
-         cond = state.GetStatValueForCalculations(StatType.Heat);
-         regen = state.GetStatValueForCalculations(StatType.HeatRegen);
-        state.CurrentHP = Mathf.Min(state.CurrentHP + regen.GetCurrentValue
-            * _deltaTime, cond.GetCurrentValue);
+        cond = state.GetStatContainer(StatType.Shield);
+        up = state.GetStatContainer(StatType.ShieldRegen);
+        state.CurrentShield = Mathf.Min(state.CurrentShield + up.GetCurrentValue * Time.deltaTime, cond.GetCurrentValue);
+
+        cond = state.GetStatContainer(StatType.Heat);
+        up = state.GetStatContainer(StatType.HeatRegen);
+        state.CurrentHeat = Mathf.Min(state.CurrentHeat + up.GetCurrentValue * Time.deltaTime, cond.GetCurrentValue);
     }
+
+
 }
 

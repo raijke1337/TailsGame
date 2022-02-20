@@ -15,8 +15,10 @@ using System.Threading.Tasks;
 
 public class UnitsManager : MonoBehaviour
 {
-    [Inject]
+   [Inject]
     public PlayerUnit GetPlayer { get; private set; }
+
+
     private UnitStatsUpdater _updater;
     public IReadOnlyCollection<NPCUnit> GetNPCs => _bots;
     private LinkedList<NPCUnit> _bots = new LinkedList<NPCUnit>();
@@ -47,13 +49,13 @@ public class UnitsManager : MonoBehaviour
         _updater.CalculateStatsOnUpdate(Time.deltaTime);
     }
 
-    public void CreateUnit()
+    public void CreateUnit(NPCUnit unit)
     {
-        //_assist.RegisterUnit(unit);
+       _updater.RegisterUnitInScene(unit);
     }
-    public void DeleteUnit()
+    public void DeleteUnit(NPCUnit unit)
     {
-        //_assist.RegisterUnit(unit,false);
+        _updater.RegisterUnitInScene(unit,false);
     }
 
 }
