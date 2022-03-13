@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 using System.Threading.Tasks;
+using static GameManager;
 
 public class UnitsManager : MonoBehaviour
 {

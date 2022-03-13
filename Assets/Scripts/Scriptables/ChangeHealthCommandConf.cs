@@ -14,16 +14,27 @@ using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "new ChangeHealthCommand",
     menuName = "Configurations/Commands/Change Health Config", order = 1)]
-public class ChangeHealthCommandConf : ScriptableObject
+public class ChangeHealthCommandConf : EffectConfiguration<ChangeHealthCommand>
 {
     [SerializeField]
-    private HealthChangeCommandData[] _commands;
+    protected List<float> _firstDm;
+    [SerializeField]
+    protected List<float> _repeatedDm;
+    [SerializeField]
+    protected List<float> _delays;
 
-    public ChangeHealthCommand GetEffect(string ID)
+
+    public override ChangeHealthCommand CreateEffect(string ID)
     {
-        var data = _commands.First(t => t.Data.ID == ID);
-        return new ChangeHealthCommand(data.InitialV, data.RepeatedV, data.Delay, data.Data);
+        int i = 0;
+        for (; i < _mainDatas.Count; i++)
+        {
+            if (_mainDatas[i].ID == ID) break;
+        }
+        return new ChangeHealthCommand(
+            initalV: _firstDm[i], repeatedV: _repeatedDm[i], delay: _delays[i], _mainDatas[i]);
     }
+
 
     [Serializable]
     public struct HealthChangeCommandData

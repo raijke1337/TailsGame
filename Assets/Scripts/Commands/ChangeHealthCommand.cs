@@ -1,18 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using static BaseCommand;
-
-public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
+public class ChangeHealthCommand : BaseCommandEffect
 {
     private float _delayCurrent;
     public float InitialValue { get; private set; }
@@ -36,13 +22,20 @@ public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
         // to make sure periodic damage isn't done instantly on application
     }
 
-    public void OnStartCommand()
+
+    public override BaseCommandEffect Clone()
+    {
+        return new ChangeHealthCommand
+            (InitialValue, RepeatedValue, Delay, new EffectData(Duration, ID, Sprite));
+    }
+
+    public override void OnStart()
     {
         Target.GetUnitState.CurrentHP += InitialValue;
         _delayCurrent = Delay;
     }
 
-    public void OnUpdateCommand(float delta)
+    public override void OnUpdate(float delta)
     {
         _delayCurrent -= delta;
         if (_delayCurrent <= 0f)
@@ -52,12 +45,9 @@ public class ChangeHealthCommand : BaseCommand, IStartCommand, IUpdateCommand
         }
     }
 
-
-    public override BaseCommand Clone()
+    public override void OnEnd()
     {
-        return new ChangeHealthCommand
-            (InitialValue, RepeatedValue, Delay, new EffectData(Duration, ID, Sprite));
-    }
 
+    }
 }
 

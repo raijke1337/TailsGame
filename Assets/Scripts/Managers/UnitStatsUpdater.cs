@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using static BaseCommand;
+using static BaseCommandEffect;
 
 public class UnitStatsUpdater
 {
@@ -44,40 +44,32 @@ public class UnitStatsUpdater
     }
 
     // register for stat updating
+    // todo
     public void RegisterUnitInScene(Unit unit, bool bind = true)
     {
         if (bind)
         {
-            unit.GetUnitState.GetCommandsAssistant.OnCommandAppliedHandler += GetCommandsAssistant_OnEffectEventHandler;
+
         }
         else
         {
-            unit.GetUnitState.GetCommandsAssistant.OnCommandAppliedHandler -= GetCommandsAssistant_OnEffectEventHandler;
+
         }
     }    
-    //calls effect's start on application to unit
-    private void GetCommandsAssistant_OnEffectEventHandler(BaseCommand arg)
-    {
-        if (!(arg is IStartCommand start)) return;
-        start.OnStartCommand();
-    }
+
     // update all stats considering their effects
-    private void UpdateAllStatCommands(IReadOnlyCollection<BaseCommand> effects)
+    private void UpdateAllStatCommands(IReadOnlyCollection<BaseCommandEffect> effects)
     {
         foreach (var e in effects)
         {
             e.CurrentDuration -= _deltaTime;
             if (e.CurrentDuration <= 0f)
             {
-                var end = e as IEndCommand;
-                if (end == null) continue;
-                end.OnEndCommand();
+                e.OnEnd();
             }
             else
             {
-                var upd = e as IUpdateCommand;
-                if (upd == null) continue;
-                upd.OnUpdateCommand(_deltaTime);
+                e.OnUpdate(_deltaTime);
             }
         }
     }

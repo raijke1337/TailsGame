@@ -163,5 +163,3 @@ public struct EffectData
         Duration = dur; ID = id; Sprite = sp;
     }
 }
-
-

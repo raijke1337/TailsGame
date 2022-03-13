@@ -26,16 +26,18 @@ public class UnitStatsHandler : ICommandsAssistant , IStatusAssistant
 
 #region commands
 
-    LinkedList<BaseCommand> _currentCommands = new LinkedList<BaseCommand>();
-    public IReadOnlyCollection<BaseCommand> GetAllCurrentlyActiveCommands => _currentCommands;
-    public event SimpleEventsHandler<BaseCommand> OnCommandAppliedHandler;
+    LinkedList<BaseCommandEffect> _currentCommands = new LinkedList<BaseCommandEffect>();
+    public IReadOnlyCollection<BaseCommandEffect> GetAllCurrentlyActiveCommands => _currentCommands;
 
-    public void AddCommand(BaseCommand effect)
+    public event SimpleEventsHandler<BaseCommandEffect> OnCommandAppliedHandler;
+
+    public void AddCommand(BaseCommandEffect effect)
     {
         _currentCommands.AddLast(effect);
+        effect.OnStart();
         OnCommandAppliedHandler?.Invoke(effect);
     }
-    public void AddCommands(IEnumerable<BaseCommand> effects)
+    public void AddCommands(IEnumerable<BaseCommandEffect> effects)
     {
         foreach (var ef in effects)
         {
@@ -55,8 +57,8 @@ public interface IStatusAssistant
 // for effects that change stats - take dmg, heal, trap etc
 public interface ICommandsAssistant
 {
-    void AddCommand(BaseCommand effect);
-    void AddCommands(IEnumerable<BaseCommand> effects);
-    IReadOnlyCollection<BaseCommand> GetAllCurrentlyActiveCommands { get; }
-    event SimpleEventsHandler<BaseCommand> OnCommandAppliedHandler;
+    void AddCommand(BaseCommandEffect effect);
+    void AddCommands(IEnumerable<BaseCommandEffect> effects);
+    IReadOnlyCollection<BaseCommandEffect> GetAllCurrentlyActiveCommands { get; }
+    event SimpleEventsHandler<BaseCommandEffect> OnCommandAppliedHandler;
 }

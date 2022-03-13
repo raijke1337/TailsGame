@@ -22,7 +22,5 @@ public class StatContainerPropertyDrawer : PropertyDrawer
             property.FindPropertyRelative(c_containerFieldName), -100f, 100f, GUIContent.none);
     }
     // this allows for better look in unitstate component
-
-
-
 }
+

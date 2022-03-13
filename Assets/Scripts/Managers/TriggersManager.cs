@@ -32,9 +32,9 @@ public class TriggersManager : MonoBehaviour
     }
 
     // triggers use this to get data according to entered id in editor
-    public T GetCommandByID<T>(string id) where T : BaseCommand
+    public T GetCommandByID<T>(string id) where T : BaseCommandEffect
     {
-        return _config.GetEffect(id) as T;
+        return _config.CreateEffect(id) as T;
 
         // todo shitty implementation fix it
     }
