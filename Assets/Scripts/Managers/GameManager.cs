@@ -12,12 +12,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class GameManager : MonoInstaller, GameManager.IManager
+public class GameManager : MonoInstaller
 {
-
-    [SerializeField]
-    private ScriptableObject[] _commConfigs;
+    private PlayerUnit _player;
+    private StatsUpdatesHandler _statsH;
     private TriggersManager _triggers;
+
 
     public override void Start()
     {
@@ -25,37 +25,12 @@ public class GameManager : MonoInstaller, GameManager.IManager
     }
     public override void InstallBindings()
     {
-        var Player = FindObjectOfType<PlayerUnit>();
-        Container.BindInstance(Player).AsSingle();
-        Container.BindInstances(_commConfigs);
-
-        //Container.BindInstance(_triggers).AsSingle();
-    }
-
-    [ContextMenu("Load all configs")]
-    public void LoadConfigurations()
-    {
-        var paths = Directory.GetFiles(Application.dataPath + "/Scripts/Configurations/CommandTriggers", "*.asset");
-        var configs = new LinkedList<ScriptableObject>();
-
-        foreach (var path in paths)
-        {
-            var newpath = "Assets" + path.Replace(Application.dataPath, "").Replace("\\", "/");
-            var config = AssetDatabase.LoadAssetAtPath(newpath, typeof(UnityEngine.Object)) as ScriptableObject;
-            configs.AddLast(config);
-        }
-        _commConfigs = configs.ToArray();
-        var managers = FindObjectsOfType<MonoBehaviour>().Where(t => t is IManager && t != this);
-        foreach (IManager m in managers)
-        {
-            m.LoadConfigurations();
-        }
-    }
-
-
-    internal interface IManager
-    {
-        void LoadConfigurations();
+        _player = FindObjectOfType<PlayerUnit>();
+        _statsH = FindObjectOfType<StatsUpdatesHandler>();
+        _triggers = GetComponent<TriggersManager>();
+        Container.BindInstance(_player).AsSingle();
+        Container.BindInstance(_statsH).AsSingle();
+        Container.BindInstance(_triggers).AsSingle();
     }
 
 }

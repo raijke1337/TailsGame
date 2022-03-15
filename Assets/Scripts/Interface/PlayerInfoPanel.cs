@@ -12,11 +12,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 using System.Threading.Tasks;
+using RotaryHeart.Lib.SerializableDictionary;
 
 public class PlayerInfoPanel : MonoBehaviour
 {
     [Inject]
     private PlayerUnit _player;
+
+    private IReadOnlyDictionary<StatType, StatValueContainer> _statdict;
 
     [SerializeField] private Image _hpBar;
     [SerializeField] private Image _shBar;
@@ -27,7 +30,8 @@ public class PlayerInfoPanel : MonoBehaviour
     [SerializeField] private Text _spText;
     [SerializeField] private Text _heText;
 
-    private UnitState playerState;
+
+    [SerializeField] private Text _dodgeText;
 
     private float _maxHP;
     private float _maxSH;
@@ -36,41 +40,48 @@ public class PlayerInfoPanel : MonoBehaviour
     private float _currentHP;
     private float _currentSH;
     private float _currentHE;
+    private float _currentD;
+
+
 
     private float _regHP;
     private float _regSH;
     private float _regHE;
 
-    private async void Start()
+    private void Start()
     {
-        await Task.Yield();
-        playerState = _player.GetUnitState;
 
-        _maxHP = playerState.GetAllCurrentStats[StatType.Health].GetCurrentValue;
-        _maxSH = playerState.GetAllCurrentStats[StatType.Shield].GetCurrentValue;
-        _maxHE = playerState.GetAllCurrentStats[StatType.Heat].GetCurrentValue;
+        _statdict = _player.GetStats;
+
+        _maxHP = _statdict[StatType.Health].GetMax();
+        _maxHE = _statdict[StatType.Heat].GetMax();
+        _maxSH = _statdict[StatType.Shield].GetMax();
     }
 
     private void LateUpdate()
     {
-        if (playerState == null) return;
+        if (_statdict == null | _player == null) return;
         UpdateCurrentValues();
         UpdateUI();
     }
     private void UpdateCurrentValues()
-    {        
-        _currentHP = playerState.CurrentHP;
-        _currentSH = playerState.CurrentShield;
-        _currentHE = playerState.CurrentHeat;
-        _regHP = playerState.GetAllCurrentStats[StatType.HealthRegen].GetCurrentValue;
-        _regSH = playerState.GetAllCurrentStats[StatType.ShieldRegen].GetCurrentValue;
-        _regHE = playerState.GetAllCurrentStats[StatType.HeatRegen].GetCurrentValue;
+    {
+        _currentHP = _statdict[StatType.Health].GetCurrent();
+        _currentSH = _statdict[StatType.Shield].GetCurrent();
+        //_currentD = _player.GetDashStats[DashStatType.DashCharges].GetCurrentValue;
+        _regSH = _statdict[StatType.ShieldRegen].GetCurrent();
+        _regHP = _statdict[StatType.HealthRegen].GetCurrent();
+
+        _currentHE = _statdict[StatType.Heat].GetCurrent();
+        _regHE = _statdict[StatType.HeatRegen].GetCurrent();
     }
     private void UpdateUI()
     {
         _hpBar.fillAmount = _currentHP / _maxHP;
         _shBar.fillAmount = _currentSH / _maxSH;
         _heBar.fillAmount = _currentHE / _maxHE;
+
+        _dodgeText.text = _currentD.ToString();
 
         _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP, " (", _regHP, " /s)");
         _spText.text = string.Concat(Math.Round(_currentSH, 0), " / ", _maxSH, " (", _regSH, " /s)");

@@ -10,39 +10,38 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using Zenject;
+
 
 public class TriggersManager : MonoBehaviour
 {
+    private List<BaseTrigger> _triggers;
+
     [SerializeField]
-    private Transform _triggersPool;
+    private List<BaseStatTriggerConfig> _configs;
+
     [SerializeField]
-    private LinkedList<BaseTriggerComp> _triggers = new LinkedList<BaseTriggerComp>();
+    private const string c_configsPath = "/Scripts/Configurations/Triggers";
+
     private void Start()
     {
-        var _trig = _triggersPool.GetComponentsInChildren<BaseTriggerComp>();
-        foreach (BaseTriggerComp trigger in _trig)
-        {
-            _triggers.AddLast(trigger);
-        }
-#if UNITY_EDITOR
-        if (FindObjectsOfType<BaseTriggerComp>().Length != _triggers.Count)
-            Debug.LogError("Item triggers must be in trigger pool");
-#endif
+        _triggers = new List<BaseTrigger>();
+        _triggers.AddRange(FindObjectsOfType<BaseTrigger>());
+        UpdateDatas();
     }
 
-    // triggers use this to get data according to entered id in editor
-    public T GetCommandByID<T>(string id) where T : BaseCommandEffect
+
+    [ContextMenu(itemName:"Get trigger configs manually")]
+    public void UpdateDatas()
     {
-        return _config.CreateEffect(id) as T;
-
-        // todo shitty implementation fix it
+        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(c_configsPath);
     }
 
-
-    [Inject]
-    private ChangeHealthCommandConf _config;
-
+    public void Activation(string ID, BaseUnit target)
+    {
+        var config = _configs.First(t => t.ID == ID);
+        target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
+            config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+    }
 
 }
 
