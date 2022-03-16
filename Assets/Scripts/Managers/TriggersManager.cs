@@ -19,8 +19,7 @@ public class TriggersManager : MonoBehaviour
     [SerializeField]
     private List<BaseStatTriggerConfig> _configs;
 
-    [SerializeField]
-    private const string c_configsPath = "/Scripts/Configurations/Triggers";
+
 
     private void Start()
     {
@@ -33,7 +32,7 @@ public class TriggersManager : MonoBehaviour
     [ContextMenu(itemName:"Get trigger configs manually")]
     public void UpdateDatas()
     {
-        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(c_configsPath);
+        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.c_TriggersConfigsPath);
     }
 
     public void Activation(string ID, BaseUnit target)

@@ -12,7 +12,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 public class ProjectileComponent : MonoBehaviour
-{    
+{
+    public List<BaseStatTriggerConfig> _effects;
 
     private void OnCollisionEnter(Collision collision)
     {

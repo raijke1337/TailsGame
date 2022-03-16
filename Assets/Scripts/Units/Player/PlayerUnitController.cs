@@ -13,34 +13,38 @@ using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 using Zenject;
 
-public class PlayerUnitController : BaseUnitMovementController
+public class PlayerUnitController : BaseUnitController
 {
     [Inject]
     protected StatsUpdatesHandler _handler;
 
-    #region inputsystem
     private PlayerControls _controls;
-    private void OnEnable()
-    {
-        _controls.Game.Enable();
-    }
+
+    private PlayerWeaponController _weaponCtrl;
+    public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
+    private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
+
     private void OnDisable()
     {
         _controls.Game.Disable();
     }
-    #endregion
-
     public Vector3 CurrentCursorPosition { get; private set; }
     private IsoCamAdjust _adj;
     [SerializeField, Tooltip("How high should the aiming be done")] private float _targetOffsetY = 1f;
 
     [SerializeField] private DodgeController _dodgeCtrl;
 
-
-    protected void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _controls = new PlayerControls();
+        _controls.Game.Enable();
+
+
         _adj = new IsoCamAdjust();
+
+        _weaponCtrl = _baseWeap as PlayerWeaponController;
+        _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
 
         _dodgeCtrl.Initialize(this);
         _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
@@ -64,11 +68,13 @@ public class PlayerUnitController : BaseUnitMovementController
     #region logic and checks
     private void RangedAttack_performed(CallbackContext obj)
     {
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
         PlayerRangedAttackSuccessEvent?.Invoke();
     }
     private void MeleeAttack_performed(CallbackContext obj)
     {
-        PlayerMeleeAttackSuccessEvent?.Invoke();
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
+            PlayerMeleeAttackSuccessEvent?.Invoke();
     }
     private void SkillR_performed(CallbackContext obj)
     {
@@ -110,6 +116,8 @@ public class PlayerUnitController : BaseUnitMovementController
         Gizmos.DrawSphere(CurrentCursorPosition, 0.1f);
     }
 #endif
+
+    // todo
     private void CalculateAimPoint()
     {
         // todo fix rotations

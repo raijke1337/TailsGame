@@ -13,6 +13,11 @@ using UnityEngine.InputSystem;
 
 public class MeleeWeapon : BaseWeapon
 {
-        
+
+    public override bool UseWeapon()
+    {
+        return true;
+    }
+    // swings deplete charges
 }
 

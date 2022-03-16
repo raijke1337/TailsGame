@@ -16,6 +16,14 @@ using RotaryHeart.Lib.SerializableDictionary;
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 
+public static class Constants
+{
+    public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
+    public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
+}
+
+
+
 //todo some other params?
 public delegate void WeaponEventHandler();
 
@@ -31,9 +39,17 @@ public interface IStatsAddEffects
 }
 
 public interface IWeapon
-{
-    void Activate();
+{    
+    bool UseWeapon();
+    public GameObject GetObject();
+}
 
+
+public enum WeaponType
+{
+    None,
+    Melee,
+    Ranged
 }
 
 

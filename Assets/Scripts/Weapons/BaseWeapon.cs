@@ -11,13 +11,26 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class BaseWeapon : MonoBehaviour, IWeapon
+public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
     public string ID;
+    public WeaponType WeapType;
+    public int _charges;
 
-    public virtual void Activate()
+    protected List<BaseStatTriggerConfig> _effects = new List<BaseStatTriggerConfig>();
+
+    protected virtual void OnEnable()
     {
-        Debug.Log($"Used weapon ID {ID}");
+        gameObject.SetActive(true);
     }
+    public abstract bool UseWeapon();
+
+    public virtual void AddTriggerData(BaseStatTriggerConfig effect)
+    {
+        _effects.Add(effect);
+    }
+
+    public GameObject GetObject() => gameObject;
+
 }
 

@@ -27,51 +27,76 @@ public class PlayerUnit : BaseUnit
         AnimateAndPerformMovement();
     }
 
-    //add subs to controller success events
-    //public SimpleEventsHandler PlayerMeleeAttackSuccessEvent;
-    //public SimpleEventsHandler PlayerRangedAttackSuccessEvent;
-    //public SimpleEventsHandler PlayerQSuccessEvent;
-    //public SimpleEventsHandler PlayerESuccessEvent;
-    //public SimpleEventsHandler PlayerRSuccessEvent;
-    //public SimpleEventsHandler PlayerDashSuccessEvent;
-
     private void OnDestroy()
     {
         PlayerBinds(false);
     }
     private void PlayerBinds(bool isRegister = true)
     {
-        _playerController.PlayerDashSuccessEvent += AnimateDash;
-        _playerController.PlayerESuccessEvent += AnimateE;
-        _playerController.PlayerMeleeAttackSuccessEvent += AnimateMelee;
-        _playerController.PlayerQSuccessEvent += AnimateQ;
-        _playerController.PlayerRangedAttackSuccessEvent += AnimateRanged;
-        _playerController.PlayerRSuccessEvent += AnimateR;
+        if (isRegister)
+        {
+            _playerController.PlayerDashSuccessEvent += AnimateDash;
+            _playerController.PlayerESuccessEvent += AnimateE;
+            _playerController.PlayerMeleeAttackSuccessEvent += AnimateMelee;
+            _playerController.PlayerQSuccessEvent += AnimateQ;
+            _playerController.PlayerRangedAttackSuccessEvent += AnimateRanged;
+            _playerController.PlayerRSuccessEvent += AnimateR;
+            _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+        }
+        else
+        {
+            _playerController.PlayerDashSuccessEvent -= AnimateDash;
+            _playerController.PlayerESuccessEvent -= AnimateE;
+            _playerController.PlayerMeleeAttackSuccessEvent -= AnimateMelee;
+            _playerController.PlayerQSuccessEvent -= AnimateQ;
+            _playerController.PlayerRangedAttackSuccessEvent -= AnimateRanged;
+            _playerController.PlayerRSuccessEvent -= AnimateR;
+            _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
+
+        }
+
+    }
+
+    private void ChangeAnimatorLayer(WeaponType type)
+    {
+        // 1 is ranged 2 is hammer
+        switch (type)
+        {
+            case WeaponType.Melee:
+                _animator.SetLayerWeight(2, 100f);
+                _animator.SetLayerWeight(1, 0f);
+                break;
+            case WeaponType.Ranged:
+                _animator.SetLayerWeight(1, 100f);
+                _animator.SetLayerWeight(2, 0f);
+                break;
+        }
     }
 
     private void AnimateDash()
     {
-        Debug.Log("Dash success");
+        _animator.SetTrigger("Dodge");
     }
     private void AnimateE()
     {
-        Debug.Log("E success");
-    }
-    private void AnimateMelee()
+        _animator.SetTrigger("ESpecial");
+    }   
+
+    protected override void AnimateMelee()
     {
-        Debug.Log("Melee success");
+        base.AnimateMelee();
     }
     private void AnimateQ()
     {
-        Debug.Log("Q success");
+        _animator.SetTrigger("QSpecial");
     }
-    private void AnimateRanged()
+    protected override void AnimateRanged()
     {
-        Debug.Log("Ranged success");
+        base.AnimateRanged();        
     }
     private void AnimateR()
     {
-        Debug.Log("R success");
+        _animator.SetTrigger("RSpecial");
     }
 
 }

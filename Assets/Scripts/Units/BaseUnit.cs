@@ -18,12 +18,12 @@ public abstract class BaseUnit : MonoBehaviour
     protected BaseStatsController _baseStats;
     protected Animator _animator;
 
-    protected BaseWeaponController _baseWeap;
-    protected BaseUnitMovementController _controller;
+    protected BaseUnitController _controller;
 
+    // use to disable controls for attack animations, stuns, skills, etc
+    public bool IsControlBusy { get; set; }
 
     public IReadOnlyDictionary<StatType,StatValueContainer> GetStats => _baseStats.GetBaseStats;
-
     [Inject]
     protected StatsUpdatesHandler _handler;
 
@@ -35,8 +35,7 @@ public abstract class BaseUnit : MonoBehaviour
     protected virtual void Start()
     {
         _animator = GetComponent<Animator>();
-        _controller = GetComponent<BaseUnitMovementController>();
-        _baseWeap = GetComponent<BaseWeaponController>();
+        _controller = GetComponent<BaseUnitController>();
     }
     protected virtual void Update()
     {
@@ -80,7 +79,6 @@ public abstract class BaseUnit : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 
-
     private void OnEnable()
     {
         _handler.RegisterUnitForStatUpdates(_baseStats);
@@ -91,5 +89,14 @@ public abstract class BaseUnit : MonoBehaviour
         _handler.RegisterUnitForStatUpdates(_baseStats,false);
     }
 
+
+    protected virtual void AnimateMelee()
+    {
+        _animator.SetTrigger("MeleeAttack");
+    }
+    protected virtual void AnimateRanged()
+    {
+        _animator.SetTrigger("RangedAttack");
+    }
 }
 

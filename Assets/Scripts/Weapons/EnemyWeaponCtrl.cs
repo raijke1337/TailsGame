@@ -13,6 +13,9 @@ using UnityEngine.InputSystem;
 
 public class EnemyWeaponCtrl : BaseWeaponController
 {
-        
+    public override bool UseWeaponCheck(WeaponType type)
+    {
+        throw new NotImplementedException();
+    }
 }
 
