@@ -15,12 +15,15 @@ public class NPCUnit : BaseUnit
 {
     public Allegiance Side;
 
+
     protected override void OnEnable()
     {
         base.OnEnable();
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
     }
+
+
 
 }
 

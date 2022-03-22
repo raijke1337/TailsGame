@@ -21,10 +21,10 @@ public static class Constants
 {
     public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
     public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
-    public const string c_DefaultStatConfigs = "/Scripts/Configurations/Default"; //todo
+    public const string c_BaseStatConfigs = "/Scripts/Configurations/BaseStats"; //todo
 }
 
-
+#region interfaces
 
 public interface IStatsComponentForHandler
 { 
@@ -44,26 +44,29 @@ public interface IWeapon
     int GetAmmo();
 }
 
-public interface IStatsAvailable
-{ IReadOnlyDictionary<StatType, StatValueContainer> GetStats();
+public interface IUnitForTargetPanel : INamed
+{ 
+    IReadOnlyDictionary<StatType, StatValueContainer> GetStats();
+    event SimpleEventsHandler<IUnitForTargetPanel> UnitDiedEvent;
+    void ToggleCamera(bool value);
+
+}
+public interface INamed
+{
     string GetName();
-    event SimpleEventsHandler<IStatsAvailable> UnitDiedEvent;
 }
 
-public interface ISkill
-{ void Use(); }
-
-public class Timer { public float time; public Timer(float t) { time = t; } }
+#endregion
+[Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
 
 
 [Serializable]
 public class StatValueContainer
 {
-    [SerializeField] private float _start;
+    [SerializeField,] private float _start;
     [SerializeField] private float _max;
     [SerializeField] private float _min;
     [SerializeField] private float _current;
-    private bool IsSetup = false;
 
     public SimpleEventsHandler<float> ValueDecreasedEvent;
 
@@ -85,15 +88,14 @@ public class StatValueContainer
 
     public void Setup()
     {
-        if (!IsSetup)
-        {
-            _current = _start;
-            IsSetup = true;
-        }
+        _current = _start;
     }
     //todo
-    public StatValueContainer(string defaultConfig = null)
+    public StatValueContainer(StatValueContainer preset)
     {
+        _start = preset._start;
+        _max = preset._max;
+        _min = preset._min;
         Setup();
     }
 }

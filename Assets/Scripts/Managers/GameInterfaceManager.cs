@@ -30,16 +30,18 @@ public class GameInterfaceManager : MonoBehaviour
         _playerUnit.GetController.TargetLockedEvent += (t) => AssignTarget(t);        
     }
 
-    private void AssignTarget(IStatsAvailable unit)
+    private void AssignTarget(IUnitForTargetPanel unit)
     {
         _tgtPanel.RunSetup(unit);
         _tgtPanel.gameObject.SetActive(true);
         unit.UnitDiedEvent += HideTgtPanel;
     }
-    private void HideTgtPanel(IStatsAvailable unit)
+    private void HideTgtPanel(IUnitForTargetPanel unit)
     {
         if (_tgtPanel.GetActiveUnit == unit)
+        {
             _tgtPanel.gameObject.SetActive(false);
+        }
     }
     // todo add smooth effects
 

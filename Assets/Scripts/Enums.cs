@@ -34,11 +34,6 @@ public enum TriggeredEffectTargetType
     Target,
     Self
 }
-public enum EnemyStatType
-{
-    AggroRange,
-    EvadeRange
-}
 
 public enum WeaponType
 {

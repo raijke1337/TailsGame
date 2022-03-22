@@ -22,15 +22,17 @@ public class PlayerUnitController : BaseUnitController
     private PlayerControls _controls;
     private PlayerWeaponController _weaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
+    [SerializeField] private SkillsController _skillCtrl;
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public BaseWeaponController GetWeaponController => _weaponCtrl;
+    public SkillsController GetSkillsController => _skillCtrl;
 
     // call these after all checks are done
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
-    public event SimpleEventsHandler<IStatsAvailable> TargetLockedEvent;
+    public event SimpleEventsHandler<IUnitForTargetPanel> TargetLockedEvent;
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
@@ -61,6 +63,7 @@ public class PlayerUnitController : BaseUnitController
 
             _adj = new IsoCamAdjust();
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
+            _handler.RegisterUnitForStatUpdates(_skillCtrl);
             _controls.Game.Dash.performed += Dash_performed;
             _controls.Game.SkillE.performed += SkillE_performed;
             _controls.Game.SkillQ.performed += SkillQ_performed;
@@ -91,7 +94,7 @@ public class PlayerUnitController : BaseUnitController
 
     }
 
-    #region logic and checks
+    #region controller checks
 
     // todo make an enum with action types and unified calls
     private void RangedAttack_performed(CallbackContext obj)
@@ -106,15 +109,22 @@ public class PlayerUnitController : BaseUnitController
     }
     private void SkillR_performed(CallbackContext obj)
     {
+        if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR))
         CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
+        Debug.Log(obj.action);
     }
     private void SkillQ_performed(CallbackContext obj)
     {
-        CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
+        if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ))
+            CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
+        Debug.Log(obj.action);
     }
     private void SkillE_performed(CallbackContext obj)
     {
-        CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
+        if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE))
+            CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
+        Debug.Log(obj.action);
+
     }
     private void Dash_performed(CallbackContext obj)
     {
@@ -159,7 +169,7 @@ public class PlayerUnitController : BaseUnitController
         {
             var loc = hit.transform.position;
             lookTarget = new Vector3(loc.x, 0, loc.z);
-            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<BaseUnit>());
+            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<IUnitForTargetPanel>());
         }
     }
 

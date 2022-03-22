@@ -28,6 +28,28 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         _effects = new List<TriggeredEffect>();
     }
 
+    public void AssignStatsByID(string ID)
+    {
+        var cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.c_BaseStatConfigs).First
+            (t=>t.ID == ID);
+        // default settings
+        if (cfg == null) // default settings
+        {
+            cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.c_BaseStatConfigs).First
+                        (t => t.ID == "default");
+        }
+        
+        _stats.Add(StatType.Health, new StatValueContainer(cfg.Stats[StatType.Health]));
+        _stats.Add(StatType.Shield, new StatValueContainer(cfg.Stats[StatType.Shield]));
+        _stats.Add(StatType.ShieldRegen, new StatValueContainer(cfg.Stats[StatType.ShieldRegen]));
+        _stats.Add(StatType.HealthRegen, new StatValueContainer(cfg.Stats[StatType.HealthRegen]));
+        _stats.Add(StatType.Heat, new StatValueContainer(cfg.Stats[StatType.Heat]));
+        _stats.Add(StatType.HeatRegen, new StatValueContainer(cfg.Stats[StatType.HeatRegen]));
+        _stats.Add(StatType.MoveSpeed, new StatValueContainer(cfg.Stats[StatType.MoveSpeed]));
+    }
+
+
+    #region handler
     // regeneration and degradation of stats goes here
     // also calculations of applied effects
     public void UpdateInDelta(float deltaTime)
@@ -37,8 +59,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         _stats[StatType.Shield].ChangeCurrent(_stats[StatType.ShieldRegen].GetCurrent() * deltaTime);
         _stats[StatType.Heat].ChangeCurrent(_stats[StatType.HeatRegen].GetCurrent() * deltaTime);
     }
-
-
     private void HandleEffects(float deltaTime)
     {
         if (_effects.Count == 0 ) return;
@@ -68,7 +88,8 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
             }
         }
     }
-
+    #endregion
+    #region effects
     public void AddTriggeredEffect(TriggeredEffect effect)
     {
         _effects.Add(effect);
@@ -80,5 +101,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
             AddTriggeredEffect(ef);
         }
     }
+    #endregion
 }
 

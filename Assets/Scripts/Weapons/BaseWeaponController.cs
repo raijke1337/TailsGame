@@ -63,6 +63,7 @@ public abstract class BaseWeaponController : MonoBehaviour
                 item.AddTriggerData(triggerID);
             }                        
             item.MaxCharges = config._charges;
+            //item.RelatedSkill = 
         }
     }
     /// first need to instantiate the weapon object and THEN add it to dictionary

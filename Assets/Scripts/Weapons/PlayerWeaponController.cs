@@ -59,9 +59,5 @@ public class PlayerWeaponController : BaseWeaponController
     }
 
 
-    //Equip(_currentWeapons[type].GetObject(), true);
-    //Equip(_currentWeapons.First(t => t.Key != type).Value.GetObject(), false);
-    //// todo
-
 }
 

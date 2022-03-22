@@ -22,6 +22,7 @@ public abstract class BaseTrigger : MonoBehaviour
 
     public List<string> TriggerEffectIDs;
 
+
     public bool Enable
     {
         get => _coll.enabled;
@@ -49,5 +50,6 @@ public abstract class BaseTrigger : MonoBehaviour
 
     protected virtual void OnTriggerExit(Collider other) { }
 
+    public string GetName() => name;
 }
 

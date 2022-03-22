@@ -21,6 +21,7 @@ public class PlayerUnit : BaseUnit
         base.OnEnable();
         _playerController = _controller as PlayerUnitController;        
         PlayerBinds();
+        ToggleCamera(true);
     }
 
 
@@ -96,7 +97,7 @@ public class PlayerUnit : BaseUnit
         _animator.SetBool("AdvancingCombo", false);
     }
 
-    protected override void TargetUpdate(IStatsAvailable unit)
+    protected override void TargetUpdate(IUnitForTargetPanel unit)
     {
         base.TargetUpdate(unit);
     }

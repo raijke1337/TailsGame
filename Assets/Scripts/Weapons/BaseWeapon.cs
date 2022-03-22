@@ -15,13 +15,14 @@ using Zenject;
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
     public string ID;
+
     public WeaponType WeapType;
 
     public int MaxCharges;
     protected int _currentCharges;
     public int GetAmmo() => _currentCharges;
 
-    public ISkill Skill; //todo related skills
+    public BaseSkill RelatedSkill;
 
     protected bool IsBusy = false;
 

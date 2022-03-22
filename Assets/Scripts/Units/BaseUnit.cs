@@ -12,10 +12,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public abstract class BaseUnit : MonoBehaviour, IStatsAvailable
+public abstract class BaseUnit : MonoBehaviour, IUnitForTargetPanel
 {
     [SerializeField]
     protected BaseStatsController _baseStats;
+
+    public string BaseStatsID;
+
     protected Animator _animator;
     protected Rigidbody _rigidbody;
     protected BaseUnitController _controller;
@@ -28,11 +31,14 @@ public abstract class BaseUnit : MonoBehaviour, IStatsAvailable
     public string GetName() => _name;
     public Rigidbody GetRigidBody => _rigidbody;
     public IReadOnlyDictionary<StatType,StatValueContainer> GetStats() => _baseStats.GetBaseStats;
+       
     [Inject]
     protected StatsUpdatesHandler _handler;
-
     //
-    public event SimpleEventsHandler<IStatsAvailable> UnitDiedEvent;
+    public event SimpleEventsHandler<IUnitForTargetPanel> UnitDiedEvent;
+
+    private Camera _faceCam;
+    public void ToggleCamera(bool value){ _faceCam.enabled = value; }
 
     public void ApplyEffect(TriggeredEffect eff)
     {
@@ -44,10 +50,15 @@ public abstract class BaseUnit : MonoBehaviour, IStatsAvailable
         _animator = GetComponent<Animator>();
         _controller = GetComponent<BaseUnitController>();
         _rigidbody = GetComponent<Rigidbody>();
+        _baseStats.AssignStatsByID(BaseStatsID);
+
         GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
 
 
         _handler.RegisterUnitForStatUpdates(_baseStats);
+
+        _faceCam = GetComponentsInChildren<Camera>().First(t=>t.CompareTag("FaceCamera"));
+        _faceCam.enabled = false;
     }
     protected virtual void Update()
     {
@@ -134,10 +145,8 @@ public abstract class BaseUnit : MonoBehaviour, IStatsAvailable
         _handler.RegisterUnitForStatUpdates(_baseStats,false);
     }
 
-    protected virtual void TargetUpdate(IStatsAvailable unit)
+    protected virtual void TargetUpdate(IUnitForTargetPanel unit)
     {
         Target = unit as BaseUnit;
     }
-    
-
 }

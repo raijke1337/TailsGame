@@ -13,11 +13,11 @@ using UnityEngine.InputSystem;
 
 public abstract class BaseInfoPanel : MonoBehaviour
 {
-    protected IStatsAvailable _unit;
+    protected IUnitForTargetPanel _unit;
     protected IReadOnlyDictionary<StatType, StatValueContainer> _statdict;
-    public IStatsAvailable GetActiveUnit => _unit;
+    public IUnitForTargetPanel GetActiveUnit => _unit;
 
-    public virtual void RunSetup(IStatsAvailable unit = null)
+    public virtual void RunSetup(IUnitForTargetPanel unit = null)
     {
         if (unit == null) return;
         _unit = unit;

@@ -42,7 +42,7 @@ public class PlayerInfoPanel : BaseInfoPanel
     private PlayerUnit _player;
 
 
-    public override void RunSetup(IStatsAvailable unit = null)
+    public override void RunSetup(IUnitForTargetPanel unit = null)
     {
         base.RunSetup(unit);
         _player = unit as PlayerUnit;
