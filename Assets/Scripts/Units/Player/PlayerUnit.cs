@@ -14,18 +14,15 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private PlayerUnitController _playerController;
+    public PlayerUnitController GetController => _playerController;
 
-    protected override void Start()
+    protected override void OnEnable()
     {
-        base.Start();
-        _playerController = _controller as PlayerUnitController;
+        base.OnEnable();
+        _playerController = _controller as PlayerUnitController;        
         PlayerBinds();
     }
 
-    protected override void Update()
-    {
-        AnimateAndPerformMovement();
-    }
 
     private void OnDestroy()
     {
@@ -35,27 +32,19 @@ public class PlayerUnit : BaseUnit
     {
         if (isRegister)
         {
-            _playerController.PlayerDashSuccessEvent += AnimateDash;
-            _playerController.PlayerESuccessEvent += AnimateE;
-            _playerController.PlayerMeleeAttackSuccessEvent += AnimateMelee;
-            _playerController.PlayerQSuccessEvent += AnimateQ;
-            _playerController.PlayerRangedAttackSuccessEvent += AnimateRanged;
-            _playerController.PlayerRSuccessEvent += AnimateR;
+            _playerController.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+            _playerController.DodgeCompletedAnimatingEvent += OnAnimationComplete;
+            _playerController.TargetLockedEvent += TargetUpdate;
         }
         else
         {
-            _playerController.PlayerDashSuccessEvent -= AnimateDash;
-            _playerController.PlayerESuccessEvent -= AnimateE;
-            _playerController.PlayerMeleeAttackSuccessEvent -= AnimateMelee;
-            _playerController.PlayerQSuccessEvent -= AnimateQ;
-            _playerController.PlayerRangedAttackSuccessEvent -= AnimateRanged;
-            _playerController.PlayerRSuccessEvent -= AnimateR;
+            _playerController.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-
+            _playerController.DodgeCompletedAnimatingEvent -= OnAnimationComplete;
         }
-
     }
+    
 
     private void ChangeAnimatorLayer(WeaponType type)
     {
@@ -73,30 +62,42 @@ public class PlayerUnit : BaseUnit
         }
     }
 
-    private void AnimateDash()
+    protected override void AnimateCombatActivity(CombatActionType type)
     {
-        _animator.SetTrigger("Dodge");
+        switch (type)
+        {
+            case CombatActionType.Melee:
+                _animator.SetTrigger("MeleeAttack");
+                break;
+            case CombatActionType.Ranged:
+                _animator.SetTrigger("RangedAttack");
+                break;
+            case CombatActionType.Dodge:
+                _animator.SetTrigger("Dodge");
+                break;
+            case CombatActionType.MeleeSpecialQ:
+                _animator.SetTrigger("QSpecial");
+                break;
+            case CombatActionType.RangedSpecialE:
+                _animator.SetTrigger("ESpecial");
+                break;
+            case CombatActionType.ShieldSpecialR:
+                _animator.SetTrigger("RSpecial");
+                break;
+        }
     }
-    private void AnimateE()
-    {
-        _animator.SetTrigger("ESpecial");
-    }   
 
-    protected override void AnimateMelee()
+    public void ComboWindowStart()
     {
-        base.AnimateMelee();
+        _animator.SetBool("AdvancingCombo",true);
     }
-    private void AnimateQ()
+    public void ComboWindowEnd()
     {
-        _animator.SetTrigger("QSpecial");
-    }
-    protected override void AnimateRanged()
-    {
-        base.AnimateRanged();        
-    }
-    private void AnimateR()
-    {
-        _animator.SetTrigger("RSpecial");
+        _animator.SetBool("AdvancingCombo", false);
     }
 
+    protected override void TargetUpdate(IStatsAvailable unit)
+    {
+        base.TargetUpdate(unit);
+    }
 }

@@ -10,27 +10,47 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
     public string ID;
     public WeaponType WeapType;
-    public int _charges;
 
-    protected List<BaseStatTriggerConfig> _effects = new List<BaseStatTriggerConfig>();
+    public int MaxCharges;
+    protected int _currentCharges;
+    public int GetAmmo() => _currentCharges;
 
-    protected virtual void OnEnable()
+    public ISkill Skill; //todo related skills
+
+    protected bool IsBusy = false;
+
+    [Inject] protected PlayerUnit _player;
+
+    protected List<WeaponHitTrigger> _triggers;
+    // triggers are found separately in melee and ranged
+
+    // get recorded into prefab?
+    // todo
+    [SerializeField] protected List<string> _effectsIDs;
+
+
+
+    private void OnEnable()
     {
-        gameObject.SetActive(true);
+        _effectsIDs = new List<string>();
     }
+
     public abstract bool UseWeapon();
 
-    public virtual void AddTriggerData(BaseStatTriggerConfig effect)
+    // loaded by weaponcontroller
+    public virtual void AddTriggerData(string effectID)
     {
-        _effects.Add(effect);
+        _effectsIDs.Add(effectID);
     }
 
     public GameObject GetObject() => gameObject;
+
 
 }
 

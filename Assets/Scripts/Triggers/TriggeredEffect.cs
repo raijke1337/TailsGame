@@ -29,6 +29,11 @@ public class TriggeredEffect
         ID = id; StatID = type; InitialValue = init;RepeatedValue = repeat;RepeatApplicationDelay = repeatDelay;TotalDuration = totalDuration; Icon = icon;
         CurrentRepeatTimer = RepeatApplicationDelay;
     }
+    public TriggeredEffect(BaseStatTriggerConfig config)
+    {
+        ID = config.ID; StatID = config.StatID; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
+        CurrentRepeatTimer = RepeatApplicationDelay;
+    }
 
 }
 

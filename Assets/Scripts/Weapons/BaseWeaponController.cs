@@ -18,8 +18,15 @@ public abstract class BaseWeaponController : MonoBehaviour
     protected GameObject[] _weaponPrefabs;
     protected Dictionary<WeaponType, IWeapon> _currentWeapons;
 
-    [SerializeField] protected Transform _weaponEmpty;
+    [SerializeField] protected Transform _meleeWeaponEmpty;
+    [SerializeField] protected Transform _rangedWeaponEmpty;
     [SerializeField] protected Transform _sheathedWeaponEmpty;
+
+
+    public int GetAmmoByType(WeaponType type)
+    {
+        return _currentWeapons[type].GetAmmo();
+    }
 
     public virtual bool UseWeaponCheck(WeaponType type)
     {
@@ -28,14 +35,18 @@ public abstract class BaseWeaponController : MonoBehaviour
     }
 
     // load weapon stats from configs
-    // set trigger info for weapons
+    // set trigger info for weapon
+    [ContextMenu(itemName:"Run start")]
     protected virtual void Start()
     {
         _currentWeapons = new Dictionary<WeaponType, IWeapon>();
 
-        foreach (var weap in _weaponPrefabs)
+        foreach (var prefab in _weaponPrefabs)
         {
-            BaseWeapon item = weap.GetComponent<BaseWeapon>();
+            var spawn = Instantiate(
+                prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
+            BaseWeapon item = spawn.GetComponent<BaseWeapon>();
+
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
                 (Constants.c_WeapConfigsPath).First(t => t.ID == item.ID);
             item.WeapType = config.WType;
@@ -45,18 +56,13 @@ public abstract class BaseWeaponController : MonoBehaviour
                 Debug.LogWarning($"something went wrong with {name}'s weapons, already has {item.WeapType}");
                 return;
             }
-
-            _currentWeapons.Add(item.WeapType, Instantiate
-                (item,_sheathedWeaponEmpty.position,_sheathedWeaponEmpty.rotation,_sheathedWeaponEmpty));
+            _currentWeapons.Add(item.WeapType, item);
 
             foreach (string triggerID in config.TriggerIDs)
             {
-                var assets = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>
-                    (Constants.c_TriggersConfigsPath);
-                var data = assets.First(t => t.ID == triggerID);
-                item.AddTriggerData(data);
+                item.AddTriggerData(triggerID);
             }                        
-            item._charges = config._charges;
+            item.MaxCharges = config._charges;
         }
     }
     /// first need to instantiate the weapon object and THEN add it to dictionary

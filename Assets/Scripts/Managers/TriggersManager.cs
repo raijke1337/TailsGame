@@ -35,7 +35,7 @@ public class TriggersManager : MonoBehaviour
         _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.c_TriggersConfigsPath);
     }
 
-    public void Activation(string ID, BaseUnit target)
+    public void Activation(string ID, BaseUnit target, BaseUnit source = null)
     {
         var config = _configs.First(t => t.ID == ID);
         target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,

@@ -16,60 +16,53 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class DodgeController : IStatsComponentForHandler
 {
 
-    private PlayerUnitController _ctrl;
-
-    [SerializeField] int Charges = 3;
-    [SerializeField] float Recharge = 4f;
-
-    //[SerializeField] float Duration = 1f;
-    //[SerializeField] float Range = 3f;
-
-    private List<DodgeCharge> _charges = new List<DodgeCharge>();
-
-    public SimpleEventsHandler<bool> DodgeCalcCompleteEvent;
+    [SerializeField] SerializableDictionaryBase<DodgeStatType, StatValueContainer> _stats;
+    public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats() => _stats;
+    public int GetDodgeCharges() => (int)_stats[DodgeStatType.Charges].GetCurrent();
 
 
-    public void Initialize(PlayerUnitController c)
-    {
-        _ctrl = c;
-    }
     public void Setup()
     {
-        for (int i = 0; i < Charges; i++)
-        {
-            _charges.Add(new DodgeCharge(Recharge));
-        }
-        _charges.TrimExcess();
+        // put paths to default cfgs here 
+        // todo
+
+        if (!_stats.ContainsKey(DodgeStatType.Charges)) _stats.Add(DodgeStatType.Charges, new StatValueContainer());
+        if (!_stats.ContainsKey(DodgeStatType.Cooldown)) _stats.Add(DodgeStatType.Cooldown, new StatValueContainer());
+        if (!_stats.ContainsKey(DodgeStatType.Duration)) _stats.Add(DodgeStatType.Duration, new StatValueContainer());
+        if (!_stats.ContainsKey(DodgeStatType.Range)) _stats.Add(DodgeStatType.Range, new StatValueContainer());
+
+        foreach(var st in _stats.Values)
+        { st.Setup(); }
     }
 
     public bool IsDodgePossibleCheck()
     {
-        DodgeCharge charge = _charges.FirstOrDefault(t => t.CurrentCooldown <= 0f);
-        if (charge == null)
-        {
-            return false;
-        }
+        if (_stats[DodgeStatType.Charges].GetCurrent() == 0f) return false;
         else
         {
-            charge.CurrentCooldown = Recharge;
+            _stats[DodgeStatType.Charges].ChangeCurrent(-1);
+            _timers.Add(new Timer(_stats[DodgeStatType.Cooldown].GetCurrent()));
             return true;
         }
     }
 
+    private List<Timer> _timers = new List<Timer>();    // no coroutines
+
     public void UpdateInDelta(float deltaTime)
     {
-        foreach (var ch in _charges)
+        foreach (var t in _timers)
         {
-            if (ch.CurrentCooldown > 0f) { ch.CurrentCooldown -= deltaTime; }            
+            if (t.time <= 0f)
+            {
+                _stats[DodgeStatType.Charges].ChangeCurrent(1);
+                _timers.Remove(t);
+                return;
+            }
+            else
+            {
+                t.time -= deltaTime;
+            }
         }
-    }
-
-
-    public class DodgeCharge
-    {
-        public float CurrentCooldown = 0f;
-        public float Recharge;
-        public DodgeCharge(float cd) { Recharge = cd; }
     }
 }
 

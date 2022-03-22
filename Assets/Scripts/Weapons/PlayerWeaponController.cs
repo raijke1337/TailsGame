@@ -14,47 +14,54 @@ using UnityEngine.InputSystem;
 public class PlayerWeaponController : BaseWeaponController
 {
     public WeaponType GetCurrentlyUsedWeaponType { get; private set; } = WeaponType.None;
-    public SimpleEventsHandler<WeaponType> WeaponSwitchEvent;
+    public WeaponSwitchEventHandler WeaponSwitchEvent;
 
     protected override void Start()
     {
         base.Start();
-        foreach (var weap in _currentWeapons)
-        {
-            weap.Value.GetObject().transform.localScale = new Vector3 (100f,100f,100f);
-            // huge todo and also yikes
-            // items are scaled down because ROOT of prefab is scale 0.01 
-            // and empties are attached to it
-        }
+        WeaponSwitchEvent += SwapItem;
     }
 
     public override bool UseWeaponCheck(WeaponType type)
     {
         if (GetCurrentlyUsedWeaponType != type)
         {
-            Equip(_currentWeapons[type].GetObject(),true);
-            Equip(_currentWeapons.First(t => t.Key != type).Value.GetObject(),false);
-            // todo
             WeaponSwitchEvent?.Invoke(type);
+            GetCurrentlyUsedWeaponType = type;
         }
         return base.UseWeaponCheck(type);
     }
 
-    private void Equip(GameObject item,bool IsEquip)
+//    visual part
+    private void SwapItem(WeaponType type)
     {
-        if (IsEquip)
+        GameObject on = _currentWeapons[type].GetObject();
+        GameObject off;
+        if (!_currentWeapons.ContainsKey(GetCurrentlyUsedWeaponType)) off = null;
+        else off = _currentWeapons[GetCurrentlyUsedWeaponType].GetObject();
+
+        if (type == WeaponType.Ranged)
         {
-            item.transform.parent = _weaponEmpty;
-            item.transform.position = _weaponEmpty.position;
-            item.transform.parent.rotation = _weaponEmpty.rotation;
+            on.transform.position = _rangedWeaponEmpty.position;
+            on.transform.rotation = _rangedWeaponEmpty.rotation;
+            on.transform.parent = _rangedWeaponEmpty;
         }
-        if (!IsEquip)
+        if (type == WeaponType.Melee)
         {
-            item.transform.parent = _sheathedWeaponEmpty;
-            item.transform.position = _sheathedWeaponEmpty.position;
-            item.transform.parent.rotation = _sheathedWeaponEmpty.rotation;
+            on.transform.position = _meleeWeaponEmpty.position;
+            on.transform.rotation = _meleeWeaponEmpty.rotation;
+            on.transform.parent = _meleeWeaponEmpty;
         }
+        if (off == null) return;
+        off.transform.position = _sheathedWeaponEmpty.position;
+        off.transform.rotation = _sheathedWeaponEmpty.rotation;
+        off.transform.parent = _sheathedWeaponEmpty;
     }
+
+
+    //Equip(_currentWeapons[type].GetObject(), true);
+    //Equip(_currentWeapons.First(t => t.Key != type).Value.GetObject(), false);
+    //// todo
 
 }
 

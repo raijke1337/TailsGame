@@ -16,24 +16,15 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 {
     [SerializeField]
-    private SerializableDictionaryBase <StatType,StatValueContainer> _dict;
-    public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _dict;
+    private SerializableDictionaryBase <StatType,StatValueContainer> _stats;
+    public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _stats;
 
-
-    private float HPregen;
-    private float SHregen;
-    private float HEregen;
 
     private List<TriggeredEffect> _effects;
 
-
-
     public void Setup()
     {
-        foreach (var v in _dict.Values) { v.Setup(); }
-        HPregen = _dict[StatType.HealthRegen].GetCurrent();
-        SHregen = _dict[StatType.ShieldRegen].GetCurrent();
-        HEregen = _dict[StatType.HeatRegen].GetCurrent();
+        foreach (var v in _stats.Values) { v.Setup(); }
         _effects = new List<TriggeredEffect>();
     }
 
@@ -42,9 +33,9 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     public void UpdateInDelta(float deltaTime)
     {
         HandleEffects(deltaTime);
-        _dict[StatType.Health].ChangeCurrent(HPregen * deltaTime);
-        _dict[StatType.Shield].ChangeCurrent(SHregen * deltaTime);
-        _dict[StatType.Heat].ChangeCurrent(HEregen * deltaTime);
+        _stats[StatType.Health].ChangeCurrent(_stats[StatType.HealthRegen].GetCurrent() * deltaTime);
+        _stats[StatType.Shield].ChangeCurrent(_stats[StatType.ShieldRegen].GetCurrent() * deltaTime);
+        _stats[StatType.Heat].ChangeCurrent(_stats[StatType.HeatRegen].GetCurrent() * deltaTime);
     }
 
 
@@ -54,7 +45,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         foreach (var ef in _effects)
         {
             // actual handling
-            StatValueContainer stat = _dict[ef.StatID];
+            StatValueContainer stat = _stats[ef.StatID];
             // start effect
             if (!ef.InitialDone)
             {

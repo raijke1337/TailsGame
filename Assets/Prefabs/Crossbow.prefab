@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 7480995966857918065}
   - component: {fileID: 7480995966855116269}
   - component: {fileID: 7480995966856178869}
-  - component: {fileID: 4095725024132277537}
+  - component: {fileID: 9122963008473924918}
+  - component: {fileID: -5257698494259970991}
   m_Layer: 0
   m_Name: crossbow
   m_TagString: Untagged
@@ -26,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7480995966858221551}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: -180, z: 0}
 --- !u!33 &7480995966855116269
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -82,7 +83,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4095725024132277537
+--- !u!114 &9122963008473924918
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,14 +92,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 7480995966858221551}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8b494d30dac4a54d9cc26f42239a228, type: 3}
+  m_Script: {fileID: 11500000, guid: 0871f748c48352f4593c03df6c2009ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5257698494259970991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7480995966858221551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8691e83a8ad2b9a41b471acfee8e030b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ID: crossbow
   WeapType: 2
-  _charges: 9
-  _reload: 3
-  _burstTime: 0.3
-  _burstShots: 3
+  MaxCharges: 9
+  _effectsIDs:
+  - crossbow_hit
+  _reload: 2
+  projectileSpeed: 10
+  _spread: 0.1
   _projectilePrefab: {fileID: 8117081725990939304, guid: fb4a746d684c53c43bcd799d45e5e582,
     type: 3}
+  _shotsPause: 0.1
+  _shots: 3

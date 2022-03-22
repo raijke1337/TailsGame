@@ -11,18 +11,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class ProjectileComponent : MonoBehaviour
+public class ProjectileComp : MonoBehaviour
 {
-    public List<BaseStatTriggerConfig> _effects;
+    public float TTL;
+    public float Speed;
 
+    public SimpleEventsHandler<Collision> ProjectileCollidedEvent;
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("hit tgt");        
-    }
-
-    private void Update()
-    {
-        transform.position += Vector3.forward * Time.deltaTime;  
+        ProjectileCollidedEvent?.Invoke(collision);
     }
 
 }

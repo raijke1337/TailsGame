@@ -34,3 +34,27 @@ public enum EnemyStatType
     AggroRange,
     EvadeRange
 }
+
+public enum WeaponType
+{
+    None,
+    Melee,
+    Ranged
+}
+public enum DodgeStatType
+{
+    Charges,
+    Range,
+    Duration,
+    Cooldown
+}
+
+public enum CombatActionType
+{
+    Melee,
+    Ranged,
+    Dodge,
+    MeleeSpecialQ,
+    RangedSpecialE,
+    ShieldSpecialR
+}

@@ -17,6 +17,7 @@ public class GameManager : MonoInstaller
     private PlayerUnit _player;
     private StatsUpdatesHandler _statsH;
     private TriggersManager _triggers;
+    private ProjectilesMover _proj;
 
 
     public override void Start()
@@ -28,10 +29,15 @@ public class GameManager : MonoInstaller
         _player = FindObjectOfType<PlayerUnit>();
         _statsH = FindObjectOfType<StatsUpdatesHandler>();
         _triggers = GetComponent<TriggersManager>();
+        _proj = GetComponent<ProjectilesMover>();
         Container.BindInstance(_player).AsSingle();
         Container.BindInstance(_statsH).AsSingle();
         Container.BindInstance(_triggers).AsSingle();
+        Container.BindInstance(_proj).AsSingle();
     }
+
+
+
 
 }
 

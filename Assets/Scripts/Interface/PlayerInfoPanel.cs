@@ -14,78 +14,64 @@ using Zenject;
 using System.Threading.Tasks;
 using RotaryHeart.Lib.SerializableDictionary;
 
-public class PlayerInfoPanel : MonoBehaviour
+public class PlayerInfoPanel : BaseInfoPanel
 {
-    [Inject]
-    private PlayerUnit _player;
 
-    private IReadOnlyDictionary<StatType, StatValueContainer> _statdict;
+    private DodgeController _dodge;
+    private PlayerWeaponController _weapons;
 
-    [SerializeField] private Image _hpBar;
     [SerializeField] private Image _shBar;
     [SerializeField] private Image _heBar;
 
-
-    [SerializeField] private Text _hpText;
     [SerializeField] private Text _spText;
     [SerializeField] private Text _heText;
 
-
     [SerializeField] private Text _dodgeText;
+    [SerializeField] private Text _ammoText;
 
-    private float _maxHP;
+
+
     private float _maxSH;
     private float _maxHE;
-
-    private float _currentHP;
     private float _currentSH;
     private float _currentHE;
-    private float _currentD;
+
+    private float _currentAmmo;
+    private float _currentDodges;
+
+    private PlayerUnit _player;
 
 
-
-    private float _regHP;
-    private float _regSH;
-    private float _regHE;
-
-    private void Start()
+    public override void RunSetup(IStatsAvailable unit = null)
     {
+        base.RunSetup(unit);
+        _player = unit as PlayerUnit;
 
-        _statdict = _player.GetStats;
-
-        _maxHP = _statdict[StatType.Health].GetMax();
         _maxHE = _statdict[StatType.Heat].GetMax();
         _maxSH = _statdict[StatType.Shield].GetMax();
-    }
 
-    private void LateUpdate()
-    {
-        if (_statdict == null | _player == null) return;
-        UpdateCurrentValues();
-        UpdateUI();
+
+        _dodge = _player.GetController.GetDodgeController;
+        _weapons = _player.GetController.GetWeaponController as PlayerWeaponController;
     }
-    private void UpdateCurrentValues()
+    protected override void UpdateCurrentValues()
     {
-        _currentHP = _statdict[StatType.Health].GetCurrent();
+        base.UpdateCurrentValues();
         _currentSH = _statdict[StatType.Shield].GetCurrent();
-        //_currentD = _player.GetDashStats[DashStatType.DashCharges].GetCurrentValue;
-        _regSH = _statdict[StatType.ShieldRegen].GetCurrent();
-        _regHP = _statdict[StatType.HealthRegen].GetCurrent();
-
         _currentHE = _statdict[StatType.Heat].GetCurrent();
-        _regHE = _statdict[StatType.HeatRegen].GetCurrent();
+        _currentAmmo = _weapons.GetAmmoByType(WeaponType.Ranged);
+        _currentDodges = _dodge.GetDodgeCharges();
     }
-    private void UpdateUI()
+    protected override void UpdateUI()
     {
-        _hpBar.fillAmount = _currentHP / _maxHP;
+        base.UpdateUI();
+        _spText.text = string.Concat(Math.Round(_currentSH, 0), " / ", _maxSH);
+        _heText.text = string.Concat(Math.Round(_currentHE, 0), " / ", _maxHE);
+        _dodgeText.text = _currentDodges.ToString();
+        _ammoText.text = _currentAmmo.ToString();
+
         _shBar.fillAmount = _currentSH / _maxSH;
         _heBar.fillAmount = _currentHE / _maxHE;
-
-        _dodgeText.text = _currentD.ToString();
-
-        _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP, " (", _regHP, " /s)");
-        _spText.text = string.Concat(Math.Round(_currentSH, 0), " / ", _maxSH, " (", _regSH, " /s)");
-        _heText.text = string.Concat(Math.Round(_currentHE, 0), " / ", _maxHE, " (", _regHE, " /s)");
     }
 }
 

@@ -17,10 +17,10 @@ public abstract class BaseTrigger : MonoBehaviour
 {
     
     protected Collider _coll;
-    [Inject]
+    [Inject,SerializeField]
     protected TriggersManager _manager;
 
-    public string TriggerEffectID;
+    public List<string> TriggerEffectIDs;
 
     public bool Enable
     {
@@ -32,15 +32,18 @@ public abstract class BaseTrigger : MonoBehaviour
     {
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
+        if (_manager == null) Debug.Log($"Missing manager reference on {name}");
     }
     protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<BaseUnit>()!=null)
         {
             var tgt = other.GetComponent<BaseUnit>();
-            _manager.Activation(TriggerEffectID,tgt);
-
-            Debug.Log($"Applying effect ID {TriggerEffectID} to {other.name}");
+            foreach (var id in TriggerEffectIDs)
+            {
+                _manager.Activation(id, tgt);
+                Debug.Log($"Applying effect ID {id} to {other.name}");
+            }
         }
     }
 

@@ -15,17 +15,16 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
+public delegate void WeaponSwitchEventHandler(WeaponType type);
 
 public static class Constants
 {
     public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
     public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
+    public const string c_DefaultStatConfigs = "/Scripts/Configurations/Default"; //todo
 }
 
 
-
-//todo some other params?
-public delegate void WeaponEventHandler();
 
 public interface IStatsComponentForHandler
 { 
@@ -42,15 +41,19 @@ public interface IWeapon
 {    
     bool UseWeapon();
     public GameObject GetObject();
+    int GetAmmo();
 }
 
-
-public enum WeaponType
-{
-    None,
-    Melee,
-    Ranged
+public interface IStatsAvailable
+{ IReadOnlyDictionary<StatType, StatValueContainer> GetStats();
+    string GetName();
+    event SimpleEventsHandler<IStatsAvailable> UnitDiedEvent;
 }
+
+public interface ISkill
+{ void Use(); }
+
+public class Timer { public float time; public Timer(float t) { time = t; } }
 
 
 [Serializable]
@@ -62,15 +65,22 @@ public class StatValueContainer
     [SerializeField] private float _current;
     private bool IsSetup = false;
 
-    public SimpleEventsHandler<float> ValueChangedEvent;
+    public SimpleEventsHandler<float> ValueDecreasedEvent;
 
     public float GetCurrent() => _current;
     public float GetMax() => _max;
     public float GetMin() => _min;
-    public float GetStart() => _start;
+    //public float GetStart() => _start;
+    // dont need because when properly set up current == start
+    /// <summary>
+    /// adds the value
+    /// </summary>
+    /// <param name="value">how much to add or remove</param>
     public void ChangeCurrent(float value)
     {
         _current = Mathf.Clamp(_current+value,_min,_max);
+        if (value < 0f)
+        ValueDecreasedEvent?.Invoke(_current);
     }
 
     public void Setup()
@@ -80,6 +90,11 @@ public class StatValueContainer
             _current = _start;
             IsSetup = true;
         }
+    }
+    //todo
+    public StatValueContainer(string defaultConfig = null)
+    {
+        Setup();
     }
 }
 

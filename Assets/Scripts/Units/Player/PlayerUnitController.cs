@@ -19,9 +19,19 @@ public class PlayerUnitController : BaseUnitController
     protected StatsUpdatesHandler _handler;
 
     private PlayerControls _controls;
-
     private PlayerWeaponController _weaponCtrl;
+    [SerializeField] private DodgeController _dodgeCtrl;
+
+    public DodgeController GetDodgeController => _dodgeCtrl;
+    public BaseWeaponController GetWeaponController => _weaponCtrl;
+
+    // call these after all checks are done
+    public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
+    public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
+
+    public event SimpleEventsHandler<IStatsAvailable> TargetLockedEvent;
+
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
@@ -32,7 +42,7 @@ public class PlayerUnitController : BaseUnitController
     private IsoCamAdjust _adj;
     [SerializeField, Tooltip("How high should the aiming be done")] private float _targetOffsetY = 1f;
 
-    [SerializeField] private DodgeController _dodgeCtrl;
+
 
     protected override void Awake()
     {
@@ -46,7 +56,6 @@ public class PlayerUnitController : BaseUnitController
         _weaponCtrl = _baseWeap as PlayerWeaponController;
         _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
 
-        _dodgeCtrl.Initialize(this);
         _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
 
         _controls.Game.Dash.performed += Dash_performed;
@@ -57,42 +66,49 @@ public class PlayerUnitController : BaseUnitController
         _controls.Game.SpecialAttack.performed += RangedAttack_performed;
     }
 
-    // call these after all checks are done
-    public SimpleEventsHandler PlayerMeleeAttackSuccessEvent;
-    public SimpleEventsHandler PlayerRangedAttackSuccessEvent;
-    public SimpleEventsHandler PlayerQSuccessEvent;
-    public SimpleEventsHandler PlayerESuccessEvent;
-    public SimpleEventsHandler PlayerRSuccessEvent;
-    public SimpleEventsHandler PlayerDashSuccessEvent;
 
     #region logic and checks
+
+    // todo make an enum with action types and unified calls
     private void RangedAttack_performed(CallbackContext obj)
-    {
+    {        
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
-        PlayerRangedAttackSuccessEvent?.Invoke();
+            CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged);
     }
     private void MeleeAttack_performed(CallbackContext obj)
     {
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
-            PlayerMeleeAttackSuccessEvent?.Invoke();
+            CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
     }
     private void SkillR_performed(CallbackContext obj)
     {
-        PlayerRSuccessEvent?.Invoke();
+        CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
     }
     private void SkillQ_performed(CallbackContext obj)
     {
-        PlayerQSuccessEvent?.Invoke();
+        CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
     }
     private void SkillE_performed(CallbackContext obj)
     {
-        PlayerESuccessEvent?.Invoke();
+        CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
     }
     private void Dash_performed(CallbackContext obj)
     {
+        if (_movement == Vector3.zero) return;
         if (_dodgeCtrl.IsDodgePossibleCheck())
-        PlayerDashSuccessEvent?.Invoke();
+        {
+            CombatActionSuccessEvent?.Invoke(CombatActionType.Dodge);
+            StartCoroutine(DoDodgeMovement());
+            //AddDodgeForce();
+        }
     }
+    //private void AddDodgeForce()
+    //{
+    //    GetUnit.GetRigidBody.AddForce(10* _movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent(), ForceMode.Impulse);
+    //    DodgeCompletedAnimatingEvent?.Invoke();
+    //}
+    // todo doesnt work
+
 
     #endregion
 
@@ -114,6 +130,8 @@ public class PlayerUnitController : BaseUnitController
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(CurrentCursorPosition, 0.1f);
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(_movement,0.1f);
     }
 #endif
 
@@ -125,10 +143,34 @@ public class PlayerUnitController : BaseUnitController
         if (!Physics.Raycast(ray, out var hit)) return;
         else
         {
-            if (!hit.collider.CompareTag("Ground")) return;
+            if (!(hit.collider.CompareTag("Ground")) &&
+                (hit.collider.gameObject.GetComponent<IStatsAvailable>() == null) ) return;
             CurrentCursorPosition = hit.point;
             transform.LookAt(CurrentCursorPosition);
+            if (hit.collider.gameObject.GetComponent<IStatsAvailable>() != null)
+            {
+                var tgt = hit.collider.gameObject.GetComponent<IStatsAvailable>();
+                TargetLockedEvent?.Invoke(tgt);
+            }    
         }
+    }
+    // doesnt look too good
+    private IEnumerator DoDodgeMovement()
+    {
+        Vector3 start = transform.position;
+        Vector3 finish = transform.position +
+                (_movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent());
+
+        float time = _dodgeCtrl.GetDodgeStats()[DodgeStatType.Duration].GetCurrent();
+        float currenttime = 0;
+        while (currenttime < time)
+        {
+            transform.position = Vector3.LerpUnclamped(start, finish, currenttime);
+            currenttime += Time.deltaTime;
+            yield return null;
+        }
+        DodgeCompletedAnimatingEvent?.Invoke();
+        yield return null;
     }
 }
 
