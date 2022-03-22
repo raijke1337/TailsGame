@@ -13,8 +13,14 @@ using UnityEngine.InputSystem;
 
 public class NPCUnit : BaseUnit
 {
-    [SerializeField]
     public Allegiance Side;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        if (!CompareTag("Enemy"))
+            Debug.LogWarning($"Set enemy tag for{name}");
+    }
 
 }
 

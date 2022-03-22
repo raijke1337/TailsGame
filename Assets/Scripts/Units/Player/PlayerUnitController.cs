@@ -13,6 +13,7 @@ using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 using Zenject;
 
+
 public class PlayerUnitController : BaseUnitController
 {
     [Inject]
@@ -29,49 +30,72 @@ public class PlayerUnitController : BaseUnitController
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
-
     public event SimpleEventsHandler<IStatsAvailable> TargetLockedEvent;
-
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
     {
-        _controls.Game.Disable();
+        PlayerBind(false);
     }
-    public Vector3 CurrentCursorPosition { get; private set; }
     private IsoCamAdjust _adj;
-    [SerializeField, Tooltip("How high should the aiming be done")] private float _targetOffsetY = 1f;
 
-
+    private CrosshairScript _aim;
+    private Ray ray;
+    private Vector3 lookTarget;
+    public Vector3 GetLookTarget() => lookTarget;
 
     protected override void Awake()
     {
         base.Awake();
         _controls = new PlayerControls();
-        _controls.Game.Enable();
-
-
-        _adj = new IsoCamAdjust();
-
-        _weaponCtrl = _baseWeap as PlayerWeaponController;
-        _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
-
-        _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
-
-        _controls.Game.Dash.performed += Dash_performed;
-        _controls.Game.SkillE.performed += SkillE_performed;
-        _controls.Game.SkillQ.performed += SkillQ_performed;
-        _controls.Game.SkillR.performed += SkillR_performed;
-        _controls.Game.MainAttack.performed += MeleeAttack_performed;
-        _controls.Game.SpecialAttack.performed += RangedAttack_performed;
+        // unique for player
+        PlayerBind();
     }
 
+    private void PlayerBind(bool enable = true)
+    {
+        if (enable)
+        {
+            _controls.Game.Enable();
+            Cursor.visible = false;
+
+            _adj = new IsoCamAdjust();
+            _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
+            _controls.Game.Dash.performed += Dash_performed;
+            _controls.Game.SkillE.performed += SkillE_performed;
+            _controls.Game.SkillQ.performed += SkillQ_performed;
+            _controls.Game.SkillR.performed += SkillR_performed;
+            _controls.Game.MainAttack.performed += MeleeAttack_performed;
+            _controls.Game.SpecialAttack.performed += RangedAttack_performed;
+
+            _weaponCtrl = _baseWeap as PlayerWeaponController;
+            _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
+
+            _aim = GetComponentInChildren<CrosshairScript>();
+            _aim.transform.parent = null;
+        }
+        else
+        {
+            _controls.Game.Disable();
+            Cursor.visible = true;
+
+            _controls.Game.Dash.performed -= Dash_performed;
+            _controls.Game.SkillE.performed -= SkillE_performed;
+            _controls.Game.SkillQ.performed -= SkillQ_performed;
+            _controls.Game.SkillR.performed -= SkillR_performed;
+            _controls.Game.MainAttack.performed -= MeleeAttack_performed;
+            _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
+
+            _weaponCtrl.WeaponSwitchEvent -= DoSwitchLayer;
+        }
+
+    }
 
     #region logic and checks
 
     // todo make an enum with action types and unified calls
     private void RangedAttack_performed(CallbackContext obj)
-    {        
+    {
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
             CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged);
     }
@@ -102,19 +126,14 @@ public class PlayerUnitController : BaseUnitController
             //AddDodgeForce();
         }
     }
-    //private void AddDodgeForce()
-    //{
-    //    GetUnit.GetRigidBody.AddForce(10* _movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent(), ForceMode.Impulse);
-    //    DodgeCompletedAnimatingEvent?.Invoke();
-    //}
-    // todo doesnt work
-
-
     #endregion
 
     private void Update()
     {
         CalculateAimPoint();
+        _aim.SetLookTarget(lookTarget);
+        transform.LookAt(lookTarget);
+
         CalculateMovement();
     }
 
@@ -125,41 +144,37 @@ public class PlayerUnitController : BaseUnitController
         Vector3 WS = _adj.Isoforward * input.y;
         _movement = AD + WS;
     }
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(CurrentCursorPosition, 0.1f);
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(_movement,0.1f);
-    }
-#endif
 
-    // todo
+    #region aiming
     private void CalculateAimPoint()
     {
-        // todo fix rotations
-        var ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (!Physics.Raycast(ray, out var hit)) return;
-        else
+        if (hit.collider.CompareTag("Ground"))
         {
-            if (!(hit.collider.CompareTag("Ground")) &&
-                (hit.collider.gameObject.GetComponent<IStatsAvailable>() == null) ) return;
-            CurrentCursorPosition = hit.point;
-            transform.LookAt(CurrentCursorPosition);
-            if (hit.collider.gameObject.GetComponent<IStatsAvailable>() != null)
-            {
-                var tgt = hit.collider.gameObject.GetComponent<IStatsAvailable>();
-                TargetLockedEvent?.Invoke(tgt);
-            }    
+            var loc = hit.point;
+            lookTarget = new Vector3(loc.x, 0, loc.z);
+        }
+        if (hit.collider.CompareTag("Enemy"))
+        {
+            var loc = hit.transform.position;
+            lookTarget = new Vector3(loc.x, 0, loc.z);
+            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<BaseUnit>());
         }
     }
-    // doesnt look too good
+
+    #endregion
+
+    #region dodges
     private IEnumerator DoDodgeMovement()
     {
         Vector3 start = transform.position;
-        Vector3 finish = transform.position +
-                (_movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent());
+        //Vector3 finish = transform.position + (_movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent());
+        // dodge in direction of running
+        // need - dodge in direction of mouse
+
+        Vector3 finish = (transform.forward * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent()) 
+            + transform.position;
 
         float time = _dodgeCtrl.GetDodgeStats()[DodgeStatType.Duration].GetCurrent();
         float currenttime = 0;
@@ -172,5 +187,12 @@ public class PlayerUnitController : BaseUnitController
         DodgeCompletedAnimatingEvent?.Invoke();
         yield return null;
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + _movement);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.forward + transform.position);
+    }    
+    #endregion
 }
-

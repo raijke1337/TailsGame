@@ -21,5 +21,6 @@ public class BaseStatTriggerConfig : ScriptableObject
     public float RepeatApplicationDelay;
     public float TotalDuration;
     public Sprite Icon;
+    public TriggeredEffectTargetType TargetType;
 }
 

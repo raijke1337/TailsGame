@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
+using Zenject;
 
 public class TriggersManager : MonoBehaviour
 {
@@ -19,7 +19,8 @@ public class TriggersManager : MonoBehaviour
     [SerializeField]
     private List<BaseStatTriggerConfig> _configs;
 
-
+    [Inject]
+    private PlayerUnit _player;
 
     private void Start()
     {
@@ -35,12 +36,26 @@ public class TriggersManager : MonoBehaviour
         _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.c_TriggersConfigsPath);
     }
 
-    public void Activation(string ID, BaseUnit target, BaseUnit source = null)
+
+    // todo??
+    public void Activation(string ID, BaseUnit target)
     {
         var config = _configs.First(t => t.ID == ID);
-        target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
-            config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+        switch (config.TargetType)
+        {
+            case TriggeredEffectTargetType.Target:
+                target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
+config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+                break;
+            case TriggeredEffectTargetType.Self:
+                _player.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
+config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+                break;
+        }
+;
     }
+
+
 
 }
 

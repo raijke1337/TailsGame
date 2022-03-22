@@ -14,7 +14,6 @@ using UnityEngine.InputSystem;
 public class CameraController : MonoBehaviour
 {
     private PlayerUnitController _target;
-    private Transform _camera;
     [SerializeField]
     private float _camMoveSpeed = 3f;
 
@@ -22,13 +21,12 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         _target = transform.parent.GetComponent<PlayerUnitController>();
-        _camera = GetComponentInChildren<Camera>().transform;
         transform.parent = null;
     }
 
     private void LateUpdate()
     {
-        var cursorLoc = _target.CurrentCursorPosition.normalized;
+        var cursorLoc = _target.GetLookTarget().normalized;
         transform.position = Vector3.Lerp(transform.position, _target.transform.position + cursorLoc, Time.deltaTime * _camMoveSpeed);
     }
 

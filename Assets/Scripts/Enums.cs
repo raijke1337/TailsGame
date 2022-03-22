@@ -29,6 +29,11 @@ public enum StatType
     HeatRegen,
     MoveSpeed
 }
+public enum TriggeredEffectTargetType
+{
+    Target,
+    Self
+}
 public enum EnemyStatType
 {
     AggroRange,

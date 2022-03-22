@@ -86,7 +86,7 @@ public abstract class BaseUnit : MonoBehaviour, IStatsAvailable
         else
         {
             _animator.SetBool("Moving", true);
-            transform.position += movement * Time.deltaTime * GetStats()[StatType.MoveSpeed].GetCurrent();
+            transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement;
             CalcAnimVector(movement);
         }
     }

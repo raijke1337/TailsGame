@@ -15,7 +15,7 @@ using Zenject;
 [RequireComponent(typeof(Collider))]
 public abstract class BaseTrigger : MonoBehaviour
 {
-    
+
     protected Collider _coll;
     [Inject,SerializeField]
     protected TriggersManager _manager;
@@ -42,7 +42,7 @@ public abstract class BaseTrigger : MonoBehaviour
             foreach (var id in TriggerEffectIDs)
             {
                 _manager.Activation(id, tgt);
-                Debug.Log($"Applying effect ID {id} to {other.name}");
+                //Debug.Log($"Applying effect ID {id} to {other.name}");
             }
         }
     }
