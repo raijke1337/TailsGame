@@ -18,6 +18,7 @@ public class GameInterfaceManager : MonoBehaviour
 
     [Inject]
     private PlayerUnit _playerUnit;
+    private BaseUnit _targetUnit;
 
     private void Start()
     {
@@ -30,15 +31,29 @@ public class GameInterfaceManager : MonoBehaviour
         _playerUnit.GetController.TargetLockedEvent += (t) => AssignTarget(t);        
     }
 
-    private void AssignTarget(IUnitForTargetPanel unit)
+    private void AssignTarget(BaseUnit unit)
     {
-        _tgtPanel.RunSetup(unit);
+        if (_targetUnit != unit && _targetUnit != null)
+        {
+            _targetUnit.ToggleCamera(false);
+        }
+        _targetUnit = unit;
+
+
+        _tgtPanel.RunSetup(_targetUnit);
         _tgtPanel.gameObject.SetActive(true);
-        unit.UnitDiedEvent += HideTgtPanel;
+
+        _targetUnit.ToggleCamera(true);
+
+        _targetUnit.UnitDiedEvent += HideTgtPanel;
     }
-    private void HideTgtPanel(IUnitForTargetPanel unit)
+
+    // potential memory leak?
+    private void HideTgtPanel(BaseUnit unit)
     {
-        if (_tgtPanel.GetActiveUnit == unit)
+        _targetUnit.ToggleCamera(false);
+
+        if (_targetUnit == unit)
         {
             _tgtPanel.gameObject.SetActive(false);
         }

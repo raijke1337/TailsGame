@@ -16,7 +16,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class SkillsController : IStatsComponentForHandler
 {
     [SerializeField] private SerializableDictionaryBase<CombatActionType, BaseSkill> _skills;
-
+    // todo add from IDs on weapons
 
     public bool RequestSkill (CombatActionType type)
     {
@@ -26,7 +26,7 @@ public class SkillsController : IStatsComponentForHandler
 
     public void Setup()
     {
-        //throw new NotImplementedException();
+        Debug.Log($"{this} set up");
     }
 
     public void UpdateInDelta(float deltaTime)

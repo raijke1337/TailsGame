@@ -42,14 +42,13 @@ public class PlayerInfoPanel : BaseInfoPanel
     private PlayerUnit _player;
 
 
-    public override void RunSetup(IUnitForTargetPanel unit = null)
+    public override void RunSetup(BaseUnit unit)
     {
         base.RunSetup(unit);
         _player = unit as PlayerUnit;
 
         _maxHE = _statdict[StatType.Heat].GetMax();
         _maxSH = _statdict[StatType.Shield].GetMax();
-
 
         _dodge = _player.GetController.GetDodgeController;
         _weapons = _player.GetController.GetWeaponController as PlayerWeaponController;
@@ -72,6 +71,9 @@ public class PlayerInfoPanel : BaseInfoPanel
 
         _shBar.fillAmount = _currentSH / _maxSH;
         _heBar.fillAmount = _currentHE / _maxHE;
+
+        ColorTexts(_spText, _maxSH, _currentSH);
+        ColorTexts(_heText, _maxHE, _currentHE);
     }
 }
 

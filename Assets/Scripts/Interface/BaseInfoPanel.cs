@@ -13,16 +13,17 @@ using UnityEngine.InputSystem;
 
 public abstract class BaseInfoPanel : MonoBehaviour
 {
-    protected IUnitForTargetPanel _unit;
-    protected IReadOnlyDictionary<StatType, StatValueContainer> _statdict;
-    public IUnitForTargetPanel GetActiveUnit => _unit;
+    protected BaseUnit _unit;
 
-    public virtual void RunSetup(IUnitForTargetPanel unit = null)
+    protected IReadOnlyDictionary<StatType, StatValueContainer> _statdict;
+
+    protected Color maxvalColor = Color.black;
+    protected Color minvalColor = Color.red;
+
+    public virtual void RunSetup(BaseUnit unit)
     {
-        if (unit == null) return;
         _unit = unit;
         _statdict = _unit.GetStats();
-
         _maxHP = _statdict[StatType.Health].GetMax();
 
         if (_nameText == null) return;
@@ -53,6 +54,12 @@ public abstract class BaseInfoPanel : MonoBehaviour
     {
         _hpBar.fillAmount = _currentHP / _maxHP;
         _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP);
+        ColorTexts(_hpText, _maxHP, _currentHP);
+    }
+
+    protected virtual void ColorTexts(Text text,float max,float current)
+    {
+        text.color = Color.Lerp(minvalColor, maxvalColor, current / max);
     }
 
 }

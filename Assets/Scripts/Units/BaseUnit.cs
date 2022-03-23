@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public abstract class BaseUnit : MonoBehaviour, IUnitForTargetPanel
+public abstract class BaseUnit : MonoBehaviour
 {
     [SerializeField]
     protected BaseStatsController _baseStats;
@@ -35,7 +35,7 @@ public abstract class BaseUnit : MonoBehaviour, IUnitForTargetPanel
     [Inject]
     protected StatsUpdatesHandler _handler;
     //
-    public event SimpleEventsHandler<IUnitForTargetPanel> UnitDiedEvent;
+    public event SimpleEventsHandler<BaseUnit> UnitDiedEvent;
 
     private Camera _faceCam;
     public void ToggleCamera(bool value){ _faceCam.enabled = value; }
@@ -80,7 +80,6 @@ public abstract class BaseUnit : MonoBehaviour, IUnitForTargetPanel
         else
         {
             _animator.SetTrigger("TakeDamage");
-            Debug.Log($"{name}: 'Ooof'");
         }
     }
 
@@ -145,8 +144,4 @@ public abstract class BaseUnit : MonoBehaviour, IUnitForTargetPanel
         _handler.RegisterUnitForStatUpdates(_baseStats,false);
     }
 
-    protected virtual void TargetUpdate(IUnitForTargetPanel unit)
-    {
-        Target = unit as BaseUnit;
-    }
 }

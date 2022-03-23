@@ -44,18 +44,6 @@ public interface IWeapon
     int GetAmmo();
 }
 
-public interface IUnitForTargetPanel : INamed
-{ 
-    IReadOnlyDictionary<StatType, StatValueContainer> GetStats();
-    event SimpleEventsHandler<IUnitForTargetPanel> UnitDiedEvent;
-    void ToggleCamera(bool value);
-
-}
-public interface INamed
-{
-    string GetName();
-}
-
 #endregion
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
 

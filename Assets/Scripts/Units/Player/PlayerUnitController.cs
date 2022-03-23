@@ -32,7 +32,7 @@ public class PlayerUnitController : BaseUnitController
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
-    public event SimpleEventsHandler<IUnitForTargetPanel> TargetLockedEvent;
+    public event SimpleEventsHandler<BaseUnit> TargetLockedEvent;
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
@@ -169,7 +169,7 @@ public class PlayerUnitController : BaseUnitController
         {
             var loc = hit.transform.position;
             lookTarget = new Vector3(loc.x, 0, loc.z);
-            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<IUnitForTargetPanel>());
+            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<BaseUnit>());
         }
     }
 

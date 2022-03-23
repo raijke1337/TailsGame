@@ -36,7 +36,6 @@ public class PlayerUnit : BaseUnit
             _playerController.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
             _playerController.DodgeCompletedAnimatingEvent += OnAnimationComplete;
-            _playerController.TargetLockedEvent += TargetUpdate;
         }
         else
         {
@@ -97,8 +96,4 @@ public class PlayerUnit : BaseUnit
         _animator.SetBool("AdvancingCombo", false);
     }
 
-    protected override void TargetUpdate(IUnitForTargetPanel unit)
-    {
-        base.TargetUpdate(unit);
-    }
 }
