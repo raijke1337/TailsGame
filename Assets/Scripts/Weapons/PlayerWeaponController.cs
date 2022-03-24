@@ -16,12 +16,11 @@ public class PlayerWeaponController : BaseWeaponController
     public WeaponType GetCurrentlyUsedWeaponType { get; private set; } = WeaponType.None;
     public WeaponSwitchEventHandler WeaponSwitchEvent;
 
-    protected override void Start()
+    public override void Setup()
     {
-        base.Start();
+        base.Setup();
         WeaponSwitchEvent += SwapItem;
     }
-
     public override bool UseWeaponCheck(WeaponType type)
     {
         if (GetCurrentlyUsedWeaponType != type)
@@ -42,22 +41,17 @@ public class PlayerWeaponController : BaseWeaponController
 
         if (type == WeaponType.Ranged)
         {
-            on.transform.position = _rangedWeaponEmpty.position;
-            on.transform.rotation = _rangedWeaponEmpty.rotation;
+            on.transform.SetPositionAndRotation(_rangedWeaponEmpty.position, _rangedWeaponEmpty.rotation);
             on.transform.parent = _rangedWeaponEmpty;
         }
         if (type == WeaponType.Melee)
         {
-            on.transform.position = _meleeWeaponEmpty.position;
-            on.transform.rotation = _meleeWeaponEmpty.rotation;
+            on.transform.SetPositionAndRotation(_meleeWeaponEmpty.position, _meleeWeaponEmpty.rotation);
             on.transform.parent = _meleeWeaponEmpty;
         }
         if (off == null) return;
-        off.transform.position = _sheathedWeaponEmpty.position;
-        off.transform.rotation = _sheathedWeaponEmpty.rotation;
+        off.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
         off.transform.parent = _sheathedWeaponEmpty;
     }
-
-
 }
 

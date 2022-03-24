@@ -24,6 +24,7 @@ public class PlayerUnitController : BaseUnitController
     [SerializeField] private PlayerWeaponController _weaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private SkillsController _skillCtrl;
+    [SerializeField] private string _shieldSkillID; // todo?
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public BaseWeaponController GetWeaponController => _weaponCtrl;
@@ -62,7 +63,16 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.Enable();
             Cursor.visible = false;
 
+            _weaponCtrl = _baseWeap as PlayerWeaponController;
+            _handler.RegisterUnitForStatUpdates(_weaponCtrl);
+
+
             _adj = new IsoCamAdjust();
+            var skills = _weaponCtrl.GetSkillIDs();
+            skills.Add(_shieldSkillID);
+
+            _skillCtrl = new SkillsController(skills);
+
 
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
             _handler.RegisterUnitForStatUpdates(_skillCtrl);
@@ -74,7 +84,6 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
 
-            _weaponCtrl = _baseWeap as PlayerWeaponController;
             _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
 
             _aim = GetComponentInChildren<CrosshairScript>();
@@ -114,20 +123,17 @@ public class PlayerUnitController : BaseUnitController
     {
         if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR))
         CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
-        Debug.Log(obj.action);
+
     }
     private void SkillQ_performed(CallbackContext obj)
     {
         if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ))
             CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
-        Debug.Log(obj.action);
     }
     private void SkillE_performed(CallbackContext obj)
     {
         if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE))
             CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
-        Debug.Log(obj.action);
-
     }
     private void Dash_performed(CallbackContext obj)
     {

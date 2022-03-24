@@ -475,10 +475,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3ee93c60433d58439d4e5dc2ed958c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {fileID: 0}
-  _camMoveSpeed: 3
-  _parentEmpty: {fileID: 0}
-  _offset: {x: 0, y: 0, z: 0}
 --- !u!20 &16494246
 Camera:
   m_ObjectHideFlags: 0
@@ -6635,8 +6631,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponPrefabs:
-  - {fileID: 7480995966858221551, guid: b1836079eb052ef488c0adb519459f14, type: 3}
   - {fileID: 6322378502437355212, guid: 51161367717f82f488065e8932e4c042, type: 3}
+  - {fileID: 7480995966858221551, guid: b1836079eb052ef488c0adb519459f14, type: 3}
   _meleeWeaponEmpty: {fileID: 1874121328}
   _rangedWeaponEmpty: {fileID: 1725923330}
   _sheathedWeaponEmpty: {fileID: 681241583}
@@ -6652,6 +6648,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e5d154b6411c7488169152a4b79f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponCtrl: {fileID: 0}
   _dodgeCtrl:
     _stats:
       reorderableList:
@@ -6696,35 +6693,8 @@ MonoBehaviour:
         _min: 0
         _current: 0
   _skillCtrl:
-    _skills:
-      reorderableList:
-        canAdd: 1
-        canRemove: 1
-        draggable: 1
-        expandable: 1
-        multipleSelection: 1
-        isExpanded: 0
-        label:
-          m_Text: Keys
-          m_Image: {fileID: 0}
-          m_Tooltip: 
-        headerHeight: 18
-        footerHeight: 13
-        slideEasing: 0.15
-        verticalSpacing: 2
-        showDefaultBackground: 1
-        elementDisplayType: 0
-        elementNameProperty: 
-        elementNameOverride: 
-        elementIcon: {fileID: 0}
-      reqReferences: {fileID: 0}
-      isExpanded: 0
-      _keyValues: 040000000300000005000000
-      _keys: 040000000300000005000000
-      _values:
-      - {fileID: 0}
-      - {fileID: 0}
-      - {fileID: 0}
+    IDs: []
+  _shieldSkillID: shield_heal
 --- !u!114 &708004455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7032,10 +7002,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3ee93c60433d58439d4e5dc2ed958c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {fileID: 0}
-  _camMoveSpeed: 3
-  _parentEmpty: {fileID: 0}
-  _offset: {x: 0, y: 0, z: 0}
 --- !u!20 &734353317
 Camera:
   m_ObjectHideFlags: 0
@@ -10252,6 +10218,7 @@ GameObject:
   - component: {fileID: 1086443992}
   - component: {fileID: 1086443991}
   - component: {fileID: 1086443994}
+  - component: {fileID: 1086443993}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -10412,6 +10379,18 @@ MonoBehaviour:
   _parentNewObjectsUnderSceneContext: 0
   _contractNames: []
   _parentContractNames: []
+--- !u!114 &1086443993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086443984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4862838d35bb10746abb0f4bb88021f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1086443994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11007,10 +10986,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3ee93c60433d58439d4e5dc2ed958c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {fileID: 0}
-  _camMoveSpeed: 3
-  _parentEmpty: {fileID: 0}
-  _offset: {x: 0, y: 0, z: 0}
 --- !u!1 &1128500445
 GameObject:
   m_ObjectHideFlags: 0
@@ -12259,6 +12234,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 8aa7a33ec074d5f429b993c5c857614b, type: 2}
+    - target: {fileID: 64493456180055760, guid: b38180f4dd93ed945ad6e4e365f91923,
+        type: 3}
+      propertyPath: m_Convex
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b38180f4dd93ed945ad6e4e365f91923, type: 3}
 --- !u!1 &1265594954

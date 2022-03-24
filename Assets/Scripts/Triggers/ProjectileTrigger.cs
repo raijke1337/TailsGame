@@ -22,16 +22,17 @@ public class ProjectileTrigger : BaseTrigger
 
     protected override void OnTriggerEnter(Collider other)
     {
-        base.OnTriggerEnter(other);
-        if (_pen == 0)
-        {
-            _speed = 0f;
-            transform.parent = other.transform;
-            _coll.enabled = false;
-            // stick to last target and disappear
-        }
-
+        if (other.CompareTag("StaticItem")) Stuck(other);
+        base.OnTriggerEnter(other);        
+        if (_pen == 0) Stuck(other);
         _pen--;
+    }
+
+    private void Stuck(Collider other)
+    {
+        _speed = 0f;
+        transform.parent = other.transform;
+        _coll.enabled = false;
     }
 
     protected override void Start()

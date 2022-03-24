@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(BaseWeaponController),typeof(BaseUnit))]
+[RequireComponent(typeof(BaseUnit))]
 public abstract class BaseUnitController : MonoBehaviour
 {
     protected BaseWeaponController _baseWeap;

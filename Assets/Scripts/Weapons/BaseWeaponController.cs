@@ -12,7 +12,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
-public abstract class BaseWeaponController : MonoBehaviour
+[Serializable]
+public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
 {
     [SerializeField]
     protected GameObject[] _weaponPrefabs;
@@ -36,13 +37,14 @@ public abstract class BaseWeaponController : MonoBehaviour
 
     // load weapon stats from configs
     // set trigger info for weapon
-    [ContextMenu(itemName:"Run start")]
-    protected virtual void Start()
+    [ContextMenu(itemName:"Run seetup")]
+    public virtual void Setup()
     {
         _currentWeapons = new Dictionary<WeaponType, IWeapon>();
 
         foreach (var prefab in _weaponPrefabs)
         {
+            // todo use a factory so this doesnt have to be a mono
             var spawn = Instantiate(
                 prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
             BaseWeapon item = spawn.GetComponent<BaseWeapon>();
@@ -53,7 +55,7 @@ public abstract class BaseWeaponController : MonoBehaviour
 
             if (_currentWeapons.ContainsKey(item.WeapType))
             {
-                Debug.LogWarning($"something went wrong with {name}'s weapons, already has {item.WeapType}");
+                Debug.LogWarning($"something went wrong with weapons, already has {item.WeapType}");
                 return;
             }
             _currentWeapons.Add(item.WeapType, item);
@@ -65,10 +67,23 @@ public abstract class BaseWeaponController : MonoBehaviour
             item.MaxCharges = config._charges;
         }
     }
+
+    public void UpdateInDelta(float deltaTime)
+    {
+        // logic here?
+    }
+
+    public List<string> GetSkillIDs()
+    {
+        var list = new List<string>();
+        foreach (var weap in _currentWeapons.Values)
+        {
+            list.Add(weap.GetRelatedSkillID());
+        }
+        return list;
+    }
+
     /// first need to instantiate the weapon object and THEN add it to dictionary
-
-
-    public SimpleEventsHandler<List<string>> WeaponsConfigured;
 
 }
 

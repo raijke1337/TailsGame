@@ -11,32 +11,35 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class BaseSkill : MonoBehaviour
+public class BaseSkill
 {
-    private float _recharge;
+
     private Timer _recTimer;
 
     private bool _isReady = true;
 
     public string ID;
-    [SerializeField] private CombatActionType _type;
+    public CombatActionType SkillType;
+    public float Recharge;
+    public Sprite Icon;
 
-    public bool RequestUse()
+
+    public virtual bool RequestUse()
     {
         if (_isReady)
         {
-            Debug.Log($"Skill {_type} used");
-            _recTimer = new Timer(_recharge);
+            DoSkillActions();
+            _recTimer = new Timer(Recharge);
             _isReady = false;
             return true;
         }
         else
         {
-            Debug.Log($"Skill {_type} not ready, wait {_recTimer.time}");
+            Debug.Log($"Skill {SkillType} not ready, wait {_recTimer.time}");
             return false;
         }
     }
-    public float Ticks(float time)
+    public virtual float Ticks(float time)
     {
         if (_recTimer == null) return 0f; 
 
@@ -46,6 +49,18 @@ public class BaseSkill : MonoBehaviour
         }
         else { _recTimer.time -= time; }
         return _recTimer.time;
+    }
+
+    public BaseSkill (BaseSkillSettings cfg)
+    {
+        ID = cfg.ID;
+        SkillType = cfg.SkillType;
+        Recharge = cfg.Recharge;
+        Icon = cfg.Icon;
+    }
+    protected virtual void DoSkillActions()
+    {
+        Debug.Log($"Used {ID}");
     }
 }
 
