@@ -20,7 +20,7 @@ public class TrapTrigger : BaseTrigger
         base.OnTriggerEnter(other);
         // _activateEffect.enableEmission = true;
         // todo
-        Debug.Log($"{this} activated, boom!");
+
     }
 }
 

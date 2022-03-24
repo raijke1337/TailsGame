@@ -16,20 +16,23 @@ public class RangedWeapon : BaseWeapon
 {
     [SerializeField,Range(0,5), Tooltip("time to reload")]protected float _reload = 2f;
     [SerializeField, Range(3,20), Tooltip("speed of projectile")] protected float projectileSpeed = 5f;
-    [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spread = 0.1f;
+    [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
+    [SerializeField, Range(0, 10), Tooltip("targets a projectile penetrates")] protected int _pen = 2;
     
     
-    [SerializeField] protected GameObject _projectilePrefab;
+    [SerializeField] protected string _projectileID;
+    private GameObject _projectilePrefab;
+    private ProjectileConfig _projectileCfg;
 
     protected int shotsToDo = 1;
-
-    [Inject]protected ProjectilesMover _proj;
-
+    [Inject] TriggersManager _tMan;
 
 
     protected virtual void Start()
     {
         _currentCharges = MaxCharges;
+        _projectilePrefab = Extensions.GetAssetsFromPath<GameObject>(Constants.c_WeaponPrefabsPath).First(t => t.name == _projectileID);
+        _projectileCfg = Extensions.GetAssetsFromPath<ProjectileConfig>(Constants.c_ProjectileConfigsPath).First(t => t.name == _projectileID);
     }
 
     public override bool UseWeapon()
@@ -61,15 +64,14 @@ public class RangedWeapon : BaseWeapon
     protected virtual void CreateProjectile()
     {
         _currentCharges--;
-        var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
-        pr.transform.forward = _player.transform.forward + 
-            new Vector3(0,0,UnityEngine.Random.Range(0, _spread));
-        // a bit of spread
-        var comp = pr.GetComponent<ProjectileComp>();
-        comp.Speed = projectileSpeed;
-        comp.TTL = 3f;
 
-        _proj.Add(comp);        
+        var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
+        pr.transform.forward = _player.transform.forward + new Vector3(0f, Extensions.GetRandomFloat(_spreadMax),0f);
+        // a bit of spread
+
+        var comp = pr.GetComponent<ProjectileTrigger>();
+        comp.Setup(_projectileCfg, _tMan);
+
     }
     protected virtual void CheckReload()
     {

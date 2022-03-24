@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-[CreateAssetMenu(fileName = "New BaseStatTriggerConfiguration",menuName = "Configurations/Triggers/BaseStatChange",order =1 )]
+[CreateAssetMenu(fileName = "New BaseStatTriggerConfiguration",menuName = "Configurations/BaseStatTrigger",order =1 )]
 public class BaseStatTriggerConfig : ScriptableObject
 {
     public string ID;

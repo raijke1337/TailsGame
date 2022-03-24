@@ -22,7 +22,8 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     protected int _currentCharges;
     public int GetAmmo() => _currentCharges;
 
-    public BaseSkill RelatedSkill;
+    [SerializeField] protected string SkillID;
+    public string GetRelatedSkillID() => SkillID;
 
     protected bool IsBusy = false;
 
@@ -51,7 +52,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     }
 
     public GameObject GetObject() => gameObject;
-
 
 }
 

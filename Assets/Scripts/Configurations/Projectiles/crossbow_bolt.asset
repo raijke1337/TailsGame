@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c78145a7351df442bd256b2019f9ebe, type: 3}
-  m_Name: crossbow
+  m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
+  m_Name: crossbow_bolt
   m_EditorClassIdentifier: 
-  ID: crossbow
-  WType: 2
-  _charges: 9
-  TriggerIDs:
-  - bolt_hit
-  SkillID: crossbow_explosive
-  ProjectileID: crossbow_bolt
+  ID: crossbow_bolt
+  TimeToLive: 5
+  ProjectileSpeed: 8
+  ProjectilePenetration: 1

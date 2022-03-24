@@ -11,16 +11,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class ProjectileComp : MonoBehaviour
+[CreateAssetMenu(fileName = "New RanmgedWeaponConfig", menuName = "Configurations/WeaponsRanged", order = 2)]
+public class RangedWeaponConfig : BaseWeaponConfig
 {
-    public float TTL;
-    public float Speed;
-
-    public SimpleEventsHandler<Collision> ProjectileCollidedEvent;
-    private void OnCollisionEnter(Collision collision)
-    {
-        ProjectileCollidedEvent?.Invoke(collision);
-    }
-
+    public string ProjectileID;
 }
 

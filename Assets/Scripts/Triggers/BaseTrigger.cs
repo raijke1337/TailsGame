@@ -29,7 +29,7 @@ public abstract class BaseTrigger : MonoBehaviour
         set => _coll.enabled = value;
     }
 
-    protected void Start()
+    protected virtual void Start()
     {
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
@@ -39,11 +39,13 @@ public abstract class BaseTrigger : MonoBehaviour
     {
         if (other.GetComponent<BaseUnit>()!=null)
         {
+
             var tgt = other.GetComponent<BaseUnit>();
             foreach (var id in TriggerEffectIDs)
             {
                 _manager.Activation(id, tgt);
-                //Debug.Log($"Applying effect ID {id} to {other.name}");
+
+                Debug.Log($"{this} triggered by {other.name}!");
             }
         }
     }

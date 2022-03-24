@@ -41,4 +41,10 @@ public static class Extensions
         }
         return list;
     }
+
+    public static float GetRandomFloat(float max)
+    {
+        return UnityEngine.Random.Range(0, max);
+    }
+
 }

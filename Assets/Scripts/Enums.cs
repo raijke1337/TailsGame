@@ -24,7 +24,7 @@ public enum StatType
     Health,
     Shield,
     HealthRegen,
-    ShieldRegen,
+    ShieldRegenMultiplier,
     Heat,
     HeatRegen,
     MoveSpeed
@@ -57,4 +57,12 @@ public enum CombatActionType
     MeleeSpecialQ,
     RangedSpecialE,
     ShieldSpecialR
+}
+
+public enum CursorType
+{
+    Menu,
+    Explore,
+    EnemyTarget,
+    Item,
 }

@@ -27,6 +27,7 @@ public class TriggersManager : MonoBehaviour
         _triggers = new List<BaseTrigger>();
         _triggers.AddRange(FindObjectsOfType<BaseTrigger>());
         UpdateDatas();
+
     }
 
 
@@ -41,18 +42,19 @@ public class TriggersManager : MonoBehaviour
     public void Activation(string ID, BaseUnit target)
     {
         var config = _configs.First(t => t.ID == ID);
+
         switch (config.TargetType)
         {
             case TriggeredEffectTargetType.Target:
                 target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
 config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
                 break;
+
             case TriggeredEffectTargetType.Self:
                 _player.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
 config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
                 break;
-        }
-;
+        };
     }
 
 

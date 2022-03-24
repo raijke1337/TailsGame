@@ -15,8 +15,13 @@ using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
 public class SkillsController : IStatsComponentForHandler
 {
-    [SerializeField] private SerializableDictionaryBase<CombatActionType, BaseSkill> _skills;
-    // todo add from IDs on weapons
+    private Dictionary<CombatActionType, BaseSkill> _skills = new Dictionary<CombatActionType, BaseSkill>();
+
+    public List<string> SkillIDs;
+    // loaded from equipped weapons
+
+    // crossbow_explosive
+    // hammer_spin
 
     public bool RequestSkill (CombatActionType type)
     {
@@ -26,15 +31,15 @@ public class SkillsController : IStatsComponentForHandler
 
     public void Setup()
     {
-        Debug.Log($"{this} set up");
+
     }
 
     public void UpdateInDelta(float deltaTime)
     {
-        foreach (var sk in _skills.Values)
-        {
-            //sk.Ticks(deltaTime);
-        }
+        //foreach (var sk in _skills.Values)
+        //{
+        //    //sk.Ticks(deltaTime);
+        //}
     }
 }
 

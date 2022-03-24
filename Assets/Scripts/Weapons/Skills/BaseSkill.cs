@@ -47,17 +47,5 @@ public class BaseSkill : MonoBehaviour
         else { _recTimer.time -= time; }
         return _recTimer.time;
     }
-
-
-    #region constr
-    public BaseSkill(float cooldown)
-    {
-        _recharge = cooldown;
-    }
-    public BaseSkill(string reqID)
-    {
-        // todo
-    }
-    #endregion
 }
 

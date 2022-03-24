@@ -1,17 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
-using RotaryHeart.Lib.SerializableDictionary;
 
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
@@ -21,7 +10,12 @@ public static class Constants
 {
     public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
     public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
-    public const string c_BaseStatConfigs = "/Scripts/Configurations/BaseStats"; //todo
+    public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats";
+    public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
+    public const string c_SkillClassesPath = "/Scripts/Weapons/Skills";
+    public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
+    public const float c_ProjectileTriggerActivateDelay = 0.15f; 
+    // to not damage self with projectiles, obvious bandaid todo
 }
 
 #region interfaces
@@ -42,6 +36,7 @@ public interface IWeapon
     bool UseWeapon();
     public GameObject GetObject();
     int GetAmmo();
+    string GetRelatedSkillID();
 }
 
 #endregion
@@ -61,8 +56,7 @@ public class StatValueContainer
     public float GetCurrent() => _current;
     public float GetMax() => _max;
     public float GetMin() => _min;
-    //public float GetStart() => _start;
-    // dont need because when properly set up current == start
+    public float GetStart() => _start;
     /// <summary>
     /// adds the value
     /// </summary>

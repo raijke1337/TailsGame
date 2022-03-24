@@ -20,7 +20,8 @@ public class PlayerUnitController : BaseUnitController
     protected StatsUpdatesHandler _handler;
 
     private PlayerControls _controls;
-    private PlayerWeaponController _weaponCtrl;
+
+    [SerializeField] private PlayerWeaponController _weaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private SkillsController _skillCtrl;
 
@@ -62,8 +63,10 @@ public class PlayerUnitController : BaseUnitController
             Cursor.visible = false;
 
             _adj = new IsoCamAdjust();
+
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
             _handler.RegisterUnitForStatUpdates(_skillCtrl);
+
             _controls.Game.Dash.performed += Dash_performed;
             _controls.Game.SkillE.performed += SkillE_performed;
             _controls.Game.SkillQ.performed += SkillQ_performed;

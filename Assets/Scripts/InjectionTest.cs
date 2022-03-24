@@ -19,7 +19,6 @@ namespace debug
         [Inject] public PlayerUnit _player;
         [Inject] public StatsUpdatesHandler _statsH;
         [Inject] public TriggersManager _triggers;
-        [Inject] public ProjectilesMover _proj;
     }
 
 }
