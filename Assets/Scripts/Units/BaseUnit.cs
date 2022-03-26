@@ -14,27 +14,18 @@ using Zenject;
 
 public abstract class BaseUnit : MonoBehaviour
 {
-    [SerializeField]
     protected BaseStatsController _baseStats;
+    protected BaseUnitController _controller;
+    [Inject] protected StatsUpdatesHandler _handler;
 
     public string BaseStatsID;
 
     protected Animator _animator;
     protected Rigidbody _rigidbody;
-    protected BaseUnitController _controller;
-
-    [SerializeField] protected string _name;
-
-    public BaseUnit Target { get; set; }
-    // nyi todo
-
-    public string GetName() => _name;
-    public Rigidbody GetRigidBody => _rigidbody;
-    public IReadOnlyDictionary<StatType,StatValueContainer> GetStats() => _baseStats.GetBaseStats;
-       
-    [Inject]
-    protected StatsUpdatesHandler _handler;
-    //
+    
+    public string GetFullName() => _baseStats.GetDisplayName;
+    public IReadOnlyDictionary<StatType,StatValueContainer> GetStats() => _baseStats.GetBaseStats;     
+    
     public event SimpleEventsHandler<BaseUnit> UnitDiedEvent;
 
     private Camera _faceCam;
@@ -50,19 +41,26 @@ public abstract class BaseUnit : MonoBehaviour
         _animator = GetComponent<Animator>();
         _controller = GetComponent<BaseUnitController>();
         _rigidbody = GetComponent<Rigidbody>();
-        _baseStats.AssignStatsByID(BaseStatsID);
 
-        GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
-
-
+        _baseStats = new BaseStatsController(BaseStatsID);
         _handler.RegisterUnitForStatUpdates(_baseStats);
+
+
+        _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController);
+
+        UnitBinds(true);
 
         _faceCam = GetComponentsInChildren<Camera>().First(t=>t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
     }
+
+    protected virtual void OnDisable()
+    {
+        UnitBinds(false);
+    }
     protected virtual void Update()
     {
-        AnimateAndPerformMovement();
+        AnimateMovement();
     }
     public void OnAnimationComplete()
     {
@@ -84,7 +82,7 @@ public abstract class BaseUnit : MonoBehaviour
     }
 
     //sets animator values and moves transfrom
-    protected void AnimateAndPerformMovement()
+    protected virtual void AnimateMovement()
     {
         ref var movement = ref _controller.MoveDirection;
         if (movement.x == 0f && movement.z == 0f)
@@ -96,12 +94,13 @@ public abstract class BaseUnit : MonoBehaviour
         else
         {
             _animator.SetBool("Moving", true);
-            transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement;
+            // transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement; // Removed because we will be using navmeshagent for npcs and rigidbody for player
             CalcAnimVector(movement);
         }
     }
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
+        Debug.Log($"Animating: {type} by {GetFullName()}");
         switch (type)
         {
             case CombatActionType.Melee:
@@ -121,7 +120,7 @@ public abstract class BaseUnit : MonoBehaviour
         }
     }
         //  calculates the vector which is used to set values in animator
-        private Vector3 CalcAnimVector(Vector3 vector)
+        protected Vector3 CalcAnimVector(Vector3 vector)
     {
         var playerFwd = transform.forward;
         var playerRght = transform.right;
@@ -143,5 +142,19 @@ public abstract class BaseUnit : MonoBehaviour
     {
         _handler.RegisterUnitForStatUpdates(_baseStats,false);
     }
+    protected virtual void UnitBinds(bool isEnable)
+    {
+        if (isEnable)
+        {
+            GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
+            _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
+        }
+        else
+        {
+            GetStats()[StatType.Health].ValueDecreasedEvent -= HealthChangedEvent;
+            _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
+        }
+    }
+
 
 }

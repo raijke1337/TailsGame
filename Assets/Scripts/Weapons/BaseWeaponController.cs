@@ -17,7 +17,7 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
 {
     [SerializeField]
     protected GameObject[] _weaponPrefabs;
-    protected Dictionary<WeaponType, IWeapon> _currentWeapons;
+    protected SerializableDictionaryBase<WeaponType, IWeapon> _currentWeapons;
 
     [SerializeField] protected Transform _meleeWeaponEmpty;
     [SerializeField] protected Transform _rangedWeaponEmpty;
@@ -35,12 +35,15 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
         return _currentWeapons[type].UseWeapon();
     }
 
+
+    #region it works
+
     // load weapon stats from configs
     // set trigger info for weapon
     [ContextMenu(itemName:"Run seetup")]
     public virtual void Setup()
     {
-        _currentWeapons = new Dictionary<WeaponType, IWeapon>();
+        _currentWeapons = new SerializableDictionaryBase<WeaponType, IWeapon>();
 
         foreach (var prefab in _weaponPrefabs)
         {
@@ -85,5 +88,6 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
 
     /// first need to instantiate the weapon object and THEN add it to dictionary
 
+#endregion
 }
 

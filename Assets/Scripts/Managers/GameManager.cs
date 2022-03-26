@@ -13,12 +13,7 @@ using UnityEngine.InputSystem;
 using Zenject;
 
 public class GameManager : MonoInstaller
-{
-    private PlayerUnit _player;
-    private StatsUpdatesHandler _statsH;
-    private TriggersManager _triggers;
-
-    
+{    
 
     public override void Start()
     {
@@ -26,12 +21,9 @@ public class GameManager : MonoInstaller
     }
     public override void InstallBindings()
     {
-        _player = FindObjectOfType<PlayerUnit>();
-        _statsH = FindObjectOfType<StatsUpdatesHandler>();
-        _triggers = GetComponent<TriggersManager>();
-        Container.BindInstance(_player).AsSingle();
-        Container.BindInstance(_statsH).AsSingle();
-        Container.BindInstance(_triggers).AsSingle();
+        Container.BindInstance(FindObjectOfType<PlayerUnit>()).AsSingle();
+        Container.BindInstance(FindObjectOfType<StatsUpdatesHandler>()).AsSingle();
+        Container.BindInstance(GetComponent<TriggersManager>()).AsSingle();
     }
 
 

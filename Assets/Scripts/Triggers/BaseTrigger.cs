@@ -33,7 +33,6 @@ public abstract class BaseTrigger : MonoBehaviour
     {
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
-        if (_manager == null) Debug.Log($"Missing manager reference on {name}");
     }
     protected virtual void OnTriggerEnter(Collider other)
     {
@@ -45,7 +44,6 @@ public abstract class BaseTrigger : MonoBehaviour
             {
                 _manager.Activation(id, tgt);
 
-                Debug.Log($"{this} triggered by {other.name}!");
             }
         }
     }

@@ -16,10 +16,12 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 {
     [SerializeField]
-    private SerializableDictionaryBase <StatType,StatValueContainer> _stats;
+    private SerializableDictionaryBase <StatType,StatValueContainer> _stats = new SerializableDictionaryBase<StatType, StatValueContainer>();
     public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _stats;
 
 
+    private string _displayName;
+    public string GetDisplayName => _displayName;
 
     private List<TriggeredEffect> _effects;
 
@@ -29,7 +31,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         _effects = new List<TriggeredEffect>();
     }
 
-    public void AssignStatsByID(string ID)
+    public BaseStatsController (string ID)
     {
         var cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.c_BaseStatConfigsPath).First
             (t=>t.ID == ID);
@@ -47,6 +49,8 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         _stats.Add(StatType.Heat, new StatValueContainer(cfg.Stats[StatType.Heat]));
         _stats.Add(StatType.HeatRegen, new StatValueContainer(cfg.Stats[StatType.HeatRegen]));
         _stats.Add(StatType.MoveSpeed, new StatValueContainer(cfg.Stats[StatType.MoveSpeed]));
+
+        _displayName = cfg.displayName;
     }
 
 

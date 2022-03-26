@@ -23,7 +23,22 @@ public class PlayerUnit : BaseUnit
         PlayerBinds();
         ToggleCamera(true);
     }
-
+    protected override void AnimateMovement()
+    {
+        ref var movement = ref _controller.MoveDirection;
+        if (movement.x == 0f && movement.z == 0f)
+        {
+            _animator.SetBool("Moving", false);
+            _animator.SetFloat("ForwardMove", 0f);
+            _animator.SetFloat("SideMove", 0f);
+        }
+        else
+        {
+            _animator.SetBool("Moving", true);
+             transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement; // Removed because we will be using navmeshagent for npcs and rigidbody for player
+            CalcAnimVector(movement);
+        }
+    }
 
     private void OnDestroy()
     {
@@ -33,13 +48,11 @@ public class PlayerUnit : BaseUnit
     {
         if (isRegister)
         {
-            _playerController.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
             _playerController.DodgeCompletedAnimatingEvent += OnAnimationComplete;
         }
         else
         {
-            _playerController.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
             _playerController.DodgeCompletedAnimatingEvent -= OnAnimationComplete;
         }

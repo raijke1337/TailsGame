@@ -28,7 +28,7 @@ public abstract class BaseInfoPanel : MonoBehaviour
 
         if (_nameText == null) return;
         // player info has no name text
-        _nameText.text = _unit.GetName();
+        _nameText.text = _unit.GetFullName();
     }
 
     [SerializeField] protected Image _hpBar;

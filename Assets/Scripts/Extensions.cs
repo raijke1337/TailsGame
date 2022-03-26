@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using RotaryHeart.Lib.SerializableDictionary;
 
 public static class Extensions
 {/// <summary>
@@ -46,5 +47,18 @@ public static class Extensions
     {
         return UnityEngine.Random.Range(0, max);
     }
+
+    //public static SerializableDictionaryBase<Tk,Tv> GetStatDictionaryByTypeAndID<Tk,Tv>(string ID, StatRequestType requestedType)
+    //{
+
+    //}
+
+    //public enum StatRequestType
+    //{
+    //    BaseStats,
+    //    DodgeStats,
+    //    EnemyStats
+    //}
+
 
 }

@@ -66,3 +66,14 @@ public enum CursorType
     EnemyTarget,
     Item,
 }
+
+
+public enum EnemyStatType
+{
+    LookRange,
+    LookSpereCastRadius,
+    TimeBetweenAttacks,
+    AttackRange,
+    ScanAngle,
+    FleeHealth
+}

@@ -11,8 +11,10 @@ public static class Constants
     public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
     public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
     public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats";
+    public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats";
     public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
     public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills";
+
     public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
     public const float c_ProjectileTriggerActivateDelay = 0.15f; 
     // to not damage self with projectiles, obvious bandaid todo

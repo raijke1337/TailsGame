@@ -18,23 +18,22 @@ public class PlayerUnitController : BaseUnitController
 {
     [Inject]
     protected StatsUpdatesHandler _handler;
-
     private PlayerControls _controls;
 
-    [SerializeField] private PlayerWeaponController _weaponCtrl;
+    [SerializeField] private PlayerWeaponController _playerWeaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private SkillsController _skillCtrl;
     [SerializeField] private string _shieldSkillID; // todo?
 
     public DodgeController GetDodgeController => _dodgeCtrl;
-    public BaseWeaponController GetWeaponController => _weaponCtrl;
+
     public SkillsController GetSkillsController => _skillCtrl;
 
     // call these after all checks are done
-    public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
     public event SimpleEventsHandler<BaseUnit> TargetLockedEvent;
+    public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
@@ -53,6 +52,10 @@ public class PlayerUnitController : BaseUnitController
         base.Awake();
         _controls = new PlayerControls();
         // unique for player
+    }
+
+    private void Start()
+    {
         PlayerBind();
     }
 
@@ -63,14 +66,12 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.Enable();
             Cursor.visible = false;
 
-            _weaponCtrl = _baseWeap as PlayerWeaponController;
-            _handler.RegisterUnitForStatUpdates(_weaponCtrl);
-
+            _playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
 
             _adj = new IsoCamAdjust();
-            var skills = _weaponCtrl.GetSkillIDs();
-            skills.Add(_shieldSkillID);
 
+            var skills = _playerWeaponCtrl.GetSkillIDs(); // run later 
+            skills.Add(_shieldSkillID);
             _skillCtrl = new SkillsController(skills);
 
 
@@ -84,7 +85,7 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
 
-            _weaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
+            _playerWeaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
 
             _aim = GetComponentInChildren<CrosshairScript>();
             _aim.transform.parent = null;
@@ -101,22 +102,21 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
 
-            _weaponCtrl.WeaponSwitchEvent -= DoSwitchLayer;
+            _playerWeaponCtrl.WeaponSwitchEvent -= DoSwitchLayer;
         }
 
     }
 
     #region controller checks
 
-    // todo make an enum with action types and unified calls
-    private void RangedAttack_performed(CallbackContext obj)
+    protected override void RangedAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
+        if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Ranged))
             CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged);
     }
-    private void MeleeAttack_performed(CallbackContext obj)
+    protected override void MeleeAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
+        if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Melee))
             CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
     }
     private void SkillR_performed(CallbackContext obj)
@@ -169,6 +169,8 @@ public class PlayerUnitController : BaseUnitController
     {
         ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (!Physics.Raycast(ray, out var hit)) return;
+
+        // todo use "interactible" and "interactor" classes here 
         if (hit.collider.CompareTag("Ground"))
         {
             var loc = hit.point;
@@ -187,6 +189,8 @@ public class PlayerUnitController : BaseUnitController
     #region dodges
     private IEnumerator DoDodgeMovement()
     {
+        // todo clean up logic here
+
         Vector3 start = transform.position;
         //Vector3 finish = transform.position + (_movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent());
         // dodge in direction of running
@@ -212,6 +216,11 @@ public class PlayerUnitController : BaseUnitController
         Gizmos.DrawLine(transform.position, transform.position + _movement);
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);
-    }    
+    }
+
+    protected override void UnitDiedAction(BaseUnit unit)
+    {
+        Debug.LogError("YOU DIED");
+    }
     #endregion
 }

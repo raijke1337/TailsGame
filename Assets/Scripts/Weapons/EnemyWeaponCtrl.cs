@@ -11,11 +11,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
+[Serializable]
 public class EnemyWeaponCtrl : BaseWeaponController
 {
-    public override bool UseWeaponCheck(WeaponType type)
-    {
-        throw new NotImplementedException();
-    }
+
 }
 

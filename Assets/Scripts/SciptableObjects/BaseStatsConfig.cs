@@ -17,6 +17,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class BaseStatsConfig : ScriptableObject
 {
     public string ID;
+    public string displayName;
     public SerializableDictionaryBase<StatType, StatValueContainer> Stats;
 }
 
