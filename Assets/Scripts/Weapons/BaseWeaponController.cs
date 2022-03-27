@@ -53,7 +53,7 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
             BaseWeapon item = spawn.GetComponent<BaseWeapon>();
 
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
-                (Constants.c_WeapConfigsPath).First(t => t.ID == item.ID);
+                (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.ID);
             item.WeapType = config.WType;
 
             if (_currentWeapons.ContainsKey(item.WeapType))

@@ -40,7 +40,7 @@ public class SkillsController : IStatsComponentForHandler
         _skills = new Dictionary<CombatActionType, BaseSkill>();
         foreach (string id in IDs)
         {
-            var cfg = Extensions.GetAssetsFromPath<BaseSkillSettings>(Constants.c_SkillConfigsPath).First(t => t.ID == id);
+            var cfg = Extensions.GetAssetsFromPath<BaseSkillSettings>(Constants.Configs.c_SkillConfigsPath).First(t => t.ID == id);
             var type = cfg.SkillType;
             _skills.Add(type, new BaseSkill(cfg));
         }

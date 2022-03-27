@@ -43,10 +43,7 @@ public abstract class BaseUnit : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
 
         _baseStats = new BaseStatsController(BaseStatsID);
-        _handler.RegisterUnitForStatUpdates(_baseStats);
 
-
-        _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController);
 
         UnitBinds(true);
 
@@ -74,6 +71,8 @@ public abstract class BaseUnit : MonoBehaviour
             _animator.SetTrigger("Death");
             Debug.Log($"{name} died");
             UnitDiedEvent?.Invoke(this);
+            UnitBinds(false);
+            StartCoroutine(RemainsDisappearCoroutine());
         }
         else
         {
@@ -138,14 +137,12 @@ public abstract class BaseUnit : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 
-    private void OnDestroy()
-    {
-        _handler.RegisterUnitForStatUpdates(_baseStats,false);
-    }
     protected virtual void UnitBinds(bool isEnable)
     {
         if (isEnable)
         {
+            _handler.RegisterUnitForStatUpdates(_baseStats);
+            _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController);
             GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
         }
@@ -153,8 +150,21 @@ public abstract class BaseUnit : MonoBehaviour
         {
             GetStats()[StatType.Health].ValueDecreasedEvent -= HealthChangedEvent;
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
+            _handler.RegisterUnitForStatUpdates(_baseStats, false);
+            _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController,false);
         }
     }
 
+    protected virtual IEnumerator RemainsDisappearCoroutine()
+    {
+        float time = 0f;
+        while (time < Constants.Combat.c_RemainsDisappearTimer)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+        Destroy(gameObject);
+        yield return null;
+    }
 
 }

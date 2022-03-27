@@ -59,7 +59,7 @@ public class ProjectileTrigger : BaseTrigger
     private IEnumerator ActivationTimer()
     {
         float time = 0f;
-        while (time < Constants.c_ProjectileTriggerActivateDelay)
+        while (time < Constants.Combat.c_ProjectileTriggerActivateDelay)
         {
             time += Time.deltaTime;
             yield return null;

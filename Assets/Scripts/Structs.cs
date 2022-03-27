@@ -8,15 +8,24 @@ public delegate void WeaponSwitchEventHandler(WeaponType type);
 
 public static class Constants
 {
-    public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
-    public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
-    public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats";
-    public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats";
-    public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
-    public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills";
+    public static class Configs
+    {
+        public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
+        public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
+        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats";
+        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats";
+        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
+        public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills";
+    }
+    public static class Combat
+    {
+        public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
+        public const float c_RemainsDisappearTimer = 5f;
+        public const float c_ProjectileTriggerActivateDelay = 0.15f;
+        public const float c_FleeTimeout = 4f;
+    }
 
-    public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
-    public const float c_ProjectileTriggerActivateDelay = 0.15f; 
+
     // to not damage self with projectiles, obvious bandaid todo
 }
 

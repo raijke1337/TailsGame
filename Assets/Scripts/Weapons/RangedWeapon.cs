@@ -31,8 +31,8 @@ public class RangedWeapon : BaseWeapon
     protected virtual void Start()
     {
         _currentCharges = MaxCharges;
-        _projectilePrefab = Extensions.GetAssetsFromPath<GameObject>(Constants.c_WeaponPrefabsPath).First(t => t.name == _projectileID);
-        _projectileCfg = Extensions.GetAssetsFromPath<ProjectileConfig>(Constants.c_ProjectileConfigsPath).First(t => t.name == _projectileID);
+        _projectilePrefab = Extensions.GetAssetsFromPath<GameObject>(Constants.Combat.c_WeaponPrefabsPath).First(t => t.name == _projectileID);
+        _projectileCfg = Extensions.GetAssetsFromPath<ProjectileConfig>(Constants.Configs.c_ProjectileConfigsPath).First(t => t.name == _projectileID);
     }
 
     public override bool UseWeapon()

@@ -31,8 +31,34 @@ public class UnitsManager : MonoBehaviour
 
         foreach (var npc in _units)
         {
-            
+            npc.NPCdiedEvent += (t) => DeadNPCaiHandling(t);
         }
+    }
+
+    private void DeadNPCaiHandling(NPCUnitControllerAI npc)
+    {
+        npc.SetAI(false);
+        _units.Remove(npc);
+    }
+
+    // todo very inefficient
+    // maybe just run it once in a while (use timeinstate)
+    public bool GetNearestAllyLocation(Vector3 position, out Vector3 location)
+    {
+        location = Vector3.zero;
+        if (_units.Count <= 1) return false;
+
+        float leastDistance = float.MaxValue;
+
+        foreach (var unit in _units)
+        {
+            var newDistance = Vector3.Distance(position, unit.transform.position);
+            if (newDistance < leastDistance)
+            {
+                location = unit.transform.position;
+            }
+        }
+        return true;
     }
 
 

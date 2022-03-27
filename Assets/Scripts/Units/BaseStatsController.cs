@@ -33,12 +33,12 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
     public BaseStatsController (string ID)
     {
-        var cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.c_BaseStatConfigsPath).First
+        var cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.Configs.c_BaseStatConfigsPath).First
             (t=>t.ID == ID);
         // default settings
         if (cfg == null) // default settings
         {
-            cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.c_BaseStatConfigsPath).First
+            cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.Configs.c_BaseStatConfigsPath).First
                         (t => t.ID == "default");
         }
         

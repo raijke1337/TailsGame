@@ -10,22 +10,21 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-[CreateAssetMenu(menuName = "PluggableAI/Actions/Patrol")]
-public class PatrolAction : Action
+[CreateAssetMenu(menuName = "aiAssets/Actions/RunTo")]
+public class RunToAction_sw : Action
 {
     public override void Act(NPCUnitControllerAI controller)
     {
-        Patrol(controller);
+        MoveTo(controller);
     }
 
-    private void Patrol(NPCUnitControllerAI controller)
+    private void MoveTo(NPCUnitControllerAI controller)
     {
-        // go towards point
-        controller.NavMeshAg.destination = 
-            controller.PatrolPoints[controller.NextPatrolPointIndex].position;
+        controller.NavMeshAg.destination = controller.ChaseTarget.position;
         controller.NavMeshAg.Resume();
     }
+
+
 
 }
 

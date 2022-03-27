@@ -34,7 +34,8 @@ public class TriggersManager : MonoBehaviour
     [ContextMenu(itemName:"Get trigger configs manually")]
     public void UpdateDatas()
     {
-        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.c_TriggersConfigsPath);
+        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath);
+        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath);
     }
 
 

@@ -55,9 +55,12 @@ public class NPCUnitControllerAI : BaseUnitController
     }
 
     #region patrol state
-    [HideInInspector] public int NextPatrolPoint;
+    [HideInInspector] public int NextPatrolPointIndex;
     public void SetUpWaypoints(List<Transform> waypoints) { PatrolPoints = waypoints; } // todo 
     public List<Transform> PatrolPoints;
+
+    [HideInInspector] public float idleTime = 2f;
+
     #endregion
 
     #region chase state
@@ -74,6 +77,23 @@ public class NPCUnitControllerAI : BaseUnitController
     #endregion
 
     #region fleeing
+    private bool hasFledOnce = false;
+    public bool FleeingStateRequest()
+    {
+        if (!hasFledOnce)
+        {
+            hasFledOnce = true;
+            var result = _manager.GetNearestAllyLocation(gameObject.transform.position, out var location);
+            if (result == false) return false;
+            else
+            {
+                ChaseTarget.position = location;
+                return true;
+            }
+        }
+        else return false;
+    }
+
 
     #endregion
 
@@ -101,7 +121,7 @@ public class NPCUnitControllerAI : BaseUnitController
         base.Awake();
               // todo unify code
 
-        var cfg = Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.c_EnemyStatConfigsPath).First
+        var cfg = Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
     (t => t.ID == enemyStatsID);
 
 
@@ -127,7 +147,7 @@ public class NPCUnitControllerAI : BaseUnitController
 
     protected override void UnitDiedAction(BaseUnit unit)
     {
-        NPCdiedEvent?.Invoke(this);
+        NPCdiedEvent?.Invoke(this);        
     }
 
     public virtual void AttackRequest()
