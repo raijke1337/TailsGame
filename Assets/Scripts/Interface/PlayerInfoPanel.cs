@@ -50,8 +50,8 @@ public class PlayerInfoPanel : BaseInfoPanel
         _maxHE = _statdict[StatType.Heat].GetMax();
         _maxSH = _statdict[StatType.Shield].GetMax();
 
-        _dodge = _player.GetController.GetDodgeController;
-        _weapons = _player.GetController.GetWeaponController as PlayerWeaponController;
+        _dodge = _player.GetController<PlayerUnitController>().GetDodgeController;
+        _weapons = _player.GetController<PlayerUnitController>().GetWeaponController as PlayerWeaponController;
     }
     protected override void UpdateCurrentValues()
     {

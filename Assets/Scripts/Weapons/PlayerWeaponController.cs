@@ -13,45 +13,31 @@ using UnityEngine.InputSystem;
 
 public class PlayerWeaponController : BaseWeaponController
 {
-    public WeaponType GetCurrentlyUsedWeaponType { get; private set; } = WeaponType.None;
-    public WeaponSwitchEventHandler WeaponSwitchEvent;
+    public WeaponSwitchEventHandler WeaponSwitchEvent; // also used for layers switch in playerunit
 
-    public override void Setup()
+    public override void SetupStatsComponent()
     {
-        base.Setup();
-        WeaponSwitchEvent += SwapItem;
+        base.SetupStatsComponent();
     }
     public override bool UseWeaponCheck(WeaponType type)
     {
-        if (GetCurrentlyUsedWeaponType != type)
+        if (CurrentWeaponType != type)
         {
-            WeaponSwitchEvent?.Invoke(type);
-            GetCurrentlyUsedWeaponType = type;
+            SwapItem(type);
         }
         return base.UseWeaponCheck(type);
     }
 
-//    visual part
     private void SwapItem(WeaponType type)
     {
-        GameObject on = _currentWeapons[type].GetObject();
-        GameObject off;
-        if (!_currentWeapons.ContainsKey(GetCurrentlyUsedWeaponType)) off = null;
-        else off = _currentWeapons[GetCurrentlyUsedWeaponType].GetObject();
-
-        if (type == WeaponType.Ranged)
+        foreach (var w in _currentWeapons.Keys)
         {
-            on.transform.SetPositionAndRotation(_rangedWeaponEmpty.position, _rangedWeaponEmpty.rotation);
-            on.transform.parent = _rangedWeaponEmpty;
+            if (w == type)
+            {
+                EquipItem(type);
+            }
+            else UnequipItem(type);
         }
-        if (type == WeaponType.Melee)
-        {
-            on.transform.SetPositionAndRotation(_meleeWeaponEmpty.position, _meleeWeaponEmpty.rotation);
-            on.transform.parent = _meleeWeaponEmpty;
-        }
-        if (off == null) return;
-        off.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
-        off.transform.parent = _sheathedWeaponEmpty;
     }
 }
 

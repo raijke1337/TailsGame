@@ -24,9 +24,27 @@ public static class Constants
         public const float c_ProjectileTriggerActivateDelay = 0.15f;
         public const float c_FleeTimeout = 4f;
     }
-
-
     // to not damage self with projectiles, obvious bandaid todo
+}
+
+
+
+public struct EnemyStats
+{
+    public float AttackRange;
+    public float TimeBetweenAttacks;
+
+    public float LookSpereCastRadius;
+    public float LookSpereCastRange;
+
+
+    public EnemyStats(EnemyStatsConfig cfg)
+    {
+        TimeBetweenAttacks = cfg.atkCD;
+        LookSpereCastRadius = cfg.lookSphereRad;
+        LookSpereCastRange = cfg.lookRange;
+        AttackRange = cfg.atkRange;
+    }
 }
 
 #region interfaces
@@ -34,7 +52,7 @@ public static class Constants
 public interface IStatsComponentForHandler
 { 
     void UpdateInDelta(float deltaTime);
-    void Setup();
+    void SetupStatsComponent();
 }
 public interface IStatsAddEffects
 {

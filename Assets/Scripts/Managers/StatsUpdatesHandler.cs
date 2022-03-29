@@ -24,13 +24,13 @@ public class StatsUpdatesHandler : MonoBehaviour
         else        
         {
             _list.Add(stats);
-            stats.Setup();
+            stats.SetupStatsComponent();
         }
     }
 
     private void Update()
     {
-        foreach (var u in _list)
+        foreach (var u in _list.ToList())
         {
             u.UpdateInDelta(Time.deltaTime);      
         }

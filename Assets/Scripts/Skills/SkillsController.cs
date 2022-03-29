@@ -35,7 +35,7 @@ public class SkillsController : IStatsComponentForHandler
         return _skills[type].RequestUse();
     }
 
-    public void Setup()
+    public void SetupStatsComponent()
     {
         _skills = new Dictionary<CombatActionType, BaseSkill>();
         foreach (string id in IDs)

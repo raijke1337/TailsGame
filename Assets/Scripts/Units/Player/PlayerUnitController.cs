@@ -16,8 +16,6 @@ using Zenject;
 
 public class PlayerUnitController : BaseUnitController
 {
-    [Inject]
-    protected StatsUpdatesHandler _handler;
     private PlayerControls _controls;
 
     [SerializeField] private PlayerWeaponController _playerWeaponCtrl;
@@ -71,6 +69,7 @@ public class PlayerUnitController : BaseUnitController
             _adj = new IsoCamAdjust();
 
             var skills = _playerWeaponCtrl.GetSkillIDs(); // run later 
+
             skills.Add(_shieldSkillID);
             _skillCtrl = new SkillsController(skills);
 
@@ -149,11 +148,12 @@ public class PlayerUnitController : BaseUnitController
 
     private void Update()
     {
+        CalculateMovement();
         CalculateAimPoint();
+        if (lookTarget == null) return;
+
         _aim.SetLookTarget(lookTarget);
         transform.LookAt(lookTarget);
-
-        CalculateMovement();
     }
 
     private void CalculateMovement()

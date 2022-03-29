@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6698622227185165430}
   - component: {fileID: 7735375437322742739}
   - component: {fileID: 5529687724404481817}
-  - component: {fileID: 5188941293757656330}
   - component: {fileID: 6074824665655175326}
+  - component: {fileID: 5188941293757656330}
   - component: {fileID: 9131835006296536996}
   - component: {fileID: -4352484866124518031}
   m_Layer: 0
@@ -85,6 +85,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6074824665655175326
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6322378502437355212}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.5, z: 0.32}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &5188941293757656330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,19 +115,6 @@ MonoBehaviour:
   MaxCharges: 0
   SkillID: hammer_spin
   _effectsIDs: []
---- !u!65 &6074824665655175326
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322378502437355212}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.5, z: 0.32}
-  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &9131835006296536996
 MonoBehaviour:
   m_ObjectHideFlags: 0

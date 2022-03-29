@@ -24,26 +24,24 @@ public abstract class BaseTrigger : MonoBehaviour
 
 
     public bool Enable
-    {
+    { 
         get => _coll.enabled;
         set => _coll.enabled = value;
     }
-
-    protected virtual void Start()
+    protected void Awake()
     {
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
     }
+
     protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<BaseUnit>()!=null)
         {
-
             var tgt = other.GetComponent<BaseUnit>();
             foreach (var id in TriggerEffectIDs)
             {
                 _manager.Activation(id, tgt);
-
             }
         }
     }

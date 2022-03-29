@@ -23,8 +23,8 @@ public class AttackAction : Action
     {
         RaycastHit hit;
 
-        if (Physics.SphereCast(controller.Eyes.position, controller.GetStats[EnemyStatType.LookSpereCastRadius],
-            controller.Eyes.forward, out hit, controller.GetStats[EnemyStatType.AttackRange]) &&
+        if (Physics.SphereCast(controller.Eyes.position, controller.GetStats.LookSpereCastRadius,
+            controller.Eyes.forward, out hit, controller.GetStats.AttackRange) &&
             hit.collider.CompareTag("Player"))
         {
             if (controller.IsAttackReady())

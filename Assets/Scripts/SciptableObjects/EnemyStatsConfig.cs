@@ -17,6 +17,10 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class EnemyStatsConfig : ScriptableObject
 {
     public string ID;
-    public SerializableDictionaryBase<EnemyStatType, float> Stats;
+
+    public float lookRange;
+    public float lookSphereRad;
+    public float atkCD;
+    public float atkRange;
 }
 

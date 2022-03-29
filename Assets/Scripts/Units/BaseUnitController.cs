@@ -11,22 +11,29 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
+using Zenject;
 
 [RequireComponent(typeof(BaseUnit))]
 public abstract class BaseUnitController : MonoBehaviour
 {
+    [Inject] protected StatsUpdatesHandler _handler;
     protected BaseWeaponController _weaponCtrl;
-    public BaseUnit GetUnit { get; protected set; }
+    public BaseUnit Unit { get; protected set; }
     public virtual event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public BaseWeaponController GetWeaponController => _weaponCtrl;
 
     protected virtual void Awake()
     {
+        Unit = GetComponent<BaseUnit>();
+        Unit.UnitDiedEvent += UnitDiedAction;
         _weaponCtrl = GetComponent<BaseWeaponController>();
-
-        GetUnit = GetComponent<BaseUnit>();
-        GetUnit.UnitDiedEvent += UnitDiedAction;
+        _handler.RegisterUnitForStatUpdates(_weaponCtrl, true);
     }
+    private void OnDisable()
+    {
+        _handler.RegisterUnitForStatUpdates(_weaponCtrl, false);
+    }
+
 
     public ref Vector3 MoveDirection => ref _movement;
     protected Vector3 _movement;

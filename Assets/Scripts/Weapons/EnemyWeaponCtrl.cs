@@ -15,5 +15,6 @@ using UnityEngine.InputSystem;
 public class EnemyWeaponCtrl : BaseWeaponController
 {
 
+
 }
 

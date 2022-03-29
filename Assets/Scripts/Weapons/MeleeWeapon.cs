@@ -19,6 +19,15 @@ public class MeleeWeapon : BaseWeapon
     {
         _trigger = GetComponent<WeaponHitTrigger>();
         _trigger.TriggerEffectIDs = _effectsIDs;
+        _trigger.Enable = false;
+    }
+
+
+
+
+    public void ToggleColliders(bool enable)
+    {
+        _trigger.Enable = enable;
     }
 
     public override bool UseWeapon()

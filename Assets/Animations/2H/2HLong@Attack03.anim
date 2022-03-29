@@ -93673,6 +93673,13 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0.2
+    functionName: TriggerTogglingEvent_UE
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 1
+    intParameter: 0
+    messageOptions: 0
   - time: 0.6333333
     functionName: ComboWindowStart
     data: 
@@ -93680,15 +93687,15 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.76666665
-    functionName: OnAnimationComplete
+  - time: 0.96666664
+    functionName: ComboWindowEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.96666664
-    functionName: ComboWindowEnd
+  - time: 1
+    functionName: TriggerTogglingEvent_UE
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

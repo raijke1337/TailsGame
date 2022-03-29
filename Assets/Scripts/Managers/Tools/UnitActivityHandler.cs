@@ -20,10 +20,6 @@ public class UnitActivityHandler
     {
         _units = new List<NPCUnitControllerAI>(); _player = player;
         _units.AddRange(units);
-        foreach (var unit in units)
-        {
-            unit.NPCdiedEvent += (t) => SetAIStateUnit(false,t);
-        }
     }
 
     public void SetAIStateGlobal(bool isProcessing)

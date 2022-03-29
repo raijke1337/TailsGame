@@ -21,7 +21,7 @@ public class DodgeController : IStatsComponentForHandler
     public int GetDodgeCharges() => (int)_stats[DodgeStatType.Charges].GetCurrent();
 
 
-    public void Setup()
+    public void SetupStatsComponent()
     {
         // put paths to default cfgs here 
         // todo

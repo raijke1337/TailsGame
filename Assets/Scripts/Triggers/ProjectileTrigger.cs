@@ -35,9 +35,8 @@ public class ProjectileTrigger : BaseTrigger
         _coll.enabled = false;
     }
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
         _coll.enabled = false;
         StartCoroutine(ActivationTimer());
 
@@ -56,6 +55,7 @@ public class ProjectileTrigger : BaseTrigger
         _pen = config.ProjectilePenetration;
     }
 
+    // todo fix maybe
     private IEnumerator ActivationTimer()
     {
         float time = 0f;

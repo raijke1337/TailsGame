@@ -28,7 +28,7 @@ public class GameInterfaceManager : MonoBehaviour
         _playerPanel.RunSetup(_playerUnit);
         _tgtPanel.gameObject.SetActive(false);
 
-        _playerUnit.GetController.TargetLockedEvent += (t) => AssignTarget(t);        
+        _playerUnit.GetController<PlayerUnitController>().TargetLockedEvent += (t) => AssignTarget(t);        
     }
 
     private void AssignTarget(BaseUnit unit)

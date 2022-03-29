@@ -11,18 +11,18 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
-
+[RequireComponent(typeof(ZenjectDynamicObjectInjection))]
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
     public string ID;
 
-    public WeaponType WeapType;
+    private WeaponType WeapType;
 
-    public int MaxCharges;
+    protected int MaxCharges;
     protected int _currentCharges;
     public int GetAmmo() => _currentCharges;
 
-    [SerializeField] protected string SkillID;
+    protected string SkillID;
     public string GetRelatedSkillID() => SkillID;
 
     protected bool IsBusy = false;
@@ -32,13 +32,11 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     protected List<WeaponHitTrigger> _triggers;
     // triggers are found separately in melee and ranged
 
-    // get recorded into prefab?
-    // todo
-    [SerializeField] protected List<string> _effectsIDs;
+    protected List<string> _effectsIDs;
 
 
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         _effectsIDs = new List<string>();
     }
@@ -52,6 +50,17 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     }
 
     public GameObject GetObject() => gameObject;
+
+    public void SetUpWeapon(BaseWeaponConfig config)
+    {
+        WeapType = config.WType;
+        foreach (string triggerID in config.TriggerIDs)
+        {
+            AddTriggerData(triggerID);
+        }
+        MaxCharges = config._charges;
+        SkillID = config.SkillID;
+    }
 
 }
 

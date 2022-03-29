@@ -18,11 +18,14 @@ public class UnitsManager : MonoBehaviour
 
     private List<NPCUnitControllerAI> _units = new List<NPCUnitControllerAI>();
     private PlayerUnitController _player;
+    private List<RoomController> _rooms = new List<RoomController>();
 
     private void Start()
     {
         _units.AddRange(FindObjectsOfType<NPCUnitControllerAI>());
         _player = FindObjectOfType<PlayerUnitController>();
+
+        _rooms.AddRange(FindObjectsOfType<RoomController>());
 
         _timer = new TimeController();
         _activity = new UnitActivityHandler(_units, _player);
@@ -31,34 +34,21 @@ public class UnitsManager : MonoBehaviour
 
         foreach (var npc in _units)
         {
-            npc.NPCdiedEvent += (t) => DeadNPCaiHandling(t);
+            npc.NPCdiedDisableAIEvent += (t) => _activity.SetAIStateUnit(false,t);
         }
     }
 
-    private void DeadNPCaiHandling(NPCUnitControllerAI npc)
-    {
-        npc.SetAI(false);
-        _units.Remove(npc);
-    }
-
-    // todo very inefficient
+    // todo
     // maybe just run it once in a while (use timeinstate)
-    public bool GetNearestAllyLocation(Vector3 position, out Vector3 location)
+    public bool AreAlliesInRoom(NPCUnitControllerAI controller, out NPCUnitControllerAI unit)
     {
-        location = Vector3.zero;
-        if (_units.Count <= 1) return false;
-
-        float leastDistance = float.MaxValue;
-
-        foreach (var unit in _units)
+        NPCUnitControllerAI result = null;
+        foreach (var room in _rooms)
         {
-            var newDistance = Vector3.Distance(position, unit.transform.position);
-            if (newDistance < leastDistance)
-            {
-                location = unit.transform.position;
-            }
+            result = room.LookForAllies(controller);
         }
-        return true;
+        unit = result;
+        return unit != null;
     }
 
 

@@ -14,9 +14,13 @@ using Zenject;
 
 public abstract class BaseUnit : MonoBehaviour
 {
-    protected BaseStatsController _baseStats;
-    protected BaseUnitController _controller;
-    [Inject] protected StatsUpdatesHandler _handler;
+    private BaseStatsController _baseStats;
+    private BaseUnitController _controller;
+
+    public T GetController<T>() where T : BaseUnitController => _controller as T;
+    public BaseUnitController GetController() => _controller;
+
+    [Inject] private StatsUpdatesHandler _handler;
 
     public string BaseStatsID;
 
@@ -59,10 +63,15 @@ public abstract class BaseUnit : MonoBehaviour
     {
         AnimateMovement();
     }
-    public void OnAnimationComplete()
-    {
 
+    public void TriggerTogglingEvent_UE(float value)
+    {    // 1 on start 0 on end
+
+        bool result = value > 0;
+        _controller.GetWeaponController.ToggleTriggersOnMelee(result);
     }
+
+
     //take damage and die here
     protected void HealthChangedEvent(float value)
     {
@@ -71,7 +80,6 @@ public abstract class BaseUnit : MonoBehaviour
             _animator.SetTrigger("Death");
             Debug.Log($"{name} died");
             UnitDiedEvent?.Invoke(this);
-            UnitBinds(false);
             StartCoroutine(RemainsDisappearCoroutine());
         }
         else
@@ -142,7 +150,6 @@ public abstract class BaseUnit : MonoBehaviour
         if (isEnable)
         {
             _handler.RegisterUnitForStatUpdates(_baseStats);
-            _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController);
             GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
         }
@@ -151,12 +158,12 @@ public abstract class BaseUnit : MonoBehaviour
             GetStats()[StatType.Health].ValueDecreasedEvent -= HealthChangedEvent;
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _handler.RegisterUnitForStatUpdates(_baseStats, false);
-            _handler.RegisterUnitForStatUpdates(_controller.GetWeaponController,false);
         }
     }
 
     protected virtual IEnumerator RemainsDisappearCoroutine()
     {
+        UnitBinds(false);
         float time = 0f;
         while (time < Constants.Combat.c_RemainsDisappearTimer)
         {

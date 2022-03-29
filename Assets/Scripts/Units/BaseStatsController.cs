@@ -25,7 +25,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
     private List<TriggeredEffect> _effects;
 
-    public void Setup()
+    public void SetupStatsComponent()
     {
         foreach (var v in _stats.Values) { v.Setup(); }
         _effects = new List<TriggeredEffect>();

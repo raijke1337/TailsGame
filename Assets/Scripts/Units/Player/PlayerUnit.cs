@@ -14,18 +14,17 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private PlayerUnitController _playerController;
-    public PlayerUnitController GetController => _playerController;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        _playerController = _controller as PlayerUnitController;        
+        _playerController = GetController<PlayerUnitController>();        
         PlayerBinds();
         ToggleCamera(true);
     }
     protected override void AnimateMovement()
     {
-        ref var movement = ref _controller.MoveDirection;
+        ref var movement = ref _playerController.MoveDirection;
         if (movement.x == 0f && movement.z == 0f)
         {
             _animator.SetBool("Moving", false);
@@ -49,12 +48,10 @@ public class PlayerUnit : BaseUnit
         if (isRegister)
         {
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
-            _playerController.DodgeCompletedAnimatingEvent += OnAnimationComplete;
         }
         else
         {
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-            _playerController.DodgeCompletedAnimatingEvent -= OnAnimationComplete;
         }
     }
     
