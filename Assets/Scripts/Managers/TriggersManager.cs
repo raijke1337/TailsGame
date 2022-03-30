@@ -40,6 +40,7 @@ public class TriggersManager : MonoBehaviour
 
 
     // todo??
+    // here we send the original triggered effect to unit
     public void Activation(string ID, BaseUnit target)
     {
         var config = _configs.First(t => t.ID == ID);
@@ -47,13 +48,11 @@ public class TriggersManager : MonoBehaviour
         switch (config.TargetType)
         {
             case TriggeredEffectTargetType.Target:
-                target.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
-config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+                target.ApplyEffect(new TriggeredEffect(config));
                 break;
 
             case TriggeredEffectTargetType.Self:
-                _player.ApplyEffect(new TriggeredEffect(config.ID, config.StatID, config.InitialValue, config.RepeatedValue,
-config.RepeatApplicationDelay, config.TotalDuration, config.Icon));
+                _player.ApplyEffect(new TriggeredEffect(config));
                 break;
         };
     }

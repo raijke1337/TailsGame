@@ -38,10 +38,6 @@ public abstract class BaseUnit : MonoBehaviour
     private Camera _faceCam;
     public void ToggleCamera(bool value){ _faceCam.enabled = value; }
 
-    public void ApplyEffect(TriggeredEffect eff)
-    {
-        _baseStats.AddTriggeredEffect(eff);
-    }
 
     protected virtual void OnEnable()
     {
@@ -184,6 +180,14 @@ public abstract class BaseUnit : MonoBehaviour
         }
         Destroy(gameObject);
         yield return null;
+    }
+
+
+
+
+    public void ApplyEffect(TriggeredEffect eff)
+    {
+        _baseStats.AddTriggeredEffect(eff);
     }
 
 }

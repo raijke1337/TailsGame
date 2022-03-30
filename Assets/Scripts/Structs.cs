@@ -22,7 +22,7 @@ public static class Constants
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
         public const float c_RemainsDisappearTimer = 5f;
         public const float c_ProjectileTriggerActivateDelay = 0.15f;
-        public const float c_FleeTimeout = 4f;
+        public const float c_shieldAbsorbMult = 0.5f;
     }
     // to not damage self with projectiles, obvious bandaid todo
 }
@@ -57,7 +57,6 @@ public interface IStatsComponentForHandler
 public interface IStatsAddEffects
 {
     void AddTriggeredEffect(TriggeredEffect effect);
-    void AddTriggeredEffects(IEnumerable<TriggeredEffect> effects);
 }
 
 public interface IWeapon : IHasGameObject

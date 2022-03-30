@@ -61,7 +61,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     {
         HandleEffects(deltaTime);
         _stats[StatType.Health].ChangeCurrent(_stats[StatType.HealthRegen].GetCurrent() * deltaTime);
-        //_stats[StatType.Shield].ChangeCurrent(_stats[StatType.ShieldRegen].GetCurrent() * deltaTime);
         _stats[StatType.Heat].ChangeCurrent(_stats[StatType.HeatRegen].GetCurrent() * deltaTime);
 
         // separate logic for shield
@@ -77,17 +76,16 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         // dont change shield
         if (result == 0 ) return;
 
-        // example : current sh 70, req (start) 50
-        // 20 = 70 - 50
-        // 20 > 0
+
+        // example : current sh 10, req (start) 50
+        // -40 = 10 - 50
+        // -40 < 0
         // value approaches starting 
         // current / required is how far the current value is so....
-        // Coefficient: 70/50 = 1.4
-        // 70 - 1.4 = 68.6
-        // reduce shield by coeff * deltatime (this is per frame, too fast)
+        // Coefficient: -40 / 50 = -0.8
+        // need to increase
 
         float value = curSh / reqSh;
-
         if (result > 0)
         {
             _stats[StatType.Shield].ChangeCurrent(-value * Time.deltaTime * _stats[StatType.ShieldRegenMultiplier].GetCurrent());
@@ -97,12 +95,15 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         {
             _stats[StatType.Shield].ChangeCurrent(value * Time.deltaTime * _stats[StatType.ShieldRegenMultiplier].GetCurrent());
         }
+        // todo fix - doesnt regen at 0
+
+
     }
     #endregion
     #region effects
     private void HandleEffects(float deltaTime)
     {
-        if (_effects.Count == 0 ) return;
+        if (_effects.Count == 0) return;
         foreach (var ef in _effects)
         {
             // actual handling
@@ -130,17 +131,51 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         }
     }
 
+
+
+
+    // here we need to recalculate the damages if the unit has a shield 
     public void AddTriggeredEffect(TriggeredEffect effect)
     {
-        _effects.Add(effect);
-    }
-    public void AddTriggeredEffects(IEnumerable<TriggeredEffect> effects)
-    {
-        foreach (var ef in effects)
+        if (effect.StatID != StatType.Health)
         {
-            AddTriggeredEffect(ef);
+            _effects.Add(effect);
+            return;
+        }        
+
+        float currentShield = _stats[StatType.Shield].GetCurrent();
+        if (currentShield == 0)
+        {
+            _effects.Add(effect);
         }
+        else
+        {
+            // absorb a const % if it odesnt exceed current shield, rest goes to hp
+
+            //ex. original effect is -100 hp initial, -20 repeated over 10 seconds each 2 seconds
+            // current shield is 70 (0-100 range)
+
+            float shieldChange;
+            float healthChange;
+
+            // direct parts here
+
+            shieldChange = Mathf.Clamp(effect.InitialValue * Constants.Combat.c_shieldAbsorbMult, -currentShield, _stats[StatType.Shield].GetMax());
+            // (-100 * 0.4) Clamp -40 from -70 minimum (all shield used) to max shield (100) in case it's a bonus
+            // result is  -40 - full 40% is absorbed
+
+            healthChange = effect.InitialValue - shieldChange;
+            // this is the direct part of dmg that bypasses shield
+            // -100 - -40 = -60
+            effect.InitialValue = healthChange;
+
+            // -20 * 0.4 = -8
+            float shieldRep = effect.RepeatedValue * Constants.Combat.c_shieldAbsorbMult;
+            _effects.Add(new TriggeredEffect(effect.ID, StatType.Shield, shieldChange, shieldRep, effect.RepeatApplicationDelay, effect.TotalDuration, null, effect.TargetType));
+
+            effect.RepeatedValue = effect.RepeatedValue * (1 - Constants.Combat.c_shieldAbsorbMult);
+            _effects.Add(effect);
+        }       
     }
     #endregion
 }
-
