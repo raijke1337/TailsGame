@@ -22,22 +22,7 @@ public class PlayerUnit : BaseUnit
         
         ToggleCamera(true);
     }
-    protected override void AnimateMovement()
-    {
-        ref var movement = ref _playerController.MoveDirection;
-        if (movement.x == 0f && movement.z == 0f)
-        {
-            _animator.SetBool("Moving", false);
-            _animator.SetFloat("ForwardMove", 0f);
-            _animator.SetFloat("SideMove", 0f);
-        }
-        else
-        {
-            _animator.SetBool("Moving", true);
-             transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement; // Removed because we will be using navmeshagent for npcs and rigidbody for player
-            CalcAnimVector(movement);
-        }
-    }
+
 
     private void ChangeAnimatorLayer(WeaponType type)
     {
@@ -81,6 +66,17 @@ public class PlayerUnit : BaseUnit
         {
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
         }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        PlayerMovement(_playerController.MoveDirection);
+    }
+
+    private void PlayerMovement(Vector3 desiredDir)
+    {
+        transform.position += Time.deltaTime * desiredDir * GetStats()[StatType.MoveSpeed].GetCurrent();
     }
 
 }

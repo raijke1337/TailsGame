@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.AI;
 using Zenject;
-
+[RequireComponent(typeof(NavMeshAgent))]
 public class InputsNPC : ControlInputsBase
 {
     [Inject] private UnitsManager _manager;
@@ -26,6 +26,8 @@ public class InputsNPC : ControlInputsBase
     public SimpleEventsHandler<InputsNPC> NPCdiedDisableAIEvent;
     public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
+
+    [HideInInspector] public NavMeshAgent NavMeshAg;
 
     /// <summary>
     /// Pluggable AI code here
@@ -107,6 +109,7 @@ public class InputsNPC : ControlInputsBase
     (t => t.ID == enemyStatsID));
 
         if (Eyes == null) Debug.LogError("Set eyes empty");
+        NavMeshAg = GetComponent<NavMeshAgent>();
     }
     private void Update()
     {

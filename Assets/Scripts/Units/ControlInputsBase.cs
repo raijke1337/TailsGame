@@ -11,14 +11,11 @@ public abstract class ControlInputsBase : MonoBehaviour
     public BaseWeaponController GetWeaponController => _weaponCtrl;
     public virtual event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
-    [HideInInspector] public NavMeshAgent NavMeshAg;
 
 
     protected virtual void OnEnable()
     {
         _weaponCtrl = GetComponent<BaseWeaponController>();
-        NavMeshAg = GetComponent<NavMeshAgent>();
-
         BindControllers(true);
     }
 

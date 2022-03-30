@@ -10,13 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-[CreateAssetMenu(menuName = "PluggableAI/Actions/DummyDoNothing")]
-public class DummyAction : Action
+[CreateAssetMenu(menuName = "aiAssets/Actions/Dummy")]
+public class DummyDoNothingAct_sw : Action
 {
     public override void Act(InputsNPC controller)
     {
-        // nothing happens
+
     }
 }
 

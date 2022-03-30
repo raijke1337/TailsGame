@@ -93,8 +93,7 @@ public abstract class BaseUnit : MonoBehaviour
             _animator.SetTrigger("TakeDamage");
         }
     }
-
-    //sets animator values and moves transfrom
+    //sets animator values 
     protected virtual void AnimateMovement()
     {
         ref var movement = ref _controller.MoveDirection;
@@ -107,10 +106,26 @@ public abstract class BaseUnit : MonoBehaviour
         else
         {
             _animator.SetBool("Moving", true);
-            // transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * movement; // Removed because we will be using navmeshagent for npcs and rigidbody for player
             CalcAnimVector(movement);
         }
     }
+    //  calculates the vector which is used to set values in animator
+    protected void CalcAnimVector(Vector3 vector)
+    {
+        var playerFwd = transform.forward;
+        var playerRght = transform.right;
+        vector.y = 0;
+        vector.Normalize();
+        // Dot product of two vectors determines how much they are pointing in the same direction.
+        // If the vectors are normalized (transform.forward and right are)
+        // then the value will be between -1 and +1.
+        var x = Vector3.Dot(playerRght, vector);
+        var z = Vector3.Dot(playerFwd, vector);
+
+        _animator.SetFloat("ForwardMove", z);
+        _animator.SetFloat("SideMove", x);
+    }
+
 
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
@@ -139,24 +154,7 @@ public abstract class BaseUnit : MonoBehaviour
         }
     }
 
-    //  calculates the vector which is used to set values in animator
-    protected Vector3 CalcAnimVector(Vector3 vector)
-    {
-        var playerFwd = transform.forward;
-        var playerRght = transform.right;
-        vector.y = 0;
-        vector.Normalize();
-        // Dot product of two vectors determines how much they are pointing in the same direction.
-        // If the vectors are normalized (transform.forward and right are)
-        // then the value will be between -1 and +1.
-        var x = Vector3.Dot(playerRght, vector);
-        var z = Vector3.Dot(playerFwd, vector);
 
-        _animator.SetFloat("ForwardMove", z);
-        _animator.SetFloat("SideMove", x);
-
-        return new Vector3(x, 0, z);
-    }
 
     protected virtual void UnitBinds(bool isEnable)
     {

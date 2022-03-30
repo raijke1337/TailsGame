@@ -140,7 +140,6 @@ public class InputsPlayer : ControlInputsBase
         {
             CombatActionSuccessEvent?.Invoke(CombatActionType.Dodge);
             StartCoroutine(DoDodgeMovement());
-            //AddDodgeForce();
         }
     }
     #endregion
@@ -160,7 +159,7 @@ public class InputsPlayer : ControlInputsBase
         var input = _controls.Game.WASD.ReadValue<Vector2>();
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
-        velocityVector = AD + WS;
+        velocityVector = AD + WS;  
     }
 
     #region aiming
@@ -209,13 +208,17 @@ public class InputsPlayer : ControlInputsBase
         DodgeCompletedAnimatingEvent?.Invoke();
         yield return null;
     }
+    #endregion
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + velocityVector);
+        Gizmos.DrawLine(transform.position, transform.position + MoveDirection);
+
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);
+
     }
 
-    #endregion
+
 }
