@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Actions/PatrolTo")]
 public class PatrolTo_sw : Action
 {
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         Patrol(controller);
     }
 
-    private void Patrol(NPCUnitControllerAI controller)
+    private void Patrol(InputsNPC controller)
     {
 
         // go towards point

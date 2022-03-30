@@ -16,14 +16,14 @@ public class UnitsManager : MonoBehaviour
     private TimeController _timer;
     private UnitActivityHandler _activity;
 
-    private List<NPCUnitControllerAI> _units = new List<NPCUnitControllerAI>();
-    private PlayerUnitController _player;
+    private List<InputsNPC> _units = new List<InputsNPC>();
+    private InputsPlayer _player;
     private List<RoomController> _rooms = new List<RoomController>();
 
     private void Start()
     {
-        _units.AddRange(FindObjectsOfType<NPCUnitControllerAI>());
-        _player = FindObjectOfType<PlayerUnitController>();
+        _units.AddRange(FindObjectsOfType<InputsNPC>());
+        _player = FindObjectOfType<InputsPlayer>();
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
 
@@ -40,9 +40,9 @@ public class UnitsManager : MonoBehaviour
 
     // todo
     // maybe just run it once in a while (use timeinstate)
-    public bool AreAlliesInRoom(NPCUnitControllerAI controller, out NPCUnitControllerAI unit)
+    public bool AreAlliesInRoom(InputsNPC controller, out InputsNPC unit)
     {
-        NPCUnitControllerAI result = null;
+        InputsNPC result = null;
         foreach (var room in _rooms)
         {
             result = room.LookForAllies(controller);

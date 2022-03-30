@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Decisions/TgtInRange")]
 public class TargetInRangeDecision_sw : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         return CheckAttackRange(controller);
     }
 
-    private bool CheckAttackRange(NPCUnitControllerAI controller)
+    private bool CheckAttackRange(InputsNPC controller)
     {
         float currentDist = Vector3.Distance(controller.transform.position, controller.ChaseTarget.position);
         return currentDist < controller.GetStats.AttackRange;

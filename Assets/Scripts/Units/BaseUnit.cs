@@ -12,25 +12,28 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
+[RequireComponent(typeof(ControlInputsBase))]
 public abstract class BaseUnit : MonoBehaviour
 {
-    private BaseStatsController _baseStats;
-    private BaseUnitController _controller;
-
-    public T GetController<T>() where T : BaseUnitController => _controller as T;
-    public BaseUnitController GetController() => _controller;
-
-    [Inject] private StatsUpdatesHandler _handler;
-
     public string BaseStatsID;
 
     protected Animator _animator;
     protected Rigidbody _rigidbody;
+
+    protected BaseStatsController _baseStats;
+    protected ControlInputsBase _controller;
+
+    public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+
+    [Inject] protected StatsUpdatesHandler _handler;
+
+
     
     public string GetFullName() => _baseStats.GetDisplayName;
     public IReadOnlyDictionary<StatType,StatValueContainer> GetStats() => _baseStats.GetBaseStats;     
     
-    public event SimpleEventsHandler<BaseUnit> UnitDiedEvent;
+    public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
+
 
     private Camera _faceCam;
     public void ToggleCamera(bool value){ _faceCam.enabled = value; }
@@ -43,16 +46,20 @@ public abstract class BaseUnit : MonoBehaviour
     protected virtual void OnEnable()
     {
         _animator = GetComponent<Animator>();
-        _controller = GetComponent<BaseUnitController>();
         _rigidbody = GetComponent<Rigidbody>();
+        _controller = GetComponent<ControlInputsBase>();
 
         _baseStats = new BaseStatsController(BaseStatsID);
 
 
-        UnitBinds(true);
 
         _faceCam = GetComponentsInChildren<Camera>().First(t=>t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
+    }
+
+    protected virtual void Start()
+    {
+        UnitBinds(true);
     }
 
     protected virtual void OnDisable()
@@ -73,13 +80,12 @@ public abstract class BaseUnit : MonoBehaviour
 
 
     //take damage and die here
-    protected void HealthChangedEvent(float value)
+    protected virtual void HealthChangedEvent(float value)
     {
         if (value <= 0f)
         {
             _animator.SetTrigger("Death");
-            Debug.Log($"{name} died");
-            UnitDiedEvent?.Invoke(this);
+            BaseUnitDiedEvent?.Invoke(this);
             StartCoroutine(RemainsDisappearCoroutine());
         }
         else
@@ -105,9 +111,11 @@ public abstract class BaseUnit : MonoBehaviour
             CalcAnimVector(movement);
         }
     }
+
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
-        Debug.Log($"Animating: {type} by {GetFullName()}");
+        Debug.Log($"Animating {type} by {GetFullName()}");
+
         switch (type)
         {
             case CombatActionType.Melee:
@@ -117,17 +125,22 @@ public abstract class BaseUnit : MonoBehaviour
                 _animator.SetTrigger("RangedAttack");
                 break;
             case CombatActionType.Dodge:
+                _animator.SetTrigger("Dodge");
                 break;
             case CombatActionType.MeleeSpecialQ:
+                _animator.SetTrigger("QSpecial");
                 break;
             case CombatActionType.RangedSpecialE:
+                _animator.SetTrigger("ESpecial");
                 break;
             case CombatActionType.ShieldSpecialR:
+                _animator.SetTrigger("RSpecial");
                 break;
         }
     }
-        //  calculates the vector which is used to set values in animator
-        protected Vector3 CalcAnimVector(Vector3 vector)
+
+    //  calculates the vector which is used to set values in animator
+    protected Vector3 CalcAnimVector(Vector3 vector)
     {
         var playerFwd = transform.forward;
         var playerRght = transform.right;
@@ -160,6 +173,7 @@ public abstract class BaseUnit : MonoBehaviour
             _handler.RegisterUnitForStatUpdates(_baseStats, false);
         }
     }
+
 
     protected virtual IEnumerator RemainsDisappearCoroutine()
     {

@@ -14,15 +14,25 @@ using UnityEngine.InputSystem;
 public class NPCUnit : BaseUnit
 {
     public Allegiance Side;
-
+    private InputsNPC _npcController;
 
     protected override void OnEnable()
     {
         base.OnEnable();
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
+        _npcController = _controller as InputsNPC;
     }
 
+
+    protected override void HealthChangedEvent(float value)
+    {
+        base.HealthChangedEvent(value);
+        if (value <= 0f)
+        {
+            _npcController.NPCdiedDisableAIEvent?.Invoke(_npcController);
+        }
+    }
 
 
 }

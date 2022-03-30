@@ -13,13 +13,13 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "PluggableAI/Decisions/Look")]
 public class LookDecision : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         bool TargetVisible = Look(controller);
         return TargetVisible;
     }
 
-    private bool Look(NPCUnitControllerAI controller)
+    private bool Look(InputsNPC controller)
     {
         RaycastHit hit;
 

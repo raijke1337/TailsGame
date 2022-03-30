@@ -14,12 +14,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "PluggableAI/Actions/Chase")]
 public class ChaseAction : Action
 {
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         Chase(controller);
     }
 
-    private void Chase (NPCUnitControllerAI controller)
+    private void Chase (InputsNPC controller)
     {
         controller.NavMeshAg.destination = controller.ChaseTarget.position;
         controller.NavMeshAg.Resume();

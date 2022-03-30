@@ -13,31 +13,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerWeaponController : BaseWeaponController
 {
-    public WeaponSwitchEventHandler WeaponSwitchEvent; // also used for layers switch in playerunit
 
-    public override void SetupStatsComponent()
-    {
-        base.SetupStatsComponent();
-    }
-    public override bool UseWeaponCheck(WeaponType type)
-    {
-        if (CurrentWeaponType != type)
-        {
-            SwapItem(type);
-        }
-        return base.UseWeaponCheck(type);
-    }
-
-    private void SwapItem(WeaponType type)
-    {
-        foreach (var w in _currentWeapons.Keys)
-        {
-            if (w == type)
-            {
-                EquipItem(type);
-            }
-            else UnequipItem(type);
-        }
-    }
 }
 

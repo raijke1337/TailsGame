@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Decisions/ArrivedAtDestination")]
 public class ArrivedAtPointDecision_sw : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         return Arrived(controller);
     }
 
-    private bool Arrived(NPCUnitControllerAI controller)
+    private bool Arrived(InputsNPC controller)
     {
         // check if the stopping distance is more than the remaining distance
         return (controller.NavMeshAg.remainingDistance <= controller.NavMeshAg.stoppingDistance &&

@@ -28,7 +28,7 @@ public class GameInterfaceManager : MonoBehaviour
         _playerPanel.RunSetup(_playerUnit);
         _tgtPanel.gameObject.SetActive(false);
 
-        _playerUnit.GetController<PlayerUnitController>().TargetLockedEvent += (t) => AssignTarget(t);        
+        _playerUnit.GetInputs<InputsPlayer>().TargetLockedEvent += (t) => AssignTarget(t);        
     }
 
     private void AssignTarget(BaseUnit unit)
@@ -45,7 +45,7 @@ public class GameInterfaceManager : MonoBehaviour
 
         _targetUnit.ToggleCamera(true);
 
-        _targetUnit.UnitDiedEvent += HideTgtPanel;
+        _targetUnit.BaseUnitDiedEvent += HideTgtPanel;
     }
 
     // potential memory leak?

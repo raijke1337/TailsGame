@@ -60,13 +60,16 @@ public interface IStatsAddEffects
     void AddTriggeredEffects(IEnumerable<TriggeredEffect> effects);
 }
 
-public interface IWeapon
+public interface IWeapon : IHasGameObject
 {    
     bool UseWeapon();
-    public GameObject GetObject();
     int GetAmmo();
     string GetRelatedSkillID();
 }
+
+public interface IHasGameObject
+{ public GameObject GetObject(); }
+
 
 #endregion
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }

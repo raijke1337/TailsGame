@@ -14,11 +14,11 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Decisions/LookForTgt")]
 public class LookDecision_sw : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         return Look(controller);
     }
-    private bool Look(NPCUnitControllerAI controller)
+    private bool Look(InputsNPC controller)
     {
         RaycastHit hit;
 

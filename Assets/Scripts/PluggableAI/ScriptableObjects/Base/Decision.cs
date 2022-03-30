@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 public abstract class Decision : ScriptableObject
 {
-    public abstract bool Decide(NPCUnitControllerAI controller);
+    public abstract bool Decide(InputsNPC controller);
     // gives a response to a state logic dilemma
 }
 

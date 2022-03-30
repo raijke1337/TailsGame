@@ -14,7 +14,7 @@ using static UnityEngine.InputSystem.InputAction;
 using Zenject;
 
 
-public class PlayerUnitController : BaseUnitController
+public class InputsPlayer : ControlInputsBase
 {
     private PlayerControls _controls;
 
@@ -24,7 +24,6 @@ public class PlayerUnitController : BaseUnitController
     [SerializeField] private string _shieldSkillID; // todo?
 
     public DodgeController GetDodgeController => _dodgeCtrl;
-
     public SkillsController GetSkillsController => _skillCtrl;
 
     // call these after all checks are done
@@ -45,9 +44,9 @@ public class PlayerUnitController : BaseUnitController
     private Vector3 lookTarget;
     public Vector3 GetLookTarget() => lookTarget;
 
-    protected override void Awake()
+    protected override void OnEnable()
     {
-        base.Awake();
+        base.OnEnable();
         _controls = new PlayerControls();
         // unique for player
     }
@@ -84,7 +83,7 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
 
-            _playerWeaponCtrl.WeaponSwitchEvent += DoSwitchLayer;
+            _playerWeaponCtrl.SwitchAnimationLayersEvent += DoSwitchLayer;
 
             _aim = GetComponentInChildren<CrosshairScript>();
             _aim.transform.parent = null;
@@ -101,19 +100,19 @@ public class PlayerUnitController : BaseUnitController
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
 
-            _playerWeaponCtrl.WeaponSwitchEvent -= DoSwitchLayer;
+            _playerWeaponCtrl.SwitchAnimationLayersEvent -= DoSwitchLayer;
         }
 
     }
 
     #region controller checks
 
-    protected override void RangedAttack_performed(CallbackContext obj)
+    private void RangedAttack_performed(CallbackContext obj)
     {
         if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Ranged))
             CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged);
     }
-    protected override void MeleeAttack_performed(CallbackContext obj)
+    private void MeleeAttack_performed(CallbackContext obj)
     {
         if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Melee))
             CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
@@ -136,7 +135,7 @@ public class PlayerUnitController : BaseUnitController
     }
     private void Dash_performed(CallbackContext obj)
     {
-        if (_movement == Vector3.zero) return;
+        if (velocityVector == Vector3.zero) return;
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
             CombatActionSuccessEvent?.Invoke(CombatActionType.Dodge);
@@ -161,7 +160,7 @@ public class PlayerUnitController : BaseUnitController
         var input = _controls.Game.WASD.ReadValue<Vector2>();
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
-        _movement = AD + WS;
+        velocityVector = AD + WS;
     }
 
     #region aiming
@@ -213,14 +212,10 @@ public class PlayerUnitController : BaseUnitController
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + _movement);
+        Gizmos.DrawLine(transform.position, transform.position + velocityVector);
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);
     }
 
-    protected override void UnitDiedAction(BaseUnit unit)
-    {
-        Debug.LogError("YOU DIED");
-    }
     #endregion
 }

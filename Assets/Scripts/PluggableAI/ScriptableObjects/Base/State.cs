@@ -23,13 +23,13 @@ public class State : ScriptableObject
     public Color StateGizmoColor = Color.gray;
 
     // state is updated every frame by statecontroler
-    public void UpdateState(NPCUnitControllerAI controller)
+    public void UpdateState(InputsNPC controller)
     {
         DoActions(controller);
         CheckTransitions(controller);
     }
 
-    private void DoActions(NPCUnitControllerAI controller)
+    private void DoActions(InputsNPC controller)
     {
         for (int i = 0; i < actions.Length; i++)
         {
@@ -37,7 +37,7 @@ public class State : ScriptableObject
         }
     }
 
-    private void CheckTransitions(NPCUnitControllerAI controller)
+    private void CheckTransitions(InputsNPC controller)
     {
         for (int i = 0; i < transitions.Length; i++)
         {

@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Actions/RunTo")]
 public class RunToAction_sw : Action
 {
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         MoveTo(controller);
     }
 
-    private void MoveTo(NPCUnitControllerAI controller)
+    private void MoveTo(InputsNPC controller)
     {
         controller.NavMeshAg.destination = controller.ChaseTarget.position;
         controller.NavMeshAg.Resume();

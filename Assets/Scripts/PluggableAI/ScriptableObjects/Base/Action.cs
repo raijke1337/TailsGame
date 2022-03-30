@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public abstract class Action : ScriptableObject
 {
     // actions are done based on decisions
-    public abstract void Act(NPCUnitControllerAI controller);
+    public abstract void Act(InputsNPC controller);
 
 }
 

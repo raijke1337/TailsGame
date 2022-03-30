@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 
 public class RoomController : MonoBehaviour
 {
-    private List<NPCUnitControllerAI> list;
+    private List<InputsNPC> list;
     private Collider _detectionArea;
 
     private void Start()
     {
-        list = new List<NPCUnitControllerAI>();
+        list = new List<InputsNPC>();
         _detectionArea = GetComponent<Collider>();
         _detectionArea.isTrigger = true;
     }
@@ -27,7 +27,7 @@ public class RoomController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            list.Add(other.GetComponent<NPCUnitControllerAI>());
+            list.Add(other.GetComponent<InputsNPC>());
 
             Debug.Log($"Found NPC {other}");
         }
@@ -40,7 +40,7 @@ public class RoomController : MonoBehaviour
             _detectionArea.enabled = false;
     }
 
-    public NPCUnitControllerAI LookForAllies(NPCUnitControllerAI controller)
+    public InputsNPC LookForAllies(InputsNPC controller)
     {
         if (!list.Contains(controller)) return null;
 

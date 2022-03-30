@@ -14,11 +14,11 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Decisions/DoneIdling")]
 public class DoneIdlingDecision_sw : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         return CheckIfDoneIdling(controller);
     }
-    private bool CheckIfDoneIdling(NPCUnitControllerAI controller)
+    private bool CheckIfDoneIdling(InputsNPC controller)
     {
         bool result = controller.IsStateCountdownElapsed(controller.idleTime);
 

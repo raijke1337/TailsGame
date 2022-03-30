@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
-public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
+public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
 {
     [SerializeField]
     protected GameObject[] _weaponPrefabs;
@@ -22,31 +22,50 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
     [SerializeField] protected Transform _meleeWeaponEmpty;
     [SerializeField] protected Transform _rangedWeaponEmpty;
     [SerializeField] protected Transform _sheathedWeaponEmpty;
+    
+    protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
 
-
-    public WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
-    //    visual part.
-
-    protected virtual void EquipItem(WeaponType type)
+    protected void SwitchWeapon(WeaponType type)
     {
-        GameObject on = _currentWeapons[type].GetObject();
-        if (type == WeaponType.Ranged)
+        GameObject weaponOfType = _currentWeapons[type].GetObject();
+        SwitchAnimationLayersEvent?.Invoke(type);
+        foreach (var other in _currentWeapons.Keys.Where(t => t != type))
         {
-            on.transform.SetPositionAndRotation(_rangedWeaponEmpty.position, _rangedWeaponEmpty.rotation);
-            on.transform.parent = _rangedWeaponEmpty;
+            Sheathe(other);
         }
-        if (type == WeaponType.Melee)
+        switch (type)
         {
-            on.transform.SetPositionAndRotation(_meleeWeaponEmpty.position, _meleeWeaponEmpty.rotation);
-            on.transform.parent = _meleeWeaponEmpty;
+            case WeaponType.None:
+                break;
+            case WeaponType.Melee:
+                Equip(type);
+                break;
+            case WeaponType.Ranged:
+                Equip(type);
+                break;
         }
         CurrentWeaponType = type;
     }
-    protected virtual void UnequipItem(WeaponType type)
+
+    private void Sheathe(WeaponType type)
     {
-        GameObject off = _currentWeapons[CurrentWeaponType].GetObject();
-        off.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
-        off.transform.parent = _sheathedWeaponEmpty;
+        var item = _currentWeapons[type].GetObject();
+        item.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
+        item.transform.parent = _sheathedWeaponEmpty;
+    }
+    private void Equip(WeaponType type)
+    {
+        var item = _currentWeapons[type].GetObject();
+        if (type == WeaponType.Melee)
+        {
+            item.transform.SetPositionAndRotation(_meleeWeaponEmpty.position, _meleeWeaponEmpty.rotation);
+            item.transform.parent = _meleeWeaponEmpty;
+        }
+        if (type == WeaponType.Ranged)
+        {
+            item.transform.SetPositionAndRotation(_rangedWeaponEmpty.position, _rangedWeaponEmpty.rotation);
+            item.transform.parent = _rangedWeaponEmpty;
+        }
     }
 
     public int GetAmmoByType(WeaponType type)
@@ -56,7 +75,7 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
 
     public virtual bool UseWeaponCheck(WeaponType type)
     {
-        // ammo checks etc are here
+        if (CurrentWeaponType != type) { SwitchWeapon(type); }
         return _currentWeapons[type].UseWeapon();
     }
     public void ToggleTriggersOnMelee(bool isEnable)
@@ -67,7 +86,7 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
 
     // load weapon stats from configs
     // set trigger info for weapon
-    [ContextMenu(itemName:"Run seetup")]
+    [ContextMenu(itemName:"Run setup")]
     public virtual void SetupStatsComponent()
     {
         _currentWeapons = new SerializableDictionaryBase<WeaponType, IWeapon>();
@@ -76,7 +95,7 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
         {
             // todo use a factory so this doesnt have to be a mono
 
-            BaseWeapon item = GetSpawn(prefab).GetComponent<BaseWeapon>();
+            BaseWeapon item = GetInstantiatedItem(prefab).GetComponent<BaseWeapon>();
 
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
                 (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.ID);
@@ -90,15 +109,11 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
             }
             _currentWeapons.Add(config.WType, item);
         }
-
-
-        EquipItem(WeaponType.Melee);
     }
 
-    private GameObject GetSpawn(GameObject prefab)
+    private GameObject GetInstantiatedItem(GameObject prefab)
     {
-        var spawn = Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
-        return spawn;
+        return Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
     }
 
     public void UpdateInDelta(float deltaTime)
@@ -115,6 +130,8 @@ public abstract class BaseWeaponController : MonoBehaviour, IStatsComponentForHa
         }
         return list;
     }
+
+    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
 
 
 }

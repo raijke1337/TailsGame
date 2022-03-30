@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "PluggableAI/Decisions/ActiveState")]
 public class ActiveStateDecision : Decision
 {
-    public override bool Decide(NPCUnitControllerAI controller)
+    public override bool Decide(InputsNPC controller)
     {
         bool chaseTargetIsActive = controller.ChaseTarget.gameObject.activeSelf;
         return chaseTargetIsActive;

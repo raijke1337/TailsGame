@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "PluggableAI/Actions/DummyDoNothing")]
 public class DummyAction : Action
 {
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         // nothing happens
     }

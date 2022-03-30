@@ -13,13 +13,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerUnit : BaseUnit
 {
-    private PlayerUnitController _playerController;
+    private InputsPlayer _playerController;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        _playerController = GetController<PlayerUnitController>();        
-        PlayerBinds();
+        _playerController = _controller as InputsPlayer; 
+        
         ToggleCamera(true);
     }
     protected override void AnimateMovement()
@@ -39,23 +39,6 @@ public class PlayerUnit : BaseUnit
         }
     }
 
-    private void OnDestroy()
-    {
-        PlayerBinds(false);
-    }
-    private void PlayerBinds(bool isRegister = true)
-    {
-        if (isRegister)
-        {
-            _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
-        }
-        else
-        {
-            _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-        }
-    }
-    
-
     private void ChangeAnimatorLayer(WeaponType type)
     {
         // 1 is ranged 2 is hammer
@@ -72,31 +55,6 @@ public class PlayerUnit : BaseUnit
         }
     }
 
-    protected override void AnimateCombatActivity(CombatActionType type)
-    {
-        switch (type)
-        {
-            case CombatActionType.Melee:
-                _animator.SetTrigger("MeleeAttack");
-                break;
-            case CombatActionType.Ranged:
-                _animator.SetTrigger("RangedAttack");
-                break;
-            case CombatActionType.Dodge:
-                _animator.SetTrigger("Dodge");
-                break;
-            case CombatActionType.MeleeSpecialQ:
-                _animator.SetTrigger("QSpecial");
-                break;
-            case CombatActionType.RangedSpecialE:
-                _animator.SetTrigger("ESpecial");
-                break;
-            case CombatActionType.ShieldSpecialR:
-                _animator.SetTrigger("RSpecial");
-                break;
-        }
-    }
-
     public void ComboWindowStart()
     {
         _animator.SetBool("AdvancingCombo",true);
@@ -104,6 +62,25 @@ public class PlayerUnit : BaseUnit
     public void ComboWindowEnd()
     {
         _animator.SetBool("AdvancingCombo", false);
+    }
+
+    protected override void HealthChangedEvent(float value)
+    {
+        base.HealthChangedEvent(value);
+    }
+
+    protected override void UnitBinds(bool isEnable)
+    {
+        base.UnitBinds(isEnable);
+
+        if (isEnable)
+        {
+            _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+        }
+        else
+        {
+            _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
+        }
     }
 
 }

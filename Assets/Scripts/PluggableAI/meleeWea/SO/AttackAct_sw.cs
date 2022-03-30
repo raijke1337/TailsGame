@@ -14,12 +14,12 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "aiAssets/Actions/Attack")]
 public class AttackAct_sw : Action
 {  
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         DoAttacking(controller);
     }
 
-    private void DoAttacking(NPCUnitControllerAI controller)
+    private void DoAttacking(InputsNPC controller)
     {
         controller.AttackRequest();
     }

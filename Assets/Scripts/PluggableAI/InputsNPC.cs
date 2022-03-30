@@ -14,7 +14,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.AI;
 using Zenject;
 
-public class NPCUnitControllerAI : BaseUnitController
+public class InputsNPC : ControlInputsBase
 {
     [Inject] private UnitsManager _manager;
 
@@ -23,10 +23,9 @@ public class NPCUnitControllerAI : BaseUnitController
     public EnemyStats GetStats => _enemyStats;
 
 
-    public SimpleEventsHandler<NPCUnitControllerAI> NPCdiedDisableAIEvent;
+    public SimpleEventsHandler<InputsNPC> NPCdiedDisableAIEvent;
     public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
-    [HideInInspector] public NavMeshAgent NavMeshAg;
 
     /// <summary>
     /// Pluggable AI code here
@@ -93,42 +92,30 @@ public class NPCUnitControllerAI : BaseUnitController
         if (CurrentState == null || EditorApplication.isPlaying == false) return;
 
         Gizmos.color = CurrentState.StateGizmoColor;
-
+        Gizmos.DrawLine(Eyes.transform.position, Eyes.transform.position + Eyes.transform.forward*_enemyStats.LookSpereCastRange);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + NavMeshAg.velocity);
     }
 
-    protected override void Awake()
+    protected override void OnEnable()
     {
-        base.Awake();
+        base.OnEnable();
               // todo unify code
 
-        var cfg = Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
-    (t => t.ID == enemyStatsID);
-
-        _enemyStats = new EnemyStats(cfg);
-        NavMeshAg = GetComponent<NavMeshAgent>();
+        _enemyStats = new EnemyStats(Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
+    (t => t.ID == enemyStatsID));
 
         if (Eyes == null) Debug.LogError("Set eyes empty");
     }
     private void Update()
     {
         if (!aiActive) return;
-
-
         CurrentState.UpdateState(this);
-        NavMeshAg.speed = Unit.GetStats()[StatType.MoveSpeed].GetCurrent();
-        _movement = NavMeshAg.velocity;
+        velocityVector = NavMeshAg.velocity;
         UpdateStateTimers();
     }
 
-    protected override void UnitDiedAction(BaseUnit unit)
-    {
-        NPCdiedDisableAIEvent?.Invoke(this);
-        _movement = Vector2.zero;
-        NavMeshAg.isStopped = true;
-    }
 
     public virtual void AttackRequest()
     {

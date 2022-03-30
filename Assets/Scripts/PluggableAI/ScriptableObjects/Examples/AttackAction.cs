@@ -13,13 +13,13 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "PluggableAI/Actions/Attack")]
 public class AttackAction : Action
 {
-    public override void Act(NPCUnitControllerAI controller)
+    public override void Act(InputsNPC controller)
     {
         Attack(controller);
     }
 
 
-    private void Attack(NPCUnitControllerAI controller)
+    private void Attack(InputsNPC controller)
     {
         RaycastHit hit;
 
