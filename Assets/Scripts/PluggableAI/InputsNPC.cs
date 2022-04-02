@@ -13,6 +13,8 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.AI;
 using Zenject;
+using UnityEngine.EventSystems;
+
 [RequireComponent(typeof(NavMeshAgent))]
 public class InputsNPC : ControlInputsBase
 {
@@ -21,9 +23,6 @@ public class InputsNPC : ControlInputsBase
     [SerializeField] protected string enemyStatsID = default;
     protected EnemyStats _enemyStats;
     public EnemyStats GetStats => _enemyStats;
-
-
-    public SimpleEventsHandler<InputsNPC> NPCdiedDisableAIEvent;
     public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
 
@@ -41,7 +40,9 @@ public class InputsNPC : ControlInputsBase
 
     public void SetAI(bool setting)
     {
-        aiActive = setting;     
+        aiActive = setting;
+        NavMeshAg.isStopped = true;
+        NavMeshAg.destination = transform.position;
     }
 
     private bool aiActive = true;
@@ -131,7 +132,6 @@ public class InputsNPC : ControlInputsBase
             CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
         }
     }
-
 
 
 }

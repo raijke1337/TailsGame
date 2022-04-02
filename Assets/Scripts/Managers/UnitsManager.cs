@@ -16,14 +16,18 @@ public class UnitsManager : MonoBehaviour
     private TimeController _timer;
     private UnitActivityHandler _activity;
 
-    private List<InputsNPC> _units = new List<InputsNPC>();
-    private InputsPlayer _player;
+    private List<NPCUnit> _units = new List<NPCUnit>();
+    private PlayerUnit _player;
     private List<RoomController> _rooms = new List<RoomController>();
 
-    private void Start()
+    public PlayerUnit GetPlayerUnit() => _player;
+    public List<NPCUnit> GetNPCs() => _units;
+
+
+    private void Awake()
     {
-        _units.AddRange(FindObjectsOfType<InputsNPC>());
-        _player = FindObjectOfType<InputsPlayer>();
+        _units.AddRange(FindObjectsOfType<NPCUnit>());
+        _player = FindObjectOfType<PlayerUnit>();
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
 
@@ -34,21 +38,14 @@ public class UnitsManager : MonoBehaviour
 
         foreach (var npc in _units)
         {
-            npc.NPCdiedDisableAIEvent += (t) => _activity.SetAIStateUnit(false,t);
+            npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
         }
+        _player.BaseUnitDiedEvent += HandleUnitDeath;
     }
 
-    // todo
-    // maybe just run it once in a while (use timeinstate)
-    public bool AreAlliesInRoom(InputsNPC controller, out InputsNPC unit)
+    private void HandleUnitDeath(BaseUnit unit)
     {
-        InputsNPC result = null;
-        foreach (var room in _rooms)
-        {
-            result = room.LookForAllies(controller);
-        }
-        unit = result;
-        return unit != null;
+        Debug.Log($"{unit.GetFullName()} died, add some logic to manager");
     }
 
 

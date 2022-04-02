@@ -44,7 +44,7 @@ public class LevelChecker : MonoBehaviour
         }
         foreach (var item in list.Where(t => !(t.name.Contains("Floor"))))
         {
-            if (!item.CompareTag("StaticItem"))
+            if (!item.CompareTag("StaticItem") || item.gameObject.layer != 2)
             {
                 _staticsFix.Add(item);
             }
@@ -87,6 +87,7 @@ public class LevelChecker : MonoBehaviour
         foreach (var item in _staticsFix)
         {
             item.tag = "StaticItem";
+            item.gameObject.layer = 2; //ignoreraycast
             sta++;
         }
         foreach (var item in _collidersFix)

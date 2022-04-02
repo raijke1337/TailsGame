@@ -10,56 +10,30 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Zenject;
+using System.Threading.Tasks;
 
 public class GameInterfaceManager : MonoBehaviour
 {
-    [SerializeField] private BaseInfoPanel _playerPanel;
-    [SerializeField] private BaseInfoPanel _tgtPanel;
+    [SerializeField] private TargetUnitPanel _tgt;
+    [SerializeField] private PlayerUnitPanel _player;
+    private UnitsManager _unitsM;
 
-    [Inject]
-    private PlayerUnit _playerUnit;
-    private BaseUnit _targetUnit;
-
-    private void Start()
+    private async void Start()
     {
-        if (_playerPanel == null) _playerPanel = FindObjectOfType<PlayerInfoPanel>();
-        if (_tgtPanel == null) _tgtPanel = FindObjectOfType<TargetInfoPanel>();
+        await Task.Yield();
 
-        _playerPanel.RunSetup(_playerUnit);
-        _tgtPanel.gameObject.SetActive(false);
-
-        _playerUnit.GetInputs<InputsPlayer>().TargetLockedEvent += (t) => AssignTarget(t);        
-    }
-
-    private void AssignTarget(BaseUnit unit)
-    {
-        if (_targetUnit != unit && _targetUnit != null)
+        _unitsM = FindObjectOfType<UnitsManager>();
+        _player.AssignItem(_unitsM.GetPlayerUnit(),true);
+        foreach (var npc in _unitsM.GetNPCs())
         {
-            _targetUnit.ToggleCamera(false);
-        }
-        _targetUnit = unit;
-
-
-        _tgtPanel.RunSetup(_targetUnit);
-        _tgtPanel.gameObject.SetActive(true);
-
-        _targetUnit.ToggleCamera(true);
-
-        _targetUnit.BaseUnitDiedEvent += HideTgtPanel;
-    }
-
-    // potential memory leak?
-    private void HideTgtPanel(BaseUnit unit)
-    {
-        _targetUnit.ToggleCamera(false);
-
-        if (_targetUnit == unit)
-        {
-            _tgtPanel.gameObject.SetActive(false);
+            npc.SelectionEvent += NPCmousedEventForUI;
         }
     }
-    // todo add smooth effects
 
+    private void NPCmousedEventForUI(InteractiveItem item, bool isSelected)
+    {
+        _tgt.AssignItem(item as NPCUnit, isSelected);
+    }
 }
 
 

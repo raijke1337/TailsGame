@@ -10,9 +10,13 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using RotaryHeart.Lib.SerializableDictionary;
 
-public class TargetInfoPanel : BaseInfoPanel
+[CreateAssetMenu(menuName = "Configurations/Shield")]
+public class ShieldSettings : ScriptableObject
 {
+    public string ID;
 
+    public SerializableDictionaryBase<ShieldStatType, StatValueContainer> Stats;
 }
 

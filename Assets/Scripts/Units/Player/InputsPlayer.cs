@@ -21,15 +21,19 @@ public class InputsPlayer : ControlInputsBase
     [SerializeField] private PlayerWeaponController _playerWeaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private SkillsController _skillCtrl;
+    [SerializeField] private ShieldController _shieldCtrl;
+
+    private SelectorComponent _selector;
+
+
     [SerializeField] private string _shieldSkillID; // todo?
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public SkillsController GetSkillsController => _skillCtrl;
+    public ShieldController GetShieldController => _shieldCtrl;
 
-    // call these after all checks are done
-    public event SimpleEventsHandler DodgeCompletedAnimatingEvent;
+
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
-    public event SimpleEventsHandler<BaseUnit> TargetLockedEvent;
     public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
@@ -39,8 +43,8 @@ public class InputsPlayer : ControlInputsBase
     }
     private IsoCamAdjust _adj;
 
-    private CrosshairScript _aim;
-    private Ray ray;
+    [SerializeField] private CrosshairScript _aim;
+
     private Vector3 lookTarget;
     public Vector3 GetLookTarget() => lookTarget;
 
@@ -54,6 +58,7 @@ public class InputsPlayer : ControlInputsBase
     private void Start()
     {
         PlayerBind();
+        transform.LookAt(transform.forward);
     }
 
     private void PlayerBind(bool enable = true)
@@ -63,6 +68,8 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.Enable();
             Cursor.visible = false;
 
+            _selector = GetComponent<SelectorComponent>();
+
             _playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
 
             _adj = new IsoCamAdjust();
@@ -71,10 +78,12 @@ public class InputsPlayer : ControlInputsBase
 
             skills.Add(_shieldSkillID);
             _skillCtrl = new SkillsController(skills);
+            _shieldCtrl = new ShieldController("player"); // todo placeholder
 
 
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
             _handler.RegisterUnitForStatUpdates(_skillCtrl);
+            _handler.RegisterUnitForStatUpdates(_shieldCtrl);
 
             _controls.Game.Dash.performed += Dash_performed;
             _controls.Game.SkillE.performed += SkillE_performed;
@@ -119,27 +128,29 @@ public class InputsPlayer : ControlInputsBase
     }
     private void SkillR_performed(CallbackContext obj)
     {
+        if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR))
         CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
 
     }
     private void SkillQ_performed(CallbackContext obj)
     {
+        if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ))
             CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
     }
     private void SkillE_performed(CallbackContext obj)
     {
+        if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE))
             CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
     }
     private void Dash_performed(CallbackContext obj)
     {
-        if (velocityVector == Vector3.zero) return;
+        if (IsControlsBusy) return;
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
             CombatActionSuccessEvent?.Invoke(CombatActionType.Dodge);
-            StartCoroutine(DoDodgeMovement());
         }
     }
     #endregion
@@ -147,8 +158,10 @@ public class InputsPlayer : ControlInputsBase
     private void Update()
     {
         CalculateMovement();
-        CalculateAimPoint();
-        if (lookTarget == null) return;
+
+        if (_selector.CalculateAimPoint() == null) return;
+
+        lookTarget =(Vector3)_selector.CalculateAimPoint();
 
         _aim.SetLookTarget(lookTarget);
         transform.LookAt(lookTarget);
@@ -161,54 +174,6 @@ public class InputsPlayer : ControlInputsBase
         Vector3 WS = _adj.Isoforward * input.y;
         velocityVector = AD + WS;  
     }
-
-    #region aiming
-    private void CalculateAimPoint()
-    {
-        ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (!Physics.Raycast(ray, out var hit)) return;
-
-        // todo use "interactible" and "interactor" classes here 
-        if (hit.collider.CompareTag("Ground"))
-        {
-            var loc = hit.point;
-            lookTarget = new Vector3(loc.x, 0, loc.z);
-        }
-        if (hit.collider.CompareTag("Enemy"))
-        {
-            var loc = hit.transform.position;
-            lookTarget = new Vector3(loc.x, 0, loc.z);
-            TargetLockedEvent?.Invoke(hit.collider.gameObject.GetComponent<BaseUnit>());
-        }
-    }
-
-    #endregion
-
-    #region dodges
-    private IEnumerator DoDodgeMovement()
-    {
-        // todo clean up logic here
-
-        Vector3 start = transform.position;
-        //Vector3 finish = transform.position + (_movement * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent());
-        // dodge in direction of running
-        // need - dodge in direction of mouse
-
-        Vector3 finish = (transform.forward * _dodgeCtrl.GetDodgeStats()[DodgeStatType.Range].GetCurrent()) 
-            + transform.position;
-
-        float time = _dodgeCtrl.GetDodgeStats()[DodgeStatType.Duration].GetCurrent();
-        float currenttime = 0;
-        while (currenttime < time)
-        {
-            transform.position = Vector3.LerpUnclamped(start, finish, currenttime);
-            currenttime += Time.deltaTime;
-            yield return null;
-        }
-        DodgeCompletedAnimatingEvent?.Invoke();
-        yield return null;
-    }
-    #endregion
 
     private void OnDrawGizmos()
     {

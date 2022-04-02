@@ -24,14 +24,6 @@ public class DodgeController : IStatsComponentForHandler
 
     public void SetupStatsComponent()
     {
-        // put paths to default cfgs here 
-        // todo
-
-        //if (!_stats.ContainsKey(DodgeStatType.Charges)) _stats.Add(DodgeStatType.Charges, new StatValueContainer());
-        //if (!_stats.ContainsKey(DodgeStatType.Cooldown)) _stats.Add(DodgeStatType.Cooldown, new StatValueContainer());
-        //if (!_stats.ContainsKey(DodgeStatType.Duration)) _stats.Add(DodgeStatType.Duration, new StatValueContainer());
-        //if (!_stats.ContainsKey(DodgeStatType.Range)) _stats.Add(DodgeStatType.Range, new StatValueContainer());
-
         foreach (var st in _stats.Values)
         { st.Setup(); }
     }

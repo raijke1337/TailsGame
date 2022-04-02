@@ -22,17 +22,24 @@ public enum Allegiance
 public enum StatType
 {
     Health,
-    Shield,
     HealthRegen,
-    ShieldRegenMultiplier,
     Heat,
     HeatRegen,
-    MoveSpeed
+    MoveSpeed,
+    //Shield,
+    //ShieldRegen,
 }
 public enum TriggeredEffectTargetType
 {
     Target,
     Self
+}
+public enum ShieldStatType
+{
+    Shield,
+    ShieldRegen,
+    ShieldRegenMultiplier,
+    ShieldAbsorbMult
 }
 
 public enum WeaponType
@@ -45,8 +52,8 @@ public enum DodgeStatType
 {
     Charges,
     Range,
-    Duration,
-    Cooldown
+    Cooldown,
+    Speed
 }
 
 public enum CombatActionType

@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 
 public class UnitActivityHandler
 {
-    private List<InputsNPC> _units;
-    private InputsPlayer _player;
+    private List<NPCUnit> _units;
+    private PlayerUnit _player;
 
-    public UnitActivityHandler(IEnumerable<InputsNPC> units, InputsPlayer player)
+    public UnitActivityHandler(IEnumerable<NPCUnit> units, PlayerUnit player)
     {
-        _units = new List<InputsNPC>(); _player = player;
+        _units = new List<NPCUnit>(); _player = player;
         _units.AddRange(units);
     }
 
@@ -29,9 +29,10 @@ public class UnitActivityHandler
             SetAIStateUnit(isProcessing, npc);
         }
     }
-    public void SetAIStateUnit(bool isProcessing, InputsNPC unit)
+    public void SetAIStateUnit(bool isProcessing, NPCUnit unit)
     {
-        unit.SetAI(isProcessing);
+        unit.GetInputs<InputsNPC>().SetAI(isProcessing);
+        unit.GetInputs<InputsNPC>().NavMeshAg.isStopped = isProcessing;
     }
 
 

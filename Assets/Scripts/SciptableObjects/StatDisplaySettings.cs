@@ -10,15 +10,14 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-public abstract class BaseInfoPanel : MonoBehaviour
+[CreateAssetMenu(menuName = "Configurations/StatDisplaySetting/")]
+public class StatDisplaySettings : ScriptableObject
 {
-    protected InteractiveItem item;
+    public Text text;
+    public Image filler;
+    public Color maxCol;
+    public Color minCol;
 
-    protected virtual void Start()
-    {
-        if (item == null) gameObject.SetActive(false);
-    }
-    protected abstract void AssignItem(InteractiveItem item, bool isSelect);
-
+    public string settingID;
 }
+

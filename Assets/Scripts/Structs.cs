@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 public delegate void WeaponSwitchEventHandler(WeaponType type);
+
+
 
 public static class Constants
 {
@@ -16,13 +19,13 @@ public static class Constants
         public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats";
         public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
         public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills";
+        public const string c_ShieldConfigsPath = "/Scripts/Configurations/Shield";
     }
     public static class Combat
     {
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
         public const float c_RemainsDisappearTimer = 5f;
         public const float c_ProjectileTriggerActivateDelay = 0.15f;
-        public const float c_shieldAbsorbMult = 0.5f;
     }
     // to not damage self with projectiles, obvious bandaid todo
 }
@@ -58,6 +61,7 @@ public interface IStatsAddEffects
 {
     void AddTriggeredEffect(TriggeredEffect effect);
 }
+
 
 public interface IWeapon : IHasGameObject
 {    
@@ -113,5 +117,10 @@ public class StatValueContainer
     }
 }
 
+public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
+public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
+{
+    public event MouseOverEvents SelectionEvent;
+}
 
 

@@ -19,6 +19,8 @@ public class CrosshairScript : MonoBehaviour
     private Vector3 _adjustedTgt;
     private SpriteRenderer _pic;
 
+
+
     [SerializeField] private CursorType CrosshairState;
 
     [SerializeField] SerializableDictionaryBase<CursorType, Sprite> Shapes;
@@ -26,6 +28,7 @@ public class CrosshairScript : MonoBehaviour
     public void SetLookTarget(Vector3 target)
     {
         _adjustedTgt = new Vector3(target.x, _aimOffset, target.z);
+        transform.position = _adjustedTgt;
     }
 
     private void Start()

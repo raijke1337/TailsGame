@@ -6,7 +6,9 @@ using Zenject;
 public abstract class ControlInputsBase : MonoBehaviour
 {
     [Inject] protected StatsUpdatesHandler _handler;
-    
+    public bool IsControlsBusy { get; set; } // todo not very good solution
+
+
     protected BaseWeaponController _weaponCtrl;
     public BaseWeaponController GetWeaponController => _weaponCtrl;
     public virtual event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
@@ -15,7 +17,8 @@ public abstract class ControlInputsBase : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        _weaponCtrl = GetComponent<BaseWeaponController>();
+        IsControlsBusy = false;
+        _weaponCtrl = GetComponent<BaseWeaponController>(); // todo remove this (mono)
         BindControllers(true);
     }
 

@@ -24,20 +24,25 @@ public abstract class BaseUnit : MonoBehaviour
     protected ControlInputsBase _controller;
 
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+    public ControlInputsBase GetInputs() => _controller;
 
     [Inject] protected StatsUpdatesHandler _handler;
 
 
-    
+
     public string GetFullName() => _baseStats.GetDisplayName;
-    public IReadOnlyDictionary<StatType,StatValueContainer> GetStats() => _baseStats.GetBaseStats;     
-    
+    public IReadOnlyDictionary<StatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
+
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
 
 
     private Camera _faceCam;
-    public void ToggleCamera(bool value){ _faceCam.enabled = value; }
+    public void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
+    protected virtual void Awake()
+    {
+        _baseStats = new BaseStatsController(BaseStatsID);
+    }
 
     protected virtual void OnEnable()
     {
@@ -45,11 +50,8 @@ public abstract class BaseUnit : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         _controller = GetComponent<ControlInputsBase>();
 
-        _baseStats = new BaseStatsController(BaseStatsID);
 
-
-
-        _faceCam = GetComponentsInChildren<Camera>().First(t=>t.CompareTag("FaceCamera"));
+        _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
     }
 
@@ -62,8 +64,9 @@ public abstract class BaseUnit : MonoBehaviour
     {
         UnitBinds(false);
     }
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
+        if (_controller.IsControlsBusy) return;
         AnimateMovement();
     }
 
@@ -125,7 +128,7 @@ public abstract class BaseUnit : MonoBehaviour
 
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
-        Debug.Log($"Animating {type} by {GetFullName()}");
+       // Debug.Log($"Animating {type} by {GetFullName()}");
 
         switch (type)
         {
@@ -137,6 +140,7 @@ public abstract class BaseUnit : MonoBehaviour
                 break;
             case CombatActionType.Dodge:
                 _animator.SetTrigger("Dodge");
+                DodgeAction();
                 break;
             case CombatActionType.MeleeSpecialQ:
                 _animator.SetTrigger("QSpecial");
@@ -149,8 +153,7 @@ public abstract class BaseUnit : MonoBehaviour
                 break;
         }
     }
-
-
+    protected virtual void DodgeAction() { }
 
     protected virtual void UnitBinds(bool isEnable)
     {
@@ -185,9 +188,7 @@ public abstract class BaseUnit : MonoBehaviour
 
 
 
-    public void ApplyEffect(TriggeredEffect eff)
-    {
-        _baseStats.AddTriggeredEffect(eff);
-    }
+    public abstract void ApplyEffect(TriggeredEffect eff);
 
 }
+

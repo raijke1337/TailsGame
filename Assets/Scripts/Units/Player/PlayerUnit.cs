@@ -15,14 +15,82 @@ public class PlayerUnit : BaseUnit
 {
     private InputsPlayer _playerController;
 
+
+
     protected override void OnEnable()
     {
         base.OnEnable();
-        _playerController = _controller as InputsPlayer; 
-        
+        _playerController = _controller as InputsPlayer;         
         ToggleCamera(true);
     }
 
+    public override void ApplyEffect(TriggeredEffect eff)
+    {
+        switch (eff.StatID)
+        {
+            case StatType.Health:
+                _baseStats.AddTriggeredEffect(_playerController.GetShieldController.ProcessHealthChange(eff));
+                break;
+            case StatType.HealthRegen:
+                _baseStats.AddTriggeredEffect(eff);
+                break;
+            case StatType.Heat:
+                _baseStats.AddTriggeredEffect(eff);
+                break;
+            case StatType.HeatRegen:
+                _baseStats.AddTriggeredEffect(eff);
+                break;
+            case StatType.MoveSpeed:
+                _baseStats.AddTriggeredEffect(eff);
+                break;
+        }
+    }
+
+
+
+    #region dodge
+
+    // stop the dodge like this
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_dodgeCor != null && collision.gameObject.tag != "Ground")
+        {
+            _playerController.IsControlsBusy = false;
+            StopCoroutine(_dodgeCor);
+        }
+    }
+
+
+
+    private Coroutine _dodgeCor;
+    public SimpleEventsHandler DodgeFinishedEvent;
+    private IEnumerator DodgingMovement()
+    {
+        var stats = _playerController.GetDodgeController.GetDodgeStats();
+        _playerController.IsControlsBusy = true;
+
+        Vector3 start = transform.position;
+        Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
+
+
+        float p = 0f;
+        while (p <= 1f)
+        {
+            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent();
+            transform.position = Vector3.Lerp(start, end, p);
+            yield return null;
+        }
+
+        _playerController.IsControlsBusy = false;
+        yield return null;
+    }
+    protected override void DodgeAction()
+    {
+        _dodgeCor = StartCoroutine(DodgingMovement());
+        //rb.AddForce(gameObject.transform.forward * _playerController.GetDodgeController.GetDodgeStats()[DodgeStatType.Force].GetCurrent(), ForceMode.Impulse);
+    }
+
+    #endregion
 
     private void ChangeAnimatorLayer(WeaponType type)
     {
@@ -68,15 +136,31 @@ public class PlayerUnit : BaseUnit
         }
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
         PlayerMovement(_playerController.MoveDirection);
     }
 
+
+    //private Vector3 currVelocity;
+    //[SerializeField,Tooltip("How quickly the inertia of movement fades")] private float massDamp = 3f;
+
+
     private void PlayerMovement(Vector3 desiredDir)
     {
-        transform.position += Time.deltaTime * desiredDir * GetStats()[StatType.MoveSpeed].GetCurrent();
-    }
+        // DO NOT FIX WHAT ISNT BROKEN //
 
+        //if (desiredDir == Vector3.zero)
+        //{
+        //    if (currVelocity.sqrMagnitude < 0.1f) currVelocity = Vector3.zero;
+        //    else currVelocity = Vector3.Lerp(currVelocity, Vector3.zero, Time.deltaTime * massDamp);
+        //}
+        //else currVelocity = desiredDir;
+        //transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * currVelocity;
+
+        // also good enough
+        transform.position += Time.deltaTime * desiredDir
+            * GetStats()[StatType.MoveSpeed].GetCurrent();
+    }
 }
