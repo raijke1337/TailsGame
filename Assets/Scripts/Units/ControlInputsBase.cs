@@ -14,7 +14,6 @@ public abstract class ControlInputsBase : MonoBehaviour
     public virtual event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
 
-
     protected virtual void OnEnable()
     {
         IsControlsBusy = false;

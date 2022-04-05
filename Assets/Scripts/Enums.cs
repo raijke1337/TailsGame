@@ -26,8 +26,6 @@ public enum StatType
     Heat,
     HeatRegen,
     MoveSpeed,
-    //Shield,
-    //ShieldRegen,
 }
 public enum TriggeredEffectTargetType
 {
@@ -72,15 +70,4 @@ public enum CursorType
     Explore,
     EnemyTarget,
     Item,
-}
-
-
-public enum EnemyStatType
-{
-    LookRange,
-    LookSpereCastRadius,
-    TimeBetweenAttacks,
-    AttackRange,
-    ScanAngle,
-    FleeHealth
 }

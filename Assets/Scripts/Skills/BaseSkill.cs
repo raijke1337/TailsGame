@@ -10,57 +10,26 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-public class BaseSkill
+[RequireComponent(typeof(Collider))]
+public abstract class BaseSkill : MonoBehaviour
 {
-
-    private Timer _recTimer;
-
-    private bool _isReady = true;
-
     public string ID;
-    public CombatActionType SkillType;
-    public float Recharge;
-    public Sprite Icon;
+    public BaseUnit Source;
 
 
-    public virtual bool RequestUse()
-    {
-        if (_isReady)
-        {
-            DoSkillActions();
-            _recTimer = new Timer(Recharge);
-            _isReady = false;
-            return true;
-        }
-        else
-        {
-            Debug.Log($"Skill {SkillType} not ready, wait {_recTimer.time}");
-            return false;
-        }
-    }
-    public virtual float Ticks(float time)
-    {
-        if (_recTimer == null) return 0f; 
 
-        if (_recTimer.time <= 0f)
-        {
-            _isReady = true;
-        }
-        else { _recTimer.time -= time; }
-        return _recTimer.time;
+    private Collider _coll;
+
+    protected abstract void OnEnable();
+    protected abstract void OnDisable();
+    protected abstract void Update();
+    protected abstract void OnTriggerEnter();
+
+    private void Awake()
+    {
+        _coll = GetComponent<Collider>();
+        _coll.isTrigger = true;
     }
 
-    public BaseSkill (BaseSkillSettings cfg)
-    {
-        ID = cfg.ID;
-        SkillType = cfg.SkillType;
-        Recharge = cfg.Recharge;
-        Icon = cfg.Icon;
-    }
-    protected virtual void DoSkillActions()
-    {
-        Debug.Log($"Used {ID}");
-    }
 }
 

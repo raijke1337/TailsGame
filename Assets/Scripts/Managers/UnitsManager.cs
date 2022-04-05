@@ -23,6 +23,7 @@ public class UnitsManager : MonoBehaviour
     public PlayerUnit GetPlayerUnit() => _player;
     public List<NPCUnit> GetNPCs() => _units;
 
+    public SkillEventsHandler RequestToPlaceSkills;
 
     private void Awake()
     {
@@ -39,16 +40,16 @@ public class UnitsManager : MonoBehaviour
         foreach (var npc in _units)
         {
             npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+            npc.SkillRequestSuccessEvent += (t1, t2) => RequestToPlaceSkills?.Invoke(t1, t2);
         }
         _player.BaseUnitDiedEvent += HandleUnitDeath;
+        _player.SkillRequestSuccessEvent += (t1, t2) => RequestToPlaceSkills?.Invoke(t1, t2);
     }
 
     private void HandleUnitDeath(BaseUnit unit)
     {
         Debug.Log($"{unit.GetFullName()} died, add some logic to manager");
     }
-
-
 
 }
 

@@ -8346,6 +8346,7 @@ GameObject:
   - component: {fileID: 1086443992}
   - component: {fileID: 1086443991}
   - component: {fileID: 1086443993}
+  - component: {fileID: 1086443994}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -8519,6 +8520,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6449b0ffb6757e47a283cd9048c3f1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1086443994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086443984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60d5e6b6f30caf14a95afc0aa94db277, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _skillsDict:
+    reorderableList:
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
+      isExpanded: 1
+      label:
+        m_Text: Keys
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 1
+    _keyValues:
+    - crossbow_explosive
+    _keys:
+    - crossbow_explosive
+    _values:
+    - {fileID: 7490823917269097011, guid: 52012852576cb13419f87eb538b6393a, type: 3}
 --- !u!1001 &1097563990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17721,20 +17763,20 @@ MonoBehaviour:
       _keyValues: 01000000000000000200000003000000
       _keys: 01000000000000000200000003000000
       _values:
-      - _start: 4
+      - _start: 3
+        _max: 0
+        _min: 0
+        _current: 0
+      - _start: 3
         _max: 10
         _min: 0
         _current: 0
-      - _start: 3
-        _max: 3
+      - _start: 6
+        _max: 0
         _min: 0
         _current: 0
-      - _start: 5
-        _max: 5
-        _min: 0
-        _current: 0
-      - _start: 3
-        _max: 5
+      - _start: 2
+        _max: 0
         _min: 0
         _current: 0
   _skillCtrl:

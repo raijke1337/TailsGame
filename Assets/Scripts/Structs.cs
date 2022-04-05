@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 public delegate void WeaponSwitchEventHandler(WeaponType type);
+public delegate void SkillEventsHandler(string ID, BaseUnit source);
 
 
 
@@ -26,6 +27,10 @@ public static class Constants
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
         public const float c_RemainsDisappearTimer = 5f;
         public const float c_ProjectileTriggerActivateDelay = 0.15f;
+    }
+    public static class Skills
+    {
+        public const string c_SkillPrefabs = "/Scripts/Skills/Prefabs";
     }
     // to not damage self with projectiles, obvious bandaid todo
 }

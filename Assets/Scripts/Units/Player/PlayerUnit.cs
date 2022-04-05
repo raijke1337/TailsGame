@@ -14,6 +14,7 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private InputsPlayer _playerController;
+    public override event SkillEventsHandler SkillRequestSuccessEvent;
 
 
 
@@ -25,6 +26,7 @@ public class PlayerUnit : BaseUnit
     }
 
     public override void ApplyEffect(TriggeredEffect eff)
+        // shield damage reduction logic
     {
         switch (eff.StatID)
         {
@@ -47,9 +49,9 @@ public class PlayerUnit : BaseUnit
     }
 
 
-
     #region dodge
 
+    private Coroutine _dodgeCor;
     // stop the dodge like this
     private void OnCollisionEnter(Collision collision)
     {
@@ -59,11 +61,6 @@ public class PlayerUnit : BaseUnit
             StopCoroutine(_dodgeCor);
         }
     }
-
-
-
-    private Coroutine _dodgeCor;
-    public SimpleEventsHandler DodgeFinishedEvent;
     private IEnumerator DodgingMovement()
     {
         var stats = _playerController.GetDodgeController.GetDodgeStats();
@@ -71,7 +68,6 @@ public class PlayerUnit : BaseUnit
 
         Vector3 start = transform.position;
         Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
-
 
         float p = 0f;
         while (p <= 1f)
@@ -87,7 +83,6 @@ public class PlayerUnit : BaseUnit
     protected override void DodgeAction()
     {
         _dodgeCor = StartCoroutine(DodgingMovement());
-        //rb.AddForce(gameObject.transform.forward * _playerController.GetDodgeController.GetDodgeStats()[DodgeStatType.Force].GetCurrent(), ForceMode.Impulse);
     }
 
     #endregion
@@ -163,4 +158,23 @@ public class PlayerUnit : BaseUnit
         transform.position += Time.deltaTime * desiredDir
             * GetStats()[StatType.MoveSpeed].GetCurrent();
     }
+
+
+    protected override void AnimateCombatActivity(CombatActionType type)
+    {
+        base.AnimateCombatActivity(type);
+        switch (type)
+        {
+            case CombatActionType.MeleeSpecialQ:
+                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
+                break;
+            case CombatActionType.RangedSpecialE:
+                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
+                break;
+            case CombatActionType.ShieldSpecialR:
+                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
+                break;
+        }
+    }
+
 }

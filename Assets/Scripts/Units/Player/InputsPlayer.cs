@@ -35,6 +35,7 @@ public class InputsPlayer : ControlInputsBase
 
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
     public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
+
     private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
@@ -130,20 +131,25 @@ public class InputsPlayer : ControlInputsBase
     {
         if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR))
-        CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
-
+        {
+            CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
+        }
     }
     private void SkillQ_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ))
+        {
             CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
+        }
     }
     private void SkillE_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE))
+        {
             CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
+        }
     }
     private void Dash_performed(CallbackContext obj)
     {
