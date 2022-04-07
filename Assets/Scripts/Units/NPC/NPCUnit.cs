@@ -60,7 +60,7 @@ public class NPCUnit : BaseUnit,InteractiveItem
         }
     }
     public event MouseOverEvents SelectionEvent;
-    public override event SkillEventsHandler SkillRequestSuccessEvent;
+    public override event BaseUnitWithIDEvent SkillRequestSuccessEvent;
 
     public void OnPointerEnter(PointerEventData eventData)
     {

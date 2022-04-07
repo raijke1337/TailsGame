@@ -16,7 +16,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class SkillsController : IStatsComponentForHandler
 {
     [SerializeField] private List<string> IDs;
-    private Dictionary<CombatActionType, SkillData> _skills;
+    private Dictionary<CombatActionType, SkillControllerData> _skills;
 
     public SkillsController(List<string> skills)
     {
@@ -37,12 +37,12 @@ public class SkillsController : IStatsComponentForHandler
 
     public void SetupStatsComponent()
     {
-        _skills = new Dictionary<CombatActionType, SkillData>();
+        _skills = new Dictionary<CombatActionType, SkillControllerData>();
         foreach (string id in IDs)
         {
-            var cfg = Extensions.GetAssetsFromPath<SkillDataSetting>(Constants.Configs.c_SkillConfigsPath).First(t => t.ID == id);
+            var cfg = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath).First(t => t.ID == id);
             var type = cfg.SkillType;
-            _skills.Add(type, new SkillData(cfg));
+            _skills.Add(type, new SkillControllerData(cfg));
         }
     }
 

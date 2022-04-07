@@ -2068,7 +2068,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -2536,7 +2535,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -3069,7 +3067,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -7509,7 +7506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -7846,7 +7842,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -8347,6 +8342,7 @@ GameObject:
   - component: {fileID: 1086443991}
   - component: {fileID: 1086443993}
   - component: {fileID: 1086443994}
+  - component: {fileID: 1086443995}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -8459,6 +8455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _configs: []
+  _projectileCfgs: []
 --- !u!114 &1086443991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8561,6 +8558,18 @@ MonoBehaviour:
     - crossbow_explosive
     _values:
     - {fileID: 7490823917269097011, guid: 52012852576cb13419f87eb538b6393a, type: 3}
+--- !u!114 &1086443995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086443984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6217851333bb79b48b2264e9ec594ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1097563990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13674,9 +13683,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 773202aa84b84dd428736239bfe6974b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - shield_small
+  _activateEffect: {fileID: 0}
 --- !u!4 &1683085353 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4263531196441134, guid: e1b9e21039285c042b92ea66c7f1c444,
@@ -15310,7 +15319,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -15484,7 +15492,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}
@@ -16241,7 +16248,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db91d8f48b522e1438d83c7b64887005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs:
   - trap_small
   _activateEffect: {fileID: 0}

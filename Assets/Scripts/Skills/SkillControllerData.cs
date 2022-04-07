@@ -11,17 +11,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class SkillData
+public class SkillControllerData
 {
-
-    private Timer _recTimer;
-
-    private bool _isReady = true;
-
     public string ID;
     public CombatActionType SkillType;
-    public float Recharge;
-    public Sprite Icon;
+
+    private Timer _recTimer;
+    private bool _isReady = true;
+
+    private SkillData _data;
+
 
     public string SkillUpgradeID { get; set; } // todo implement 
 
@@ -30,7 +29,7 @@ public class SkillData
     {
         if (_isReady)
         {
-            _recTimer = new Timer(Recharge);
+            _recTimer = new Timer(_data.Recharge);
             _isReady = false;
             return true;
         }
@@ -52,14 +51,13 @@ public class SkillData
         return _recTimer.time;
     }
 
-    public SkillData (SkillDataSetting cfg)
+    public SkillControllerData (SkillControllerDataConfig cfg)
     {
         ID = cfg.ID;
         SkillType = cfg.SkillType;
-        Recharge = cfg.Recharge;
-        Icon = cfg.Icon;
+        _data = new SkillData(cfg.Data);
     }
-    // all logic moved to SkillsPlacerMan class, here we only have cooldown checking and IDs
+    // all logic moved to SkillsPlacerMan class, here we only have cooldown checking and data
 
 }
 

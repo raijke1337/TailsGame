@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37d28a11433942b458ae2a45ffafe01e, type: 3}
+  m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
   m_Name: crossbow_explosive
   m_EditorClassIdentifier: 
   ID: crossbow_explosive
-  SkillType: 4
-  Data:
-    Icon: {fileID: 21300000, guid: 9c1bd758ff5093a428bf7013bb9aac33, type: 3}
-    Recharge: 6
-    FinalArea: 3
-    StartArea: 1
-    PersistTime: 2
+  TimeToLive: 5
+  ProjectileSpeed: 10
+  ProjectilePenetration: 1

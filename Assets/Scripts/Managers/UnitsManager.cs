@@ -23,7 +23,7 @@ public class UnitsManager : MonoBehaviour
     public PlayerUnit GetPlayerUnit() => _player;
     public List<NPCUnit> GetNPCs() => _units;
 
-    public SkillEventsHandler RequestToPlaceSkills;
+    public BaseUnitWithIDEvent RequestToPlaceSkills;
 
     private void Awake()
     {

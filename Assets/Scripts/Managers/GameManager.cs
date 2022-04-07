@@ -23,7 +23,7 @@ public class GameManager : MonoInstaller
     {
         Container.BindInstance(FindObjectOfType<PlayerUnit>()).AsSingle();
         Container.BindInstance(FindObjectOfType<StatsUpdatesHandler>()).AsSingle();
-        Container.BindInstance(GetComponent<TriggersManager>()).AsSingle();
+        Container.BindInstance(GetComponent<TriggersProjectilesManager>()).AsSingle();
         Container.BindInstance(GetComponent<UnitsManager>()).AsSingle();
     }
 

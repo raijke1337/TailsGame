@@ -12,61 +12,62 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class ProjectileTrigger : BaseTrigger
+public class ProjectileTrigger : BaseTrigger, IProjectile
 {
-    private float _ttl;
-    private float _speed;
-    private float _pen;
+    public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
 
-    private bool isActive;
+    private ProjectileData ProjData;
+
+    private float _exp;
+    private int _penetr;
+
+
+    public event BaseUnitWithIDEvent TriggerHitEvent;
+    public event SimpleEventsHandler<IProjectile> ExpiryEvent;
 
     protected override void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player")) return;
+
         if (other.CompareTag("StaticItem")) Stuck(other);
-        base.OnTriggerEnter(other);        
-        if (_pen == 0) Stuck(other);
-        _pen--;
+        if (other.GetComponent<BaseUnit>() != null)
+        {
+            Debug.Log($"{this} hit {other}");
+            var tgt = other.GetComponent<BaseUnit>();
+            foreach (var id in TriggerEffectIDs)
+            {
+                TriggerHitEvent?.Invoke(id,tgt);
+            }
+        }
+        if (_penetr == 0) Stuck(other);
+        _penetr--;
     }
 
     private void Stuck(Collider other)
     {
-        _speed = 0f;
+        ProjData.Speed = 0f;
         transform.parent = other.transform;
         _coll.enabled = false;
     }
-
-    protected void Start()
+    public void OnSpawn()
     {
-        _coll.enabled = false;
-        StartCoroutine(ActivationTimer());
-
-        Destroy(gameObject, _ttl);
+        base.Awake();
+        transform.position += transform.forward;
+        _exp = ProjData.TimeToLive;
+        _penetr = ProjData.Penetration;
     }
 
-    private void Update()
+    public void OnUpdate()
     {
-        transform.position += _speed * Time.deltaTime * transform.forward;
-    }
-    public void Setup(ProjectileConfig config,TriggersManager man)
-    {
-        _manager = man;
-        _ttl = config.TimeToLive;
-        _speed = config.ProjectileSpeed;
-        _pen = config.ProjectilePenetration;
+        transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
+        _exp -= Time.deltaTime;
+        if (_exp <= 0) ExpiryEvent?.Invoke(this);
     }
 
-    // todo fix maybe
-    private IEnumerator ActivationTimer()
+    public void OnExpiry()
     {
-        float time = 0f;
-        while (time < Constants.Combat.c_ProjectileTriggerActivateDelay)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-        _coll.enabled = true;
-        yield return null;
+        Destroy(gameObject);
     }
- 
+
 }
 

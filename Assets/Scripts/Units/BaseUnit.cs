@@ -27,7 +27,7 @@ public abstract class BaseUnit : MonoBehaviour
     public ControlInputsBase GetInputs() => _controller;
 
     [Inject] protected StatsUpdatesHandler _handler;
-    public abstract event SkillEventsHandler SkillRequestSuccessEvent;
+    public abstract event BaseUnitWithIDEvent SkillRequestSuccessEvent;
 
 
     public string GetFullName() => _baseStats.GetDisplayName;

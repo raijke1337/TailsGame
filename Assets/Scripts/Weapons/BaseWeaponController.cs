@@ -22,6 +22,7 @@ public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
     [SerializeField] protected Transform _meleeWeaponEmpty;
     [SerializeField] protected Transform _rangedWeaponEmpty;
     [SerializeField] protected Transform _sheathedWeaponEmpty;
+
     
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
 

@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private InputsPlayer _playerController;
-    public override event SkillEventsHandler SkillRequestSuccessEvent;
+    public override event BaseUnitWithIDEvent SkillRequestSuccessEvent;
 
 
 

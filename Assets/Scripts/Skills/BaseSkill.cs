@@ -13,23 +13,25 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Collider))]
 public abstract class BaseSkill : MonoBehaviour
 {
-    public string ID;
+    public string SkillID;
     public BaseUnit Source;
 
+    public SkillData SkillData;
 
+    public GameObject EffectPrefab;
 
     private Collider _coll;
 
-    protected abstract void OnEnable();
-    protected abstract void OnDisable();
-    protected abstract void Update();
-    protected abstract void OnTriggerEnter();
+    protected abstract void OnTriggerEnter(Collider other);
+
 
     private void Awake()
     {
+        if (EffectPrefab == null || EffectPrefab.GetComponent<SkillAreaComp>() == null) Debug.LogError($"Set prefab for {this}");
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
     }
+
 
 }
 

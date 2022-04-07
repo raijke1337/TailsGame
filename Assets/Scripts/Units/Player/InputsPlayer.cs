@@ -120,7 +120,11 @@ public class InputsPlayer : ControlInputsBase
     private void RangedAttack_performed(CallbackContext obj)
     {
         if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Ranged))
-            CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged);
+        { 
+            CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged); 
+            
+        }
+
     }
     private void MeleeAttack_performed(CallbackContext obj)
     {

@@ -11,12 +11,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class PickUpTrigger : BaseTrigger
+public class PickUpTrigger : LevelItemTrigger
 {
     protected override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
-        Destroy(gameObject);
+        if (tgt != null)
+        {
+            Destroy(gameObject);
+        }
     }
 }
 

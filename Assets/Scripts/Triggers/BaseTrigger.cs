@@ -17,37 +17,25 @@ public abstract class BaseTrigger : MonoBehaviour
 {
 
     protected Collider _coll;
-    [Inject,SerializeField]
-    protected TriggersManager _manager;
+    [Inject]
+    protected TriggersProjectilesManager _manager; // only works for pre-spawned items todo
 
     public List<string> TriggerEffectIDs;
-
-
-    public bool Enable
+    public virtual bool Enable
     { 
         get => _coll.enabled;
         set => _coll.enabled = value;
     }
+
     protected void Awake()
     {
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<BaseUnit>()!=null)
-        {
-            var tgt = other.GetComponent<BaseUnit>();
-            foreach (var id in TriggerEffectIDs)
-            {
-                _manager.Activation(id, tgt);
-            }
-        }
-    }
+    protected abstract void OnTriggerEnter(Collider other);
 
     protected virtual void OnTriggerExit(Collider other) { }
 
-    public string GetName() => name;
 }
 

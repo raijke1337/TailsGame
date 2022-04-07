@@ -5,8 +5,11 @@ using UnityEngine.EventSystems;
 
 public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
+public delegate void SimpleEventsHandler<T1,T2>(T1 arg1,T2 arg2);
+
 public delegate void WeaponSwitchEventHandler(WeaponType type);
-public delegate void SkillEventsHandler(string ID, BaseUnit source);
+public delegate void BaseUnitWithIDEvent(string ID, BaseUnit unit);
+public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
 
 
 
@@ -26,7 +29,7 @@ public static class Constants
     {
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
         public const float c_RemainsDisappearTimer = 5f;
-        public const float c_ProjectileTriggerActivateDelay = 0.15f;
+        //public const float c_ProjectileTriggerActivateDelay = 0.15f;
     }
     public static class Skills
     {
@@ -44,8 +47,6 @@ public struct EnemyStats
 
     public float LookSpereCastRadius;
     public float LookSpereCastRange;
-
-
     public EnemyStats(EnemyStatsConfig cfg)
     {
         TimeBetweenAttacks = cfg.atkCD;
@@ -66,8 +67,6 @@ public interface IStatsAddEffects
 {
     void AddTriggeredEffect(TriggeredEffect effect);
 }
-
-
 public interface IWeapon : IHasGameObject
 {    
     bool UseWeapon();
@@ -78,13 +77,24 @@ public interface IWeapon : IHasGameObject
 public interface IHasGameObject
 { public GameObject GetObject(); }
 
+public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
+{
+    public event MouseOverEvents SelectionEvent;
+}
+
+public interface IProjectile
+{
+    void OnSpawn();
+    void OnUpdate();
+    void OnExpiry();
+    event SimpleEventsHandler<IProjectile> ExpiryEvent;
+    void SetProjectileData(ProjectileDataConfig cfg);
+    event BaseUnitWithIDEvent TriggerHitEvent;
+}
 
 #endregion
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
-
-
-[Serializable]
-public class StatValueContainer
+[Serializable] public class StatValueContainer
 {
     [SerializeField,] private float _start;
     [SerializeField] private float _max;
@@ -122,10 +132,36 @@ public class StatValueContainer
     }
 }
 
-public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
-public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
+
+[Serializable]
+public struct ProjectileData
 {
-    public event MouseOverEvents SelectionEvent;
+    public float TimeToLive;
+    public float Speed;
+    public int Penetration;
+
+    public ProjectileData(ProjectileDataConfig config)
+    {
+        TimeToLive = config.TimeToLive;
+        Speed = config.ProjectileSpeed;
+        Penetration = config.ProjectilePenetration;
+    }
 }
+
+[Serializable]
+public struct SkillData
+{
+    public Sprite Icon;
+    public float Recharge;
+    public float FinalArea;
+    public float StartArea;
+    public float PersistTime;
+    public SkillData(SkillData refs)
+    {
+        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime;
+    }
+}
+
+
 
 

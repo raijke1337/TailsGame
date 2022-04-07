@@ -15,24 +15,21 @@ using Zenject;
 public class RangedWeapon : BaseWeapon
 {
     [SerializeField,Range(0,5), Tooltip("time to reload")]protected float _reload = 2f;
-    [SerializeField, Range(3,20), Tooltip("speed of projectile")] protected float projectileSpeed = 5f;
     [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
-    [SerializeField, Range(0, 10), Tooltip("targets a projectile penetrates")] protected int _pen = 2;
     
     
     [SerializeField] protected string _projectileID;
     private GameObject _projectilePrefab;
-    private ProjectileConfig _projectileCfg;
+
 
     protected int shotsToDo = 1;
-    [Inject] TriggersManager _tMan;
 
+    public event SimpleEventsHandler<IProjectile,string> PlacedProjectileEvent;
 
     protected virtual void Start()
     {
         _currentCharges = MaxCharges;
         _projectilePrefab = Extensions.GetAssetsFromPath<GameObject>(Constants.Combat.c_WeaponPrefabsPath).First(t => t.name == _projectileID);
-        _projectileCfg = Extensions.GetAssetsFromPath<ProjectileConfig>(Constants.Configs.c_ProjectileConfigsPath).First(t => t.name == _projectileID);
     }
 
     public override bool UseWeapon()
@@ -67,11 +64,11 @@ public class RangedWeapon : BaseWeapon
 
         var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
         pr.transform.forward = _player.transform.forward + new Vector3(0f, Extensions.GetRandomFloat(_spreadMax),0f);
-        // a bit of spread
+        // a bit of spread        
 
         var comp = pr.GetComponent<ProjectileTrigger>();
-        comp.Setup(_projectileCfg, _tMan);
 
+        PlacedProjectileEvent?.Invoke(comp, _projectileID);
     }
     protected virtual void CheckReload()
     {

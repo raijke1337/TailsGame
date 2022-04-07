@@ -10,15 +10,14 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(fileName = "New ProjectileConfig", menuName = "Configurations/Projectiles", order = 1)]
-public class ProjectileConfig : ScriptableObject
+
+[CreateAssetMenu(fileName = "New SkillControllerDataConfig", menuName = "Configurations/Skills")]
+public class SkillControllerDataConfig : ScriptableObject
 {
     public string ID;
+    public CombatActionType SkillType;
 
-    public float TimeToLive;
-    public float ProjectileSpeed;
-    public float ProjectilePenetration;
-
-
+    public SkillData Data;
 }
+
 

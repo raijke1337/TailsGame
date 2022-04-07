@@ -17,14 +17,21 @@ public class SkillsPlacerManager : MonoBehaviour
     [SerializeField] SerializableDictionaryBase<string,BaseSkill> _skillsDict;
     // todo load from folder
 
-    private List<BaseSkill> _placedSkills = new List<BaseSkill>(); // todo not used 
-
     private UnitsManager _unitsM;
+    public event SimpleEventsHandler<IProjectile,string> ProjectileSkillCreatedEvent;
+
+    private Dictionary<string,SkillData> _datas = new Dictionary<string,SkillData>();
 
     private void OnEnable()
     {
         _unitsM = GetComponent<UnitsManager>();
         _unitsM.RequestToPlaceSkills += PlaceSkill;
+
+        var cfgs = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath);
+        foreach (var cfg in cfgs)
+        {
+            _datas.Add(cfg.ID,cfg.Data);
+        }
     }
     private void OnDisable()
     {
@@ -33,9 +40,20 @@ public class SkillsPlacerManager : MonoBehaviour
 
     private void PlaceSkill(string ID, BaseUnit source)
     {
-        Debug.Log($"{source.GetFullName()} requested skill ID {ID}");
         var skill = Instantiate(_skillsDict[ID]);
         skill.Source = source;
+
+        skill.SkillData = new SkillData(_datas[ID]);
+
+        skill.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
+        skill.transform.forward = source.transform.forward;
+
+
+        if (skill is IProjectile)
+        {
+            var sk = skill as IProjectile;
+            ProjectileSkillCreatedEvent?.Invoke(sk, ID);            
+        }
     }
 }
 
