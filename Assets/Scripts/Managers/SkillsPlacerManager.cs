@@ -7,7 +7,6 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEditor;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
@@ -45,7 +44,7 @@ public class SkillsPlacerManager : MonoBehaviour
 
         skill.SkillData = new SkillData(_datas[ID]);
 
-        skill.transform.SetPositionAndRotation(source.transform.position, source.transform.rotation);
+        skill.transform.SetPositionAndRotation(source.transform.position+source.transform.up, source.transform.rotation);
         skill.transform.forward = source.transform.forward;
 
 

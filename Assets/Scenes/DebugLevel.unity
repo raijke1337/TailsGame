@@ -5361,7 +5361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a95de394cd8c0e14ab5d0ce265e8430f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a95de394cd8c0e14ab5d0ce265e8430f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5369,7 +5369,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a95de394cd8c0e14ab5d0ce265e8430f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 16.75
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: a95de394cd8c0e14ab5d0ce265e8430f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8342,7 +8342,6 @@ GameObject:
   - component: {fileID: 1086443991}
   - component: {fileID: 1086443993}
   - component: {fileID: 1086443994}
-  - component: {fileID: 1086443995}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -8558,18 +8557,6 @@ MonoBehaviour:
     - crossbow_explosive
     _values:
     - {fileID: 7490823917269097011, guid: 52012852576cb13419f87eb538b6393a, type: 3}
---- !u!114 &1086443995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1086443984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6217851333bb79b48b2264e9ec594ea4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1097563990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17795,7 +17782,7 @@ MonoBehaviour:
         draggable: 1
         expandable: 1
         multipleSelection: 1
-        isExpanded: 0
+        isExpanded: 1
         label:
           m_Text: Keys
           m_Image: {fileID: 0}
@@ -17810,10 +17797,26 @@ MonoBehaviour:
         elementNameOverride: 
         elementIcon: {fileID: 0}
       reqReferences: {fileID: 0}
-      isExpanded: 0
-      _keyValues: 
-      _keys: 
-      _values: []
+      isExpanded: 1
+      _keyValues: 01000000000000000200000003000000
+      _keys: 01000000000000000200000003000000
+      _values:
+      - _start: 2
+        _max: 10
+        _min: 0
+        _current: 0
+      - _start: 300
+        _max: 300
+        _min: 0
+        _current: 0
+      - _start: 1
+        _max: 5
+        _min: 0
+        _current: 0
+      - _start: 0.8
+        _max: 1
+        _min: 0
+        _current: 0
   _shieldSkillID: shield_heal
   _aim: {fileID: 0}
 --- !u!114 &5191026039628492188

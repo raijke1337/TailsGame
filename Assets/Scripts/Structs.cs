@@ -17,44 +17,29 @@ public static class Constants
 {
     public static class Configs
     {
-        public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers";
-        public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons";
-        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats";
-        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats";
-        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles";
-        public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills";
-        public const string c_ShieldConfigsPath = "/Scripts/Configurations/Shield";
+        public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers/";
+        public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons/";
+        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats/";
+        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats/";
+        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles/";
+        public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills/";
+        public const string c_ShieldConfigsPath = "/Scripts/Configurations/Shield/";
+#if UNITY_EDITOR
+        public const string c_AllConfigsPath = "/Scripts/Configurations/";
+#endif
     }
+
     public static class Combat
     {
-        public const string c_WeaponPrefabsPath = "/Prefabs/Weapons";
-        public const float c_RemainsDisappearTimer = 5f;
-        //public const float c_ProjectileTriggerActivateDelay = 0.15f;
+        public const string c_WeaponPrefabsPath = "/Prefabs/Weapons/";
+        public const float c_RemainsDisappearTimer = 3f;
     }
     public static class Skills
     {
-        public const string c_SkillPrefabs = "/Scripts/Skills/Prefabs";
-    }
-    // to not damage self with projectiles, obvious bandaid todo
-}
-
-
-
-public struct EnemyStats
-{
-    public float AttackRange;
-    public float TimeBetweenAttacks;
-
-    public float LookSpereCastRadius;
-    public float LookSpereCastRange;
-    public EnemyStats(EnemyStatsConfig cfg)
-    {
-        TimeBetweenAttacks = cfg.atkCD;
-        LookSpereCastRadius = cfg.lookSphereRad;
-        LookSpereCastRange = cfg.lookRange;
-        AttackRange = cfg.atkRange;
+        public const string c_SkillPrefabs = "/Scripts/Skills/Prefabs/";
     }
 }
+
 
 #region interfaces
 
@@ -162,6 +147,23 @@ public struct SkillData
     }
 }
 
+
+[Serializable]
+public struct EnemyStats
+{
+    public float AttackRange;
+    public float TimeBetweenAttacks;
+
+    public float LookSpereCastRadius;
+    public float LookSpereCastRange;
+    public EnemyStats(EnemyStatsConfig cfg)
+    {
+        TimeBetweenAttacks = cfg.atkCD;
+        LookSpereCastRadius = cfg.lookSphereRad;
+        LookSpereCastRange = cfg.lookRange;
+        AttackRange = cfg.atkRange;
+    }
+}
 
 
 

@@ -1,64 +1,59 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
+using UnityEngine;
 
 public static class Extensions
 {/// <summary>
 /// get assets of T type
 /// </summary>
 /// <typeparam name="T">any class</typeparam>
-/// <param name="path">path starts with / and ends without one</param>
-/// <returns></returns>
-    public static List<T> GetAssetsFromPath<T> (string path) where T: class
+/// <param name="path">refer to Constants</param>
+/// <param name="editorMode">look in subfolders instead</param>
+/// <returns>list of assets in specified folder</returns>
+    public static List<T> GetAssetsFromPath<T> (string path,bool editorMode = false) where T: class
     {
-        List<T> list = new List<T>();
-        string[] files = Directory.GetFiles(Application.dataPath + path);
+        List<T> result = new List<T>();
+        List<string> workPaths = new List<string>();
 
-        string relativePath = "Assets" + path;
-
-        foreach (string loc in files)
+        if (!editorMode)
         {
-            string filePath;
-            int index = loc.LastIndexOf(@"\");
-            // remove everything before the last \
-            filePath = relativePath + loc.Substring(index);
-            filePath.Replace(@"\", @"/");
-
-            var file = AssetDatabase.LoadAssetAtPath(filePath, typeof(T));
-            if (file is T)
+            workPaths.Add(path);
+        }
+        if (editorMode)
+        {
+            var folders = Directory.GetDirectories(Application.dataPath + path);
+            List<string> fixedFolders = new List<string>();
+            foreach (var folder in folders)
             {
-                list.Add(file as T);
+                string foldername = folder.Substring(folder.LastIndexOf("/") + 1);
+                workPaths.Add(path + foldername + "/");
             }
         }
-        return list;
+        List<string> filesAtPaths = new List<string>();
+        foreach (var folder in workPaths)
+        {
+            var res = (Directory.GetFiles(Application.dataPath + folder));
+            filesAtPaths.AddRange(res);
+        }        
+
+        foreach (string found in filesAtPaths)
+        {
+            var replace = Application.dataPath;
+            var foundRelativ = found.Replace(replace.ToString(), "Assets");
+
+            var file = AssetDatabase.LoadAssetAtPath(foundRelativ, typeof(T));
+            if (file is T)
+            {
+                result.Add(file as T);
+            }
+        }
+        return result;
     }
 
     public static float GetRandomFloat(float max)
     {
-        return UnityEngine.Random.Range(0, max);
+        return Random.Range(0, max);
     }
-
-    //public static SerializableDictionaryBase<Tk,Tv> GetStatDictionaryByTypeAndID<Tk,Tv>(string ID, StatRequestType requestedType)
-    //{
-
-    //}
-
-    //public enum StatRequestType
-    //{
-    //    BaseStats,
-    //    DodgeStats,
-    //    EnemyStats
-    //}
-
 
 }
