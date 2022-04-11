@@ -14,9 +14,8 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats", order = 1)]
 
-public class BaseStatsConfig : ScriptableObject
+public class BaseStatsConfig : ScriptableObjectID
 {
-    public string ID;
     public string displayName;
     public SerializableDictionaryBase<StatType, StatValueContainer> Stats;
 }

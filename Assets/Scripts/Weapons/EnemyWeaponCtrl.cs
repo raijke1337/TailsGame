@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 [Serializable]
-public class EnemyWeaponCtrl : BaseWeaponController
+public class EnemyWeaponCtrl : WeaponController
 {
 
 

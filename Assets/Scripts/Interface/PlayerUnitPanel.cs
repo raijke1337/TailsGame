@@ -20,7 +20,7 @@ public class PlayerUnitPanel : BaseUnitPanel
     private PlayerUnit _player;
 
     private DodgeController _dodge;
-    private PlayerWeaponController _weapons;
+    private WeaponController _weapons;
     private ShieldController _shield;
 
     private StatValueContainer HPc;
@@ -58,7 +58,7 @@ public class PlayerUnitPanel : BaseUnitPanel
     protected override void RunSetup()
     {
         _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
-        _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController as PlayerWeaponController;
+        _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
 
         HPc = _player.GetStats()[StatType.Health];

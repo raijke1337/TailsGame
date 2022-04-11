@@ -18,21 +18,32 @@ public class SkillsController : IStatsComponentForHandler
     [SerializeField] private List<string> IDs;
     private Dictionary<CombatActionType, SkillControllerData> _skills;
 
+    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; 
+
     public SkillsController(List<string> skills)
     {
         IDs = new List<string>();
         IDs.AddRange(skills);
     }
 
-    // crossbow_explosive
-    // hammer_spin
-    // shield_heal
-    // use mono class for ingame activities
-    // use SO config to set base values
 
-    public bool RequestSkill (CombatActionType type)
+    public bool RequestSkill (CombatActionType type, out float cost)
     {
-        return _skills[type].RequestUse();
+        var result = _skills[type].RequestUse();
+        cost = _skills[type].GetCost;
+        if (result)
+        {
+            switch (type)
+            {
+                case CombatActionType.MeleeSpecialQ:
+                    SwitchAnimationLayersEvent?.Invoke(WeaponType.Melee);
+                    break;
+                case CombatActionType.RangedSpecialE:
+                    SwitchAnimationLayersEvent?.Invoke(WeaponType.Ranged);
+                    break;
+            }
+        }
+        return result;
     }
 
     public void SetupStatsComponent()

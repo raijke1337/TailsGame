@@ -18,7 +18,6 @@ public class InputsPlayer : ControlInputsBase
 {
     private PlayerControls _controls;
 
-    [SerializeField] private PlayerWeaponController _playerWeaponCtrl;
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private SkillsController _skillCtrl;
     [SerializeField] private ShieldController _shieldCtrl;
@@ -32,11 +31,8 @@ public class InputsPlayer : ControlInputsBase
     public SkillsController GetSkillsController => _skillCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
 
-
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
-    public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
-    private void DoSwitchLayer(WeaponType type) => ChangeLayerEvent?.Invoke(type);
 
     private void OnDisable()
     {
@@ -71,15 +67,15 @@ public class InputsPlayer : ControlInputsBase
 
             _selector = GetComponent<SelectorComponent>();
 
-            _playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
+            //_playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
 
             _adj = new IsoCamAdjust();
 
-            var skills = _playerWeaponCtrl.GetSkillIDs(); // run later 
+            var skills = _weaponCtrl.GetSkillIDs(); 
 
             skills.Add(_shieldSkillID);
             _skillCtrl = new SkillsController(skills);
-            _shieldCtrl = new ShieldController("player"); // todo placeholder
+            _shieldCtrl = new ShieldController("player"); // todo proper setup
 
 
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
@@ -93,7 +89,8 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
 
-            _playerWeaponCtrl.SwitchAnimationLayersEvent += DoSwitchLayer;
+            _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+            _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
 
             _aim = GetComponentInChildren<CrosshairScript>();
             _aim.transform.parent = null;
@@ -110,49 +107,59 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
 
-            _playerWeaponCtrl.SwitchAnimationLayersEvent -= DoSwitchLayer;
+            _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
+            _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
         }
 
     }
+
+    private void SwitchAnimatorLayer(WeaponType type)
+    {
+        if (_weaponCtrl.GetCurrentWeaponType != type)
+        {
+            ChangeLayerEvent?.Invoke(type);
+        }
+    }
+
 
     #region controller checks
 
     private void RangedAttack_performed(CallbackContext obj)
     {
-        if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Ranged))
-        { 
-            CombatActionSuccessEvent?.Invoke(CombatActionType.Ranged); 
-            
-        }
-
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
+            CombatActionSuccessCallback(CombatActionType.Ranged);             
+        
     }
     private void MeleeAttack_performed(CallbackContext obj)
     {
-        if (_playerWeaponCtrl.UseWeaponCheck(WeaponType.Melee))
-            CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
+            CombatActionSuccessCallback(CombatActionType.Melee);
     }
     private void SkillR_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
-        if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR))
+        if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR,out var c))
         {
-            CombatActionSuccessEvent?.Invoke(CombatActionType.ShieldSpecialR);
+            if (_statsCtrl.RequestHeatUsage(c))
+            CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
         }
     }
     private void SkillQ_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
-        if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ))
+        if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ, out var c))
         {
-            CombatActionSuccessEvent?.Invoke(CombatActionType.MeleeSpecialQ);
+            if (_statsCtrl.RequestHeatUsage(c))
+                CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
         }
     }
     private void SkillE_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
-        if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE))
+        if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE, out var c))
         {
-            CombatActionSuccessEvent?.Invoke(CombatActionType.RangedSpecialE);
+            if (_statsCtrl.RequestHeatUsage(c))
+                CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
         }
     }
     private void Dash_performed(CallbackContext obj)
@@ -160,7 +167,7 @@ public class InputsPlayer : ControlInputsBase
         if (IsControlsBusy) return;
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
-            CombatActionSuccessEvent?.Invoke(CombatActionType.Dodge);
+            CombatActionSuccessCallback(CombatActionType.Dodge);
         }
     }
     #endregion

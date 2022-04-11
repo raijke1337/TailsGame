@@ -23,7 +23,7 @@ public class ConfigurationsEditor : EditorWindow
         VisualElement root = rootVisualElement;
 
         // load configs
-        var configs = Extensions.GetAssetsFromPath<ScriptableObject>(Constants.Configs.c_AllConfigsPath, true);
+        var configs = Extensions.GetAssetsFromPath<ScriptableObjectID>(Constants.Configs.c_AllConfigsPath, true);
 
         // this makes a split view
         var split = new TwoPaneSplitView(0, 250, TwoPaneSplitViewOrientation.Horizontal);
@@ -44,14 +44,14 @@ public class ConfigurationsEditor : EditorWindow
         // set up the right part
         right = new VisualElement();
         split.Add(right);
-        right.Add(new Label { text = "test" });
-
     }
 
     private void Left_onSelectionChange(IEnumerable<object> items)
     {
         right.Clear();
-        var selectedCfg = items.First() as ScriptableObject;
+        var selectedCfg = items.First() as ScriptableObjectID;
+        if (selectedCfg == null) return;
+        right.Add(new Label { text = selectedCfg.ID });
     }
 }
 

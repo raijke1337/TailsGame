@@ -16,13 +16,10 @@ public class TriggersProjectilesManager : MonoBehaviour
 {
     // transform, destroy
     private List<IProjectile> _projectiles = new List<IProjectile>();
-
+    private PlayerUnit player;
 
     [SerializeField] private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
     [SerializeField] private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
-
-    [Inject]
-    private PlayerUnit _player;
 
     private SkillsPlacerManager _skillsMan;
 
@@ -30,46 +27,53 @@ public class TriggersProjectilesManager : MonoBehaviour
     {
         UpdateDatas();
         var rangedWeapons = FindObjectsOfType<RangedWeapon>();
+        var baseTriggers = FindObjectsOfType<BaseTrigger>();
+
         foreach (var w in rangedWeapons)
         {
             w.PlacedProjectileEvent += NewProjectile;
         }
+        foreach (var triggerplacer in baseTriggers)
+        {
+            triggerplacer.TriggerApplicationRequestEvent += ApplyTriggerEffect;
+        }
         _skillsMan = GetComponent<SkillsPlacerManager>();
         _skillsMan.ProjectileSkillCreatedEvent += NewProjectile;
+        _skillsMan.SkillAreaPlacedEvent += RegisterTrigger;
+
+        player = _skillsMan.GetUnitsManager.GetPlayerUnit();
     }
 
-    // todo??
-    // here we send the original triggered effect to unit
-    public void ApplyTriggerEffect(string ID, BaseUnit target)
+
+    private void ApplyTriggerEffect(string ID, BaseUnit target)
     {
         var config = _configs.First(t => t.ID == ID);
-
-        switch (config.TargetType)
+        if (config.StatID == StatType.Heat || config.StatID == StatType.HeatRegen) // todo implement proper combo points handling
         {
-            case TriggeredEffectTargetType.Target:
-                target.ApplyEffect(new TriggeredEffect(config));
-                break;
-
-            case TriggeredEffectTargetType.Self:
-                _player.ApplyEffect(new TriggeredEffect(config));
-                break;
-        };
+            target = player;
+        }
+        target.ApplyEffect(new TriggeredEffect(config));
+        Debug.Log($"Applying trigger: {ID} to {target.GetFullName()}");
     }
 
+    private void RegisterTrigger(IAppliesTriggers item)
+    {
+        item.TriggerApplicationRequestEvent += ApplyTriggerEffect;
+    }
     private void NewProjectile (IProjectile proj, string ID)
     {
         _projectiles.Add(proj);
         proj.SetProjectileData(_projectileCfgs.First(t => t.ID == ID));
-        proj.TriggerHitEvent += (t1, t2) => ProjectileCollisionHandling(t1, t2, proj);
-        proj.ExpiryEvent += ProjectileExpiryHandling;
-        proj.OnSpawn();
+        RegisterTrigger(proj);
+        proj.ExpiryEventProjectile += ProjectileExpiryHandling;
+        proj.OnSpawnProj();
     }
 
-    private void ProjectileExpiryHandling(IProjectile arg)
+    private void ProjectileExpiryHandling(IProjectile proj)
     {
-        _projectiles.Remove(arg);
-        arg.TriggerHitEvent -= (t1, t2) => ProjectileCollisionHandling(t1, t2, arg);
-        arg.OnExpiry();
+        _projectiles.Remove(proj);
+        proj.TriggerApplicationRequestEvent -= (t1, t2) => ProjectileCollisionHandling(t1, t2, proj);
+        proj.OnExpiryProj();
     }
 
     private void ProjectileCollisionHandling(string triggerId, BaseUnit target, IProjectile projectile)
@@ -82,7 +86,7 @@ public class TriggersProjectilesManager : MonoBehaviour
         foreach (var p in _projectiles.ToList())
         {
             if (p == null) return;
-            p.OnUpdate();
+            p.OnUpdateProj();
         }
     }
 

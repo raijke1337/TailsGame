@@ -14,8 +14,6 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private InputsPlayer _playerController;
-    public override event BaseUnitWithIDEvent SkillRequestSuccessEvent;
-
 
 
     protected override void OnEnable()
@@ -88,7 +86,7 @@ public class PlayerUnit : BaseUnit
     #endregion
 
     private void ChangeAnimatorLayer(WeaponType type)
-    {
+    {     
         // 1 is ranged 2 is hammer
         switch (type)
         {
@@ -166,15 +164,14 @@ public class PlayerUnit : BaseUnit
         switch (type)
         {
             case CombatActionType.MeleeSpecialQ:
-                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
+                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
                 break;
             case CombatActionType.RangedSpecialE:
-                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
+                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
                 break;
             case CombatActionType.ShieldSpecialR:
-                SkillRequestSuccessEvent?.Invoke(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
+                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
                 break;
         }
     }
-
 }

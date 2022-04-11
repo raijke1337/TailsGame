@@ -30,6 +30,16 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         _effects = new List<TriggeredEffect>();
     }
 
+    public bool RequestHeatUsage(float value)
+    {
+        var result = (_stats[StatType.Heat].GetCurrent() + value) >= 0; // + because values are negative
+        if (result)
+        {
+            _stats[StatType.Heat].ChangeCurrent(value);
+        }
+        return result;
+    }
+
     public BaseStatsController (string ID)
     {
         _stats = new SerializableDictionaryBase<StatType, StatValueContainer>();
@@ -52,8 +62,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
         _displayName = cfg.displayName;
     }
-
-
     #region handler
     // regeneration and degradation of stats goes here
     // also calculations of applied effects
@@ -94,10 +102,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
             }
         }
     }
-
-
-
-
     // here we need to recalculate the damages if the unit has a shield 
     public void AddTriggeredEffect(TriggeredEffect effect)
     {

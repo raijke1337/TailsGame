@@ -14,16 +14,6 @@ using Zenject;
 
 public class WeaponHitTrigger : BaseTrigger
 {
-    protected override void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<BaseUnit>() != null)
-        {
-            var tgt = other.GetComponent<BaseUnit>();
-            foreach (var id in TriggerEffectIDs)
-            {
-                _manager.ApplyTriggerEffect(id, tgt);
-            }
-        }
-    }
+
 }
 

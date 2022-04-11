@@ -23,7 +23,6 @@ public class InputsNPC : ControlInputsBase
     [SerializeField] protected string enemyStatsID = default;
     protected EnemyStats _enemyStats;
     public EnemyStats GetStats => _enemyStats;
-    public override event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
 
 
     [HideInInspector] public NavMeshAgent NavMeshAg;
@@ -129,7 +128,7 @@ public class InputsNPC : ControlInputsBase
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
         {
             _timeSinceAttack = 0f;
-            CombatActionSuccessEvent?.Invoke(CombatActionType.Melee);
+            CombatActionSuccessCallback(CombatActionType.Melee);
         }
     }
 

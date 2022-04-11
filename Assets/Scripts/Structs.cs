@@ -39,45 +39,6 @@ public static class Constants
         public const string c_SkillPrefabs = "/Scripts/Skills/Prefabs/";
     }
 }
-
-
-#region interfaces
-
-public interface IStatsComponentForHandler
-{ 
-    void UpdateInDelta(float deltaTime);
-    void SetupStatsComponent();
-}
-public interface IStatsAddEffects
-{
-    void AddTriggeredEffect(TriggeredEffect effect);
-}
-public interface IWeapon : IHasGameObject
-{    
-    bool UseWeapon();
-    int GetAmmo();
-    string GetRelatedSkillID();
-}
-
-public interface IHasGameObject
-{ public GameObject GetObject(); }
-
-public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
-{
-    public event MouseOverEvents SelectionEvent;
-}
-
-public interface IProjectile
-{
-    void OnSpawn();
-    void OnUpdate();
-    void OnExpiry();
-    event SimpleEventsHandler<IProjectile> ExpiryEvent;
-    void SetProjectileData(ProjectileDataConfig cfg);
-    event BaseUnitWithIDEvent TriggerHitEvent;
-}
-
-#endregion
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
 [Serializable] public class StatValueContainer
 {
@@ -141,9 +102,13 @@ public struct SkillData
     public float FinalArea;
     public float StartArea;
     public float PersistTime;
+    public float SkillCost;
+
+    public SkillTargetType Type;
+
     public SkillData(SkillData refs)
     {
-        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime;
+        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; Type = refs.Type;
     }
 }
 
@@ -165,5 +130,48 @@ public struct EnemyStats
     }
 }
 
+
+
+#region interfaces
+
+public interface IStatsComponentForHandler
+{
+    void UpdateInDelta(float deltaTime);
+    void SetupStatsComponent();
+}
+public interface IStatsAddEffects
+{
+    void AddTriggeredEffect(TriggeredEffect effect);
+}
+public interface IWeapon : IHasGameObject
+{
+    bool UseWeapon();
+    int GetAmmo();
+    string GetRelatedSkillID();
+}
+
+public interface IHasGameObject
+{ public GameObject GetObject(); }
+
+public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
+{
+    public event MouseOverEvents SelectionEvent;
+}
+
+public interface IProjectile : IAppliesTriggers
+{
+    void OnSpawnProj();
+    void OnUpdateProj();
+    void OnExpiryProj();
+    event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
+    void SetProjectileData(ProjectileDataConfig cfg);
+
+}
+public interface IAppliesTriggers
+{ event BaseUnitWithIDEvent TriggerApplicationRequestEvent; }
+
+
+
+#endregion
 
 

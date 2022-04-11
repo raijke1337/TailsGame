@@ -21,20 +21,19 @@ public class TriggeredEffect
     public float TotalDuration; 
     public Sprite Icon;
 
-    public TriggeredEffectTargetType TargetType;
 
     public float CurrentRepeatTimer; // used by stats controller to do ticks
     public bool InitialDone = false; // is initial value applied
 
-    public TriggeredEffect (string id,StatType type,float init,float repeat = 0,float repeatDelay = 0,float totalDuration = 0, Sprite icon = null, TriggeredEffectTargetType tgtType = TriggeredEffectTargetType.Target)
+    public TriggeredEffect (string id,StatType type,float init,float repeat = 0,float repeatDelay = 0,float totalDuration = 0, Sprite icon = null)
     {
         ID = id; StatID = type; InitialValue = init;RepeatedValue = repeat;RepeatApplicationDelay = repeatDelay;TotalDuration = totalDuration; Icon = icon;
-        CurrentRepeatTimer = RepeatApplicationDelay; TargetType = tgtType;
+        CurrentRepeatTimer = RepeatApplicationDelay;
     }
     public TriggeredEffect(BaseStatTriggerConfig config)
     {
         ID = config.ID; StatID = config.StatID; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
-        CurrentRepeatTimer = RepeatApplicationDelay; TargetType = config.TargetType;
+        CurrentRepeatTimer = RepeatApplicationDelay; 
     }
 
 }

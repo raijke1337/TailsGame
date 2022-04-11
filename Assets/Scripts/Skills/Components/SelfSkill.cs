@@ -11,8 +11,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class PlayerWeaponController : BaseWeaponController
+public class SelfSkill : BaseSkill
 {
-
+    protected override void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(Source.tag))
+        {
+            var eff = PlaceAndSubEffect(other.transform);
+            Destroy(gameObject);
+        }
+    }
 }
 

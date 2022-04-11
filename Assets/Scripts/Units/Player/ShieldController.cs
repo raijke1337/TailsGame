@@ -60,7 +60,7 @@ public class ShieldController : IStatsComponentForHandler
             var AdjRep = effect.RepeatedValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent();
             effect.RepeatedValue -= AdjRep;
 
-            TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatID, adjDmg,AdjRep,effect.RepeatApplicationDelay,effect.TotalDuration,effect.Icon,effect.TargetType);
+            TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatID, adjDmg,AdjRep,effect.RepeatApplicationDelay,effect.TotalDuration,effect.Icon);
             _effects.Add(_shieldAbsord);
 
             return effect;

@@ -13,16 +13,36 @@ using UnityEngine.InputSystem;
 
 public class SkillAreaComp : MonoBehaviour
 {
-    public virtual event SimpleEventsHandler<BaseUnit> TargetHitEvent;
+    public event SimpleEventsHandler<BaseUnit> TargetHitEvent;
     public SkillData Data;
-
+    public BaseUnit Source;
     protected virtual void OnTriggerEnter(Collider other)
     {
         var comp = other.GetComponent<BaseUnit>();
-        if (comp!=null)
+        if (comp == null) return;
+
+        switch (Data.Type)
         {
-            TargetHitEvent?.Invoke(comp);
+            case SkillTargetType.TargetsEnemies:
+                if (comp.Side != Source.Side)
+                {
+                    TargetHitEvent?.Invoke(comp);
+                }
+                break;
+            case SkillTargetType.TargetsUser:
+                if (comp == Source)
+                {
+                    TargetHitEvent?.Invoke(comp);
+                }
+                break;
+            case SkillTargetType.TargetsAllies:
+                if (comp.Side == Source.Side)
+                { 
+                    TargetHitEvent?.Invoke(comp);
+                }
+                break;
         }
+
     }
     private void Awake()
     {

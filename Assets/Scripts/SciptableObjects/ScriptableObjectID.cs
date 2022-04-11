@@ -11,8 +11,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class ScriptableObjectID : ScriptableObject
+[Serializable]
+public abstract class ScriptableObjectID : ScriptableObject
 {
-        
+    public string ID;
 }
 

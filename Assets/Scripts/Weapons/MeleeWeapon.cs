@@ -23,8 +23,6 @@ public class MeleeWeapon : BaseWeapon
     }
 
 
-
-
     public void ToggleColliders(bool enable)
     {
         _trigger.Enable = enable;

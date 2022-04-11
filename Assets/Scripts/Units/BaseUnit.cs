@@ -19,22 +19,24 @@ public abstract class BaseUnit : MonoBehaviour
 
     protected Animator _animator;
     protected Rigidbody _rigidbody;
-
     protected BaseStatsController _baseStats;
     protected ControlInputsBase _controller;
 
-    public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
-    public ControlInputsBase GetInputs() => _controller;
 
-    [Inject] protected StatsUpdatesHandler _handler;
-    public abstract event BaseUnitWithIDEvent SkillRequestSuccessEvent;
+    public Side Side;
+    public Transform SkillsPosition;
+
+    public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+    [Inject] protected StatsUpdatesHandler _handler;    
+
 
 
     public string GetFullName() => _baseStats.GetDisplayName;
     public IReadOnlyDictionary<StatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
 
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
-
+    public event BaseUnitWithIDEvent SkillRequestSuccessEvent;
+    protected void SkillRequestCallBack(string id,BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id,unit);
 
     private Camera _faceCam;
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
@@ -49,7 +51,7 @@ public abstract class BaseUnit : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         _controller = GetComponent<ControlInputsBase>();
-
+        _controller.SetStatsController(_baseStats);
 
         _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
@@ -128,8 +130,6 @@ public abstract class BaseUnit : MonoBehaviour
 
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
-       // Debug.Log($"Animating {type} by {GetFullName()}");
-
         switch (type)
         {
             case CombatActionType.Melee:
@@ -185,10 +185,12 @@ public abstract class BaseUnit : MonoBehaviour
         yield return null;
     }
 
-
-
-
     public abstract void ApplyEffect(TriggeredEffect eff);
 
+
+    protected void OnValidate()
+    {
+        if (SkillsPosition == null) SkillsPosition = GetComponentsInChildren<Transform>().First(t => t.name.Contains("Hips"));
+    }
 }
 

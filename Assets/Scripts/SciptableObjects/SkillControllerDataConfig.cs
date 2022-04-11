@@ -12,9 +12,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "New SkillControllerDataConfig", menuName = "Configurations/Skills")]
-public class SkillControllerDataConfig : ScriptableObject
+public class SkillControllerDataConfig : ScriptableObjectID
 {
-    public string ID;
     public CombatActionType SkillType;
 
     public SkillData Data;

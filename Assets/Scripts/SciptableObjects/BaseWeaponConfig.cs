@@ -12,9 +12,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "New BaseWeaponConfig", menuName = "Configurations/Weapons", order = 1)]
-public class BaseWeaponConfig : ScriptableObject
+public class BaseWeaponConfig : ScriptableObjectID
 {
-    public string ID;
 
     public WeaponType WType;
 

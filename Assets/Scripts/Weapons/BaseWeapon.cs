@@ -1,17 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 using Zenject;
-[RequireComponent(typeof(ZenjectDynamicObjectInjection))]
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
     public string ID;
@@ -33,7 +22,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     // triggers are found separately in melee and ranged
 
     protected List<string> _effectsIDs;
-
 
 
     protected virtual void OnEnable()

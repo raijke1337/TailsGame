@@ -12,15 +12,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "New BaseStatTriggerConfiguration",menuName = "Configurations/BaseStatTrigger",order =1 )]
-public class BaseStatTriggerConfig : ScriptableObject
+public class BaseStatTriggerConfig : ScriptableObjectID
 {
-    public string ID;
     public StatType StatID;
     public float InitialValue;
     public float RepeatedValue;
     public float RepeatApplicationDelay;
     public float TotalDuration;
     public Sprite Icon;
-    public TriggeredEffectTargetType TargetType;
 }
 

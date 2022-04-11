@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: hammer_spin
   m_EditorClassIdentifier: 
   ID: hammer_spin
-  ShieldRestoreValue: 15
-  HeatCost: 25
   SkillType: 3
-  Recharge: 5
-  Icon: {fileID: 21300000, guid: 7dfd68325eeac354d866d207e4d2744c, type: 3}
+  Data:
+    Icon: {fileID: 0}
+    Recharge: 0
+    FinalArea: 2
+    StartArea: 2
+    PersistTime: 0.5
+    SkillCost: 0
+    Type: 0

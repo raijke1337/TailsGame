@@ -14,9 +14,8 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 [CreateAssetMenu(fileName = "New EnemyStats", menuName = "Configurations/EnemyStats", order = 2)]
 
-public class EnemyStatsConfig : ScriptableObject
+public class EnemyStatsConfig : ScriptableObjectID
 {
-    public string ID;
 
     public float lookRange;
     public float lookSphereRad;

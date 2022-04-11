@@ -16,10 +16,9 @@ public class PickUpTrigger : LevelItemTrigger
     protected override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
-        if (tgt != null)
-        {
+
             Destroy(gameObject);
-        }
+
     }
 }
 

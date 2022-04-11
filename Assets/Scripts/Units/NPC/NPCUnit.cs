@@ -14,13 +14,9 @@ using UnityEngine.EventSystems;
 
 public class NPCUnit : BaseUnit,InteractiveItem
 {
-    public Allegiance Side;
+
     private InputsNPC _npcController;
-
-
     public SimpleEventsHandler<NPCUnit> UnitDiedEvent;
-
-
 
     protected override void OnEnable()
     {
@@ -60,8 +56,6 @@ public class NPCUnit : BaseUnit,InteractiveItem
         }
     }
     public event MouseOverEvents SelectionEvent;
-    public override event BaseUnitWithIDEvent SkillRequestSuccessEvent;
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         SelectionEvent?.Invoke(this, true);

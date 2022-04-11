@@ -22,23 +22,16 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
     private int _penetr;
 
 
-    public event BaseUnitWithIDEvent TriggerHitEvent;
-    public event SimpleEventsHandler<IProjectile> ExpiryEvent;
+    public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 
     protected override void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) return;
 
         if (other.CompareTag("StaticItem")) Stuck(other);
-        if (other.GetComponent<BaseUnit>() != null)
-        {
-            Debug.Log($"{this} hit {other}");
-            var tgt = other.GetComponent<BaseUnit>();
-            foreach (var id in TriggerEffectIDs)
-            {
-                TriggerHitEvent?.Invoke(id,tgt);
-            }
-        }
+
+        base.OnTriggerEnter(other);
+
         if (_penetr == 0) Stuck(other);
         _penetr--;
     }
@@ -49,7 +42,7 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
         transform.parent = other.transform;
         _coll.enabled = false;
     }
-    public void OnSpawn()
+    public void OnSpawnProj()
     {
         base.Awake();
         transform.position += transform.forward;
@@ -57,14 +50,14 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
         _penetr = ProjData.Penetration;
     }
 
-    public void OnUpdate()
+    public void OnUpdateProj()
     {
         transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
         _exp -= Time.deltaTime;
-        if (_exp <= 0) ExpiryEvent?.Invoke(this);
+        if (_exp <= 0) ExpiryEventProjectile?.Invoke(this);
     }
 
-    public void OnExpiry()
+    public void OnExpiryProj()
     {
         Destroy(gameObject);
     }

@@ -13,20 +13,8 @@ using UnityEngine.InputSystem;
 
 public class LevelItemTrigger : BaseTrigger
 {
-    protected BaseUnit tgt;
-
     //some logic here?
     [SerializeField] private ParticleSystem _activateEffect;
-    protected override void OnTriggerEnter(Collider other)
-    {
-        tgt = other.GetComponent<PlayerUnit>();
-        if (tgt != null)
-        {
-            foreach (var id in TriggerEffectIDs)
-            {
-                _manager.ApplyTriggerEffect(id, tgt);
-            }
-        }
-    }
+
 }
 

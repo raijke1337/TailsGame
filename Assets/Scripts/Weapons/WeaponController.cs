@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
-public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
+public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 {
     [SerializeField]
     protected GameObject[] _weaponPrefabs;
@@ -23,7 +23,9 @@ public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
     [SerializeField] protected Transform _rangedWeaponEmpty;
     [SerializeField] protected Transform _sheathedWeaponEmpty;
 
-    
+    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+
+    public WeaponType GetCurrentWeaponType => CurrentWeaponType;
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
 
     protected void SwitchWeapon(WeaponType type)
@@ -83,6 +85,10 @@ public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
     {
         (_currentWeapons[WeaponType.Melee] as MeleeWeapon).ToggleColliders(isEnable);
     }
+    public void SwitchModels(WeaponType type)
+    {
+        SwitchWeapon(type);
+    }
 
 
     // load weapon stats from configs
@@ -131,8 +137,6 @@ public class BaseWeaponController : MonoBehaviour, IStatsComponentForHandler
         }
         return list;
     }
-
-    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
 
 
 }

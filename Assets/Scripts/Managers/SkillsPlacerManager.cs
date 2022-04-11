@@ -18,8 +18,11 @@ public class SkillsPlacerManager : MonoBehaviour
 
     private UnitsManager _unitsM;
     public event SimpleEventsHandler<IProjectile,string> ProjectileSkillCreatedEvent;
+    public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
 
     private Dictionary<string,SkillData> _datas = new Dictionary<string,SkillData>();
+
+    public UnitsManager GetUnitsManager => _unitsM;
 
     private void OnEnable()
     {
@@ -44,9 +47,9 @@ public class SkillsPlacerManager : MonoBehaviour
 
         skill.SkillData = new SkillData(_datas[ID]);
 
-        skill.transform.SetPositionAndRotation(source.transform.position+source.transform.up, source.transform.rotation);
+        skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
         skill.transform.forward = source.transform.forward;
-
+        SkillAreaPlacedEvent?.Invoke(skill);
 
         if (skill is IProjectile)
         {

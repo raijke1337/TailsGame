@@ -12,10 +12,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 //side
-public enum Allegiance
+public enum Side
 {
-    Ally,
-    Enemy
+    PlayerSide,
+    EnemySide
 }
 
 // all used stats 
@@ -27,11 +27,7 @@ public enum StatType
     HeatRegen,
     MoveSpeed,
 }
-public enum TriggeredEffectTargetType
-{
-    Target,
-    Self
-}
+
 public enum ShieldStatType
 {
     Shield,
@@ -62,6 +58,13 @@ public enum CombatActionType
     MeleeSpecialQ,
     RangedSpecialE,
     ShieldSpecialR
+}
+
+public enum SkillTargetType
+{
+    TargetsEnemies,
+    TargetsUser,
+    TargetsAllies
 }
 
 public enum CursorType

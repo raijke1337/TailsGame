@@ -13,10 +13,10 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
 [CreateAssetMenu(menuName = "Configurations/Shield")]
-public class ShieldSettings : ScriptableObject
+public class ShieldSettings : ScriptableObjectID
 {
-    public string ID;
 
     public SerializableDictionaryBase<ShieldStatType, StatValueContainer> Stats;
+
 }
 

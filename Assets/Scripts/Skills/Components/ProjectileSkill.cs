@@ -13,8 +13,8 @@ using UnityEngine.InputSystem;
 
 public class ProjectileSkill : BaseSkill, IProjectile
 {
-    public event BaseUnitWithIDEvent TriggerHitEvent;
-    public event SimpleEventsHandler<IProjectile> ExpiryEvent;
+    
+    public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
     private ProjectileData ProjData;
@@ -22,40 +22,37 @@ public class ProjectileSkill : BaseSkill, IProjectile
     private float _exp;
     private int _penetr;
 
-    public void OnExpiry()
+    public void OnExpiryProj()
     {
         Destroy(gameObject);
     }
 
-    public void OnSpawn()
+    public void OnSpawnProj()
     {
         transform.position += transform.forward;
         _exp = ProjData.TimeToLive;
         _penetr = ProjData.Penetration;
     }
 
-    public void OnUpdate()
+    public void OnUpdateProj()
     {
         transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
         _exp -= Time.deltaTime;
-        if (_exp <= 0f) ExpiryEvent?.Invoke(this);
+        if (_exp <= 0f) ExpiryEventProjectile?.Invoke(this);
     }
 
 
     protected override void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") || other.CompareTag("Ground")) return;
-        Debug.Log(other);
         if (_penetr > 0)
         {
-            var expl = Instantiate(EffectPrefab).GetComponent<SkillAreaComp>();
-            expl.transform.position = other.transform.position;
-            expl.TargetHitEvent += (t) => TriggerHitEvent?.Invoke(SkillID, t);
-            expl.Data = SkillData;
+            var effect = PlaceAndSubEffect(other.transform);            
             _penetr--;
         }
-        if (_penetr == 0) ExpiryEvent?.Invoke(this);
+        if (_penetr == 0) ExpiryEventProjectile?.Invoke(this);
     }
+
 
 
 

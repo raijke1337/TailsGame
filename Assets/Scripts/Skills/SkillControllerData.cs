@@ -20,7 +20,7 @@ public class SkillControllerData
     private bool _isReady = true;
 
     private SkillData _data;
-
+    public float GetCost => _data.SkillCost;
 
     public string SkillUpgradeID { get; set; } // todo implement 
 
@@ -35,7 +35,6 @@ public class SkillControllerData
         }
         else
         {
-            Debug.Log($"Skill {SkillType} not ready, wait {_recTimer.time}");
             return false;
         }
     }
