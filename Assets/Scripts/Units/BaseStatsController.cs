@@ -18,7 +18,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     private SerializableDictionaryBase<StatType, StatValueContainer> _stats;
     public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _stats;
 
-
     private string _displayName;
     public string GetDisplayName => _displayName;
 

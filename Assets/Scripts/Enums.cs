@@ -25,7 +25,7 @@ public enum StatType
     HealthRegen,
     Heat,
     HeatRegen,
-    MoveSpeed,
+    MoveSpeed
 }
 
 public enum ShieldStatType

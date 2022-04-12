@@ -20,6 +20,11 @@ public abstract class BaseUnitPanel : MonoBehaviour
     protected readonly Color maxColorDefault = Color.black;
 
 
+    protected List<Image> _bars = new List<Image>();
+    protected List<float> _values = new List<float>();
+    protected List<StatValueContainer> _containers = new List<StatValueContainer>();
+
+
     public virtual void AssignItem(BaseUnit item, bool isSelect)
     {
         baseUnit = item;
@@ -44,6 +49,7 @@ public abstract class BaseUnitPanel : MonoBehaviour
 
     protected abstract void UpdateValues();
     protected abstract void UpdateDisplay();
+
     protected abstract void RunSetup();
 
     protected virtual void Start()

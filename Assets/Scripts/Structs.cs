@@ -33,6 +33,7 @@ public static class Constants
     {
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons/";
         public const float c_RemainsDisappearTimer = 3f;
+        public const float c_StaggeringHitHealthPercent = 0.1f; // 10% max hp
     }
     public static class Skills
     {
