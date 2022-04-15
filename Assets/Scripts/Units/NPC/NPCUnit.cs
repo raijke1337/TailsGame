@@ -12,11 +12,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(InputsNPC))]
 public class NPCUnit : BaseUnit,InteractiveItem
 {
 
     private InputsNPC _npcController;
+    public RoomController UnitRoom { get; set; }
+
     public SimpleEventsHandler<NPCUnit> UnitDiedEvent;
+    public SimpleEventsHandler<NPCUnit> UnitWasAttackedEventForAggro;
+    public event MouseOverEvents SelectionEvent;
+
 
     protected override void OnEnable()
     {
@@ -24,18 +30,7 @@ public class NPCUnit : BaseUnit,InteractiveItem
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
         _npcController = _controller as InputsNPC;
-    }
-
-
-    protected override void HealthChangedEvent(float value)
-    {
-        base.HealthChangedEvent(value);
-        if (value <= 0f)
-        {
-            _npcController.SetAI(false);
-        }
-    }
-
+    }       
     public override void ApplyEffect(TriggeredEffect eff)
     {
         switch (eff.StatID)
@@ -55,15 +50,37 @@ public class NPCUnit : BaseUnit,InteractiveItem
                 break;
         }
     }
-    public event MouseOverEvents SelectionEvent;
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         SelectionEvent?.Invoke(this, true);
     }
-
     public void OnPointerExit(PointerEventData eventData)
     {
         SelectionEvent?.Invoke(this, false);
     }
+
+
+    #region behavior
+
+    public void AiToggle(bool isProcessing) => _npcController.SwitchState(isProcessing);
+
+
+    protected override void HealthChangedEvent(float value, float prevValue)
+    {
+        base.HealthChangedEvent(value, prevValue);
+        UnitWasAttackedEventForAggro?.Invoke(this);
+    }
+
+    public void SetChaseTarget(BaseUnit unit)
+    {
+        //Debug.Log($"{_baseStats.GetDisplayName} aggro on: {unit.GetFullName()}");
+        _npcController.Aggro(unit);
+    }
+
+
+
+    #endregion
+
 }
 

@@ -13,20 +13,19 @@ using UnityEngine.InputSystem;
 
 public abstract class BaseUnitPanel : MonoBehaviour
 {
-
+    
     private BaseUnit baseUnit;
+    [SerializeField] protected float _barFillRateMult = 1f;
+
 
     protected readonly Color minColorDefault = Color.red;
     protected readonly Color maxColorDefault = Color.black;
 
 
-    protected List<Image> _bars = new List<Image>();
-    protected List<float> _values = new List<float>();
-    protected List<StatValueContainer> _containers = new List<StatValueContainer>();
-
 
     public virtual void AssignItem(BaseUnit item, bool isSelect)
     {
+
         baseUnit = item;
         baseUnit.ToggleCamera(isSelect);
         gameObject.SetActive(isSelect);
@@ -43,12 +42,10 @@ public abstract class BaseUnitPanel : MonoBehaviour
     protected virtual void LateUpdate()
     {
         if (baseUnit == null) return;
-        UpdateValues();
-        UpdateDisplay();
+        UpdatePanel();
     }
 
-    protected abstract void UpdateValues();
-    protected abstract void UpdateDisplay();
+    protected abstract void UpdatePanel();
 
     protected abstract void RunSetup();
 
@@ -56,6 +53,9 @@ public abstract class BaseUnitPanel : MonoBehaviour
     {
         if (baseUnit == null) gameObject.SetActive(false);
     }
+
+
+
 
 }
 

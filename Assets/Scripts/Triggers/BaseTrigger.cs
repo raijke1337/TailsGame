@@ -47,6 +47,5 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
     }
 
     protected virtual void OnTriggerExit(Collider other) { }
-
 }
 

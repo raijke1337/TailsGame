@@ -13,12 +13,12 @@ using UnityEngine.InputSystem;
 
 public class RoomController : MonoBehaviour
 {
-    private List<InputsNPC> list;
+    private List<NPCUnit> list;
     private Collider _detectionArea;
 
     private void Start()
     {
-        list = new List<InputsNPC>();
+        list = new List<NPCUnit>();
         _detectionArea = GetComponent<Collider>();
         _detectionArea.isTrigger = true;
     }
@@ -27,29 +27,22 @@ public class RoomController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            list.Add(other.GetComponent<InputsNPC>());
-
-            Debug.Log($"Found NPC {other}");
+            var unit = other.GetComponent<NPCUnit>();
+            list.Add(unit);
+            unit.UnitRoom = this;
         }
     }
 
     private void LateUpdate()
-        // find units and turn off
     {
-        if (_detectionArea.enabled)
-            _detectionArea.enabled = false;
+        if (_detectionArea.enabled) _detectionArea.enabled = false;
     }
-
-    public InputsNPC LookForAllies(InputsNPC controller)
+    public void Alert(BaseUnit player)
     {
-        if (!list.Contains(controller)) return null;
-
-        else
-        {
-            return (list.First(t => t != controller));
-        }
+        foreach (var unit in list) unit.SetChaseTarget(player);
     }
 
 
 }
+
 

@@ -15,6 +15,11 @@ using UnityEngine.InputSystem;
 public class EnemyWeaponCtrl : WeaponController
 {
 
+    public override void SetupStatsComponent()
+    {
+        base.SetupStatsComponent();
+        Equip(WeaponType.Melee);
+    }
 
 }
 

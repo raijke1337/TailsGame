@@ -28,6 +28,10 @@ public class PlayerUnitPanel : BaseUnitPanel
     private StatValueContainer HEc;
 
 
+    protected List<StatValueContainer> _cont = new List<StatValueContainer>();
+    [SerializeField] protected float FillLerp = 0f;
+
+
     [SerializeField] private Image _hpBar;
     [SerializeField] private Image _shBar;
     [SerializeField] private Image _heBar;
@@ -35,17 +39,9 @@ public class PlayerUnitPanel : BaseUnitPanel
     [SerializeField] private Text _hpText;
     [SerializeField] private Text _spText;
     [SerializeField] private Text _heText;
-
     [SerializeField] private Text _dodgeText;
     [SerializeField] private Text _ammoText;
 
-
-    private float _maxHP;
-    private float _currentHP;
-    private float _maxSH;
-    private float _maxHE;
-    private float _currentSH;
-    private float _currentHE;
 
     private float _currentAmmo;
     private float _currentDodges;
@@ -64,42 +60,50 @@ public class PlayerUnitPanel : BaseUnitPanel
         HPc = _player.GetStats()[StatType.Health];
         HEc = _player.GetStats()[StatType.Heat];
         SHc = _shield.GetShieldStats()[ShieldStatType.Shield];
+        //_cont.Add(HPc);
+        //_cont.Add(HEc);
+        //_cont.Add(SHc);
+        HPc.ValueChangedEvent += ResetTicker; // only hp because other stats regen 
+    }
+
+    protected void ResetTicker(float arg1, float arg2)
+    {
+        FillLerp = 0f;
     }
 
 
-    protected override void UpdateValues()
+
+    protected override void UpdatePanel()
     {
-        _maxHP = HPc.GetMax();
-        _currentHP = HPc.GetCurrent();
-        _maxSH = SHc.GetMax();
-        _currentSH = SHc.GetCurrent();
-        _maxHE = HEc.GetMax();
-        _currentHE = HEc.GetCurrent();
+        if (FillLerp < 1f) FillLerp += Mathf.Clamp01(Time.deltaTime * _barFillRateMult);
+
         _currentAmmo = _weapons.GetAmmoByType(WeaponType.Ranged);
         _currentDodges = _dodge.GetDodgeCharges();
-    }
-
-    protected override void UpdateDisplay()
-    {
 
 
-        _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP);
-        _spText.text = string.Concat(Math.Round(_currentSH, 0), " / ", _maxSH);
-        _heText.text = string.Concat(Math.Round(_currentHE, 0), " / ", _maxHE);
+        _hpText.text = string.Concat(Math.Round(HPc.GetCurrent(), 0), " / ", HPc.GetMax());
+        _spText.text = string.Concat(Math.Round(SHc.GetCurrent(), 0), " / ", SHc.GetMax());
+        _heText.text = string.Concat(Math.Round(HEc.GetCurrent(), 0), " / ", HEc.GetMax());
 
         _dodgeText.text = _currentDodges.ToString();
         _ammoText.text = _currentAmmo.ToString();
 
+        ColorTexts(_hpText, HPc.GetMax(), HPc.GetCurrent(), minColorDefault, maxColorDefault);
+        ColorTexts(_spText, SHc.GetMax(), SHc.GetCurrent(), minColorDefault, maxColorDefault);
+        ColorTexts(_heText, HEc.GetMax(), HEc.GetCurrent(), minColorDefault, maxColorDefault);
 
-        _hpBar.fillAmount = _currentHP / _maxHP;
-        _shBar.fillAmount = _currentSH / _maxSH;
-        _heBar.fillAmount = _currentHE / _maxHE;
-
-        ColorTexts(_hpText, _maxHP, _currentHP,minColorDefault,maxColorDefault);
-        ColorTexts(_spText, _maxSH, _currentSH,minColorDefault, maxColorDefault);
-        ColorTexts(_heText, _maxHE, _currentHE,minColorDefault, maxColorDefault);
+        PrettyLerp();
 
     }
+
+    protected void PrettyLerp()
+    {
+        _hpBar.fillAmount = Mathf.Lerp(HPc.GetLast() / HPc.GetMax(), HPc.GetCurrent() / HPc.GetMax(), FillLerp);
+        _shBar.fillAmount = Mathf.Lerp(SHc.GetLast() / SHc.GetMax(), SHc.GetCurrent() / SHc.GetMax(), FillLerp);
+        _heBar.fillAmount = Mathf.Lerp(HEc.GetLast() / HEc.GetMax(), HEc.GetCurrent() / HEc.GetMax(), FillLerp);
+
+    }
+
 
 }
 

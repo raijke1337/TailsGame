@@ -17,6 +17,7 @@ public abstract class ControlInputsBase : MonoBehaviour
     public WeaponController GetWeaponController => _weaponCtrl;
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
+    public event SimpleEventsHandler StaggerHappened;
 
     protected virtual void OnEnable()
     {
@@ -30,21 +31,24 @@ public abstract class ControlInputsBase : MonoBehaviour
     {
         _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_staggerCheck, isEnable);
-        _statsCtrl.GetBaseStats[StatType.Health].ValueDecreasedEvent += StaggerCheck;
     }
 
-    public void SetStatsController(BaseStatsController stats) => _statsCtrl = stats;
+    public void SetStatsController(BaseStatsController stats)
+    {
+        _statsCtrl = stats;
+        _statsCtrl.GetBaseStats[StatType.Health].ValueChangedEvent += StaggerCheck;
+    }
 
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;
 
-    protected void StaggerCheck(float damage)
+    protected void StaggerCheck(float current,float prev)
     {
-        if (damage >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[StatType.Health].GetMax()) ;
+        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[StatType.Health].GetMax()) ;
         {
             if (_staggerCheck.DidHitStun())
             {
-                Debug.Log($"{_statsCtrl.GetDisplayName} got staggered!");
+                StaggerHappened?.Invoke();
             }
         }
     }

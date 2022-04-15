@@ -22,18 +22,18 @@ public class UnitActivityHandler
         _units.AddRange(units);
     }
 
-    public void SetAIStateGlobal(bool isProcessing)
-    {
-        foreach (var npc in _units)
-        {
-            SetAIStateUnit(isProcessing, npc);
-        }
-    }
-    public void SetAIStateUnit(bool isProcessing, NPCUnit unit)
-    {
-        unit.GetInputs<InputsNPC>().SetAI(isProcessing);
-        unit.GetInputs<InputsNPC>().NavMeshAg.isStopped = isProcessing;
-    }
+    //public void SetAIStateGlobal(bool isProcessing)
+    //{
+    //    foreach (var npc in _units)
+    //    {
+    //        SetAIStateUnit(isProcessing, npc);
+    //    }
+    //}
+    //public void SetAIStateUnit(bool isProcessing, NPCUnit unit)
+    //{
+    //    unit.GetInputs<InputsNPC>().SetAI(isProcessing);
+    //    unit.GetInputs<InputsNPC>().NavMeshAg.isStopped = isProcessing;
+    //}
 
 
 

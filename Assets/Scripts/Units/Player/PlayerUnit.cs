@@ -110,9 +110,9 @@ public class PlayerUnit : BaseUnit
         _animator.SetBool("AdvancingCombo", false);
     }
 
-    protected override void HealthChangedEvent(float value)
+    protected override void HealthChangedEvent(float value,float prevvalue)
     {
-        base.HealthChangedEvent(value);
+        base.HealthChangedEvent(value,prevvalue);
     }
 
     protected override void UnitBinds(bool isEnable)

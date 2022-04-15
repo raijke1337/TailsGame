@@ -8,7 +8,8 @@ using Zenject;
 [RequireComponent(typeof(ControlInputsBase))]
     public abstract class BaseUnit : MonoBehaviour
     {
-        public string BaseStatsID;
+        [SerializeField] protected string StatsID;
+    public string GetID => StatsID;
 
         protected Animator _animator;
         protected Rigidbody _rigidbody;
@@ -27,6 +28,9 @@ using Zenject;
         public string GetFullName() => _baseStats.GetDisplayName;
         public IReadOnlyDictionary<StatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
 
+
+
+
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
         public event BaseUnitWithIDEvent SkillRequestSuccessEvent;
         protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit);
@@ -36,7 +40,7 @@ using Zenject;
 
         protected virtual void Awake()
         {
-            _baseStats = new BaseStatsController(BaseStatsID);
+            _baseStats = new BaseStatsController(StatsID);
         }
 
         protected virtual void OnEnable()
@@ -73,18 +77,14 @@ using Zenject;
         }
 
 
-        //take damage and die here
-        protected virtual void HealthChangedEvent(float value)
+        // die here
+        protected virtual void HealthChangedEvent(float value, float prevValue)
         {
             if (value <= 0f)
             {
                 _animator.SetTrigger("Death");
                 BaseUnitDiedEvent?.Invoke(this);
                 StartCoroutine(RemainsDisappearCoroutine());
-            }
-            else
-            {
-                _animator.SetTrigger("TakeDamage");
             }
         }
         //sets animator values 
@@ -153,17 +153,22 @@ using Zenject;
             if (isEnable)
             {
                 _handler.RegisterUnitForStatUpdates(_baseStats);
-                GetStats()[StatType.Health].ValueDecreasedEvent += HealthChangedEvent;
+                GetStats()[StatType.Health].ValueChangedEvent += HealthChangedEvent;
                 _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
+            _controller.StaggerHappened += AnimateStagger;
             }
             else
             {
-                GetStats()[StatType.Health].ValueDecreasedEvent -= HealthChangedEvent;
+                GetStats()[StatType.Health].ValueChangedEvent -= HealthChangedEvent;
                 _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
                 _handler.RegisterUnitForStatUpdates(_baseStats, false);
-            }
+            _controller.StaggerHappened += AnimateStagger;
         }
-
+        }
+    protected void AnimateStagger()
+    {
+        _animator.SetTrigger("TakeDamage");
+    }
 
         protected virtual IEnumerator RemainsDisappearCoroutine()
         {

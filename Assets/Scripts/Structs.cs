@@ -11,7 +11,7 @@ public delegate void WeaponSwitchEventHandler(WeaponType type);
 public delegate void BaseUnitWithIDEvent(string ID, BaseUnit unit);
 public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
 
-
+public delegate void StateMachineEvent();
 
 public static class Constants
 {
@@ -47,22 +47,26 @@ public static class Constants
     [SerializeField] private float _max;
     [SerializeField] private float _min;
     [SerializeField] private float _current;
-
-    public SimpleEventsHandler<float> ValueDecreasedEvent;
+    [SerializeField] private float _last;
+    /// <summary>
+    /// current, previous
+    /// </summary>
+    public SimpleEventsHandler<float,float> ValueChangedEvent;
 
     public float GetCurrent() => _current;
     public float GetMax() => _max;
     public float GetMin() => _min;
     public float GetStart() => _start;
+    public float GetLast() => _last;
     /// <summary>
     /// adds the value
     /// </summary>
     /// <param name="value">how much to add or remove</param>
     public void ChangeCurrent(float value)
     {
-        _current = Mathf.Clamp(_current+value,_min,_max);
-        if (value < 0f)
-        ValueDecreasedEvent?.Invoke(_current);
+        _last = _current;
+        _current = Mathf.Clamp(_current + value, _min, _max);
+        ValueChangedEvent?.Invoke(_current, _last);
     }
 
     public void Setup()
@@ -122,12 +126,14 @@ public struct EnemyStats
 
     public float LookSpereCastRadius;
     public float LookSpereCastRange;
+    public float IdleTime;
     public EnemyStats(EnemyStatsConfig cfg)
     {
         TimeBetweenAttacks = cfg.atkCD;
         LookSpereCastRadius = cfg.lookSphereRad;
         LookSpereCastRange = cfg.lookRange;
         AttackRange = cfg.atkRange;
+        IdleTime = cfg.idleTime;
     }
 }
 

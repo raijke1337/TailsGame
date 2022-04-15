@@ -47,13 +47,19 @@ public class TriggersProjectilesManager : MonoBehaviour
 
     private void ApplyTriggerEffect(string ID, BaseUnit target)
     {
+        // todo logic : Source Type , Target Type (nyi)
         var config = _configs.First(t => t.ID == ID);
-        if (config.StatID == StatType.Heat || config.StatID == StatType.HeatRegen) // todo implement proper combo points handling
+
+        switch (config.SourceType)
         {
-            target = player;
+            case TriggerSourceType.Player:
+                target.ApplyEffect(new TriggeredEffect(config));
+                break;
+            case TriggerSourceType.Enemy:
+                if (target is NPCUnit) return;
+                else target.ApplyEffect(new TriggeredEffect(config));
+                break;
         }
-        target.ApplyEffect(new TriggeredEffect(config));
-        Debug.Log($"Applying trigger: {ID} to {target.GetFullName()}");
     }
 
     private void RegisterTrigger(IAppliesTriggers item)

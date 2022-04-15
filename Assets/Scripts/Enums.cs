@@ -22,7 +22,7 @@ public enum Side
 public enum StatType
 {
     Health,
-    HealthRegen,
+    HealthRegen, // remove - unused todo
     Heat,
     HeatRegen,
     MoveSpeed
@@ -65,6 +65,11 @@ public enum SkillTargetType
     TargetsEnemies,
     TargetsUser,
     TargetsAllies
+}
+public enum TriggerSourceType
+{ 
+    Player,
+    Enemy
 }
 
 public enum CursorType

@@ -36,17 +36,14 @@ public class TargetUnitPanel : BaseUnitPanel
         _nameText.text = _unit.GetFullName();
     }
 
-    protected override void UpdateValues()
+    protected override void UpdatePanel()
     {
         _maxHP = HPc.GetMax();
         _currentHP = HPc.GetCurrent();
-    }
-
-    protected override void UpdateDisplay()
-    {
         _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP);
         _hpBar.fillAmount = _currentHP / _maxHP;
         ColorTexts(_hpText, _maxHP, _currentHP, minColorDefault, maxColorDefault);
     }
+
 }
 

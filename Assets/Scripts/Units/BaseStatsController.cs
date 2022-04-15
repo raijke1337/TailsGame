@@ -67,7 +67,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     public void UpdateInDelta(float deltaTime)
     {
         HandleEffects(deltaTime);
-        _stats[StatType.Health].ChangeCurrent(_stats[StatType.HealthRegen].GetCurrent() * deltaTime);
+        //_stats[StatType.Health].ChangeCurrent(_stats[StatType.HealthRegen].GetCurrent() * deltaTime); removed in general 
         _stats[StatType.Heat].ChangeCurrent(_stats[StatType.HeatRegen].GetCurrent() * deltaTime);
     }
     #endregion

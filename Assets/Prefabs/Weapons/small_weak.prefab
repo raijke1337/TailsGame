@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 64671666997608106}
   - component: {fileID: -4382413954596844150}
   - component: {fileID: -8534430287755341017}
-  - component: {fileID: -6410835965968619148}
   m_Layer: 0
   m_Name: small_weak
   m_TagString: Untagged
@@ -111,7 +110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cc5452177305e4287558b216bd3933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs: []
 --- !u!114 &-8534430287755341017
 MonoBehaviour:
@@ -125,16 +123,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efa24d988ff003c49aa9b3a093f08cab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: small_weak
---- !u!114 &-6410835965968619148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1720152226819544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0871f748c48352f4593c03df6c2009ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  ID: spider_bot

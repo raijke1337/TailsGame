@@ -28,7 +28,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     public WeaponType GetCurrentWeaponType => CurrentWeaponType;
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
 
-    protected void SwitchWeapon(WeaponType type)
+    protected virtual void SwitchWeapon(WeaponType type)
     {
         GameObject weaponOfType = _currentWeapons[type].GetObject();
         SwitchAnimationLayersEvent?.Invoke(type);
@@ -50,13 +50,13 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         CurrentWeaponType = type;
     }
 
-    private void Sheathe(WeaponType type)
+    protected void Sheathe(WeaponType type)
     {
         var item = _currentWeapons[type].GetObject();
         item.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
         item.transform.parent = _sheathedWeaponEmpty;
     }
-    private void Equip(WeaponType type)
+    protected void Equip(WeaponType type)
     {
         var item = _currentWeapons[type].GetObject();
         if (type == WeaponType.Melee)
