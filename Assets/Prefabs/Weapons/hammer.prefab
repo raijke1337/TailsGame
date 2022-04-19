@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6074824665655175326}
   - component: {fileID: 5188941293757656330}
   - component: {fileID: 9131835006296536996}
-  - component: {fileID: -4352484866124518031}
   m_Layer: 0
   m_Name: hammer
   m_TagString: Untagged
@@ -111,10 +110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: hammer
-  WeapType: 1
-  MaxCharges: 0
-  SkillID: hammer_spin
-  _effectsIDs: []
 --- !u!114 &9131835006296536996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,17 +122,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cc5452177305e4287558b216bd3933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
   TriggerEffectIDs: []
---- !u!114 &-4352484866124518031
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6322378502437355212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0871f748c48352f4593c03df6c2009ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

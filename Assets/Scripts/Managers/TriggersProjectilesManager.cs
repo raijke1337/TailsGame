@@ -49,15 +49,16 @@ public class TriggersProjectilesManager : MonoBehaviour
     {
         // todo logic : Source Type , Target Type (nyi)
         var config = _configs.First(t => t.ID == ID);
-
         switch (config.SourceType)
         {
             case TriggerSourceType.Player:
                 target.ApplyEffect(new TriggeredEffect(config));
+                Debug.Log($"Applying effect ID {ID} to {target.GetFullName()}");
                 break;
             case TriggerSourceType.Enemy:
                 if (target is NPCUnit) return;
                 else target.ApplyEffect(new TriggeredEffect(config));
+                Debug.Log($"Applying effect ID {ID} to {target.GetFullName()}");
                 break;
         }
     }

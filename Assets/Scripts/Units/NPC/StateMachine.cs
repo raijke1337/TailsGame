@@ -45,13 +45,17 @@ public class StateMachine : IStatsComponentForHandler
         CurrentState = init;
         RemainState = dummy;
     }
-    public void SetAI(bool setting) => aiActive = NMAgent.isStopped = setting;
+    public void SetAI(bool setting)
+    {
+        aiActive = setting;
+        NMAgent.isStopped = !setting;
+    }
 
     public void TransitionToState(State nextState)
     {
         if (nextState != RemainState)
         {
-           Debug.Log($"Transition from {CurrentState} to {nextState} for {NMAgent.gameObject.name}");
+           //Debug.Log($"Transition from {CurrentState} to {nextState} for {NMAgent.gameObject.name}");
            CurrentState = nextState;
            OnExitState();
         }

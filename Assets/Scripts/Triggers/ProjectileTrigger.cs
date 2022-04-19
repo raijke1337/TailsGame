@@ -45,9 +45,12 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
     public void OnSpawnProj()
     {
         base.Awake();
-        transform.position += transform.forward;
         _exp = ProjData.TimeToLive;
         _penetr = ProjData.Penetration;
+
+        var oldx = transform.localEulerAngles.x;
+        transform.Rotate(new Vector3(-oldx, 0, 0));
+        // fix vertical rotation
     }
 
     public void OnUpdateProj()

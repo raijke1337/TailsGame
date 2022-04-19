@@ -23,8 +23,7 @@ public class MoveToPointAction : Action
         else
         {
             controller.NMAgent.SetDestination(controller.PatrolPoints[controller.CurrentPatrolPointIndex].position);
-        } 
-            
+        }             
     }
 }
 

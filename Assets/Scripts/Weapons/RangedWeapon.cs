@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -63,9 +63,7 @@ public class RangedWeapon : BaseWeapon
         _currentCharges--;
 
         var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
-        pr.transform.forward = _player.transform.forward + new Vector3(0f, Extensions.GetRandomFloat(_spreadMax),0f);
-        // a bit of spread        
-
+        pr.transform.forward = _player.transform.forward;
         var comp = pr.GetComponent<ProjectileTrigger>();
 
         PlacedProjectileEvent?.Invoke(comp, _projectileID);

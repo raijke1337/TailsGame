@@ -43,7 +43,6 @@ public class InputsPlayer : ControlInputsBase
     [SerializeField] private CrosshairScript _aim;
 
     private Vector3 lookTarget;
-    public Vector3 GetLookTarget() => lookTarget;
 
     protected override void OnEnable()
     {
@@ -175,13 +174,7 @@ public class InputsPlayer : ControlInputsBase
     private void Update()
     {
         CalculateMovement();
-
-        if (_selector.CalculateAimPoint() == null) return;
-
-        lookTarget =(Vector3)_selector.CalculateAimPoint();
-
-        _aim.SetLookTarget(lookTarget);
-        transform.LookAt(lookTarget);
+        Aiming();
     }
 
     private void CalculateMovement()
@@ -190,6 +183,16 @@ public class InputsPlayer : ControlInputsBase
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
         velocityVector = AD + WS;  
+    }
+    private void Aiming()
+    {
+        if (_selector.CalculateAimPoint() == null) return;
+        lookTarget = (Vector3)_selector.CalculateAimPoint();
+        _aim.SetLookTarget(lookTarget);
+        transform.LookAt(lookTarget);
+
+        var currentX = transform.localEulerAngles.x;
+        transform.Rotate(new Vector3(-currentX,0,0));
     }
 
     private void OnDrawGizmos()

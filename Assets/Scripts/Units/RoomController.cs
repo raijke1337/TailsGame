@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 
 public class RoomController : MonoBehaviour
 {
-    private List<NPCUnit> list;
+    [SerializeField] private List<NPCUnit> list;
     private Collider _detectionArea;
 
     private void Start()
