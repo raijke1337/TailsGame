@@ -13,14 +13,11 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public class SkillsPlacerManager : MonoBehaviour
 {
-    [SerializeField] SerializableDictionaryBase<string,BaseSkill> _skillsDict;
-    // todo load from folder
-
+    [SerializeField] SerializableDictionaryBase<string,BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
     private UnitsManager _unitsM;
     public event SimpleEventsHandler<IProjectile,string> ProjectileSkillCreatedEvent;
     public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
 
-    private Dictionary<string,SkillData> _datas = new Dictionary<string,SkillData>();
 
     public UnitsManager GetUnitsManager => _unitsM;
 
@@ -28,12 +25,8 @@ public class SkillsPlacerManager : MonoBehaviour
     {
         _unitsM = GetComponent<UnitsManager>();
         _unitsM.RequestToPlaceSkills += PlaceSkill;
-
-        var cfgs = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath);
-        foreach (var cfg in cfgs)
-        {
-            _datas.Add(cfg.ID,cfg.Data);
-        }
+        LoadBaseSkills();
+        LoadDatasIntoSkills();
     }
     private void OnDisable()
     {
@@ -43,10 +36,15 @@ public class SkillsPlacerManager : MonoBehaviour
     private void PlaceSkill(string ID, BaseUnit source)
     {
         var skill = Instantiate(_skillsDict[ID]);
-        skill.Source = source;
-
-        skill.SkillData = new SkillData(_datas[ID]);
-
+        switch (skill.SkillData.SourceType)
+        {
+            case TriggerSourceType.Player:
+                skill.Source = source as PlayerUnit;
+                break;
+            case TriggerSourceType.Enemy:
+                skill.Source = source as NPCUnit;
+                break;
+        }
         skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
         skill.transform.forward = source.transform.forward;
         SkillAreaPlacedEvent?.Invoke(skill);
@@ -57,5 +55,34 @@ public class SkillsPlacerManager : MonoBehaviour
             ProjectileSkillCreatedEvent?.Invoke(sk, ID);            
         }
     }
+
+
+    private void LoadBaseSkills()
+    {
+        var skills = Extensions.GetAssetsFromPath<BaseSkill>(Constants.Combat.c_SkillPrefabs,true); 
+        foreach (var skill in skills)
+        {
+            _skillsDict[skill.SkillID] = skill;
+        }
+    }
+    private void LoadDatasIntoSkills()
+    {
+        var cfgs = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath);
+        foreach (var skill in _skillsDict.Values)
+        {
+            var dataCfg = cfgs.First(t => t.ID == skill.SkillID);
+            skill.SkillData = new SkillData(dataCfg.Data);
+        }
+    }
+#if UNITY_EDITOR
+    [ContextMenu("Load skills and configs")]
+    public void RefreshStuff()
+    {
+        LoadBaseSkills();
+        LoadDatasIntoSkills();
+    }
+
+#endif
+
 }
 

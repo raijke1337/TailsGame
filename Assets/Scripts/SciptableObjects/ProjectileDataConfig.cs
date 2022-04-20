@@ -17,7 +17,7 @@ public class ProjectileDataConfig : ScriptableObjectID
     public float TimeToLive;
     public float ProjectileSpeed;
     public int ProjectilePenetration;
-
+    public TriggerSourceType SourceType;
 
 }
 

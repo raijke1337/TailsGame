@@ -30,6 +30,7 @@ public class RoomController : MonoBehaviour
             var unit = other.GetComponent<NPCUnit>();
             list.Add(unit);
             unit.UnitRoom = this;
+            Debug.Log($"{this} registered: {unit.GetFullName()}");
         }
     }
 
@@ -37,9 +38,14 @@ public class RoomController : MonoBehaviour
     {
         if (_detectionArea.enabled) _detectionArea.enabled = false;
     }
-    public void Alert(BaseUnit player)
+    public void Alert(PlayerUnit player)
     {
         foreach (var unit in list) unit.SetChaseTarget(player);
+    }
+
+    public NPCUnit GetBigRobot()
+    {
+        return list.First(t => t.GetEnemyType == EnemyType.Big);
     }
 
 

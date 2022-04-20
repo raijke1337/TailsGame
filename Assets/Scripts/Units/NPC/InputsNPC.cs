@@ -14,24 +14,24 @@ using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.AI;
 using Zenject;
 using UnityEngine.EventSystems;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class InputsNPC : ControlInputsBase
 {
-
+    public RoomController UnitRoom { get; set; }
+    [SerializeField] protected List<Transform> patrolPoints;
     public void SwitchState(bool setting) => fsm.SetAI(setting);
 
     [SerializeField] protected string enemyStatsID = default;
     [SerializeField] protected State InitialState;
     [SerializeField] protected State DummyState;
-
-    [SerializeField] protected List<Transform> patrolPoints;
+    [SerializeField, ReadOnly] protected State CurrentState;
 
     protected EnemyStats _enemyStats;
     protected NavMeshAgent _navMeshAg;
-
-     private StateMachine fsm;
-
+    private StateMachine fsm;
+    public EnemyType GetEnemyType => _enemyStats.EnemyType;
 
 
 #if UNITY_EDITOR
@@ -49,21 +49,30 @@ public class InputsNPC : ControlInputsBase
 #endif
 
 
-    protected override void OnEnable()
+    protected override async void OnEnable()
     {
         base.OnEnable();
-        if (patrolPoints == null) Debug.LogError($"Set at least 1 patrol point for {_statsCtrl.GetDisplayName}, {name} ");
+        if (patrolPoints.Count == 0)
+        {
+            Debug.Log($"No patrol points set for {_statsCtrl.GetDisplayName}, {name} ");
+            patrolPoints.Add(transform);
+        }
 
         _enemyStats = new EnemyStats(Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
     (t => t.ID == enemyStatsID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
         fsm = new StateMachine(_navMeshAg, _enemyStats,InitialState,DummyState);
+
+        await Task.Yield(); // bandaid todo?
+
+        _navMeshAg.speed = _statsCtrl.GetBaseStats[StatType.MoveSpeed].GetCurrent();
         Bind(true);
         fsm.SetPatrolPoints(patrolPoints);
     }
     protected virtual void LateUpdate()
     {
+        CurrentState = fsm.CurrentState;
         velocityVector = fsm.CurrentVelocity;
     }
     protected virtual void OnDisable()
@@ -78,12 +87,16 @@ public class InputsNPC : ControlInputsBase
             _handler.RegisterUnitForStatUpdates(fsm);
             fsm.AgressiveActionRequest += HandleAttackRequest;
             fsm.PlayerSeenEvent += HandlePlayerDetection;
+            fsm.AllyRequest += HandleAllySearch;
+            _statsCtrl.GetBaseStats[StatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
         }
         else
         {
             _handler.RegisterUnitForStatUpdates(fsm, false);
             fsm.AgressiveActionRequest -= HandleAttackRequest;
             fsm.PlayerSeenEvent -= HandlePlayerDetection;
+            fsm.AllyRequest -= HandleAllySearch;
+            _statsCtrl.GetBaseStats[StatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
         }
     }
 
@@ -96,8 +109,12 @@ public class InputsNPC : ControlInputsBase
     {
         CombatActionSuccessCallback(CombatActionType.Melee);
     }
-    public void Aggro(BaseUnit unit, bool startCombat = true) => fsm.OnAggro(unit, startCombat);
-
+    public void Aggro(PlayerUnit unit, bool startCombat = true) => fsm.OnAggro(unit, startCombat);
+    protected virtual void HandleAllySearch()
+    {
+        var found = UnitRoom.GetBigRobot();
+        fsm.SetAlly(found);
+    }
 
 
 }

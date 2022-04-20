@@ -21,12 +21,14 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
     private float _exp;
     private int _penetr;
 
+    public TriggerSourceType SourceType { get => ProjData.SourceType; }
 
     public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) return;
+        if (SourceType == TriggerSourceType.Player && other.CompareTag("Player")) return;
+        if (SourceType == TriggerSourceType.Enemy && other.CompareTag("Enemy")) return;
 
         if (other.CompareTag("StaticItem")) Stuck(other);
 

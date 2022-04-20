@@ -14,13 +14,27 @@ using UnityEngine.InputSystem;
 public class PlayerUnit : BaseUnit
 {
     private InputsPlayer _playerController;
-
+    private VisualsController _visualController;
+    private float[] _visualStagesHP;
+    private int _currentVisualStageIndex;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        _playerController = _controller as InputsPlayer;         
+        _playerController = _controller as InputsPlayer;     
+        _visualController = GetComponent<VisualsController>();  
         ToggleCamera(true);
+
+        float maxHP = _baseStats.GetBaseStats[StatType.Health].GetMax();
+        int stages = _visualController.StagesTotal;
+        _visualStagesHP = new float[stages];
+        var coef = maxHP / stages;
+        for (int i = 0; i < stages; i++)
+        {
+            _visualStagesHP[i] = maxHP;
+            maxHP -= coef;
+        }
+        _currentVisualStageIndex = 0;
     }
 
     public override void ApplyEffect(TriggeredEffect eff)
@@ -113,6 +127,13 @@ public class PlayerUnit : BaseUnit
     protected override void HealthChangedEvent(float value,float prevvalue)
     {
         base.HealthChangedEvent(value,prevvalue);
+        int newIndex = _currentVisualStageIndex + 1;
+        if (newIndex >= _visualStagesHP.Count()) return;
+        if (value <= _visualStagesHP[newIndex])
+        {
+            _currentVisualStageIndex++;
+            _visualController.AdvanceMaterialStage();
+        }
     }
 
     protected override void UnitBinds(bool isEnable)

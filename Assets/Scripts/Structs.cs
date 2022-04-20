@@ -11,6 +11,7 @@ public delegate void WeaponSwitchEventHandler(WeaponType type);
 public delegate void BaseUnitWithIDEvent(string ID, BaseUnit unit);
 public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
 
+
 public delegate void StateMachineEvent();
 
 public static class Constants
@@ -32,13 +33,11 @@ public static class Constants
     public static class Combat
     {
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons/";
+        public const string c_SkillPrefabs = "/Prefabs/Skills/";
         public const float c_RemainsDisappearTimer = 3f;
         public const float c_StaggeringHitHealthPercent = 0.1f; // 10% max hp
     }
-    public static class Skills
-    {
-        public const string c_SkillPrefabs = "/Scripts/Skills/Prefabs/";
-    }
+
 }
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
 [Serializable] public class StatValueContainer
@@ -90,12 +89,14 @@ public struct ProjectileData
     public float TimeToLive;
     public float Speed;
     public int Penetration;
+    public TriggerSourceType SourceType;
 
     public ProjectileData(ProjectileDataConfig config)
     {
         TimeToLive = config.TimeToLive;
         Speed = config.ProjectileSpeed;
         Penetration = config.ProjectilePenetration;
+        SourceType = config.SourceType;
     }
 }
 
@@ -109,11 +110,12 @@ public struct SkillData
     public float PersistTime;
     public float SkillCost;
 
-    public SkillTargetType Type;
+    public SkillTargetType TargetType;
+    public TriggerSourceType SourceType;
 
     public SkillData(SkillData refs)
     {
-        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; Type = refs.Type;
+        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; TargetType = refs.TargetType; SourceType = refs.SourceType; 
     }
 }
 
@@ -127,6 +129,8 @@ public struct EnemyStats
     public float LookSpereCastRadius;
     public float LookSpereCastRange;
     public float IdleTime;
+
+    public EnemyType EnemyType;
     public EnemyStats(EnemyStatsConfig cfg)
     {
         TimeBetweenAttacks = cfg.atkCD;
@@ -134,6 +138,7 @@ public struct EnemyStats
         LookSpereCastRange = cfg.lookRange;
         AttackRange = cfg.atkRange;
         IdleTime = cfg.idleTime;
+        EnemyType = cfg.Type;
     }
 }
 
@@ -165,7 +170,7 @@ public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
     public event MouseOverEvents SelectionEvent;
 }
 
-public interface IProjectile : IAppliesTriggers
+public interface IProjectile : IAppliesTriggers, ISourceMatters
 {
     void OnSpawnProj();
     void OnUpdateProj();
@@ -177,6 +182,10 @@ public interface IProjectile : IAppliesTriggers
 public interface IAppliesTriggers
 { event BaseUnitWithIDEvent TriggerApplicationRequestEvent; }
 
+public interface ISourceMatters
+{
+    TriggerSourceType SourceType { get; }
+}
 
 
 #endregion

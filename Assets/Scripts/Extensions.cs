@@ -9,18 +9,15 @@ public static class Extensions
 /// </summary>
 /// <typeparam name="T">any class</typeparam>
 /// <param name="path">refer to Constants</param>
-/// <param name="editorMode">look in subfolders instead</param>
+/// <param name="includeSubDirs">look in subfolders </param>
 /// <returns>list of assets in specified folder</returns>
-    public static List<T> GetAssetsFromPath<T> (string path,bool editorMode = false) where T: class
+    public static List<T> GetAssetsFromPath<T> (string path,bool includeSubDirs = false) where T: class
     {
         List<T> result = new List<T>();
         List<string> workPaths = new List<string>();
+        workPaths.Add(path);
 
-        if (!editorMode)
-        {
-            workPaths.Add(path);
-        }
-        if (editorMode)
+        if (includeSubDirs)
         {
             var folders = Directory.GetDirectories(Application.dataPath + path);
             List<string> fixedFolders = new List<string>();

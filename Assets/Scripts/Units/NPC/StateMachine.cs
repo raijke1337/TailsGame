@@ -25,11 +25,13 @@ public class StateMachine : IStatsComponentForHandler
     public Vector3 CurrentVelocity { get; protected set; }
     public float TimeInState { get; private set; }
     public EnemyStats GetEnemyStats { get; private set; }
-    public BaseUnit ChaseUnit { get; private set; }
+    public PlayerUnit FoundPlayer { get; private set; }
+    public NPCUnit FoundAlly{ get; private set; }
     public bool InCombat { get; private set; }
 
     public event StateMachineEvent PlayerSeenEvent;
     public event StateMachineEvent AgressiveActionRequest;
+    public event StateMachineEvent AllyRequest;
 
 
 
@@ -55,16 +57,15 @@ public class StateMachine : IStatsComponentForHandler
     {
         if (nextState != RemainState)
         {
-           //Debug.Log($"Transition from {CurrentState} to {nextState} for {NMAgent.gameObject.name}");
            CurrentState = nextState;
            OnExitState();
         }
     }
     private void OnExitState() => TimeInState = 0f;
 
-    public void OnAggro(BaseUnit unit,bool isStartCombat)
+    public void OnAggro(PlayerUnit unit,bool isStartCombat)
     {
-        ChaseUnit = unit; InCombat = isStartCombat;
+        FoundPlayer = unit; InCombat = isStartCombat;
     }
 
     public void SetPatrolPoints(List<Transform> points)
@@ -88,11 +89,13 @@ public class StateMachine : IStatsComponentForHandler
         var result = hit.collider.CompareTag("Player"); 
         if (result)
         {
-            OnAggro(hit.collider.gameObject.GetComponent<BaseUnit>(), true);
+            OnAggro(hit.collider.gameObject.GetComponent<PlayerUnit>(), true);
             PlayerSeenEvent?.Invoke();
         }
         return result;
     }
     public void OnAttackRequest() => AgressiveActionRequest?.Invoke();
+    public void OnRequestAlly() => AllyRequest?.Invoke();
+    public void SetAlly(NPCUnit ally) => FoundAlly = ally;
 
 }

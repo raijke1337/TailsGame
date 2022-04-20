@@ -21,7 +21,7 @@ public class SkillAreaComp : MonoBehaviour
         var comp = other.GetComponent<BaseUnit>();
         if (comp == null) return;
 
-        switch (Data.Type)
+        switch (Data.TargetType)
         {
             case SkillTargetType.TargetsEnemies:
                 if (comp.Side != Source.Side)

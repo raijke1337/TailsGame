@@ -12,17 +12,20 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(InputsNPC)),RequireComponent(typeof(EnemyWeaponCtrl))]
-public class NPCUnit : BaseUnit,InteractiveItem
+[RequireComponent(typeof(InputsNPC)), RequireComponent(typeof(EnemyWeaponCtrl))]
+public class NPCUnit : BaseUnit, InteractiveItem
 {
-
     private InputsNPC _npcController;
-    public RoomController UnitRoom { get; set; }
 
     public SimpleEventsHandler<NPCUnit> UnitDiedEvent;
     public SimpleEventsHandler<NPCUnit> UnitWasAttackedEventForAggro;
     public event MouseOverEvents SelectionEvent;
-
+    public EnemyType GetEnemyType => _npcController.GetEnemyType;
+    public RoomController UnitRoom
+    {
+        get => _npcController.UnitRoom;
+        set => _npcController.UnitRoom = value;    
+    }
 
     protected override void OnEnable()
     {
@@ -72,7 +75,7 @@ public class NPCUnit : BaseUnit,InteractiveItem
         UnitWasAttackedEventForAggro?.Invoke(this);
     }
 
-    public void SetChaseTarget(BaseUnit unit)
+    public void SetChaseTarget(PlayerUnit unit)
     {
         //Debug.Log($"{_baseStats.GetDisplayName} aggro on: {unit.GetFullName()}");
         _npcController.Aggro(unit);

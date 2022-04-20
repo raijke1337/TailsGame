@@ -72,10 +72,17 @@ public enum TriggerSourceType
     Enemy
 }
 
+
 public enum CursorType
 {
     Menu,
     Explore,
     EnemyTarget,
     Item,
+}
+public enum EnemyType
+{
+    Small,
+    Big,
+    Boss
 }

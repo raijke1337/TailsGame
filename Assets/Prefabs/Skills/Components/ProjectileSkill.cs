@@ -22,6 +22,8 @@ public class ProjectileSkill : BaseSkill, IProjectile
     private float _exp;
     private int _penetr;
 
+    public TriggerSourceType SourceType => ProjData.SourceType;
+
     public void OnExpiryProj()
     {
         Destroy(gameObject);
@@ -47,14 +49,11 @@ public class ProjectileSkill : BaseSkill, IProjectile
         if (other.CompareTag("Player") || other.CompareTag("Ground")) return;
         if (_penetr > 0)
         {
-            var effect = PlaceAndSubEffect(other.transform);            
+            PlaceAndSubEffect(transform);            
             _penetr--;
         }
         if (_penetr == 0) ExpiryEventProjectile?.Invoke(this);
     }
-
-
-
 
 }
 

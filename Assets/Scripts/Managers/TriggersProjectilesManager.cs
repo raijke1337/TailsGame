@@ -47,8 +47,11 @@ public class TriggersProjectilesManager : MonoBehaviour
 
     private void ApplyTriggerEffect(string ID, BaseUnit target)
     {
-        // todo logic : Source Type , Target Type (nyi)
         var config = _configs.First(t => t.ID == ID);
+
+        if (config.StatID == StatType.Heat) target = player;
+        // todo placeholder logic for combo increase
+
         switch (config.SourceType)
         {
             case TriggerSourceType.Player:
@@ -101,7 +104,7 @@ public class TriggersProjectilesManager : MonoBehaviour
     [ContextMenu(itemName: "Update configurations")]
     public void UpdateDatas()
     {
-        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath);
+        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath,true);
         _projectileCfgs = Extensions.GetAssetsFromPath<ProjectileDataConfig>(Constants.Configs.c_ProjectileConfigsPath);
     }
 

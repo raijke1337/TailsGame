@@ -30,6 +30,7 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
         set => _coll.enabled = value;
     }
 
+
     protected void Awake()
     {
         _coll = GetComponent<Collider>();

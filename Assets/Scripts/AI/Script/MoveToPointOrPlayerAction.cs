@@ -10,15 +10,15 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/MoveTo")]
-public class MoveToPointAction : Action
+[CreateAssetMenu(menuName = "AIConfig/Action/MoveToPlayer")]
+public class MoveToPointOrPlayerAction : Action
 {
     public override void Act(StateMachine controller)
     {
         controller.NMAgent.isStopped = false;
         if (controller.InCombat)
         {
-            controller.NMAgent.SetDestination(controller.ChaseUnit.transform.position);
+            controller.NMAgent.SetDestination(controller.FoundPlayer.transform.position);
         }
         else
         {

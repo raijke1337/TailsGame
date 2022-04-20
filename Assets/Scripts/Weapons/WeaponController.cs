@@ -16,7 +16,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 {
     [SerializeField]
-    protected GameObject[] _weaponPrefabs;
+    protected BaseWeapon[] _weaponPrefabs;
     protected SerializableDictionaryBase<WeaponType, IWeapon> _currentWeapons;
 
     [SerializeField] protected Transform _meleeWeaponEmpty;
@@ -102,8 +102,8 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         {
             // todo use a factory so this doesnt have to be a mono
 
-            BaseWeapon item = GetInstantiatedItem(prefab).GetComponent<BaseWeapon>();
-
+            var item =  Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
+            
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
                 (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.ID);
 
@@ -118,10 +118,6 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         }
     }
 
-    private GameObject GetInstantiatedItem(GameObject prefab)
-    {
-        return Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
-    }
 
     public void UpdateInDelta(float deltaTime)
     {
