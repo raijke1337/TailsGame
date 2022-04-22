@@ -10,12 +10,17 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/UseAttacks")]
-public class UseAttacksAction : Action
+[CreateAssetMenu(menuName = "AIConfig/Action/UseAttacks: Melee")]
+public abstract class UseAttacksAction : Action
 {
+    protected virtual CombatActionType ChooseActionType()
+    {
+        return CombatActionType.Melee;
+    }
+
     public override void Act(StateMachine controller)
     {
-        controller.OnAttackRequest();
+        controller.OnAttackRequest(ChooseActionType());
     }
 }
 

@@ -48,13 +48,12 @@ public class InputsNPC : ControlInputsBase
     }
 #endif
 
-
-    protected override async void OnEnable()
+    public override void BindControllers(bool isEnable)
     {
-        base.OnEnable();
+        base.BindControllers(isEnable);
+
         if (patrolPoints.Count == 0)
         {
-            Debug.Log($"No patrol points set for {_statsCtrl.GetDisplayName}, {name} ");
             patrolPoints.Add(transform);
         }
 
@@ -62,16 +61,19 @@ public class InputsNPC : ControlInputsBase
     (t => t.ID == enemyStatsID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
-        fsm = new StateMachine(_navMeshAg, _enemyStats,InitialState,DummyState);
-
-        await Task.Yield(); // bandaid todo?
+        fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
 
         _navMeshAg.speed = _statsCtrl.GetBaseStats[StatType.MoveSpeed].GetCurrent();
-        Bind(true);
+
+        Bind(isEnable);
         fsm.SetPatrolPoints(patrolPoints);
+
     }
+
     protected virtual void LateUpdate()
     {
+        // todo too many bandaids
+        if (fsm == null) return;
         CurrentState = fsm.CurrentState;
         velocityVector = fsm.CurrentVelocity;
     }
@@ -104,10 +106,10 @@ public class InputsNPC : ControlInputsBase
     {
         Debug.Log($"Placeholder: {_statsCtrl.GetDisplayName} detected player; {this}");
     }
-    protected virtual void HandleAttackRequest()
+    protected virtual void HandleAttackRequest(CombatActionType type)
         // todo more logic
     {
-        CombatActionSuccessCallback(CombatActionType.Melee);
+        CombatActionSuccessCallback(type);
     }
     public void Aggro(PlayerUnit unit, bool startCombat = true) => fsm.OnAggro(unit, startCombat);
     protected virtual void HandleAllySearch()

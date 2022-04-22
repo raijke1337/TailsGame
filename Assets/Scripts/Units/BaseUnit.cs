@@ -49,6 +49,7 @@ using Zenject;
             _rigidbody = GetComponent<Rigidbody>();
             _controller = GetComponent<ControlInputsBase>();
             _controller.SetStatsController(_baseStats);
+        _controller.BindControllers(true);
 
             _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
             _faceCam.enabled = false;
@@ -62,7 +63,8 @@ using Zenject;
         protected virtual void OnDisable()
         {
             UnitBinds(false);
-        }
+        _controller.BindControllers(false);
+    }
         protected virtual void FixedUpdate()
         {
             if (_controller.IsControlsBusy) return;

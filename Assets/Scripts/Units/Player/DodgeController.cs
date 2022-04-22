@@ -15,17 +15,31 @@ using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
 public class DodgeController : IStatsComponentForHandler
 {
-
-    [SerializeField] SerializableDictionaryBase<DodgeStatType, StatValueContainer> _stats;
+    [SerializeField]
+    SerializableDictionaryBase<DodgeStatType, StatValueContainer> _stats;
     public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats() => _stats;
-    public int GetDodgeCharges() => (int)_stats[DodgeStatType.Charges].GetCurrent();
+    public int GetDodgeCharges()
+    {
+        return _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent() : 0;
+    }
+    
 
-
+    public DodgeController(string unitID)
+    {
+        _stats = new SerializableDictionaryBase<DodgeStatType, StatValueContainer>();
+        var cfg = Extensions.GetAssetsFromPath<DodgeStatsConfig>(Constants.Configs.c_DodgeConfigsPath).First(t=>t.ID == unitID);
+        foreach (var c in cfg.Stats)
+        {
+            _stats[c.Key] = new StatValueContainer(c.Value);
+        }
+        _timers = new List<Timer>();
+    }
 
     public void SetupStatsComponent()
     {
         foreach (var st in _stats.Values)
         { st.Setup(); }
+        
     }
 
     public bool IsDodgePossibleCheck()
@@ -39,7 +53,7 @@ public class DodgeController : IStatsComponentForHandler
         }
     }
 
-    private List<Timer> _timers = new List<Timer>();    // no coroutines
+    private List<Timer> _timers;    // no coroutines
 
     public void UpdateInDelta(float deltaTime)
     {
@@ -56,7 +70,16 @@ public class DodgeController : IStatsComponentForHandler
                 t.time -= deltaTime;
             }
         }
+#if UNITY_EDITOR
+        charges = GetDodgeCharges();
+#endif
     }
+
+#if UNITY_EDITOR
+    // for property drawer
+    public int charges;
+#endif
+
 }
 
 

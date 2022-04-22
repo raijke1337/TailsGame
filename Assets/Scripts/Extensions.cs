@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static class Extensions
 {/// <summary>
@@ -52,5 +54,26 @@ public static class Extensions
     {
         return Random.Range(0, max);
     }
+
+#if UNITY_EDITOR
+
+
+    //[CustomPropertyDrawer(typeof(DodgeController))]
+    //public class DodgeControllerPropertyDrawer : PropertyDrawer
+    //{
+    //    public override VisualElement CreatePropertyGUI(SerializedProperty property)
+    //    {
+    //        var display = new VisualElement();
+            
+    //        var currentcharges = new PropertyField(property.FindPropertyRelative("charges"));
+    //        display.Add(currentcharges);
+            
+    //        return base.CreatePropertyGUI(property);
+    //    }
+    //}
+
+    // todo display
+
+#endif
 
 }

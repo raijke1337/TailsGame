@@ -10,14 +10,11 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "Configurations/StatDisplaySetting/")]
-public class StatDisplaySettings : ScriptableObject
-{
-    public Text text;
-    public Image filler;
-    public Color maxCol;
-    public Color minCol;
 
-    public string settingID;
+public class ServiceGolemInputs : InputsNPC
+{
+    [SerializeField] private DodgeController _dodgeCtrl;
+    public void SetDodgeCtrl(string ID) => _dodgeCtrl = new DodgeController(ID);
+
 }
 

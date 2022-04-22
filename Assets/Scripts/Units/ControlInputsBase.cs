@@ -11,26 +11,27 @@ public abstract class ControlInputsBase : MonoBehaviour
 
     [SerializeField] protected WeaponController _weaponCtrl;
     [SerializeField] protected StunnerComponent _staggerCheck;
+    [SerializeField] protected string[] extraSkills;
 
-
+    [SerializeField] protected SkillsController _skillCtrl;
+    public SkillsController GetSkillsController => _skillCtrl;
     protected BaseStatsController _statsCtrl;
     public WeaponController GetWeaponController => _weaponCtrl;
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
     public event SimpleEventsHandler StaggerHappened;
 
-    protected virtual void OnEnable()
+    public virtual void BindControllers(bool isEnable)
     {
         IsControlsBusy = false;
         _staggerCheck = new StunnerComponent(3, 3); // todo configs
         _weaponCtrl = GetComponent<WeaponController>(); // todo remove this (mono)
-        BindControllers(true);
-    }
-
-    protected virtual void BindControllers(bool isEnable)
-    {
         _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_staggerCheck, isEnable);
+        _handler.RegisterUnitForStatUpdates(_skillCtrl, isEnable);
+        var skills = _weaponCtrl.GetSkillIDs();
+        foreach (var skill in extraSkills) { skills.Add(skill); }
+        _skillCtrl = new SkillsController(skills);
     }
 
     public void SetStatsController(BaseStatsController stats)
@@ -44,13 +45,17 @@ public abstract class ControlInputsBase : MonoBehaviour
 
     protected void StaggerCheck(float current,float prev)
     {
-        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[StatType.Health].GetMax()) ;
+        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[StatType.Health].GetMax())
         {
             if (_staggerCheck.DidHitStun())
             {
                 StaggerHappened?.Invoke();
             }
         }
+    }
+    private void OnDisable()
+    {
+        BindControllers(false);
     }
 
 }

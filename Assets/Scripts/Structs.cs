@@ -13,18 +13,20 @@ public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
 
 
 public delegate void StateMachineEvent();
+public delegate void StateMachineEvent<T>(T arg);
 
 public static class Constants
 {
     public static class Configs
     {
-        public const string c_TriggersConfigsPath = "/Scripts/Configurations/Triggers/";
-        public const string c_WeapConfigsPath = "/Scripts/Configurations/Weapons/";
-        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseStats/";
-        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/EnemyStats/";
-        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/Projectiles/";
-        public const string c_SkillConfigsPath = "/Scripts/Configurations/Skills/";
-        public const string c_ShieldConfigsPath = "/Scripts/Configurations/Shield/";
+        public const string c_TriggersConfigsPath = "/Scripts/Configurations/TriggersManager/";
+        public const string c_WeapConfigsPath = "/Scripts/Configurations/WeaponsController/";
+        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseUnit/";
+        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/InputsNPC/";
+        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/ProjectilesManager/";
+        public const string c_SkillConfigsPath = "/Scripts/Configurations/SkillsManager/";
+        public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
+        public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
 #if UNITY_EDITOR
         public const string c_AllConfigsPath = "/Scripts/Configurations/";
 #endif
@@ -58,9 +60,9 @@ public static class Constants
     public float GetStart() => _start;
     public float GetLast() => _last;
     /// <summary>
-    /// adds the value
+    /// adds the value, clamped by min and max
     /// </summary>
-    /// <param name="value">how much to add or remove</param>
+    /// <param name="value">use negative for dmg</param>
     public void ChangeCurrent(float value)
     {
         _last = _current;
@@ -76,8 +78,8 @@ public static class Constants
     public StatValueContainer(StatValueContainer preset)
     {
         _start = preset._start;
-        _max = preset._max;
-        _min = preset._min;
+        _max = preset._max == 0f ?  preset._max : preset._start;    
+        _min = preset._min == 0f? preset._min : 0f;
         Setup();
     }
 }

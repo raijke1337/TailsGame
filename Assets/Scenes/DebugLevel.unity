@@ -1093,10 +1093,20 @@ PrefabInstance:
       propertyPath: patrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 1248377473}
+    - target: {fileID: 2780723236041015666, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_Speed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
       propertyPath: m_Name
       value: CrawlerMech
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3304742314808056772, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
@@ -4593,10 +4603,20 @@ PrefabInstance:
       propertyPath: patrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 1248377473}
+    - target: {fileID: 2780723236041015666, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_Speed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
       propertyPath: m_Name
       value: CrawlerMech (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3304742314808056772, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
@@ -5582,10 +5602,20 @@ PrefabInstance:
       propertyPath: patrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 1248377473}
+    - target: {fileID: 2780723236041015666, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_Speed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
       propertyPath: m_Name
       value: CrawlerMech (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780723236041015678, guid: 14d10bf5fb869e04798107531f519075,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3304742314808056772, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
@@ -8698,9 +8728,18 @@ MonoBehaviour:
       elementIcon: {fileID: 0}
     reqReferences: {fileID: 0}
     isExpanded: 1
-    _keyValues: []
-    _keys: []
-    _values: []
+    _keyValues:
+    - crossbow_explosive
+    - hammer_spin
+    - shield_heal
+    _keys:
+    - crossbow_explosive
+    - hammer_spin
+    - shield_heal
+    _values:
+    - {fileID: 7490823917269097011, guid: 52012852576cb13419f87eb538b6393a, type: 3}
+    - {fileID: 6096554309314098554, guid: 69a581d51e15f6e42b79f52491f22d5a, type: 3}
+    - {fileID: 6096554309314098554, guid: 250da4e41704341469b677a5e148a5e4, type: 3}
 --- !u!1001 &1097563990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17322,6 +17361,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1748906682}
     m_Modifications:
+    - target: {fileID: 1229093803892301225, guid: 951d7a59e5e33c445a3482874a653741,
+        type: 3}
+      propertyPath: m_Speed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5153969273948394074, guid: 951d7a59e5e33c445a3482874a653741,
         type: 3}
       propertyPath: m_RootOrder
@@ -17335,7 +17379,7 @@ PrefabInstance:
     - target: {fileID: 5153969273948394074, guid: 951d7a59e5e33c445a3482874a653741,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5153969273948394074, guid: 951d7a59e5e33c445a3482874a653741,
         type: 3}
@@ -17381,6 +17425,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ServiceGolem
+      objectReference: {fileID: 0}
+    - target: {fileID: 5157316843177516174, guid: 951d7a59e5e33c445a3482874a653741,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 951d7a59e5e33c445a3482874a653741, type: 3}
@@ -17428,6 +17477,21 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 41680dad0f0243748b4e228f49a2e3c4, type: 2}
+    - target: {fileID: 4355740808610983244, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: _dodgeCtrl._stats._keys.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4355740808610983244, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: _dodgeCtrl._stats._values.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4355740808610983244, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: _dodgeCtrl._stats._keyValues.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4355740808610983246, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
       propertyPath: m_Name

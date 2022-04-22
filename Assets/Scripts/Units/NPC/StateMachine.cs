@@ -30,7 +30,7 @@ public class StateMachine : IStatsComponentForHandler
     public bool InCombat { get; private set; }
 
     public event StateMachineEvent PlayerSeenEvent;
-    public event StateMachineEvent AgressiveActionRequest;
+    public event StateMachineEvent<CombatActionType> AgressiveActionRequest;
     public event StateMachineEvent AllyRequest;
 
 
@@ -94,7 +94,7 @@ public class StateMachine : IStatsComponentForHandler
         }
         return result;
     }
-    public void OnAttackRequest() => AgressiveActionRequest?.Invoke();
+    public void OnAttackRequest(CombatActionType type = CombatActionType.Melee) => AgressiveActionRequest?.Invoke(type);
     public void OnRequestAlly() => AllyRequest?.Invoke();
     public void SetAlly(NPCUnit ally) => FoundAlly = ally;
 

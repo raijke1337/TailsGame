@@ -18,8 +18,9 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     private SerializableDictionaryBase<StatType, StatValueContainer> _stats;
     public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _stats;
 
-    private string _displayName;
-    public string GetDisplayName => _displayName;
+
+    public string GetDisplayName { get; }
+    public string GetUnitID { get; }
 
     private List<TriggeredEffect> _effects;
 
@@ -59,7 +60,8 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
             _stats.Add(_keys[i], new StatValueContainer(_values[i]));
         }
 
-        _displayName = cfg.displayName;
+        GetDisplayName = cfg.displayName;
+        GetUnitID = cfg.ID;
     }
     #region handler
     // regeneration and degradation of stats goes here

@@ -890,9 +890,9 @@ GameObject:
   - component: {fileID: 5153969273948394074}
   - component: {fileID: 5098805184269333314}
   - component: {fileID: 1229093803892301225}
-  - component: {fileID: 6263333879083654521}
+  - component: {fileID: 7711334822126299358}
+  - component: {fileID: 8811871022688349231}
   - component: {fileID: 1867402080882196941}
-  - component: {fileID: 8866258675056334279}
   - component: {fileID: 1616352762732222702}
   - component: {fileID: 1394203379183514854}
   m_Layer: 0
@@ -960,7 +960,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6263333879083654521
+--- !u!114 &7711334822126299358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -969,15 +969,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 5157316843177516174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 764ffdfb1056855499afb336196436bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 826c190434ca56546ac5d33c731d7880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StatsID: golem_bot
+  Side: 1
+  SkillsPosition: {fileID: 5159177290556306074}
+--- !u!114 &8811871022688349231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5157316843177516174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81c6598b0eed0334d9c1ff7cc1d20865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponCtrl: {fileID: 0}
+  extraSkills: []
+  _skillCtrl:
+    IDs: []
   patrolPoints: []
   enemyStatsID: golem_bot
   InitialState: {fileID: 11400000, guid: afbe920454ade2b4ab20de1fb1104fe9, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   CurrentState: {fileID: 0}
+  _dodgeCtrl:
+    charges: 0
 --- !u!114 &1867402080882196941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,21 +1015,6 @@ MonoBehaviour:
   _meleeWeaponEmpty: {fileID: 965050323710725567}
   _rangedWeaponEmpty: {fileID: 7359830087074885046}
   _sheathedWeaponEmpty: {fileID: 569145520939935362}
---- !u!114 &8866258675056334279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5157316843177516174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StatsID: golem_bot
-  Side: 1
-  SkillsPosition: {fileID: 5159177290556306074}
 --- !u!136 &1616352762732222702
 CapsuleCollider:
   m_ObjectHideFlags: 0

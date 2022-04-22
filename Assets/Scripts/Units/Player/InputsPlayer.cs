@@ -19,7 +19,6 @@ public class InputsPlayer : ControlInputsBase
     private PlayerControls _controls;
 
     [SerializeField] private DodgeController _dodgeCtrl;
-    [SerializeField] private SkillsController _skillCtrl;
     [SerializeField] private ShieldController _shieldCtrl;
 
     private SelectorComponent _selector;
@@ -28,7 +27,6 @@ public class InputsPlayer : ControlInputsBase
     [SerializeField] private string _shieldSkillID; // todo?
 
     public DodgeController GetDodgeController => _dodgeCtrl;
-    public SkillsController GetSkillsController => _skillCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
 
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
@@ -44,11 +42,12 @@ public class InputsPlayer : ControlInputsBase
 
     private Vector3 lookTarget;
 
-    protected override void OnEnable()
+    public override void BindControllers(bool isEnable)
     {
-        base.OnEnable();
+        base.BindControllers(isEnable);
         _controls = new PlayerControls();
-        // unique for player
+        _shieldCtrl = new ShieldController(_statsCtrl.GetUnitID);
+        _dodgeCtrl = new DodgeController(_statsCtrl.GetUnitID);
     }
 
     private void Start()
@@ -70,15 +69,9 @@ public class InputsPlayer : ControlInputsBase
 
             _adj = new IsoCamAdjust();
 
-            var skills = _weaponCtrl.GetSkillIDs(); 
-
-            skills.Add(_shieldSkillID);
-            _skillCtrl = new SkillsController(skills);
-            _shieldCtrl = new ShieldController("player"); // todo proper setup
 
 
             _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
-            _handler.RegisterUnitForStatUpdates(_skillCtrl);
             _handler.RegisterUnitForStatUpdates(_shieldCtrl);
 
             _controls.Game.Dash.performed += Dash_performed;
@@ -179,6 +172,7 @@ public class InputsPlayer : ControlInputsBase
 
     private void CalculateMovement()
     {
+        if (_controls == null || IsControlsBusy) return;
         var input = _controls.Game.WASD.ReadValue<Vector2>();
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
