@@ -21,24 +21,31 @@ public abstract class ControlInputsBase : MonoBehaviour
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
     public event SimpleEventsHandler StaggerHappened;
 
-    public virtual void BindControllers(bool isEnable)
-    {
-        IsControlsBusy = false;
-        _staggerCheck = new StunnerComponent(3, 3); // todo configs
-        _weaponCtrl = GetComponent<WeaponController>(); // todo remove this (mono)
-        _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
-        _handler.RegisterUnitForStatUpdates(_staggerCheck, isEnable);
-        _handler.RegisterUnitForStatUpdates(_skillCtrl, isEnable);
-        var skills = _weaponCtrl.GetSkillIDs();
-        foreach (var skill in extraSkills) { skills.Add(skill); }
-        _skillCtrl = new SkillsController(skills);
-    }
 
-    public void SetStatsController(BaseStatsController stats)
+    public virtual void InitControllers(BaseStatsController stats)
     {
         _statsCtrl = stats;
         _statsCtrl.GetBaseStats[StatType.Health].ValueChangedEvent += StaggerCheck;
+        _staggerCheck = new StunnerComponent(3, 3); // todo configs
+        _weaponCtrl = GetComponent<WeaponController>(); // todo remove this (mono)
+        // not initialized? todo
+
     }
+    public virtual void BindControllers(bool isEnable)
+    {
+        IsControlsBusy = false;
+
+        _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
+        _handler.RegisterUnitForStatUpdates(_staggerCheck, isEnable);
+
+        // needs data from set up weaponctrl
+        var skills = _weaponCtrl.GetSkillIDs();
+        foreach (var skill in extraSkills) { skills.Add(skill); }
+        _skillCtrl = new SkillsController(skills);
+
+        _handler.RegisterUnitForStatUpdates(_skillCtrl, isEnable);
+    }
+
 
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;

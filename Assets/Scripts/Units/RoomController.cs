@@ -45,7 +45,8 @@ public class RoomController : MonoBehaviour
 
     public NPCUnit GetBigRobot()
     {
-        return list.First(t => t.GetEnemyType == EnemyType.Big);
+        var result = list.FirstOrDefault(t => t.GetEnemyType == EnemyType.Big);
+        return result;
     }
 
 

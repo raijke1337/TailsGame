@@ -17,12 +17,8 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
 {
 
     protected Collider _coll;
-    [Inject]
-    protected TriggersProjectilesManager _manager; // only works for pre-spawned items todo
-
-    public List<string> TriggerEffectIDs;
-
     public event BaseUnitWithIDEvent TriggerApplicationRequestEvent;
+    protected void TriggerCallback(string ID, BaseUnit unit) => TriggerApplicationRequestEvent?.Invoke(ID,unit);
 
     public virtual bool Enable
     { 
@@ -37,15 +33,7 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
         _coll.isTrigger = true;
     }
 
-    protected virtual void OnTriggerEnter(Collider other)
-    {
-        var comp = other.GetComponent<BaseUnit>();
-        if (comp == null) return;
-        foreach (var id in TriggerEffectIDs)
-        {
-            TriggerApplicationRequestEvent?.Invoke(id, comp);
-        }
-    }
+    protected abstract void OnTriggerEnter(Collider other);
 
     protected virtual void OnTriggerExit(Collider other) { }
 }

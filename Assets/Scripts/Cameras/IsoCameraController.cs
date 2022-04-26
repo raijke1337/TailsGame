@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public class IsoCameraController : MonoBehaviour
 {
 
-    [SerializeField] private Transform _target;
+    private Transform _target;
     [SerializeField] private float _camMoveSpeed = 1.4f;
 
     private Vector3 _offset;
@@ -23,6 +23,7 @@ public class IsoCameraController : MonoBehaviour
     private void Start()
     {
         _offset = transform.position;
+        if (_target == null) _target = FindObjectsOfType<Transform>().First(t => t.name == Constants.Objects.c_isoCameraTargetObjectName);
     }
 
     private void LateUpdate()

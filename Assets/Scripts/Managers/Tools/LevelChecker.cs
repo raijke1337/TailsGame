@@ -17,6 +17,7 @@ public class LevelChecker : MonoBehaviour
     private List<Transform> _staticsFix;
     private List<Transform> _collidersFix;
     private List<Transform> _rigidsFix;
+    private List<Transform> _textsFix;
 
     [ContextMenu("Run check")]
     private void Check()
@@ -25,6 +26,7 @@ public class LevelChecker : MonoBehaviour
         _staticsFix = new List<Transform>();
         _collidersFix = new List<Transform>();
         _rigidsFix = new List<Transform>();
+        _textsFix = new List<Transform>();
 
         List<Transform> list = new List<Transform>();
 
@@ -44,7 +46,7 @@ public class LevelChecker : MonoBehaviour
         }
         foreach (var item in list.Where(t => !(t.name.Contains("Floor"))))
         {
-            if (!item.CompareTag("StaticItem") || item.gameObject.layer != 2)
+            if (!item.gameObject.isStatic || item.gameObject.layer != 2)
             {
                 _staticsFix.Add(item);
             }
@@ -57,12 +59,18 @@ public class LevelChecker : MonoBehaviour
         {
             _rigidsFix.Add(item);
         }
+        foreach (var item in list.Where(t => t.GetComponent<TextTrigger>() != null))
+        {
+            _textsFix.Add(item);
+        }
+
         if (_floorFix.Count == 0 && _staticsFix.Count == 0 && _collidersFix.Count == 0 && _rigidsFix.Count == 0 )
             return;
         Debug.Log($"{_floorFix.Count} level floor items missing the FLOOR tag");
         Debug.Log($"{_staticsFix.Count} level items missing the STATICITEM tag");
         Debug.Log($"{_collidersFix.Count} level items missing the COLLIDER");
         Debug.Log($"{_rigidsFix.Count} level items missing the RigidBody");
+        Debug.Log($"{_textsFix.Count} text trigger items missing the TextTrigger tag");
     }
 
     private void OnValidate()
@@ -76,17 +84,19 @@ public class LevelChecker : MonoBehaviour
         int sta = 0;
         int col = 0;
         int rig = 0;
+        int txt = 0;
 
         Check();
 
         foreach (var flooritem in _floorFix)
         {
             flooritem.tag = "Ground";
+            flooritem.gameObject.isStatic = true;
             flr++;
         }
         foreach (var item in _staticsFix)
         {
-            item.tag = "StaticItem";
+            item.gameObject.isStatic = true;
             item.gameObject.layer = 2; //ignoreraycast
             sta++;
         }
@@ -100,7 +110,12 @@ public class LevelChecker : MonoBehaviour
             item.gameObject.AddComponent<Rigidbody>().isKinematic = true;
             rig++;
         }     
-        Debug.Log($"Fixed: {flr} FLOOR tags, {sta} STATIC tags, {col} colliders, {rig} rigidbodies");
+        foreach (var item in _textsFix)
+        {
+            item.tag = "TextTrigger";
+            txt++;
+        }
+        Debug.Log($"Fixed: {flr} FLOOR tags, {sta} STATIC, {col} colliders, {rig} rigidbodies, {txt} texts");
     }
 }
 

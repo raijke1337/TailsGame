@@ -21,7 +21,7 @@ public class ShieldController : IStatsComponentForHandler
     public string settingsID { get; }
 
     private List<TriggeredEffect> _effects = new List<TriggeredEffect>();
-    [SerializeField] private SerializableDictionaryBase<ShieldStatType, StatValueContainer> _stats = new SerializableDictionaryBase<ShieldStatType, StatValueContainer>();
+    private Dictionary<ShieldStatType, StatValueContainer> _stats = new Dictionary<ShieldStatType, StatValueContainer>();
     public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats() => _stats;
 
     public void SetupStatsComponent()

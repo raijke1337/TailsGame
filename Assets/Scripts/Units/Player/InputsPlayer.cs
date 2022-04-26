@@ -24,8 +24,6 @@ public class InputsPlayer : ControlInputsBase
     private SelectorComponent _selector;
 
 
-    [SerializeField] private string _shieldSkillID; // todo?
-
     public DodgeController GetDodgeController => _dodgeCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
 
@@ -85,7 +83,7 @@ public class InputsPlayer : ControlInputsBase
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
 
             _aim = GetComponentInChildren<CrosshairScript>();
-            _aim.transform.parent = null;
+            _aim.transform.SetParent(null);
         }
         else
         {
@@ -180,7 +178,7 @@ public class InputsPlayer : ControlInputsBase
     }
     private void Aiming()
     {
-        if (_selector.CalculateAimPoint() == null) return;
+        if (_selector == null || _selector.CalculateAimPoint()==null) return;
         lookTarget = (Vector3)_selector.CalculateAimPoint();
         _aim.SetLookTarget(lookTarget);
         transform.LookAt(lookTarget);

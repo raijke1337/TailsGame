@@ -77,12 +77,20 @@ public class NPCUnit : BaseUnit, InteractiveItem
 
     public void SetChaseTarget(PlayerUnit unit)
     {
-        //Debug.Log($"{_baseStats.GetDisplayName} aggro on: {unit.GetFullName()}");
         _npcController.Aggro(unit);
     }
 
 
 
+    #endregion
+
+
+    #region dbug
+
+    private void LateUpdate()
+    {
+        if (UnitRoom == null) Debug.LogError($"Unit {this} has no room assigned!");
+    }
     #endregion
 
 }

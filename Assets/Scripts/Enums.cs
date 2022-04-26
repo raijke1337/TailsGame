@@ -86,3 +86,9 @@ public enum EnemyType
     Big,
     Boss
 }
+
+public enum TextType
+{
+    Tutorial,
+    Story
+}

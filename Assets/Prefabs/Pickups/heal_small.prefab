@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4795190700258654124}
   - component: {fileID: 4802772712635843052}
   - component: {fileID: 4762331339921956170}
-  - component: {fileID: 4824460072041089346}
+  - component: {fileID: 3622201858080065730}
   m_Layer: 0
   m_Name: heal_small
   m_TagString: Untagged
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 1e3f4dd6698853844b8cab4c33a09c96, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,7 +97,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 2d56fe2ad841a4f429c64626c08eaae5, type: 3}
---- !u!114 &4824460072041089346
+--- !u!114 &3622201858080065730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,7 +106,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 4824981421775035912}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 046d9f7d74f92704c91dc042d7cd6177, type: 3}
+  m_Script: {fileID: 11500000, guid: 773202aa84b84dd428736239bfe6974b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _commandID: heal_small
+  TriggerEffectIDs:
+  - heal_small
+  _activateEffect: {fileID: 0}

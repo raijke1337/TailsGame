@@ -13,7 +13,7 @@ public static class Extensions
 /// <param name="path">refer to Constants</param>
 /// <param name="includeSubDirs">look in subfolders </param>
 /// <returns>list of assets in specified folder</returns>
-    public static List<T> GetAssetsFromPath<T> (string path,bool includeSubDirs = false) where T: class
+    public static List<T> GetAssetsFromPath<T> (string path,bool includeSubDirs = true) where T: class
     {
         List<T> result = new List<T>();
         List<string> workPaths = new List<string>();

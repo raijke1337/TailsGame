@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class ProjectileTrigger : BaseTrigger, IProjectile
+public class ProjectileTrigger : WeaponHitTrigger, IProjectile
 {
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
 
@@ -29,8 +29,9 @@ public class ProjectileTrigger : BaseTrigger, IProjectile
     {
         if (SourceType == TriggerSourceType.Player && other.CompareTag("Player")) return;
         if (SourceType == TriggerSourceType.Enemy && other.CompareTag("Enemy")) return;
+        if (other.CompareTag("TextTrigger")) return;
 
-        if (other.CompareTag("StaticItem")) Stuck(other);
+        if (other.gameObject.isStatic) Stuck(other);
 
         base.OnTriggerEnter(other);
 

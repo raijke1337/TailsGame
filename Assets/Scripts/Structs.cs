@@ -31,7 +31,10 @@ public static class Constants
         public const string c_AllConfigsPath = "/Scripts/Configurations/";
 #endif
     }
-
+    public static class Objects
+    {
+        public const string c_isoCameraTargetObjectName = "IsoCamTarget";
+    }
     public static class Combat
     {
         public const string c_WeaponPrefabsPath = "/Prefabs/Weapons/";
@@ -39,12 +42,17 @@ public static class Constants
         public const float c_RemainsDisappearTimer = 3f;
         public const float c_StaggeringHitHealthPercent = 0.1f; // 10% max hp
     }
+    public static class Texts
+    {
+        public const string c_TextsPath = "/Texts/";
+    }
 
 }
+#region structs 
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
 [Serializable] public class StatValueContainer
 {
-    [SerializeField,] private float _start;
+    [SerializeField] private float _start;
     [SerializeField] private float _max;
     [SerializeField] private float _min;
     [SerializeField] private float _current;
@@ -75,18 +83,17 @@ public static class Constants
         _current = _start;
     }
     //todo
+    // this is for lazy people
     public StatValueContainer(StatValueContainer preset)
     {
         _start = preset._start;
-        _max = preset._max == 0f ?  preset._max : preset._start;    
-        _min = preset._min == 0f? preset._min : 0f;
+        _max = preset._max;
+        _min = preset._min;
         Setup();
     }
 }
 
-
-[Serializable]
-public struct ProjectileData
+[Serializable] public struct ProjectileData
 {
     public float TimeToLive;
     public float Speed;
@@ -102,8 +109,7 @@ public struct ProjectileData
     }
 }
 
-[Serializable]
-public struct SkillData
+[Serializable] public struct SkillData
 {
     public Sprite Icon;
     public float Recharge;
@@ -120,10 +126,7 @@ public struct SkillData
         Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; TargetType = refs.TargetType; SourceType = refs.SourceType; 
     }
 }
-
-
-[Serializable]
-public struct EnemyStats
+[Serializable] public struct EnemyStats
 {
     public float AttackRange;
     public float TimeBetweenAttacks;
@@ -144,7 +147,14 @@ public struct EnemyStats
     }
 }
 
+[Serializable] public struct TextContainer
+{
+    public string ID;
+    public TextType Type;
+    public string[] Texts;
+}
 
+#endregion
 
 #region interfaces
 

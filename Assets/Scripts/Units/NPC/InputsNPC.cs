@@ -64,6 +64,7 @@ public class InputsNPC : ControlInputsBase
         fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
 
         _navMeshAg.speed = _statsCtrl.GetBaseStats[StatType.MoveSpeed].GetCurrent();
+        _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
 
         Bind(isEnable);
         fsm.SetPatrolPoints(patrolPoints);

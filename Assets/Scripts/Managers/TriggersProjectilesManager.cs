@@ -49,19 +49,18 @@ public class TriggersProjectilesManager : MonoBehaviour
     {
         var config = _configs.First(t => t.ID == ID);
 
-        if (config.StatID == StatType.Heat) target = player;
-        // todo placeholder logic for combo increase
-
         switch (config.SourceType)
         {
             case TriggerSourceType.Player:
+                if (config.StatID == StatType.Heat || config .StatID == StatType.HeatRegen)
+                {
+                    target = player;
+                }
                 target.ApplyEffect(new TriggeredEffect(config));
-                Debug.Log($"Applying effect ID {ID} to {target.GetFullName()}");
                 break;
             case TriggerSourceType.Enemy:
                 if (target is NPCUnit) return;
                 else target.ApplyEffect(new TriggeredEffect(config));
-                Debug.Log($"Applying effect ID {ID} to {target.GetFullName()}");
                 break;
         }
     }

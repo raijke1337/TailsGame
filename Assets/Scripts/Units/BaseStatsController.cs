@@ -26,8 +26,8 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
     public void SetupStatsComponent()
     {
-        foreach (var v in _stats.Values) { v.Setup(); }
         _effects = new List<TriggeredEffect>();
+        foreach (var v in _stats.Values) { v.Setup(); }
     }
 
     public bool RequestHeatUsage(float value)

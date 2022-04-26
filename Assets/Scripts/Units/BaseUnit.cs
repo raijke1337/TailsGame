@@ -29,8 +29,6 @@ using Zenject;
         public IReadOnlyDictionary<StatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
 
 
-
-
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
         public event BaseUnitWithIDEvent SkillRequestSuccessEvent;
         protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit);
@@ -45,14 +43,14 @@ using Zenject;
 
         protected virtual void OnEnable()
         {
-            _animator = GetComponent<Animator>();
-            _rigidbody = GetComponent<Rigidbody>();
-            _controller = GetComponent<ControlInputsBase>();
-            _controller.SetStatsController(_baseStats);
+        _animator = GetComponent<Animator>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _controller = GetComponent<ControlInputsBase>();
+        _controller.InitControllers(_baseStats);
         _controller.BindControllers(true);
-
-            _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-            _faceCam.enabled = false;
+        
+        _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
+        _faceCam.enabled = false;
         }
 
         protected virtual void Start()
@@ -139,13 +137,16 @@ using Zenject;
                     break;
                 case CombatActionType.MeleeSpecialQ:
                     _animator.SetTrigger("QSpecial");
-                    break;
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
+                break;
                 case CombatActionType.RangedSpecialE:
                     _animator.SetTrigger("ESpecial");
-                    break;
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
+                break;
                 case CombatActionType.ShieldSpecialR:
                     _animator.SetTrigger("RSpecial");
-                    break;
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
+                break;
             }
         }
         protected virtual void DodgeAction() { }

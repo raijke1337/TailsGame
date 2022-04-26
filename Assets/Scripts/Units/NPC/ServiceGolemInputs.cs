@@ -15,6 +15,14 @@ public class ServiceGolemInputs : InputsNPC
 {
     [SerializeField] private DodgeController _dodgeCtrl;
     public void SetDodgeCtrl(string ID) => _dodgeCtrl = new DodgeController(ID);
+    public DodgeController GetDodgeController => _dodgeCtrl;
+    protected override void HandleAttackRequest(CombatActionType type)
+    {
+        if (type == CombatActionType.MeleeSpecialQ && !_dodgeCtrl.IsDodgePossibleCheck()) return;
+        base.HandleAttackRequest(type);
+    }
+
+
 
 }
 

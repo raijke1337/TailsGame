@@ -14,6 +14,15 @@ using Zenject;
 
 public class WeaponHitTrigger : BaseTrigger
 {
-
+    [SerializeField] public List<string> TriggerEffectIDs;
+    protected override void OnTriggerEnter(Collider other)
+    {
+        var comp = other.GetComponent<BaseUnit>();
+        if (comp == null) return;
+        foreach (var id in TriggerEffectIDs)
+        {
+            TriggerCallback(id, comp);
+        }
+    }
 }
 

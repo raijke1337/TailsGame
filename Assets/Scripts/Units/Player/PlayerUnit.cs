@@ -37,6 +37,10 @@ public class PlayerUnit : BaseUnit
         _currentVisualStageIndex = 0;
     }
 
+
+    
+
+
     public override void ApplyEffect(TriggeredEffect eff)
         // shield damage reduction logic
     {
@@ -73,13 +77,18 @@ public class PlayerUnit : BaseUnit
             StopCoroutine(_dodgeCor);
         }
     }
+    protected override void DodgeAction()
+    {
+        _dodgeCor = StartCoroutine(DodgingMovement());
+    }
     private IEnumerator DodgingMovement()
     {
         var stats = _playerController.GetDodgeController.GetDodgeStats();
         _playerController.IsControlsBusy = true;
 
         Vector3 start = transform.position;
-        Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
+        //Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
+        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent();
 
         float p = 0f;
         while (p <= 1f)
@@ -88,14 +97,10 @@ public class PlayerUnit : BaseUnit
             transform.position = Vector3.Lerp(start, end, p);
             yield return null;
         }
-
         _playerController.IsControlsBusy = false;
         yield return null;
     }
-    protected override void DodgeAction()
-    {
-        _dodgeCor = StartCoroutine(DodgingMovement());
-    }
+
 
     #endregion
 
@@ -172,27 +177,10 @@ public class PlayerUnit : BaseUnit
         //}
         //else currVelocity = desiredDir;
         //transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * currVelocity;
+        // too slide-y
 
         // also good enough
         transform.position += Time.deltaTime * desiredDir
             * GetStats()[StatType.MoveSpeed].GetCurrent();
-    }
-
-
-    protected override void AnimateCombatActivity(CombatActionType type)
-    {
-        base.AnimateCombatActivity(type);
-        switch (type)
-        {
-            case CombatActionType.MeleeSpecialQ:
-                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
-                break;
-            case CombatActionType.RangedSpecialE:
-                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
-                break;
-            case CombatActionType.ShieldSpecialR:
-                SkillRequestCallBack(_playerController.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
-                break;
-        }
     }
 }
