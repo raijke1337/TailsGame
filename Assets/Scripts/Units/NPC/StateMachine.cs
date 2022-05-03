@@ -50,6 +50,7 @@ public class StateMachine : IStatsComponentForHandler
     public void SetAI(bool setting)
     {
         aiActive = setting;
+        if (NMAgent == null) return;
         NMAgent.isStopped = !setting;
     }
 

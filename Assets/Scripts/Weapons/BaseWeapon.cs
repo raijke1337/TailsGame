@@ -17,10 +17,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     protected bool IsBusy = false;
 
     [Inject] protected PlayerUnit _player;
-
-    protected List<WeaponTrigger> _triggers;
-    // triggers are found separately in melee and ranged
-
     protected List<string> _effectsIDs;
 
 

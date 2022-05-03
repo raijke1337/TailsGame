@@ -21,6 +21,7 @@ public class ProjectileSkill : BaseSkill, IProjectile
 
     private float _exp;
     private int _penetr;
+    public string GetID { get => SkillID;  }
 
     public TriggerSourceType SourceType => ProjData.SourceType;
 

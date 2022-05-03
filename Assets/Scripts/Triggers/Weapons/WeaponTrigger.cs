@@ -14,7 +14,12 @@ using Zenject;
 
 public class WeaponTrigger : BaseTrigger
 {
-    [SerializeField] public List<string> TriggerEffectIDs;
+    protected List<string> TriggerEffectIDs;
+    public void SetTriggerIDS(IEnumerable<string> ids)
+    {
+        TriggerEffectIDs = new List<string>();
+        foreach (string id in ids) { TriggerEffectIDs.Add(id); }
+    }
 
     protected override void OnTriggerEnter(Collider other)
     {

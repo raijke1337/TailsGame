@@ -15,13 +15,14 @@ using Zenject;
 public class ProjectileTrigger : WeaponTrigger, IProjectile
 {
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
-
     private ProjectileData ProjData;
 
     private float _exp;
     private int _penetr;
 
     public TriggerSourceType SourceType { get => ProjData.SourceType; }
+
+    public string GetID { get; set; }
 
     public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 

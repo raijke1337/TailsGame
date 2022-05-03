@@ -69,10 +69,10 @@ public class TriggersProjectilesManager : MonoBehaviour
     {
         item.TriggerApplicationRequestEvent += ApplyTriggerEffect;
     }
-    private void NewProjectile (IProjectile proj, string ID)
+    private void NewProjectile (IProjectile proj)
     {
         _projectiles.Add(proj);
-        proj.SetProjectileData(_projectileCfgs.First(t => t.ID == ID));
+        proj.SetProjectileData(_projectileCfgs.First(t => t.ID == proj.GetID));
         RegisterTrigger(proj);
         proj.ExpiryEventProjectile += ProjectileExpiryHandling;
         proj.OnSpawnProj();

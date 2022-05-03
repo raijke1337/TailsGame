@@ -35,10 +35,7 @@ public class PlayerUnit : BaseUnit
             maxHP -= coef;
         }
         _currentVisualStageIndex = 0;
-    }
-
-
-    
+    }    
 
 
     public override void ApplyEffect(TriggeredEffect eff)
@@ -63,8 +60,6 @@ public class PlayerUnit : BaseUnit
                 break;
         }
     }
-
-
     #region dodge
 
     private Coroutine _dodgeCor;
@@ -106,16 +101,20 @@ public class PlayerUnit : BaseUnit
 
     private void ChangeAnimatorLayer(WeaponType type)
     {     
-        // 1 is ranged 2 is hammer
+        // 1  2 is ranged 3 4  is melee
         switch (type)
         {
             case WeaponType.Melee:
-                _animator.SetLayerWeight(2, 100f);
                 _animator.SetLayerWeight(1, 0f);
+                _animator.SetLayerWeight(2, 0f);
+                _animator.SetLayerWeight(3, 100f);
+                _animator.SetLayerWeight(4, 100f);
                 break;
             case WeaponType.Ranged:
                 _animator.SetLayerWeight(1, 100f);
-                _animator.SetLayerWeight(2, 0f);
+                _animator.SetLayerWeight(2, 100f);
+                _animator.SetLayerWeight(3, 0f);
+                _animator.SetLayerWeight(4, 0f);
                 break;
         }
     }

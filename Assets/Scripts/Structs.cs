@@ -181,15 +181,18 @@ public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
     public event MouseOverEvents SelectionEvent;
 }
 
-public interface IProjectile : IAppliesTriggers, ISourceMatters
+public interface IProjectile : IAppliesTriggers, ISourceMatters, IHasID
 {
     void OnSpawnProj();
     void OnUpdateProj();
     void OnExpiryProj();
     event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
     void SetProjectileData(ProjectileDataConfig cfg);
-
 }
+public interface IHasID
+{ string GetID { get; } }
+
+
 public interface IAppliesTriggers
 { event BaseUnitWithIDEvent TriggerApplicationRequestEvent; }
 

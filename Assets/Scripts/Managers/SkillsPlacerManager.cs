@@ -15,7 +15,7 @@ public class SkillsPlacerManager : MonoBehaviour
 {
     [SerializeField] SerializableDictionaryBase<string,BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
     private UnitsManager _unitsM;
-    public event SimpleEventsHandler<IProjectile,string> ProjectileSkillCreatedEvent;
+    public event SimpleEventsHandler<IProjectile> ProjectileSkillCreatedEvent;
     public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
 
 
@@ -52,7 +52,7 @@ public class SkillsPlacerManager : MonoBehaviour
         if (skill is IProjectile)
         {
             var sk = skill as IProjectile;
-            ProjectileSkillCreatedEvent?.Invoke(sk, ID);            
+            ProjectileSkillCreatedEvent?.Invoke(sk);            
         }
     }
 

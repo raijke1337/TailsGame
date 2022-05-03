@@ -18,7 +18,7 @@ public class MeleeWeapon : BaseWeapon
     private void Start()
     {
         _trigger = GetComponent<WeaponTrigger>();
-        _trigger.TriggerEffectIDs = _effectsIDs;
+        _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.Enable = false;
     }
 
