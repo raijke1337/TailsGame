@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class ProjectileTrigger : WeaponHitTrigger, IProjectile
+public class ProjectileTrigger : WeaponTrigger, IProjectile
 {
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
 

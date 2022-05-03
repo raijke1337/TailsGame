@@ -66,7 +66,11 @@ public class NPCUnit : BaseUnit, InteractiveItem
 
     #region behavior
 
-    public void AiToggle(bool isProcessing) => _npcController.SwitchState(isProcessing);
+    public void AiToggle(bool isProcessing)
+    {    
+        _npcController.SwitchState(isProcessing);
+    }
+
 
 
     protected override void HealthChangedEvent(float value, float prevValue)
@@ -83,15 +87,5 @@ public class NPCUnit : BaseUnit, InteractiveItem
 
 
     #endregion
-
-
-    #region dbug
-
-    private void LateUpdate()
-    {
-        if (UnitRoom == null) Debug.LogError($"Unit {this} has no room assigned!");
-    }
-    #endregion
-
 }
 

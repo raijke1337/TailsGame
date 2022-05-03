@@ -15,7 +15,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
 public class SkillsController : IStatsComponentForHandler
 {
-    [SerializeField] private List<string> IDs;
+    private List<string> IDs;
     private Dictionary <CombatActionType, SkillControllerData> _skills;
 
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent; 
@@ -27,6 +27,7 @@ public class SkillsController : IStatsComponentForHandler
     }
 
 
+    // todo layer switching doesnt work properly
     public bool RequestSkill (CombatActionType type, out float cost)
     {
         var result = _skills[type].RequestUse();

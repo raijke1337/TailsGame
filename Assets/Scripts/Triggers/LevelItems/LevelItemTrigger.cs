@@ -13,20 +13,36 @@ using UnityEngine.InputSystem;
 
 public class LevelItemTrigger : BaseTrigger
 {
-    public string TriggerID;
+    [SerializeField] protected List<string> TriggerIDs;
+    [SerializeField] protected bool disappearsOnPickup = true;
+    [SerializeField] protected ParticleSystem pickupEffect;
+    [SerializeField] protected float pickupEffectDuration = 0f;
 
-    [SerializeField,Space] protected ParticleSystem _activateEffect;
+
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if (_activateEffect == null) return;
-        _activateEffect.enableEmission = true;
+        var comp = other.GetComponent<PlayerUnit>();
+        if (comp == null) return;
+        foreach (var id in TriggerIDs)
+        {
+            TriggerCallback(id, comp);
+        }
+        if (pickupEffect!= null) StartCoroutine(ActivationEffect());
+        if (disappearsOnPickup) StartCoroutine(BaseUnit.ItemDisappearsCoroutine(pickupEffectDuration,gameObject));
     }
 
-    protected override void OnTriggerExit(Collider other)
+    protected IEnumerator ActivationEffect()
     {
-        if (_activateEffect == null) return;
-        _activateEffect.enableEmission = false;
+        pickupEffect.Play();
+        float passed = 0f;
+        while (passed < pickupEffectDuration)
+        {
+            passed += Time.deltaTime;
+            yield return null;
+        }
+        pickupEffect.Stop();
+        yield return null;  
     }
 }
 

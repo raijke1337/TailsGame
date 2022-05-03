@@ -735,8 +735,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponCtrl: {fileID: 0}
   extraSkills: []
-  _skillCtrl:
-    IDs: []
   patrolPoints: []
   enemyStatsID: spider_bot
   InitialState: {fileID: 11400000, guid: 173c56c381ff3704487b0b1bda3a3b47, type: 2}
@@ -785,8 +783,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 2, y: 3.6851091, z: 2}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!54 &8633567235844140875
 Rigidbody:
   m_ObjectHideFlags: 0

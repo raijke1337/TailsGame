@@ -24,11 +24,8 @@ public class TrapWithTimerTrigger : LevelItemTrigger
         _trapEffect = GetComponent<ParticleSystem>();
         StartCor();
     }
-    protected override void OnTriggerEnter(Collider other)
-    {
-        base.OnTriggerEnter(other);        
-    }
-    
+
+
     private IEnumerator Toggling(float time)
     {
         float passed = 0f;

@@ -46,7 +46,6 @@ public static class Constants
     {
         public const string c_TextsPath = "/Texts/";
     }
-
 }
 #region structs 
 [Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }

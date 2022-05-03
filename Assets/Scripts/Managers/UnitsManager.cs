@@ -33,8 +33,6 @@ public class UnitsManager : MonoBehaviour
         //_timer = new TimeController();
         //_activity = new UnitActivityHandler(_units, _player);
 
-        SetAIStateGlobal(true);
-
         foreach (var npc in _units)
         {
             npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
@@ -44,6 +42,14 @@ public class UnitsManager : MonoBehaviour
         }
         _player.BaseUnitDiedEvent += HandleUnitDeath;
         _player.SkillRequestSuccessEvent += (t1, t2) => RequestToPlaceSkills?.Invoke(t1, t2);
+    }
+    private void Start()
+    {
+        SetAIStateGlobal(true);
+    }
+    private void OnDisable()
+    {
+        SetAIStateGlobal(false);
     }
     public void SetAIStateGlobal(bool isProcessing)
     {

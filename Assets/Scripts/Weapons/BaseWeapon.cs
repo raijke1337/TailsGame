@@ -18,7 +18,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
 
     [Inject] protected PlayerUnit _player;
 
-    protected List<WeaponHitTrigger> _triggers;
+    protected List<WeaponTrigger> _triggers;
     // triggers are found separately in melee and ranged
 
     protected List<string> _effectsIDs;

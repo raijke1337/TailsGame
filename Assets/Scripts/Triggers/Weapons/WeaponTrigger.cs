@@ -10,14 +10,20 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using Zenject;
 
-public class PickUpTrigger : LevelItemTrigger
+public class WeaponTrigger : BaseTrigger
 {
+    [SerializeField] public List<string> TriggerEffectIDs;
+
     protected override void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player")) return;
-        base.OnTriggerEnter(other);
-            Destroy(gameObject);
+        var comp = other.GetComponent<BaseUnit>();
+        if (comp == null) return;
+        foreach (var id in TriggerEffectIDs)
+        {
+            TriggerCallback(id, comp);
+        }
     }
 }
 

@@ -71,7 +71,7 @@ public class PlayerUnit : BaseUnit
     // stop the dodge like this
     private void OnCollisionEnter(Collision collision)
     {
-        if (_dodgeCor != null && collision.gameObject.tag != "Ground")
+        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
         {
             _playerController.IsControlsBusy = false;
             StopCoroutine(_dodgeCor);
