@@ -79,8 +79,7 @@ public abstract class BaseUnit : MonoBehaviour
         _controller.BindControllers(false);
     }
     protected virtual void FixedUpdate()
-    {
-        if (_controller.IsControlsBusy) return;
+    {   
         AnimateMovement();
     }
     #endregion

@@ -2,12 +2,13 @@ using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
+using static UnityEngine.InputSystem.InputAction;
 
 [RequireComponent(typeof(BaseUnit))]
 public abstract class ControlInputsBase : MonoBehaviour
 {
     [Inject] protected StatsUpdatesHandler _handler;
-    public bool IsControlsBusy { get; set; } // todo not very good solution
+    public bool IsControlsBusy { get; set; } // todo ?
 
     [SerializeField] protected WeaponController _weaponCtrl;
     [SerializeField] protected StunnerComponent _staggerCheck;
@@ -46,6 +47,10 @@ public abstract class ControlInputsBase : MonoBehaviour
         _handler.RegisterUnitForStatUpdates(_skillCtrl, isEnable);
     }
 
+    public void ToggleBusyControls_AnimationEvent(int state)
+    {
+        IsControlsBusy = state != 0;
+    }   
 
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;

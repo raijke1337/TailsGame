@@ -114,27 +114,27 @@ public class InputsPlayer : ControlInputsBase
 
     #region controller checks
 
-    private void RangedAttack_performed(CallbackContext obj)
+    protected void RangedAttack_performed(CallbackContext obj)
     {
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
-            CombatActionSuccessCallback(CombatActionType.Ranged);             
-        
+            CombatActionSuccessCallback(CombatActionType.Ranged);
+
     }
-    private void MeleeAttack_performed(CallbackContext obj)
+    protected void MeleeAttack_performed(CallbackContext obj)
     {
         if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
             CombatActionSuccessCallback(CombatActionType.Melee);
     }
-    private void SkillR_performed(CallbackContext obj)
+    protected void SkillR_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
-        if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR,out var c))
+        if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR, out var c))
         {
             if (_statsCtrl.RequestHeatUsage(c))
-            CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
+                CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
         }
     }
-    private void SkillQ_performed(CallbackContext obj)
+    protected void SkillQ_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ, out var c))
@@ -143,7 +143,7 @@ public class InputsPlayer : ControlInputsBase
                 CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
         }
     }
-    private void SkillE_performed(CallbackContext obj)
+    protected void SkillE_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
         if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE, out var c))

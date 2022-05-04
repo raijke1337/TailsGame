@@ -45,7 +45,8 @@ public class SkillsPlacerManager : MonoBehaviour
                 skill.Source = source as NPCUnit;
                 break;
         }
-        skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
+        skill.transform.position = source.SkillsPosition.position;
+        skill.transform.rotation = source.SkillsPosition.rotation;
         skill.transform.forward = source.transform.forward;
         SkillAreaPlacedEvent?.Invoke(skill);
 

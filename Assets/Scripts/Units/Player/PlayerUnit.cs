@@ -105,16 +105,16 @@ public class PlayerUnit : BaseUnit
         switch (type)
         {
             case WeaponType.Melee:
+                _animator.SetLayerWeight(0, 0f);
                 _animator.SetLayerWeight(1, 0f);
-                _animator.SetLayerWeight(2, 0f);
+                _animator.SetLayerWeight(2, 100f);
                 _animator.SetLayerWeight(3, 100f);
-                _animator.SetLayerWeight(4, 100f);
                 break;
             case WeaponType.Ranged:
+                _animator.SetLayerWeight(0, 100f);
                 _animator.SetLayerWeight(1, 100f);
-                _animator.SetLayerWeight(2, 100f);
+                _animator.SetLayerWeight(2, 0f);
                 _animator.SetLayerWeight(3, 0f);
-                _animator.SetLayerWeight(4, 0f);
                 break;
         }
     }
@@ -167,6 +167,7 @@ public class PlayerUnit : BaseUnit
 
     private void PlayerMovement(Vector3 desiredDir)
     {
+        if (_controller.IsControlsBusy) return;
         // DO NOT FIX WHAT ISNT BROKEN //
 
         //if (desiredDir == Vector3.zero)
