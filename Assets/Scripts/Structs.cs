@@ -55,8 +55,8 @@ public static class Constants
     [SerializeField] private float _start;
     [SerializeField] private float _max;
     [SerializeField] private float _min;
-    [SerializeField] private float _current;
-    [SerializeField] private float _last;
+    private float _current;
+    private float _last;
     /// <summary>
     /// current, previous
     /// </summary>
@@ -70,7 +70,7 @@ public static class Constants
     /// <summary>
     /// adds the value, clamped by min and max
     /// </summary>
-    /// <param name="value">use negative for dmg</param>
+    /// <param name="value">use negative for decrease</param>
     public void ChangeCurrent(float value)
     {
         _last = _current;
@@ -81,9 +81,11 @@ public static class Constants
     public void Setup()
     {
         _current = _start;
+        // this is for lazy people
+        // case: only start value is set
+        if (_max == 0) _max = _start;
     }
-    //todo
-    // this is for lazy people
+
     public StatValueContainer(StatValueContainer preset)
     {
         _start = preset._start;
@@ -170,8 +172,9 @@ public interface IStatsAddEffects
 public interface IWeapon : IHasGameObject
 {
     bool UseWeapon();
-    int GetAmmo();
+    int GetAmmo { get; }
     string GetRelatedSkillID();
+    event SimpleEventsHandler<float> TargetHit;
 }
 
 public interface IHasGameObject

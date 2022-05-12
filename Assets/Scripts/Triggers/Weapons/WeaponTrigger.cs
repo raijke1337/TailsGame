@@ -15,6 +15,8 @@ using Zenject;
 public class WeaponTrigger : BaseTrigger
 {
     protected List<string> TriggerEffectIDs;
+    public SimpleEventsHandler HitSuccessEvent;
+
     public void SetTriggerIDS(IEnumerable<string> ids)
     {
         TriggerEffectIDs = new List<string>();
@@ -25,6 +27,7 @@ public class WeaponTrigger : BaseTrigger
     {
         var comp = other.GetComponent<BaseUnit>();
         if (comp == null) return;
+        HitSuccessEvent?.Invoke();
         foreach (var id in TriggerEffectIDs)
         {
             TriggerCallback(id, comp);

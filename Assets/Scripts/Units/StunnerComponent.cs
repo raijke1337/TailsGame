@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
+    [Serializable]
     public class StunnerComponent : IStatsComponentForHandler
     {
         public int StaggerCounter { get; } // total hits it takes to stagger a unit

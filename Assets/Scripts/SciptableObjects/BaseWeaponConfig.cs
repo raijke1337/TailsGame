@@ -16,11 +16,11 @@ public class BaseWeaponConfig : ScriptableObjectID
 {
 
     public WeaponType WType;
-
-
     public int _charges;
     public List<string> TriggerIDs;
     public string SkillID;
+    public int ComboValue;
+    // how much combo increases per hit
 
 }
 

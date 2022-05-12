@@ -69,7 +69,7 @@ public class PlayerUnit : BaseUnit
     }
     private IEnumerator DodgingMovement()
     {
-        var stats = _playerController.GetDodgeController.GetDodgeStats();
+        var stats = _playerController.GetDodgeController.GetDodgeStats;
         _playerController.IsControlsBusy = true;
 
         Vector3 start = transform.position;
@@ -115,6 +115,7 @@ public class PlayerUnit : BaseUnit
     public void ComboWindowEnd()
     {
         _animator.SetBool("AdvancingCombo", false);
+        _playerController.ComboGained = false;
     }
 
     protected override void HealthChangedEvent(float value,float prevvalue)

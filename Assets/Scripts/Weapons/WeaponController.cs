@@ -1,16 +1,8 @@
+using RotaryHeart.Lib.SerializableDictionary;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
 public class WeaponController : MonoBehaviour, IStatsComponentForHandler
@@ -24,6 +16,9 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     [SerializeField] protected Transform _sheathedWeaponEmpty;
 
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+    public event SimpleEventsHandler<float> TargetHitByWeaponEvent; // for comboctrl, used by input
+    
+
 
     public WeaponType GetCurrentWeaponType => CurrentWeaponType;
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
@@ -72,10 +67,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         }
     }
 
-    public int GetAmmoByType(WeaponType type)
-    {
-        return _currentWeapons[type].GetAmmo();
-    }
+    public int GetAmmoByType(WeaponType type) => _currentWeapons[type].GetAmmo;
 
     public virtual bool UseWeaponCheck(WeaponType type)
     {
@@ -114,8 +106,11 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
             }
             _currentWeapons.Add(config.WType, item);
         }
+        foreach (IWeapon weapon in _currentWeapons.Values)
+        {
+            weapon.TargetHit += (f) => TargetHitByWeaponEvent?.Invoke(f); 
+        }
     }
-
 
     public void UpdateInDelta(float deltaTime)
     {

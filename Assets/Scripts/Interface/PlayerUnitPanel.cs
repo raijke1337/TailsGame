@@ -22,6 +22,7 @@ public class PlayerUnitPanel : BaseUnitPanel
     private DodgeController _dodge;
     private WeaponController _weapons;
     private ShieldController _shield;
+    private ComboController _combo;
 
     private StatValueContainer HPc;
     private StatValueContainer SHc;
@@ -56,13 +57,12 @@ public class PlayerUnitPanel : BaseUnitPanel
         _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
         _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
+        _combo = _player.GetInputs<InputsPlayer>().GetComboController;
 
         HPc = _player.GetStats()[BaseStatType.Health];
-       // HEc = _player.GetStats()[BaseStatType.Heat];
-        SHc = _shield.GetShieldStats()[ShieldStatType.Shield];
-        //_cont.Add(HPc);
-        //_cont.Add(HEc);
-        //_cont.Add(SHc);
+        HEc = _combo.ComboContainer;
+        SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+
         HPc.ValueChangedEvent += ResetTicker; // only hp because other stats regen 
     }
 

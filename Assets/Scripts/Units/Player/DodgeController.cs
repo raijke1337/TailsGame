@@ -1,23 +1,16 @@
+using RotaryHeart.Lib.SerializableDictionary;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
 public class DodgeController : IStatsComponentForHandler
 {
-    [SerializeField]
-    SerializableDictionaryBase<DodgeStatType, StatValueContainer> _stats;
-    public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats() => _stats;
+
+    Dictionary<DodgeStatType, StatValueContainer> _stats;
+    public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
+
     public int GetDodgeCharges()
     {
         return _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent() : 0;
@@ -26,7 +19,7 @@ public class DodgeController : IStatsComponentForHandler
 
     public DodgeController(string unitID)
     {
-        _stats = new SerializableDictionaryBase<DodgeStatType, StatValueContainer>();
+        _stats = new Dictionary<DodgeStatType, StatValueContainer>();
         var cfg = Extensions.GetAssetsFromPath<DodgeStatsConfig>(Constants.Configs.c_DodgeConfigsPath).First(t=>t.ID == unitID);
         foreach (var c in cfg.Stats)
         {
@@ -70,15 +63,9 @@ public class DodgeController : IStatsComponentForHandler
                 t.time -= deltaTime;
             }
         }
-#if UNITY_EDITOR
-        charges = GetDodgeCharges();
-#endif
+
     }
 
-#if UNITY_EDITOR
-    // for property drawer
-    public int charges;
-#endif
 
 }
 

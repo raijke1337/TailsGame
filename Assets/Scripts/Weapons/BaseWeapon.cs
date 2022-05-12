@@ -9,7 +9,8 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
 
     protected int MaxCharges;
     protected int _currentCharges;
-    public int GetAmmo() => _currentCharges;
+    protected int ComboVal;
+    public int GetAmmo { get { return _currentCharges; } }
 
     protected string SkillID;
     public string GetRelatedSkillID() => SkillID;
@@ -19,6 +20,8 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     [Inject] protected PlayerUnit _player;
     protected List<string> _effectsIDs;
 
+    public event SimpleEventsHandler<float> TargetHit;
+    protected void TargetHitCallback(float val) => TargetHit?.Invoke(val);
 
     protected virtual void OnEnable()
     {
@@ -44,6 +47,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         }
         MaxCharges = config._charges;
         SkillID = config.SkillID;
+        ComboVal = config.ComboValue;
     }
 
 }

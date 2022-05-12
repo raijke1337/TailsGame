@@ -10,8 +10,9 @@ public abstract class ControlInputsBase : MonoBehaviour
     [Inject] protected StatsUpdatesHandler _handler;
     public bool IsControlsBusy { get; set; } // todo ?
 
-    [SerializeField] protected WeaponController _weaponCtrl;
+    protected WeaponController _weaponCtrl;
     [SerializeField] protected StunnerComponent _staggerCheck;
+
     [SerializeField] protected string[] extraSkills;
 
     [SerializeField] protected SkillsController _skillCtrl;

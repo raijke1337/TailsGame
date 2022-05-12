@@ -22,7 +22,7 @@ public class ShieldController : IStatsComponentForHandler
 
     private List<TriggeredEffect> _effects = new List<TriggeredEffect>();
     private Dictionary<ShieldStatType, StatValueContainer> _stats = new Dictionary<ShieldStatType, StatValueContainer>();
-    public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats() => _stats;
+    public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get { return _stats; } }
 
     public void SetupStatsComponent()
     {

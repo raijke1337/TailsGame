@@ -30,16 +30,6 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
         foreach (var v in _stats.Values) { v.Setup(); }
     }
 
-    public bool RequestHeatUsage(float value)
-    {
-        //var result = (_stats[BaseStatType.Heat].GetCurrent() + value) >= 0; // + because values are negative
-        //if (result)
-        //{
-        //    _stats[BaseStatType.Heat].ChangeCurrent(value);
-        //}
-        //return result;
-        return true;
-    }
 
     public BaseStatsController (string ID)
     {

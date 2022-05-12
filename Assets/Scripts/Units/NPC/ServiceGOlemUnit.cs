@@ -38,7 +38,7 @@ public class ServiceGolemUnit : NPCUnit
     }
     private IEnumerator DodgingMovement()
     {
-        var stats = (_controller as ServiceGolemInputs).GetDodgeController.GetDodgeStats();
+        var stats = (_controller as ServiceGolemInputs).GetDodgeController.GetDodgeStats;
         _controller.IsControlsBusy = true;
 
         Vector3 start = transform.position;

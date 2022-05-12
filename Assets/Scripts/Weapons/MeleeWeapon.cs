@@ -15,11 +15,13 @@ using UnityEngine.InputSystem;
 public class MeleeWeapon : BaseWeapon
 {
     private WeaponTrigger _trigger;
+
     private void Start()
     {
         _trigger = GetComponent<WeaponTrigger>();
         _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.Enable = false;
+        _trigger.HitSuccessEvent += HandleHit;
     }
 
 
@@ -32,6 +34,14 @@ public class MeleeWeapon : BaseWeapon
     {
         return true;
     }
-    // swings deplete charges
+
+    private void OnDisable()
+    {
+        _trigger.HitSuccessEvent -= HandleHit;
+    }
+    protected void HandleHit()
+    {
+        TargetHitCallback(ComboVal);
+    }
 }
 
