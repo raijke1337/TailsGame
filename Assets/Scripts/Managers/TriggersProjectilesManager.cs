@@ -52,10 +52,7 @@ public class TriggersProjectilesManager : MonoBehaviour
         switch (config.SourceType)
         {
             case TriggerSourceType.Player:
-                if (config.StatID == StatType.Heat || config .StatID == StatType.HeatRegen)
-                {
-                    target = player;
-                }
+                if (target is PlayerUnit) return;
                 target.ApplyEffect(new TriggeredEffect(config));
                 break;
             case TriggerSourceType.Enemy:

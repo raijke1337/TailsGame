@@ -20,6 +20,7 @@ public class InputsPlayer : ControlInputsBase
 
     [SerializeField] private DodgeController _dodgeCtrl;
     [SerializeField] private ShieldController _shieldCtrl;
+    [SerializeField] private ComboController _comboCtrl;
 
     private SelectorComponent _selector;
 
@@ -46,6 +47,7 @@ public class InputsPlayer : ControlInputsBase
         _controls = new PlayerControls();
         _shieldCtrl = new ShieldController(_statsCtrl.GetUnitID);
         _dodgeCtrl = new DodgeController(_statsCtrl.GetUnitID);
+        _comboCtrl = new ComboController(_statsCtrl.GetUnitID);
     }
 
     private void Start()

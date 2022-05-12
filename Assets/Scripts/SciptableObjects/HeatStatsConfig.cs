@@ -12,11 +12,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
-[CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats", order = 1)]
-
-public class BaseStatsConfig : ScriptableObjectID
+[CreateAssetMenu(fileName = "New HeatStatsConfig", menuName = "Configurations/ComboController")]
+public class HeatStatsConfig : ScriptableObjectID
 {
-    public string displayName;
-    public SerializableDictionaryBase<BaseStatType, StatValueContainer> Stats;
+    [SerializeField] public StatValueContainer HeatContainer;
+    public float DegenCoeff;
 }
 

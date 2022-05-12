@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public class TriggeredEffect 
 {
     public string ID; // used to load info
-    public StatType StatID; // used to pick changed stat
+    public BaseStatType StatID; // used to pick changed stat
     public float InitialValue; 
     public float RepeatedValue; //tick value
     public float RepeatApplicationDelay { get; }
@@ -26,7 +26,7 @@ public class TriggeredEffect
     public float CurrentRepeatTimer; // used by stats controller to do ticks
     public bool InitialDone = false; // is initial value applied
 
-    public TriggeredEffect (string id,StatType type,float init,float repeat = 0,float repeatDelay = 0,float totalDuration = 0, Sprite icon = null)
+    public TriggeredEffect (string id,BaseStatType type,float init,float repeat = 0,float repeatDelay = 0,float totalDuration = 0, Sprite icon = null)
     {
         ID = id; StatID = type; InitialValue = init;RepeatedValue = repeat;RepeatApplicationDelay = repeatDelay;TotalDuration = totalDuration; Icon = icon;
         CurrentRepeatTimer = RepeatApplicationDelay;

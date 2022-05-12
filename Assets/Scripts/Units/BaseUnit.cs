@@ -23,7 +23,7 @@ public abstract class BaseUnit : MonoBehaviour
 
     public string GetFullName() => _baseStats.GetDisplayName;
 
-    public IReadOnlyDictionary<StatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
+    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event BaseUnitWithIDEvent SkillRequestSuccessEvent;
     protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit);
@@ -56,13 +56,13 @@ public abstract class BaseUnit : MonoBehaviour
         if (isEnable)
         {
             _handler.RegisterUnitForStatUpdates(_baseStats);
-            GetStats()[StatType.Health].ValueChangedEvent += HealthChangedEvent;
+            GetStats()[BaseStatType.Health].ValueChangedEvent += HealthChangedEvent;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened += AnimateStagger;
         }
         else
         {
-            GetStats()[StatType.Health].ValueChangedEvent -= HealthChangedEvent;
+            GetStats()[BaseStatType.Health].ValueChangedEvent -= HealthChangedEvent;
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _handler.RegisterUnitForStatUpdates(_baseStats, false);
             _controller.StaggerHappened += AnimateStagger;

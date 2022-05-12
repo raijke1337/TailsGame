@@ -19,15 +19,12 @@ public enum Side
 }
 
 // all used stats 
-public enum StatType
+public enum BaseStatType : byte
 {
     Health,
-    HealthRegen, // remove - unused todo
-    Heat,
-    HeatRegen,
-    MoveSpeed
+    MoveSpeed,
+    TurnSpeed
 }
-
 public enum ShieldStatType
 {
     Shield,

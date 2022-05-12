@@ -32,7 +32,7 @@ public class TargetUnitPanel : BaseUnitPanel
     }
     protected override void RunSetup()
     {
-        HPc = _unit.GetStats()[StatType.Health];
+        HPc = _unit.GetStats()[BaseStatType.Health];
         _nameText.text = _unit.GetFullName();
     }
 

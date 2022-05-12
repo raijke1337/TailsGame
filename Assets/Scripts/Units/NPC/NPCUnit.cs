@@ -38,17 +38,10 @@ public class NPCUnit : BaseUnit, InteractiveItem
     {
         switch (eff.StatID)
         {
-            case StatType.Health:
+            case BaseStatType.Health:
                 _baseStats.AddTriggeredEffect(eff);
                 break;
-            case StatType.HealthRegen:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-            case StatType.Heat:
-                break;
-            case StatType.HeatRegen:
-                break;
-            case StatType.MoveSpeed:
+            case BaseStatType.MoveSpeed:
                 _baseStats.AddTriggeredEffect(eff);
                 break;
         }

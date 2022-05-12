@@ -28,6 +28,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     public WeaponType GetCurrentWeaponType => CurrentWeaponType;
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
 
+    public void SwitchModels(WeaponType type) => SwitchWeapon(type);
     protected virtual void SwitchWeapon(WeaponType type)
     {
         GameObject weaponOfType = _currentWeapons[type].GetObject();
@@ -85,10 +86,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     {
         (_currentWeapons[WeaponType.Melee] as MeleeWeapon).ToggleColliders(isEnable);
     }
-    public void SwitchModels(WeaponType type)
-    {
-        SwitchWeapon(type);
-    }
+
 
 
     // load weapon stats from configs

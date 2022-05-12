@@ -25,7 +25,7 @@ public class PlayerUnit : BaseUnit
         _visualController = GetComponent<VisualsController>();  
         ToggleCamera(true);
 
-        float maxHP = _baseStats.GetBaseStats[StatType.Health].GetMax();
+        float maxHP = _baseStats.GetBaseStats[BaseStatType.Health].GetMax();
         int stages = _visualController.StagesTotal;
         _visualStagesHP = new float[stages];
         var coef = maxHP / stages;
@@ -43,19 +43,10 @@ public class PlayerUnit : BaseUnit
     {
         switch (eff.StatID)
         {
-            case StatType.Health:
+            case BaseStatType.Health:
                 _baseStats.AddTriggeredEffect(_playerController.GetShieldController.ProcessHealthChange(eff));
                 break;
-            case StatType.HealthRegen:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-            case StatType.Heat:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-            case StatType.HeatRegen:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-            case StatType.MoveSpeed:
+            case BaseStatType.MoveSpeed:
                 _baseStats.AddTriggeredEffect(eff);
                 break;
         }
@@ -179,6 +170,6 @@ public class PlayerUnit : BaseUnit
 
         // also good enough
         transform.position += Time.deltaTime * desiredDir
-            * GetStats()[StatType.MoveSpeed].GetCurrent();
+            * GetStats()[BaseStatType.MoveSpeed].GetCurrent();
     }
 }

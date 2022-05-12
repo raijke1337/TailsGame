@@ -26,7 +26,7 @@ public abstract class ControlInputsBase : MonoBehaviour
     public virtual void InitControllers(BaseStatsController stats)
     {
         _statsCtrl = stats;
-        _statsCtrl.GetBaseStats[StatType.Health].ValueChangedEvent += StaggerCheck;
+        _statsCtrl.GetBaseStats[BaseStatType.Health].ValueChangedEvent += StaggerCheck;
         _staggerCheck = new StunnerComponent(3, 3); // todo configs
         _weaponCtrl = GetComponent<WeaponController>(); // todo remove this (mono)
         // not initialized? todo
@@ -57,7 +57,7 @@ public abstract class ControlInputsBase : MonoBehaviour
 
     protected void StaggerCheck(float current,float prev)
     {
-        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[StatType.Health].GetMax())
+        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[BaseStatType.Health].GetMax())
         {
             if (_staggerCheck.DidHitStun())
             {

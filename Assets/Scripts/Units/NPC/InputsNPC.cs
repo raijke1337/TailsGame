@@ -63,7 +63,7 @@ public class InputsNPC : ControlInputsBase
         _navMeshAg = GetComponent<NavMeshAgent>();
         fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
 
-        _navMeshAg.speed = _statsCtrl.GetBaseStats[StatType.MoveSpeed].GetCurrent();
+        _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent();
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
 
         Bind(isEnable);
@@ -91,7 +91,7 @@ public class InputsNPC : ControlInputsBase
             fsm.AgressiveActionRequest += HandleAttackRequest;
             fsm.PlayerSeenEvent += HandlePlayerDetection;
             fsm.AllyRequest += HandleAllySearch;
-            _statsCtrl.GetBaseStats[StatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
+            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
         }
         else
         {
@@ -99,7 +99,7 @@ public class InputsNPC : ControlInputsBase
             fsm.AgressiveActionRequest -= HandleAttackRequest;
             fsm.PlayerSeenEvent -= HandlePlayerDetection;
             fsm.AllyRequest -= HandleAllySearch;
-            _statsCtrl.GetBaseStats[StatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
+            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
         }
     }
 

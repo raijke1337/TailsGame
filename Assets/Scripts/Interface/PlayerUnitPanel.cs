@@ -57,8 +57,8 @@ public class PlayerUnitPanel : BaseUnitPanel
         _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
 
-        HPc = _player.GetStats()[StatType.Health];
-        HEc = _player.GetStats()[StatType.Heat];
+        HPc = _player.GetStats()[BaseStatType.Health];
+       // HEc = _player.GetStats()[BaseStatType.Heat];
         SHc = _shield.GetShieldStats()[ShieldStatType.Shield];
         //_cont.Add(HPc);
         //_cont.Add(HEc);

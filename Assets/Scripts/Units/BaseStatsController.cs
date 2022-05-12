@@ -15,8 +15,8 @@ using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
 public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 {
-    private SerializableDictionaryBase<StatType, StatValueContainer> _stats;
-    public IReadOnlyDictionary<StatType, StatValueContainer> GetBaseStats => _stats;
+    private SerializableDictionaryBase<BaseStatType, StatValueContainer> _stats;
+    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetBaseStats => _stats;
 
 
     public string GetDisplayName { get; }
@@ -32,17 +32,18 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
     public bool RequestHeatUsage(float value)
     {
-        var result = (_stats[StatType.Heat].GetCurrent() + value) >= 0; // + because values are negative
-        if (result)
-        {
-            _stats[StatType.Heat].ChangeCurrent(value);
-        }
-        return result;
+        //var result = (_stats[BaseStatType.Heat].GetCurrent() + value) >= 0; // + because values are negative
+        //if (result)
+        //{
+        //    _stats[BaseStatType.Heat].ChangeCurrent(value);
+        //}
+        //return result;
+        return true;
     }
 
     public BaseStatsController (string ID)
     {
-        _stats = new SerializableDictionaryBase<StatType, StatValueContainer>();
+        _stats = new SerializableDictionaryBase<BaseStatType, StatValueContainer>();
         var cfg = Extensions.GetAssetsFromPath<BaseStatsConfig>(Constants.Configs.c_BaseStatConfigsPath).First
             (t=>t.ID == ID);
         // default settings
@@ -69,8 +70,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     public void UpdateInDelta(float deltaTime)
     {
         HandleEffects(deltaTime);
-        //_stats[StatType.Health].ChangeCurrent(_stats[StatType.HealthRegen].GetCurrent() * deltaTime); removed in general 
-        _stats[StatType.Heat].ChangeCurrent(_stats[StatType.HeatRegen].GetCurrent() * deltaTime);
+
     }
     #endregion
     #region effects

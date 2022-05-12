@@ -27,6 +27,7 @@ public static class Constants
         public const string c_SkillConfigsPath = "/Scripts/Configurations/SkillsManager/";
         public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
         public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
+        public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
 #if UNITY_EDITOR
         public const string c_AllConfigsPath = "/Scripts/Configurations/";
 #endif
