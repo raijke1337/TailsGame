@@ -23,7 +23,6 @@ public class InputsNPC : ControlInputsBase
     [SerializeField] protected List<Transform> patrolPoints;
     public void SwitchState(bool setting) => fsm.SetAI(setting);
 
-    [SerializeField] protected string enemyStatsID = default;
     [SerializeField] protected State InitialState;
     [SerializeField] protected State DummyState;
     [SerializeField, ReadOnly] protected State CurrentState;
@@ -47,7 +46,6 @@ public class InputsNPC : ControlInputsBase
         Gizmos.DrawWireSphere(fsm.NMAgent.destination,fsm.NMAgent.stoppingDistance);
     }
 #endif
-
     public override void BindControllers(bool isEnable)
     {
         base.BindControllers(isEnable);
@@ -58,7 +56,7 @@ public class InputsNPC : ControlInputsBase
         }
 
         _enemyStats = new EnemyStats(Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
-    (t => t.ID == enemyStatsID));
+    (t => t.ID == _statsCtrl.GetUnitID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
         fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
@@ -118,7 +116,6 @@ public class InputsNPC : ControlInputsBase
         var found = UnitRoom.GetBigRobot();
         fsm.SetAlly(found);
     }
-
 
 }
 

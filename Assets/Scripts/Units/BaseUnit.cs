@@ -58,7 +58,7 @@ public abstract class BaseUnit : MonoBehaviour
             _handler.RegisterUnitForStatUpdates(_baseStats);
             GetStats()[BaseStatType.Health].ValueChangedEvent += HealthChangedEvent;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
-            _controller.StaggerHappened += AnimateStagger;
+            _controller.StaggerHappened += AnimateStagger; 
         }
         else
         {
