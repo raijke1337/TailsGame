@@ -108,13 +108,11 @@ public class PlayerUnit : BaseUnit
                 _animator.SetLayerWeight(0, 0f);
                 _animator.SetLayerWeight(1, 0f);
                 _animator.SetLayerWeight(2, 100f);
-                _animator.SetLayerWeight(3, 100f);
                 break;
             case WeaponType.Ranged:
                 _animator.SetLayerWeight(0, 100f);
                 _animator.SetLayerWeight(1, 100f);
                 _animator.SetLayerWeight(2, 0f);
-                _animator.SetLayerWeight(3, 0f);
                 break;
         }
     }

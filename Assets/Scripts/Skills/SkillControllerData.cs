@@ -23,6 +23,10 @@ public class SkillControllerData
     private SkillData _data;
     public float GetCost => _data.SkillCost;
 
+    // todo for ui
+    public float GetCD => _recTimer.time;
+    public Sprite GetSkillImage => _data.Icon;
+
     public string SkillUpgradeID { get; set; } // todo implement 
 
 

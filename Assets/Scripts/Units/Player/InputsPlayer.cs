@@ -80,7 +80,10 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
 
             _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+            
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+            _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
+
 
             _aim = GetComponentInChildren<CrosshairScript>();
             _aim.transform.SetParent(null);
@@ -99,6 +102,7 @@ public class InputsPlayer : ControlInputsBase
 
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
+            _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
         }
 
     }
