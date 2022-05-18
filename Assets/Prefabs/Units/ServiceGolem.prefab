@@ -897,7 +897,7 @@ GameObject:
   - component: {fileID: 1394203379183514854}
   m_Layer: 0
   m_Name: ServiceGolem
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -987,17 +987,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81c6598b0eed0334d9c1ff7cc1d20865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weaponCtrl: {fileID: 0}
   extraSkills: []
-  _skillCtrl:
-    IDs: []
   patrolPoints: []
-  enemyStatsID: golem_bot
   InitialState: {fileID: 11400000, guid: afbe920454ade2b4ab20de1fb1104fe9, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   CurrentState: {fileID: 0}
-  _dodgeCtrl:
-    charges: 0
 --- !u!114 &1867402080882196941
 MonoBehaviour:
   m_ObjectHideFlags: 0

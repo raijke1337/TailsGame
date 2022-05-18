@@ -10,13 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/Attacking/Spider")]
-public class SpiderAttackAction : Action
-{ 
+[CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Rotate")]
+public class RotateToTarget : Action
+{
     public override void Act(StateMachine controller)
     {
-        controller.NMAgent.SetDestination(controller.FoundPlayer.transform.position);
-        controller.OnAttackRequest(CombatActionType.Melee);
+        controller.OnRotate();
     }
 }
 

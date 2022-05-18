@@ -25,7 +25,6 @@ public abstract class BaseUnitPanel : MonoBehaviour
 
     public virtual void AssignItem(BaseUnit item, bool isSelect)
     {
-
         baseUnit = item;
         baseUnit.ToggleCamera(isSelect);
         gameObject.SetActive(isSelect);

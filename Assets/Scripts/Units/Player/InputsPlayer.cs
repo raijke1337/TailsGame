@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 
@@ -22,6 +23,8 @@ public class InputsPlayer : ControlInputsBase
     // only one gain per swing, changed by unit
     public bool ComboGained { get; set; } = false;
     private Vector3 lookTarget;
+
+    public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
 
 
     private void OnDisable()
@@ -69,6 +72,10 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.SkillR.performed += SkillR_performed;
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
+            _controls.Game.Pause.performed += (t) => MenuToggleRequest?.Invoke(GameMenuType.Pause);
+            _controls.Game.Items.performed += (t) => MenuToggleRequest?.Invoke(GameMenuType.Items);
+
+
 
             _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
 
@@ -91,6 +98,9 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.SkillR.performed -= SkillR_performed;
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
+            _controls.Game.Pause.performed -= (t) => MenuToggleRequest?.Invoke(GameMenuType.Pause);
+            _controls.Game.Items.performed -= (t) => MenuToggleRequest?.Invoke(GameMenuType.Items);
+
 
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
@@ -176,7 +186,9 @@ public class InputsPlayer : ControlInputsBase
 
     private void CalculateMovement()
     {
-        if (_controls == null || IsControlsBusy) return;
+
+        if (IsControlsBusy) return;
+        if (_controls == null) return;
         var input = _controls.Game.WASD.ReadValue<Vector2>();
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
@@ -187,10 +199,13 @@ public class InputsPlayer : ControlInputsBase
         if (_selector == null || _selector.CalculateAimPoint() == null) return;
         lookTarget = (Vector3)_selector.CalculateAimPoint();
         _aim.SetLookTarget(lookTarget);
-        transform.LookAt(lookTarget);
+        LerpRotateToTarget(lookTarget);
+        // better solution in base class
 
-        var currentX = transform.localEulerAngles.x;
-        transform.Rotate(new Vector3(-currentX, 0, 0));
+        // this works fine
+        //transform.LookAt(lookTarget);
+        //var currentX = transform.localEulerAngles.x;
+        //transform.Rotate(new Vector3(-currentX, 0, 0));
     }
 
     private void OnDrawGizmos()

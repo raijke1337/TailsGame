@@ -38,7 +38,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "PauseEditor",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "fe54560b-7bd0-45b7-bf9c-f5d72f3ea0eb",
                     "expectedControlType": "Button",
@@ -65,6 +65,14 @@
                     "name": "SpecialAttack",
                     "type": "Button",
                     "id": "e9c23c4d-a739-4ae0-8b74-c3ffdef73b6d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Items",
+                    "type": "Button",
+                    "id": "c1abd474-226a-4b66-b401-4ba971a244d4",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -144,7 +152,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PauseEditor",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -200,6 +208,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "SpecialAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1000d161-135a-4f12-a1d5-4a6abf769f99",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Items",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

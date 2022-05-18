@@ -19,6 +19,7 @@ public abstract class BaseUnit : MonoBehaviour
     public Side Side;
     public Transform SkillsPosition;
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+
     [Inject] protected StatsUpdatesHandler _handler;
 
     public string GetFullName() => _baseStats.GetDisplayName;

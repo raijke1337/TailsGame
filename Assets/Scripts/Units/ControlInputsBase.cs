@@ -56,6 +56,15 @@ public abstract class ControlInputsBase : MonoBehaviour
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;
 
+    protected void LerpRotateToTarget(Vector3 looktarget)
+    {
+        Vector3 relativePosition = looktarget - transform.position;
+        Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
+            Time.deltaTime * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent());
+    }
+
+
     protected void StaggerCheck(float current,float prev)
     {
         if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[BaseStatType.Health].GetMax())
@@ -70,6 +79,8 @@ public abstract class ControlInputsBase : MonoBehaviour
     {
         BindControllers(false);
     }
+
+
 
 }
 

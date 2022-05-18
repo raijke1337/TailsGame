@@ -87,29 +87,25 @@ public class InputsNPC : ControlInputsBase
         {
             _handler.RegisterUnitForStatUpdates(fsm);
             fsm.AgressiveActionRequest += HandleAttackRequest;
-            fsm.PlayerSeenEvent += HandlePlayerDetection;
             fsm.AllyRequest += HandleAllySearch;
+            fsm.RotateRequest += HandleRotation;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
         }
         else
         {
             _handler.RegisterUnitForStatUpdates(fsm, false);
             fsm.AgressiveActionRequest -= HandleAttackRequest;
-            fsm.PlayerSeenEvent -= HandlePlayerDetection;
             fsm.AllyRequest -= HandleAllySearch;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
+            fsm.RotateRequest -= HandleRotation;
         }
     }
 
-    protected virtual void HandlePlayerDetection()
-    {
-        Debug.Log($"Placeholder: {_statsCtrl.GetDisplayName} detected player; {this}");
-    }
     protected virtual void HandleAttackRequest(CombatActionType type)
-        // todo more logic
-    {
+    { 
         CombatActionSuccessCallback(type);
     }
+    protected virtual void HandleRotation() => LerpRotateToTarget(fsm.FoundPlayer.transform.position);
     public void Aggro(PlayerUnit unit, bool startCombat = true) => fsm.OnAggro(unit, startCombat);
     protected virtual void HandleAllySearch()
     {

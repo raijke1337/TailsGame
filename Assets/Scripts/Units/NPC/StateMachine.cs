@@ -29,9 +29,10 @@ public class StateMachine : IStatsComponentForHandler
     public NPCUnit FoundAlly{ get; private set; }
     public bool InCombat { get; private set; }
 
-    public event StateMachineEvent PlayerSeenEvent;
+    //public event StateMachineEvent PlayerSeenEvent;
     public event StateMachineEvent<CombatActionType> AgressiveActionRequest;
     public event StateMachineEvent AllyRequest;
+    public event StateMachineEvent RotateRequest;
 
 
 
@@ -67,6 +68,7 @@ public class StateMachine : IStatsComponentForHandler
     public void OnAggro(PlayerUnit unit,bool isStartCombat)
     {
         FoundPlayer = unit; InCombat = isStartCombat;
+        // use this for PlayerSeenEvent functions
     }
 
     public void SetPatrolPoints(List<Transform> points)
@@ -83,20 +85,20 @@ public class StateMachine : IStatsComponentForHandler
         CurrentPatrolPointIndex++;
         if (CurrentPatrolPointIndex == PatrolPoints.Length) CurrentPatrolPointIndex = 0;
     }
-    public bool OnLookSphereCast()
+    public bool CanSeePlayerCast()
     {
         Physics.SphereCast(NMAgent.transform.position, GetEnemyStats.LookSpereCastRadius, NMAgent.transform.forward, out var hit, GetEnemyStats.LookSpereCastRange);
         if (hit.collider == null) return false;
-        var result = hit.collider.CompareTag("Player"); 
+        var result = hit.collider.CompareTag("Player");
         if (result)
         {
             OnAggro(hit.collider.gameObject.GetComponent<PlayerUnit>(), true);
-            PlayerSeenEvent?.Invoke();
         }
         return result;
     }
     public void OnAttackRequest(CombatActionType type = CombatActionType.Melee) => AgressiveActionRequest?.Invoke(type);
     public void OnRequestAlly() => AllyRequest?.Invoke();
     public void SetAlly(NPCUnit ally) => FoundAlly = ally;
+    public void OnRotate() => RotateRequest?.Invoke();
 
 }

@@ -13,8 +13,6 @@ using UnityEngine.InputSystem;
 
 public class UnitsManager : MonoBehaviour
 {
-    //private TimeController _timer;
-    //private UnitActivityHandler _activity;
     private List<RoomController> _rooms = new List<RoomController>();
 
     private List<NPCUnit> _units = new List<NPCUnit>();
@@ -30,8 +28,6 @@ public class UnitsManager : MonoBehaviour
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
 
-        //_timer = new TimeController();
-        //_activity = new UnitActivityHandler(_units, _player);
 
         foreach (var npc in _units)
         {
@@ -67,7 +63,11 @@ public class UnitsManager : MonoBehaviour
         unit.SetChaseTarget(_player);
         unit.UnitRoom.Alert(_player);
     }
-
+    public void MenuOpened(bool isOpen = true)
+    {
+        if (isOpen) { Time.timeScale = 0f;  }
+        else { Time.timeScale = 1f; }
+    }
 
 
     private void HandleUnitDeath(BaseUnit unit)

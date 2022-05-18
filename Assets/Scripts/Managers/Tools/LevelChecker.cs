@@ -44,7 +44,7 @@ public class LevelChecker : MonoBehaviour
                 _floorFix.Add(flooritem);
             }
         }
-        foreach (var item in list.Where(t => !(t.name.Contains("Floor"))))
+        foreach (var item in list)
         {
             if (!item.gameObject.isStatic || item.gameObject.layer != 2)
             {
@@ -67,7 +67,7 @@ public class LevelChecker : MonoBehaviour
         if (_floorFix.Count == 0 && _staticsFix.Count == 0 && _collidersFix.Count == 0 && _rigidsFix.Count == 0 )
             return;
         Debug.Log($"{_floorFix.Count} level floor items missing the FLOOR tag");
-        Debug.Log($"{_staticsFix.Count} level items missing the STATICITEM tag");
+        Debug.Log($"{_staticsFix.Count} level items missing the STATICITEM");
         Debug.Log($"{_collidersFix.Count} level items missing the COLLIDER");
         Debug.Log($"{_rigidsFix.Count} level items missing the RigidBody");
         Debug.Log($"{_textsFix.Count} text trigger items missing the TextTrigger tag");

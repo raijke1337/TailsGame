@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-public abstract class BaseWeapon : MonoBehaviour, IWeapon
+public abstract class BaseWeapon : BaseItem, IWeapon
 {
-    public string ID;
-
     private WeaponType WeapType;
 
     protected int MaxCharges;

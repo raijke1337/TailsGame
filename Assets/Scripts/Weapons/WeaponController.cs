@@ -95,7 +95,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
             var item =  Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
             
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
-                (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.ID);
+                (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.itemID);
 
             item.SetUpWeapon(config);
 

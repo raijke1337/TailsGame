@@ -10,13 +10,16 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/Attacking/Golem")]
-public class GolemAttackAction : Action
+[CreateAssetMenu(menuName = "AIConfig/Action/Attacking/Generic Attack")]
+public class GenericAttackAction : Action
 {
     public override void Act(StateMachine controller)
     {
-        controller.NMAgent.SetDestination(controller.FoundPlayer.transform.position);
-        controller.OnAttackRequest(CombatActionType.Melee);
+        AttackLogic(controller);
     }
+    protected virtual void AttackLogic(StateMachine controller)
+    { controller.OnAttackRequest(CombatActionType.Melee);  }
+    
+
 }
 

@@ -51,7 +51,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""PauseEditor"",
+                    ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""fe54560b-7bd0-45b7-bf9c-f5d72f3ea0eb"",
                     ""expectedControlType"": ""Button"",
@@ -78,6 +78,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""SpecialAttack"",
                     ""type"": ""Button"",
                     ""id"": ""e9c23c4d-a739-4ae0-8b74-c3ffdef73b6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Items"",
+                    ""type"": ""Button"",
+                    ""id"": ""c1abd474-226a-4b66-b401-4ba971a244d4"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -157,7 +165,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PauseEditor"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -215,6 +223,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""SpecialAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1000d161-135a-4f12-a1d5-4a6abf769f99"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Items"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -227,10 +246,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Game_SkillQ = m_Game.FindAction("SkillQ", throwIfNotFound: true);
         m_Game_SkillE = m_Game.FindAction("SkillE", throwIfNotFound: true);
         m_Game_SkillR = m_Game.FindAction("SkillR", throwIfNotFound: true);
-        m_Game_PauseEditor = m_Game.FindAction("PauseEditor", throwIfNotFound: true);
+        m_Game_Pause = m_Game.FindAction("Pause", throwIfNotFound: true);
         m_Game_Dash = m_Game.FindAction("Dash", throwIfNotFound: true);
         m_Game_MainAttack = m_Game.FindAction("MainAttack", throwIfNotFound: true);
         m_Game_SpecialAttack = m_Game.FindAction("SpecialAttack", throwIfNotFound: true);
+        m_Game_Items = m_Game.FindAction("Items", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,10 +304,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Game_SkillQ;
     private readonly InputAction m_Game_SkillE;
     private readonly InputAction m_Game_SkillR;
-    private readonly InputAction m_Game_PauseEditor;
+    private readonly InputAction m_Game_Pause;
     private readonly InputAction m_Game_Dash;
     private readonly InputAction m_Game_MainAttack;
     private readonly InputAction m_Game_SpecialAttack;
+    private readonly InputAction m_Game_Items;
     public struct GameActions
     {
         private @PlayerControls m_Wrapper;
@@ -296,10 +317,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @SkillQ => m_Wrapper.m_Game_SkillQ;
         public InputAction @SkillE => m_Wrapper.m_Game_SkillE;
         public InputAction @SkillR => m_Wrapper.m_Game_SkillR;
-        public InputAction @PauseEditor => m_Wrapper.m_Game_PauseEditor;
+        public InputAction @Pause => m_Wrapper.m_Game_Pause;
         public InputAction @Dash => m_Wrapper.m_Game_Dash;
         public InputAction @MainAttack => m_Wrapper.m_Game_MainAttack;
         public InputAction @SpecialAttack => m_Wrapper.m_Game_SpecialAttack;
+        public InputAction @Items => m_Wrapper.m_Game_Items;
         public InputActionMap Get() { return m_Wrapper.m_Game; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -321,9 +343,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SkillR.started -= m_Wrapper.m_GameActionsCallbackInterface.OnSkillR;
                 @SkillR.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnSkillR;
                 @SkillR.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnSkillR;
-                @PauseEditor.started -= m_Wrapper.m_GameActionsCallbackInterface.OnPauseEditor;
-                @PauseEditor.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnPauseEditor;
-                @PauseEditor.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnPauseEditor;
+                @Pause.started -= m_Wrapper.m_GameActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnPause;
                 @Dash.started -= m_Wrapper.m_GameActionsCallbackInterface.OnDash;
                 @Dash.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnDash;
                 @Dash.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnDash;
@@ -333,6 +355,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SpecialAttack.started -= m_Wrapper.m_GameActionsCallbackInterface.OnSpecialAttack;
                 @SpecialAttack.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnSpecialAttack;
                 @SpecialAttack.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnSpecialAttack;
+                @Items.started -= m_Wrapper.m_GameActionsCallbackInterface.OnItems;
+                @Items.performed -= m_Wrapper.m_GameActionsCallbackInterface.OnItems;
+                @Items.canceled -= m_Wrapper.m_GameActionsCallbackInterface.OnItems;
             }
             m_Wrapper.m_GameActionsCallbackInterface = instance;
             if (instance != null)
@@ -349,9 +374,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SkillR.started += instance.OnSkillR;
                 @SkillR.performed += instance.OnSkillR;
                 @SkillR.canceled += instance.OnSkillR;
-                @PauseEditor.started += instance.OnPauseEditor;
-                @PauseEditor.performed += instance.OnPauseEditor;
-                @PauseEditor.canceled += instance.OnPauseEditor;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
                 @Dash.started += instance.OnDash;
                 @Dash.performed += instance.OnDash;
                 @Dash.canceled += instance.OnDash;
@@ -361,6 +386,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SpecialAttack.started += instance.OnSpecialAttack;
                 @SpecialAttack.performed += instance.OnSpecialAttack;
                 @SpecialAttack.canceled += instance.OnSpecialAttack;
+                @Items.started += instance.OnItems;
+                @Items.performed += instance.OnItems;
+                @Items.canceled += instance.OnItems;
             }
         }
     }
@@ -371,9 +399,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnSkillQ(InputAction.CallbackContext context);
         void OnSkillE(InputAction.CallbackContext context);
         void OnSkillR(InputAction.CallbackContext context);
-        void OnPauseEditor(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnMainAttack(InputAction.CallbackContext context);
         void OnSpecialAttack(InputAction.CallbackContext context);
+        void OnItems(InputAction.CallbackContext context);
     }
 }

@@ -17,7 +17,6 @@ public class NPCUnit : BaseUnit, InteractiveItem
 {
     private InputsNPC _npcController;
 
-    public SimpleEventsHandler<NPCUnit> UnitDiedEvent;
     public SimpleEventsHandler<NPCUnit> UnitWasAttackedEventForAggro;
     public event MouseOverEvents SelectionEvent;
     public EnemyType GetEnemyType => _npcController.GetEnemyType;
@@ -55,7 +54,10 @@ public class NPCUnit : BaseUnit, InteractiveItem
     {
         SelectionEvent?.Invoke(this, false);
     }
-
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+    }
 
     #region behavior
 
@@ -64,12 +66,11 @@ public class NPCUnit : BaseUnit, InteractiveItem
         _npcController.SwitchState(isProcessing);
     }
 
-
-
     protected override void HealthChangedEvent(float value, float prevValue)
     {
         base.HealthChangedEvent(value, prevValue);
         UnitWasAttackedEventForAggro?.Invoke(this);
+        if (value <= 0f) { SelectionEvent?.Invoke(this, false); }
     }
 
     public void SetChaseTarget(PlayerUnit unit)

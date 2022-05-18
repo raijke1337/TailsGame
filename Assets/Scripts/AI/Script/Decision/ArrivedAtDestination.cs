@@ -16,6 +16,7 @@ public class ArrivedAtDestination : Decision
     public override bool Decide(StateMachine controller)
     {
         var result = Vector3.Distance(controller.NMAgent.transform.position, controller.NMAgent.destination) < controller.NMAgent.stoppingDistance;
+        if (result) controller.OnPatrolPointReached();
         return result;
     }
 }

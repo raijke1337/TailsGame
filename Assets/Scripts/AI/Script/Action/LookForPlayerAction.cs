@@ -8,7 +8,7 @@ namespace Assets.Scripts.AI.Script
     {
         public override void Act(StateMachine controller)
         {
-            controller.OnLookSphereCast();
+           controller.CanSeePlayerCast();
         }
     }
 }

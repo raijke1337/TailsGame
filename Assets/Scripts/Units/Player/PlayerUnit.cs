@@ -18,6 +18,8 @@ public class PlayerUnit : BaseUnit
     private float[] _visualStagesHP;
     private int _currentVisualStageIndex;
 
+    public event SimpleEventsHandler<GameMenuType> ToggleMenuEvent;
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -73,7 +75,6 @@ public class PlayerUnit : BaseUnit
         _playerController.IsControlsBusy = true;
 
         Vector3 start = transform.position;
-        //Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
         Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent();
 
         float p = 0f;
@@ -137,10 +138,12 @@ public class PlayerUnit : BaseUnit
         if (isEnable)
         {
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+            _playerController.MenuToggleRequest += (t) => ToggleMenuEvent?.Invoke(t);
         }
         else
         {
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
+            _playerController.MenuToggleRequest -= (t) => ToggleMenuEvent?.Invoke(t);
         }
     }
 

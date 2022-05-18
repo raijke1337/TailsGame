@@ -89,3 +89,9 @@ public enum TextType
     Tutorial,
     Story
 }
+
+public enum GameMenuType
+{
+    Items = 0,
+    Pause = 255
+}

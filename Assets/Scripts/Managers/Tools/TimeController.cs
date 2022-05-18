@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 public class TimeController : Time
 {
     private float _gameCoef = 1f;
-    private float _uiCoef = 1f;
+    private float _uiCoef = 0f;
 
     public float GameDeltaTime => _gameCoef * deltaTime;
     public float UIdeltaTime => _uiCoef * deltaTime;
