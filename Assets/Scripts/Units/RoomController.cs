@@ -38,14 +38,11 @@ public class RoomController : MonoBehaviour
     {
         if (_detectionArea.enabled) _detectionArea.enabled = false;
     }
-    public void Alert(PlayerUnit player)
-    {
-        foreach (var unit in list) unit.SetChaseTarget(player);
-    }
 
-    public NPCUnit GetBigRobot()
+    public NPCUnit CallBigRobot()
     {
         var result = list.FirstOrDefault(t => t.GetEnemyType == EnemyType.Big);
+        if (result != null) { result.UnitWasAttackedEvent?.Invoke(); }
         return result;
     }
 

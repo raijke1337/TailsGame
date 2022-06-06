@@ -21,6 +21,6 @@ public class BaseStatTriggerConfig : ScriptableObjectID
     public float TotalDuration;
     public Sprite Icon;
 
-    public TriggerSourceType SourceType;
+    public TriggerTargetType TargetType;
 }
 

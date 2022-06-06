@@ -26,7 +26,7 @@ public abstract class BaseUnit : MonoBehaviour
 
     public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
-    public event BaseUnitWithIDEvent SkillRequestSuccessEvent;
+    public event SkillRequestedEvent SkillRequestSuccessEvent;
     protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit);
 
     private Camera _faceCam;
@@ -39,7 +39,7 @@ public abstract class BaseUnit : MonoBehaviour
     }
     protected void OnValidate()
     {
-        if (SkillsPosition == null) SkillsPosition = GetComponentsInChildren<Transform>().First(t => t.name.Contains("Hips"));
+        if (SkillsPosition == null) SkillsPosition = GetComponentsInChildren<Transform>().First();
     }
     protected virtual void OnEnable()
     {
@@ -47,6 +47,7 @@ public abstract class BaseUnit : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         _controller = GetComponent<ControlInputsBase>();
         _controller.InitControllers(_baseStats);
+        _controller.SetUnit(this);
         _controller.BindControllers(true);
 
         _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));

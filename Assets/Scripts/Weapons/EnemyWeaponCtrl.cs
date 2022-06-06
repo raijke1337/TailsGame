@@ -18,7 +18,7 @@ public class EnemyWeaponCtrl : WeaponController
     public override void SetupStatsComponent()
     {
         base.SetupStatsComponent();
-        Equip(WeaponType.Melee);
+        if (!Equip(WeaponType.Melee)) Equip(WeaponType.Ranged);
     }
 
 }

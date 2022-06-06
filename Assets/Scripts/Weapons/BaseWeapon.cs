@@ -10,15 +10,16 @@ public abstract class BaseWeapon : BaseItem, IWeapon
     protected int ComboVal;
     public int GetAmmo { get { return _currentCharges; } }
 
+    public BaseUnit Owner { get ; set ; }
+
     protected string SkillID;
     public string GetRelatedSkillID() => SkillID;
 
     protected bool IsBusy = false;
 
-    [Inject] protected PlayerUnit _player;
     protected List<string> _effectsIDs;
 
-    public event SimpleEventsHandler<float> TargetHit;
+    public event SimpleEventsHandler<float> TargetHit; // only for combo
     protected void TargetHitCallback(float val) => TargetHit?.Invoke(val);
 
     protected virtual void OnEnable()

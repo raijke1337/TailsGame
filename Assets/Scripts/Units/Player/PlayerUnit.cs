@@ -59,7 +59,7 @@ public class PlayerUnit : BaseUnit
     // stop the dodge like this
     private void OnCollisionEnter(Collision collision)
     {
-        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
+        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground")&& !collision.gameObject.CompareTag("Enemy")) // also dodge through enemies
         {
             _playerController.IsControlsBusy = false;
             StopCoroutine(_dodgeCor);
@@ -93,7 +93,7 @@ public class PlayerUnit : BaseUnit
 
     private void ChangeAnimatorLayer(WeaponType type)
     {     
-        // 1  2 is ranged 3 4  is melee
+        // 1  2 is ranged 3  is melee
         switch (type)
         {
             case WeaponType.Melee:
@@ -176,4 +176,6 @@ public class PlayerUnit : BaseUnit
         transform.position += Time.deltaTime * desiredDir
             * GetStats()[BaseStatType.MoveSpeed].GetCurrent();
     }
+
+    public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
 }

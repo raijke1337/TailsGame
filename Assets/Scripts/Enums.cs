@@ -57,7 +57,7 @@ public enum CombatActionType
     ShieldSpecialR
 }
 
-public enum SkillTargetType
+public enum TriggerTargetType
 {
     TargetsEnemies,
     TargetsUser,
@@ -94,4 +94,11 @@ public enum GameMenuType
 {
     Items = 0,
     Pause = 255
+}
+
+public enum InteractiveItemType : byte
+{
+    Enemy = 0,
+    Pickup = 10,
+
 }

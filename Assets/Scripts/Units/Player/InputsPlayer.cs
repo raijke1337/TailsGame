@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 
-
+[RequireComponent(typeof(AimingComponent))]
 public class InputsPlayer : ControlInputsBase
 {
     private PlayerControls _controls;
@@ -11,9 +11,9 @@ public class InputsPlayer : ControlInputsBase
     [SerializeField] private ShieldController _shieldCtrl;
     [SerializeField] private ComboController _comboCtrl;
 
-    private CrosshairScript _aim;
-    private SelectorComponent _selector;
     private IsoCamAdjust _adj;
+    public TargetUnitPanel TargetPanel { get; set; }
+
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
@@ -22,9 +22,9 @@ public class InputsPlayer : ControlInputsBase
     public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
     // only one gain per swing, changed by unit
     public bool ComboGained { get; set; } = false;
-    private Vector3 lookTarget;
 
     public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
+    private AimingComponent _aim;
 
 
     private void OnDisable()
@@ -54,7 +54,6 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.Enable();
             Cursor.visible = false;
 
-            _selector = GetComponent<SelectorComponent>();
 
             //_playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
 
@@ -64,7 +63,7 @@ public class InputsPlayer : ControlInputsBase
             _handler.RegisterUnitForStatUpdates(_comboCtrl);
 
 
-
+            _aim = GetComponent<AimingComponent>();
 
             _controls.Game.Dash.performed += Dash_performed;
             _controls.Game.SkillE.performed += SkillE_performed;
@@ -84,8 +83,6 @@ public class InputsPlayer : ControlInputsBase
 
             _weaponCtrl.TargetHitByWeaponEvent += HandleComboGain;
 
-            _aim = GetComponentInChildren<CrosshairScript>();
-            _aim.transform.SetParent(null);
         }
         else
         {
@@ -196,16 +193,10 @@ public class InputsPlayer : ControlInputsBase
     }
     private void Aiming()
     {
-        if (_selector == null || _selector.CalculateAimPoint() == null) return;
-        lookTarget = (Vector3)_selector.CalculateAimPoint();
-        _aim.SetLookTarget(lookTarget);
-        LerpRotateToTarget(lookTarget);
-        // better solution in base class
-
-        // this works fine
-        //transform.LookAt(lookTarget);
-        //var currentX = transform.localEulerAngles.x;
-        //transform.Rotate(new Vector3(-currentX, 0, 0));
+        if (_aim == null) return;
+        LerpRotateToTarget(_aim.GetLookPoint);
+        if (_aim.GetItem is NPCUnit) TargetPanel.AssignItem(_aim.GetItem as NPCUnit,true);
+        // massive TODO here
     }
 
     private void OnDrawGizmos()

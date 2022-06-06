@@ -13,7 +13,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public class SkillsPlacerManager : MonoBehaviour
 {
-    [SerializeField] SerializableDictionaryBase<string,BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
+    SerializableDictionaryBase<string,BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
     private UnitsManager _unitsM;
     public event SimpleEventsHandler<IProjectile> ProjectileSkillCreatedEvent;
     public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
@@ -36,15 +36,16 @@ public class SkillsPlacerManager : MonoBehaviour
     private void PlaceSkill(string ID, BaseUnit source)
     {
         var skill = Instantiate(_skillsDict[ID]);
-        switch (skill.SkillData.SourceType)
-        {
-            case TriggerSourceType.Player:
-                skill.Source = source as PlayerUnit;
-                break;
-            case TriggerSourceType.Enemy:
-                skill.Source = source as NPCUnit;
-                break;
-        }
+        skill.Source = source;
+        //switch (skill.SkillData.SourceType)
+        //{
+        //    case TriggerSourceType.Player:
+        //        skill.Source = source as PlayerUnit;
+        //        break;
+        //    case TriggerSourceType.Enemy:
+        //        skill.Source = source as NPCUnit;
+        //        break;
+        //}
         skill.transform.position = source.SkillsPosition.position;
         skill.transform.rotation = source.SkillsPosition.rotation;
         skill.transform.forward = source.transform.forward;

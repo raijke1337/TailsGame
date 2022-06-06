@@ -17,8 +17,8 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
 {
 
     protected Collider _coll;
-    public event BaseUnitWithIDEvent TriggerApplicationRequestEvent;
-    protected void TriggerCallback(string ID, BaseUnit unit) => TriggerApplicationRequestEvent?.Invoke(ID,unit);
+    public event TriggerEventApplication TriggerApplicationRequestEvent;
+    protected void TriggerCallback(string ID, BaseUnit unit,BaseUnit source) => TriggerApplicationRequestEvent?.Invoke(ID,unit,source);
 
     public virtual bool Enable
     { 

@@ -18,8 +18,8 @@ public class RangedWeapon : BaseWeapon
     [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
     
     
-    [SerializeField] protected string projectileName;
-    private ProjectileTrigger _projectilePrefab;
+    [SerializeField] private ProjectileTrigger _projectilePrefab;
+    [SerializeField] private string _projectileID;
 
 
     protected int shotsToDo = 1;
@@ -29,7 +29,7 @@ public class RangedWeapon : BaseWeapon
     protected virtual void Start()
     {
         _currentCharges = MaxCharges;
-        _projectilePrefab = Extensions.GetAssetsFromPath<ProjectileTrigger>(Constants.Combat.c_WeaponPrefabsPath).First(t => t.name == projectileName);
+        if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");
     }
 
     public override bool UseWeapon()
@@ -63,9 +63,10 @@ public class RangedWeapon : BaseWeapon
         _currentCharges--;
 
         var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
-        pr.transform.forward = _player.transform.forward;
+        pr.Source = Owner;
+        pr.transform.forward = Owner.transform.forward;
         pr.SetTriggerIDS(_effectsIDs);
-        pr.GetID = projectileName;
+        pr.GetID = _projectileID;
 
         PlacedProjectileEvent?.Invoke(pr);
     }

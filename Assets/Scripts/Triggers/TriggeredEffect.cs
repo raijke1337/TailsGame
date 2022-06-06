@@ -20,7 +20,7 @@ public class TriggeredEffect
     public float RepeatApplicationDelay { get; }
     public float TotalDuration; 
     public Sprite Icon;
-    public TriggerSourceType Source;
+    public TriggerTargetType Target;
 
 
     public float CurrentRepeatTimer; // used by stats controller to do ticks
@@ -34,7 +34,7 @@ public class TriggeredEffect
     public TriggeredEffect(BaseStatTriggerConfig config)
     {
         ID = config.ID; StatID = config.StatID; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
-        CurrentRepeatTimer = RepeatApplicationDelay;  Source = config.SourceType;
+        CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType;
     }
 
 }

@@ -1,25 +1,23 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Zenject;
 
 public class TriggersProjectilesManager : MonoBehaviour
 {
     // transform, destroy
     private List<IProjectile> _projectiles = new List<IProjectile>();
-    private PlayerUnit player;
 
-    [SerializeField] private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
-    [SerializeField] private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
+    private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
+    private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
+
+
+#if UNITY_EDITOR
+    [SerializeField] private Text _triggersDebug;
+#endif
+
+
 
     private SkillsPlacerManager _skillsMan;
 
@@ -41,26 +39,132 @@ public class TriggersProjectilesManager : MonoBehaviour
         _skillsMan.ProjectileSkillCreatedEvent += NewProjectile;
         _skillsMan.SkillAreaPlacedEvent += RegisterTrigger;
 
-        player = _skillsMan.GetUnitsManager.GetPlayerUnit();
+#if UNITY_EDITOR
+        _triggersDebug.text = $"{this} started";
+#endif
+
     }
 
 
-    private void ApplyTriggerEffect(string ID, BaseUnit target)
+    private void ApplyTriggerEffect(string ID, BaseUnit target, BaseUnit source)
     {
         var config = _configs.First(t => t.ID == ID);
+        TriggeredEffect effect = new TriggeredEffect(config);
+        BaseUnit finaltgt = null;
 
-        switch (config.SourceType)
+        if (source is NPCUnit)
         {
-            case TriggerSourceType.Player:
-                if (target is PlayerUnit) return;
-                target.ApplyEffect(new TriggeredEffect(config));
-                break;
-            case TriggerSourceType.Enemy:
-                if (target is NPCUnit) return;
-                else target.ApplyEffect(new TriggeredEffect(config));
-                break;
+            switch (config.TargetType)
+            {
+                case TriggerTargetType.TargetsEnemies:
+                    if (target is PlayerUnit player)
+                    {
+                        finaltgt = player;
+                    }
+                    break;
+                case TriggerTargetType.TargetsUser:
+                    if (target == source)
+                    {
+                        finaltgt = source;
+                    }
+                    break;
+                case TriggerTargetType.TargetsAllies:
+                    if (target != source && target.Side == source.Side)
+                    {
+                        finaltgt = target;
+                    }
+                    break;
+            }
         }
+        if (source is PlayerUnit)
+        {
+            switch (config.TargetType)
+            {
+                case TriggerTargetType.TargetsEnemies:
+                    if (target is NPCUnit enemy)
+                    {
+                        finaltgt = enemy;
+                    }
+                    break;
+                case TriggerTargetType.TargetsUser:
+                    if (target == source)
+                    {
+                        finaltgt = source;
+                    }
+                    break;
+                case TriggerTargetType.TargetsAllies:
+                    if (target != source && target.Side == source.Side)
+                    {
+                        finaltgt = target;
+                    }
+                    break;
+            }
+        }
+        else if (!(source is PlayerUnit) && !(source is NPCUnit)) // traps , could keep null maybe? dont like it
+        {
+            switch (config.TargetType)
+            {
+                case TriggerTargetType.TargetsEnemies:
+                    if (target is PlayerUnit player)
+                    {
+                        finaltgt = player;
+                    }
+                    break;
+                case TriggerTargetType.TargetsUser:
+                    if (target == source)
+                    {
+#if UNITY_EDITOR
+                        _triggersDebug.text = $"{effect} applied by ID {ID} source {source} targets user";
+#endif
+                    }
+                    break;
+                case TriggerTargetType.TargetsAllies:
+                    if (target != source && target is NPCUnit) // maybe use for aoe support npc abilities
+                    {
+                        finaltgt = target;
+                    }
+                    break;
+            }
+        }
+        if (finaltgt == null)
+        {
+#if UNITY_EDITOR
+            _triggersDebug.text += $"\n Trigger {ID} not applied";
+#endif
+            return;
+        }
+
+
+
+#if UNITY_EDITOR
+        _triggersDebug.text += $"\n Applying effect ID {ID}, source: {source}, target {finaltgt}";
+#endif
+
+        finaltgt.ApplyEffect(effect);
     }
+
+    // todo check the result of gettype
+
+    //private void ApplyTriggerEffect(string ID, BaseUnit target, BaseUnit source)
+    //{
+    //    var config = _configs.First(t => t.ID == ID);
+
+    //    switch (config.TargetType)
+    //    {
+    //        case TriggerTargetType.TargetsEnemies:
+    //            if (target.GetType() != source.GetType())
+    //            {
+    //                
+    //            }
+    //            break;
+    //        case TriggerTargetType.TargetsUser:
+    //            break;
+    //        case TriggerTargetType.TargetsAllies:
+    //            break;
+    //    }
+    //}
+
+
 
     private void RegisterTrigger(IAppliesTriggers item)
     {
@@ -78,20 +182,24 @@ public class TriggersProjectilesManager : MonoBehaviour
     private void ProjectileExpiryHandling(IProjectile proj)
     {
         _projectiles.Remove(proj);
-        proj.TriggerApplicationRequestEvent -= (t1, t2) => ProjectileCollisionHandling(t1, t2, proj);
+        //proj.TriggerApplicationRequestEvent -= (id, tgt) => ProjectileCollisionHandling(id, tgt, proj);
         proj.OnExpiryProj();
     }
 
-    private void ProjectileCollisionHandling(string triggerId, BaseUnit target, IProjectile projectile)
-    {
-        ApplyTriggerEffect(triggerId, target);
-    }
+    //private void ProjectileCollisionHandling(string triggerId, BaseUnit target, IProjectile projectile)
+    //{
+    //    ApplyTriggerEffect(triggerId, target,projectile.Source);
+    //}
 
     private void Update()
     {
         foreach (var p in _projectiles.ToList())
         {
-            if (p == null) return;
+            if (p == null)
+            {
+                _projectiles.Remove(p);
+                return;
+            }
             p.OnUpdateProj();
         }
     }

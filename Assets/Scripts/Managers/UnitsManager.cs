@@ -19,7 +19,7 @@ public class UnitsManager : MonoBehaviour
     private PlayerUnit _player;
     public PlayerUnit GetPlayerUnit() => _player;
     public List<NPCUnit> GetNPCs() => _units;
-    public BaseUnitWithIDEvent RequestToPlaceSkills;
+    public SkillRequestedEvent RequestToPlaceSkills;
 
     private void Awake()
     {
@@ -32,12 +32,11 @@ public class UnitsManager : MonoBehaviour
         foreach (var npc in _units)
         {
             npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-            npc.SkillRequestSuccessEvent += (t1, t2) => RequestToPlaceSkills?.Invoke(t1, t2);
-            npc.UnitWasAttackedEventForAggro += (t) => OnUnitAggro(t);
+            npc.SkillRequestSuccessEvent += (id, user) => RequestToPlaceSkills?.Invoke(id, user);
             
         }
         _player.BaseUnitDiedEvent += HandleUnitDeath;
-        _player.SkillRequestSuccessEvent += (t1, t2) => RequestToPlaceSkills?.Invoke(t1, t2);
+        _player.SkillRequestSuccessEvent += (id, user) => RequestToPlaceSkills?.Invoke(id, user);
     }
     private void Start()
     {
@@ -46,6 +45,7 @@ public class UnitsManager : MonoBehaviour
     private void OnDisable()
     {
         SetAIStateGlobal(false);
+        // todo unsubs
     }
     public void SetAIStateGlobal(bool isProcessing)
     {
@@ -58,11 +58,7 @@ public class UnitsManager : MonoBehaviour
     {
         unit.AiToggle(isProcessing);
     }
-    void OnUnitAggro(NPCUnit unit)
-    {
-        unit.SetChaseTarget(_player);
-        unit.UnitRoom.Alert(_player);
-    }
+
     public void MenuOpened(bool isOpen = true)
     {
         if (isOpen) { Time.timeScale = 0f;  }

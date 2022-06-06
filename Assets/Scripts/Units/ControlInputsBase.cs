@@ -7,6 +7,9 @@ using static UnityEngine.InputSystem.InputAction;
 [RequireComponent(typeof(BaseUnit))]
 public abstract class ControlInputsBase : MonoBehaviour
 {
+    private BaseUnit unit;
+    public void SetUnit(BaseUnit u) => unit = u;
+
     [Inject] protected StatsUpdatesHandler _handler;
     public bool IsControlsBusy { get; set; } // todo ?
 
@@ -36,9 +39,10 @@ public abstract class ControlInputsBase : MonoBehaviour
     public virtual void BindControllers(bool isEnable)
     {
         IsControlsBusy = false;
-
+        _weaponCtrl.SetUser(unit);
         _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_staggerCheck, isEnable);
+
 
         // needs data from set up weaponctrl
         var skills = _weaponCtrl.GetSkillIDs();

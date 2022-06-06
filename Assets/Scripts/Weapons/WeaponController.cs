@@ -17,8 +17,9 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
     public event SimpleEventsHandler<float> TargetHitByWeaponEvent; // for comboctrl, used by input
-    
 
+    private BaseUnit _owner;
+    public void SetUser(BaseUnit user) => _owner = user; // to give source to triggers
 
     public WeaponType GetCurrentWeaponType => CurrentWeaponType;
     protected WeaponType CurrentWeaponType { get; private set; } = WeaponType.None;
@@ -52,9 +53,10 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         item.transform.SetPositionAndRotation(_sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation);
         item.transform.parent = _sheathedWeaponEmpty;
     }
-    protected void Equip(WeaponType type)
+    protected bool Equip(WeaponType type)
     {
         var item = _currentWeapons[type].GetObject();
+        if (item == null) return false;
         if (type == WeaponType.Melee)
         {
             item.transform.SetPositionAndRotation(_meleeWeaponEmpty.position, _meleeWeaponEmpty.rotation);
@@ -65,6 +67,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
             item.transform.SetPositionAndRotation(_rangedWeaponEmpty.position, _rangedWeaponEmpty.rotation);
             item.transform.parent = _rangedWeaponEmpty;
         }
+        return true;
     }
 
     public int GetAmmoByType(WeaponType type) => _currentWeapons[type].GetAmmo;
@@ -92,8 +95,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         {
             // todo use a factory so this doesnt have to be a mono
 
-            var item =  Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);
-            
+            var item =  Instantiate(prefab, _sheathedWeaponEmpty.position, _sheathedWeaponEmpty.rotation, _sheathedWeaponEmpty);            
             BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig>
                 (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == item.itemID);
 
@@ -108,9 +110,11 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
         }
         foreach (IWeapon weapon in _currentWeapons.Values)
         {
-            weapon.TargetHit += (f) => TargetHitByWeaponEvent?.Invoke(f); 
+            weapon.TargetHit += (f) => TargetHitByWeaponEvent?.Invoke(f);
+            weapon.Owner = _owner;
         }
     }
+
 
     public void UpdateInDelta(float deltaTime)
     {

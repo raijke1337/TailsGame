@@ -11,17 +11,18 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(WeaponTrigger))]
+[RequireComponent(typeof(WeaponTriggerComponent))]
 public class MeleeWeapon : BaseWeapon
 {
-    private WeaponTrigger _trigger;
+    private WeaponTriggerComponent _trigger;
 
     private void Start()
     {
-        _trigger = GetComponent<WeaponTrigger>();
+        _trigger = GetComponent<WeaponTriggerComponent>();
         _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.Enable = false;
         _trigger.HitSuccessEvent += HandleHit;
+        _trigger.Source = Owner;
     }
 
 

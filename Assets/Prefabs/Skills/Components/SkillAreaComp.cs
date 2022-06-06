@@ -23,19 +23,19 @@ public class SkillAreaComp : MonoBehaviour
 
         switch (Data.TargetType)
         {
-            case SkillTargetType.TargetsEnemies:
+            case TriggerTargetType.TargetsEnemies:
                 if (comp.Side != Source.Side)
                 {
                     TargetHitEvent?.Invoke(comp);
                 }
                 break;
-            case SkillTargetType.TargetsUser:
+            case TriggerTargetType.TargetsUser:
                 if (comp == Source)
                 {
                     TargetHitEvent?.Invoke(comp);
                 }
                 break;
-            case SkillTargetType.TargetsAllies:
+            case TriggerTargetType.TargetsAllies:
                 if (comp.Side == Source.Side)
                 { 
                     TargetHitEvent?.Invoke(comp);

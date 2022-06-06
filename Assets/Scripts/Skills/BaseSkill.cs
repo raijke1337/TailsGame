@@ -18,9 +18,13 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
     public SkillData SkillData;
     public GameObject EffectPrefab;
 
-    public event BaseUnitWithIDEvent TriggerApplicationRequestEvent;
+
+
+    public event TriggerEventApplication TriggerApplicationRequestEvent;
 
     private Collider _coll;
+
+    public TriggerSourceType GetSourceType => throw new NotImplementedException();
 
     protected virtual void OnTriggerEnter(Collider other)
     {
@@ -38,7 +42,7 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
     // use this to apply a trigger effect
     protected virtual void CallTriggerHit(string ID, BaseUnit target)
     {
-        TriggerApplicationRequestEvent?.Invoke(ID, target);
+        TriggerApplicationRequestEvent?.Invoke(ID,target,Source);
     }
     protected SkillAreaComp PlaceAndSubEffect(Transform tr)
     {

@@ -11,14 +11,14 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class LevelItemTrigger : BaseTrigger
+public class LevelItemTrigger : BaseTrigger,InteractiveItem
 {
     [SerializeField] protected List<string> TriggerIDs;
     [SerializeField] protected bool disappearsOnPickup = true;
     [SerializeField] protected ParticleSystem pickupEffect;
     [SerializeField] protected float pickupEffectDuration = 0f;
 
-
+    public InteractiveItemType IIType => InteractiveItemType.Pickup;
 
     protected override void OnTriggerEnter(Collider other)
     {
@@ -26,7 +26,7 @@ public class LevelItemTrigger : BaseTrigger
         if (comp == null) return;
         foreach (var id in TriggerIDs)
         {
-            TriggerCallback(id, comp);
+            TriggerCallback(id,comp,null);
         }
         if (pickupEffect!= null) StartCoroutine(ActivationEffect());
         if (disappearsOnPickup) StartCoroutine(BaseUnit.ItemDisappearsCoroutine(pickupEffectDuration,gameObject));

@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class ProjectileTrigger : WeaponTrigger, IProjectile
+public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
 {
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
     private ProjectileData ProjData;
@@ -20,16 +20,14 @@ public class ProjectileTrigger : WeaponTrigger, IProjectile
     private float _exp;
     private int _penetr;
 
-    public TriggerSourceType SourceType { get => ProjData.SourceType; }
-
     public string GetID { get; set; }
+
+    BaseUnit IProjectile.Source => Source;
 
     public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if (SourceType == TriggerSourceType.Player && other.CompareTag("Player")) return;
-        if (SourceType == TriggerSourceType.Enemy && other.CompareTag("Enemy")) return;
         if (other.CompareTag("TextTrigger")) return;
 
         if (other.gameObject.isStatic) Stuck(other);

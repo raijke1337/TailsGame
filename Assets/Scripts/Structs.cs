@@ -8,8 +8,8 @@ public delegate void SimpleEventsHandler<T>(T arg);
 public delegate void SimpleEventsHandler<T1,T2>(T1 arg1,T2 arg2);
 
 public delegate void WeaponSwitchEventHandler(WeaponType type);
-public delegate void BaseUnitWithIDEvent(string ID, BaseUnit unit);
-public delegate void MouseOverEvents(InteractiveItem item, bool isSelected);
+public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
+public delegate void SkillRequestedEvent(string ID, BaseUnit source);
 
 
 public delegate void StateMachineEvent();
@@ -100,14 +100,12 @@ public static class Constants
     public float TimeToLive;
     public float Speed;
     public int Penetration;
-    public TriggerSourceType SourceType;
 
     public ProjectileData(ProjectileDataConfig config)
     {
         TimeToLive = config.TimeToLive;
         Speed = config.ProjectileSpeed;
         Penetration = config.ProjectilePenetration;
-        SourceType = config.SourceType;
     }
 }
 
@@ -120,12 +118,11 @@ public static class Constants
     public float PersistTime;
     public float SkillCost;
 
-    public SkillTargetType TargetType;
-    public TriggerSourceType SourceType;
+    public TriggerTargetType TargetType;
 
     public SkillData(SkillData refs)
     {
-        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; TargetType = refs.TargetType; SourceType = refs.SourceType; 
+        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; TargetType = refs.TargetType;
     }
 }
 [Serializable] public struct EnemyStats
@@ -171,6 +168,7 @@ public interface IStatsAddEffects
 }
 public interface IWeapon : IHasGameObject
 {
+    BaseUnit Owner { get; set; }
     bool UseWeapon();
     int GetAmmo { get; }
     string GetRelatedSkillID();
@@ -180,30 +178,30 @@ public interface IWeapon : IHasGameObject
 public interface IHasGameObject
 { public GameObject GetObject(); }
 
-public interface InteractiveItem : IPointerEnterHandler, IPointerExitHandler
-{
-    public event MouseOverEvents SelectionEvent;
-}
 
-public interface IProjectile : IAppliesTriggers, ISourceMatters, IHasID
+public interface IProjectile : IAppliesTriggers, IHasID
 {
     void OnSpawnProj();
     void OnUpdateProj();
     void OnExpiryProj();
     event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
     void SetProjectileData(ProjectileDataConfig cfg);
+    BaseUnit Source { get; }
 }
 public interface IHasID
 { string GetID { get; } }
 
 
 public interface IAppliesTriggers
-{ event BaseUnitWithIDEvent TriggerApplicationRequestEvent; }
+{ event TriggerEventApplication TriggerApplicationRequestEvent; }
 
-public interface ISourceMatters
+
+public interface InteractiveItem
 {
-    TriggerSourceType SourceType { get; }
+    public InteractiveItemType IIType {get;}
+
 }
+
 
 
 #endregion

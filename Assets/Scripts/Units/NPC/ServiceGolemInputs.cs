@@ -22,5 +22,6 @@ public class ServiceGolemInputs : InputsNPC
         base.HandleAttackRequest(type);
     }
 
+
 }
 

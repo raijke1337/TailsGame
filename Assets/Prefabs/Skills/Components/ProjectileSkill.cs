@@ -23,7 +23,7 @@ public class ProjectileSkill : BaseSkill, IProjectile
     private int _penetr;
     public string GetID { get => SkillID;  }
 
-    public TriggerSourceType SourceType => ProjData.SourceType;
+    BaseUnit IProjectile.Source => Source;
 
     public void OnExpiryProj()
     {
