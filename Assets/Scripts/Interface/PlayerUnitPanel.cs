@@ -81,16 +81,16 @@ public class PlayerUnitPanel : BaseUnitPanel
         _currentDodges = _dodge.GetDodgeCharges();
 
 
-        _hpText.text = string.Concat(Math.Round(HPc.GetCurrent(), 0), " / ", HPc.GetMax());
-        _spText.text = string.Concat(Math.Round(SHc.GetCurrent(), 0), " / ", SHc.GetMax());
-        _heText.text = string.Concat(Math.Round(HEc.GetCurrent(), 0), " / ", HEc.GetMax());
+        _hpText.text = string.Concat(Math.Round(HPc.GetCurrent, 0), " / ", HPc.GetMax);
+        _spText.text = string.Concat(Math.Round(SHc.GetCurrent, 0), " / ", SHc.GetMax);
+        _heText.text = string.Concat(Math.Round(HEc.GetCurrent, 0), " / ", HEc.GetMax);
 
         _dodgeText.text = _currentDodges.ToString();
         _ammoText.text = _currentAmmo.ToString();
 
-        ColorTexts(_hpText, HPc.GetMax(), HPc.GetCurrent(), minColorDefault, maxColorDefault);
-        ColorTexts(_spText, SHc.GetMax(), SHc.GetCurrent(), minColorDefault, maxColorDefault);
-        ColorTexts(_heText, HEc.GetMax(), HEc.GetCurrent(), minColorDefault, maxColorDefault);
+        ColorTexts(_hpText, HPc.GetMax, HPc.GetCurrent, minColorDefault, maxColorDefault);
+        ColorTexts(_spText, SHc.GetMax, SHc.GetCurrent, minColorDefault, maxColorDefault);
+        ColorTexts(_heText, HEc.GetMax, HEc.GetCurrent, minColorDefault, maxColorDefault);
 
         PrettyLerp();
 
@@ -98,9 +98,9 @@ public class PlayerUnitPanel : BaseUnitPanel
 
     protected void PrettyLerp()
     {
-        _hpBar.fillAmount = Mathf.Lerp(HPc.GetLast() / HPc.GetMax(), HPc.GetCurrent() / HPc.GetMax(), FillLerp);
-        _shBar.fillAmount = Mathf.Lerp(SHc.GetLast() / SHc.GetMax(), SHc.GetCurrent() / SHc.GetMax(), FillLerp);
-        _heBar.fillAmount = Mathf.Lerp(HEc.GetLast() / HEc.GetMax(), HEc.GetCurrent() / HEc.GetMax(), FillLerp);
+        _hpBar.fillAmount = Mathf.Lerp(HPc.GetLast / HPc.GetMax, HPc.GetCurrent / HPc.GetMax, FillLerp);
+        _shBar.fillAmount = Mathf.Lerp(SHc.GetLast / SHc.GetMax, SHc.GetCurrent / SHc.GetMax, FillLerp);
+        _heBar.fillAmount = Mathf.Lerp(HEc.GetLast / HEc.GetMax, HEc.GetCurrent / HEc.GetMax, FillLerp);
 
     }
 

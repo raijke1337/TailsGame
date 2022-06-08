@@ -23,7 +23,7 @@ public class ConfigurationsEditor : EditorWindow
         VisualElement root = rootVisualElement;
 
         // load configs
-        var configs = Extensions.GetAssetsFromPath<ScriptableObjectID>(Constants.Configs.c_AllConfigsPath, true);
+        var configs = Extensions.GetAssetsFromPath<ScriptableObjectID>(Constants.Configs.c_ManagerConfigsPath, true);
 
         // this makes a split view
         var split = new TwoPaneSplitView(0, 250, TwoPaneSplitViewOrientation.Horizontal);

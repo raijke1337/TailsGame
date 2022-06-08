@@ -24,7 +24,7 @@ public class SkillControllerData
     public float GetCost => _data.SkillCost;
 
     // todo for ui
-    public float GetCD => _recTimer.time;
+    public float GetCD => _recTimer.GetRemaining;
     public Sprite GetSkillImage => _data.Icon;
 
     public string SkillUpgradeID { get; set; } // todo implement 
@@ -34,25 +34,14 @@ public class SkillControllerData
     {
         if (_isReady)
         {
-            _recTimer = new Timer(_data.Recharge);
+            _recTimer.ResetTimer();
             _isReady = false;
-            return true;
         }
-        else
-        {
-            return false;
-        }
+        return _isReady;
     }
     public virtual float Ticks(float time)
     {
-        if (_recTimer == null) return 0f; 
-
-        if (_recTimer.time <= 0f)
-        {
-            _isReady = true;
-        }
-        else { _recTimer.time -= time; }
-        return _recTimer.time;
+        return _recTimer.TimerTick(time);
     }
 
     public SkillControllerData (SkillControllerDataConfig cfg)
@@ -60,6 +49,12 @@ public class SkillControllerData
         ID = cfg.ID;
         SkillType = cfg.SkillType;
         _data = new SkillData(cfg.Data);
+        _recTimer = new Timer(_data.Recharge);
+        _recTimer.TimeUp += _recTimer_TimeUp;
+    }
+    private void _recTimer_TimeUp(Timer arg)
+    {
+        _isReady = true;
     }
     // all logic moved to SkillsPlacerMan class, here we only have cooldown checking and data
 

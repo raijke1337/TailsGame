@@ -16,7 +16,8 @@ using UnityEngine.EventSystems;
 public class NPCUnit : BaseUnit, InteractiveItem
 {
     private InputsNPC _npcController;
-    public SimpleEventsHandler UnitWasAttackedEvent;
+    //public event SimpleEventsHandler<NPCUnit> OnUnitAggro;
+    
 
     public EnemyType GetEnemyType => _npcController.GetEnemyType;
     public RoomController UnitRoom
@@ -32,11 +33,11 @@ public class NPCUnit : BaseUnit, InteractiveItem
         base.OnEnable();
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
-        _npcController = _controller as InputsNPC;
-    }       
+        _npcController = _controller as InputsNPC;        
+    }
+
     public override void ApplyEffect(TriggeredEffect eff)
     {
-        
         switch (eff.StatID)
         {
             case BaseStatType.Health:
@@ -50,6 +51,7 @@ public class NPCUnit : BaseUnit, InteractiveItem
     protected override void OnDisable()
     {
         base.OnDisable();
+
     }
 
     #region behavior
@@ -62,10 +64,10 @@ public class NPCUnit : BaseUnit, InteractiveItem
     protected override void HealthChangedEvent(float value, float prevValue)
     {
         base.HealthChangedEvent(value, prevValue);
-
+        UnitRoom.StartCombatCheck(this);
     }
 
-
+    public void EnterCombat(PlayerUnit player, bool isCombat = true) => _npcController.EnterCombat(player, isCombat);
     #endregion
 }
 

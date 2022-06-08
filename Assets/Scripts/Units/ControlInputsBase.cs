@@ -65,13 +65,13 @@ public abstract class ControlInputsBase : MonoBehaviour
         Vector3 relativePosition = looktarget - transform.position;
         Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
-            Time.deltaTime * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent());
+            Time.deltaTime * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
     }
 
 
     protected void StaggerCheck(float current,float prev)
     {
-        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[BaseStatType.Health].GetMax())
+        if (prev - current >= Constants.Combat.c_StaggeringHitHealthPercent * _statsCtrl.GetBaseStats[BaseStatType.Health].GetMax)
         {
             if (_staggerCheck.DidHitStun())
             {

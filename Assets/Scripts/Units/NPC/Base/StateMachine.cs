@@ -30,13 +30,13 @@ public class StateMachine : IStatsComponentForHandler
     public Vector3 CurrentVelocity { get; protected set; }
     public float TimeInState { get; private set; }
     public EnemyStats GetEnemyStats { get; private set; }
-    public PlayerUnit FoundPlayer { get; set; }
-    public NPCUnit FoundAlly{ get; set; }
+    public PlayerUnit FoundPlayer { get; private set; }
+    public NPCUnit FoundAlly{ get; private set; }
     public bool InCombat { get; set; }
 
-    //public event StateMachineEvent PlayerSeenEvent;
+    
     public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
-    public event StateMachineEvent<BaseUnit> PlayerSpottedSM;
+    public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
     public event StateMachineEvent AllyRequestSM;
     public event StateMachineEvent RotateRequestSM;
 
@@ -106,7 +106,10 @@ public class StateMachine : IStatsComponentForHandler
     public void OnRequestAlly() => AllyRequestSM?.Invoke();
     public void OnRotate() => RotateRequestSM?.Invoke();
     public void SetAlly(NPCUnit ally) => FoundAlly = ally;
-
+    public void InitiateCombat (PlayerUnit player,bool isCombat)
+    {
+        InCombat = isCombat; FoundPlayer = player;
+    }
 
     
 

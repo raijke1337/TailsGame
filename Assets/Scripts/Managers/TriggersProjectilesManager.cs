@@ -9,14 +9,11 @@ public class TriggersProjectilesManager : MonoBehaviour
     // transform, destroy
     private List<IProjectile> _projectiles = new List<IProjectile>();
 
-    private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
-    private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
+    //private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
+    //private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
 
-
-#if UNITY_EDITOR
-    [SerializeField] private Text _triggersDebug;
-#endif
-
+    private Dictionary<string, BaseStatTriggerConfig> _triggersD = new Dictionary<string, BaseStatTriggerConfig>();
+    private Dictionary<string, ProjectileDataConfig> _projectilesD = new Dictionary<string, ProjectileDataConfig>();
 
 
     private SkillsPlacerManager _skillsMan;
@@ -39,16 +36,12 @@ public class TriggersProjectilesManager : MonoBehaviour
         _skillsMan.ProjectileSkillCreatedEvent += NewProjectile;
         _skillsMan.SkillAreaPlacedEvent += RegisterTrigger;
 
-#if UNITY_EDITOR
-        _triggersDebug.text = $"{this} started";
-#endif
-
     }
 
 
     private void ApplyTriggerEffect(string ID, BaseUnit target, BaseUnit source)
     {
-        var config = _configs.First(t => t.ID == ID);
+        var config = _triggersD[ID];
         TriggeredEffect effect = new TriggeredEffect(config);
         BaseUnit finaltgt = null;
 
@@ -113,9 +106,7 @@ public class TriggersProjectilesManager : MonoBehaviour
                 case TriggerTargetType.TargetsUser:
                     if (target == source)
                     {
-#if UNITY_EDITOR
-                        _triggersDebug.text = $"{effect} applied by ID {ID} source {source} targets user";
-#endif
+
                     }
                     break;
                 case TriggerTargetType.TargetsAllies:
@@ -128,41 +119,12 @@ public class TriggersProjectilesManager : MonoBehaviour
         }
         if (finaltgt == null)
         {
-#if UNITY_EDITOR
-            _triggersDebug.text += $"\n Trigger {ID} not applied";
-#endif
             return;
         }
-
-
-
-#if UNITY_EDITOR
-        _triggersDebug.text += $"\n Applying effect ID {ID}, source: {source}, target {finaltgt}";
-#endif
 
         finaltgt.ApplyEffect(effect);
     }
 
-    // todo check the result of gettype
-
-    //private void ApplyTriggerEffect(string ID, BaseUnit target, BaseUnit source)
-    //{
-    //    var config = _configs.First(t => t.ID == ID);
-
-    //    switch (config.TargetType)
-    //    {
-    //        case TriggerTargetType.TargetsEnemies:
-    //            if (target.GetType() != source.GetType())
-    //            {
-    //                
-    //            }
-    //            break;
-    //        case TriggerTargetType.TargetsUser:
-    //            break;
-    //        case TriggerTargetType.TargetsAllies:
-    //            break;
-    //    }
-    //}
 
 
 
@@ -173,7 +135,7 @@ public class TriggersProjectilesManager : MonoBehaviour
     private void NewProjectile (IProjectile proj)
     {
         _projectiles.Add(proj);
-        proj.SetProjectileData(_projectileCfgs.First(t => t.ID == proj.GetID));
+        proj.SetProjectileData(_projectilesD[proj.GetID]);
         RegisterTrigger(proj);
         proj.ExpiryEventProjectile += ProjectileExpiryHandling;
         proj.OnSpawnProj();
@@ -182,15 +144,8 @@ public class TriggersProjectilesManager : MonoBehaviour
     private void ProjectileExpiryHandling(IProjectile proj)
     {
         _projectiles.Remove(proj);
-        //proj.TriggerApplicationRequestEvent -= (id, tgt) => ProjectileCollisionHandling(id, tgt, proj);
         proj.OnExpiryProj();
     }
-
-    //private void ProjectileCollisionHandling(string triggerId, BaseUnit target, IProjectile projectile)
-    //{
-    //    ApplyTriggerEffect(triggerId, target,projectile.Source);
-    //}
-
     private void Update()
     {
         foreach (var p in _projectiles.ToList())
@@ -208,8 +163,16 @@ public class TriggersProjectilesManager : MonoBehaviour
     [ContextMenu(itemName: "Update configurations")]
     public void UpdateDatas()
     {
-        _configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath,true);
-        _projectileCfgs = Extensions.GetAssetsFromPath<ProjectileDataConfig>(Constants.Configs.c_ProjectileConfigsPath);
+        var configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath,true);
+        foreach (var cfg in configs)
+        {
+            _triggersD[cfg.ID] = cfg;
+        }
+        var projectileCfgs = Extensions.GetAssetsFromPath<ProjectileDataConfig>(Constants.Configs.c_ProjectileConfigsPath);
+        foreach (var cfg in projectileCfgs)
+        {
+            _projectilesD[cfg.ID] = cfg;
+        }
     }
 
 }

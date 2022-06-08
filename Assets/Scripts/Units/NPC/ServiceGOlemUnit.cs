@@ -42,13 +42,12 @@ public class ServiceGolemUnit : NPCUnit
         _controller.IsControlsBusy = true;
 
         Vector3 start = transform.position;
-        //Vector3 end = start + transform.forward * stats[DodgeStatType.Range].GetCurrent();
-        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent();
+        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent;
 
         float p = 0f;
         while (p <= 1f)
         {
-            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent();
+            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent;
             transform.position = Vector3.Lerp(start, end, p);
             yield return null;
         }

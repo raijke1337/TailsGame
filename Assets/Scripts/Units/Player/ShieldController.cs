@@ -43,7 +43,7 @@ public class ShieldController : IStatsComponentForHandler
     public void UpdateInDelta(float deltaTime)
     {
         HandleEffects(deltaTime);
-        _stats[ShieldStatType.Shield].ChangeCurrent(_stats[ShieldStatType.ShieldRegen].GetCurrent() * deltaTime * _stats[ShieldStatType.ShieldRegenMultiplier].GetCurrent());
+        _stats[ShieldStatType.Shield].ChangeCurrent(_stats[ShieldStatType.ShieldRegen].GetCurrent * deltaTime * _stats[ShieldStatType.ShieldRegenMultiplier].GetCurrent);
     }
 
 
@@ -55,9 +55,9 @@ public class ShieldController : IStatsComponentForHandler
         }
         else
         {
-            var adjDmg = effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent();
+            var adjDmg = effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
             effect.InitialValue -= adjDmg;
-            var AdjRep = effect.RepeatedValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent();
+            var AdjRep = effect.RepeatedValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
             effect.RepeatedValue -= AdjRep;
 
             TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatID, adjDmg,AdjRep,effect.RepeatApplicationDelay,effect.TotalDuration,effect.Icon);

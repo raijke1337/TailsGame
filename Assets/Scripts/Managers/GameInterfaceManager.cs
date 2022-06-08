@@ -26,9 +26,9 @@ public class GameInterfaceManager : MonoBehaviour
         await Task.Yield();
 
         _unitsM = FindObjectOfType<UnitsManager>();
-        _player.AssignItem(_unitsM.GetPlayerUnit(),true);
-        _unitsM.GetPlayerUnit().SetInfoPanel(_tgt);
-        _unitsM.GetPlayerUnit().ToggleMenuEvent += GameInterfaceManager_ToggleMenuEvent;
+        _player.AssignItem(_unitsM.GetPlayerUnit,true);
+        _unitsM.GetPlayerUnit.SetInfoPanel(_tgt);
+        _unitsM.GetPlayerUnit.ToggleMenuEvent += GameInterfaceManager_ToggleMenuEvent;
 
         _items.enabled = false;
         _pause.enabled = false;

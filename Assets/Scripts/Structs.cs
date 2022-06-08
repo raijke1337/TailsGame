@@ -28,9 +28,9 @@ public static class Constants
         public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
         public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
         public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
-#if UNITY_EDITOR
-        public const string c_AllConfigsPath = "/Scripts/Configurations/";
-#endif
+
+        public const string c_ManagerConfigsPath = "/Scripts/Configurations/";
+
     }
     public static class Objects
     {
@@ -49,7 +49,48 @@ public static class Constants
     }
 }
 #region structs 
-[Serializable] public class Timer { public float time; public Timer(float t) { time = t; } }
+[Serializable] public class Timer 
+{
+    public delegate void TimerEvents<T>(T arg) where T : Timer;
+    public event TimerEvents<Timer> TimeUp;
+    public float GetInitial { get; }
+    public float GetRemaining { get; private set; }
+    public bool GetExpired { get => _expired; }
+    private bool _expired;
+    public Timer(float t)
+    { 
+        GetInitial = t;
+        GetRemaining = t;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deltatime"></param>
+    /// <returns> current remaining time</returns>
+    public float TimerTick(float deltatime)
+    {
+        if (GetRemaining <= 0 && !_expired)
+        {
+            _expired = true;
+            TimeUp?.Invoke(this);
+        }
+        else if (GetRemaining > 0)
+        {
+            GetRemaining -= deltatime;
+        }    
+        return GetRemaining;
+    }
+    public void ResetTimer()
+    {
+        _expired = false;
+        GetRemaining = GetInitial;
+    }
+    public void ResetTimer(float t)
+    {
+        _expired = false;
+        GetRemaining = t;
+    }
+}
 [Serializable] public class StatValueContainer
 {
     [SerializeField] private float _start;
@@ -62,11 +103,12 @@ public static class Constants
     /// </summary>
     public SimpleEventsHandler<float,float> ValueChangedEvent;
 
-    public float GetCurrent() => _current;
-    public float GetMax() => _max;
-    public float GetMin() => _min;
-    public float GetStart() => _start;
-    public float GetLast() => _last;
+    public float GetCurrent { get => _current; }
+    public float GetMax { get => _max; }
+    public float GetMin {get => _min;}
+    public float GetStart {get => _start;}
+    public float GetLast {get => _last;}
+
     /// <summary>
     /// adds the value, clamped by min and max
     /// </summary>

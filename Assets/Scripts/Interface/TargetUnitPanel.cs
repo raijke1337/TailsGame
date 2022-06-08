@@ -38,8 +38,8 @@ public class TargetUnitPanel : BaseUnitPanel
 
     protected override void UpdatePanel()
     {
-        _maxHP = HPc.GetMax();
-        _currentHP = HPc.GetCurrent();
+        _maxHP = HPc.GetMax;
+        _currentHP = HPc.GetCurrent;
         _hpText.text = string.Concat(Math.Round(_currentHP, 0), " / ", _maxHP);
         _hpBar.fillAmount = _currentHP / _maxHP;
         ColorTexts(_hpText, _maxHP, _currentHP, minColorDefault, maxColorDefault);

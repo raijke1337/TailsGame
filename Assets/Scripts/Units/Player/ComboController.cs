@@ -36,7 +36,7 @@ public class ComboController : IStatsComponentForHandler
 
     public bool UseCombo(float value)
     {
-        bool result = ComboContainer.GetCurrent() >= -value;    // because these are negative in configs
+        bool result = ComboContainer.GetCurrent >= -value;    // because these are negative in configs
         if (result) ComboContainer.ChangeCurrent(value);
         return result;
     }

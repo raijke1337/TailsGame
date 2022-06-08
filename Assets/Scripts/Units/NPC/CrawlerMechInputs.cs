@@ -18,10 +18,5 @@ public class CrawlerMechInputs : InputsNPC
         base.HandleAttackRequest(type);
     }
 
-    protected override void OnFindAlly()
-    {
-        fsm.SetAlly(UnitRoom.CallBigRobot());
-    }
-
 }
 

@@ -1,15 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
+using UnityEngine;
 
 public class UnitsManager : MonoBehaviour
 {
@@ -17,7 +8,7 @@ public class UnitsManager : MonoBehaviour
 
     private List<NPCUnit> _units = new List<NPCUnit>();
     private PlayerUnit _player;
-    public PlayerUnit GetPlayerUnit() => _player;
+    public PlayerUnit GetPlayerUnit { get => _player; }
     public List<NPCUnit> GetNPCs() => _units;
     public SkillRequestedEvent RequestToPlaceSkills;
 
@@ -27,7 +18,10 @@ public class UnitsManager : MonoBehaviour
         _player = FindObjectOfType<PlayerUnit>();
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
-
+        foreach (var room in _rooms)
+        {
+            room.Manager = this;
+        }
 
         foreach (var npc in _units)
         {
@@ -78,6 +72,7 @@ public class UnitsManager : MonoBehaviour
             Debug.LogWarning("You died");
         }
     }
+
 
 }
 

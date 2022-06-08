@@ -14,11 +14,8 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public class AimingComponent : MonoBehaviour
 {
-    public SerializableDictionaryBase<CursorType, Sprite> Cursors;
-    private CrosshairComponent _crosshair;
     private Camera _camera;
 
-    [Tooltip("The plane to cast raycasts at"),SerializeField] private Transform _raycastPrefab;
     [Tooltip("Vertical offset for crosshair"), SerializeField] private float _vertOffset = 0.1f;
     public Vector3 GetLookPoint { get; private set; }
     public InteractiveItem GetItem { get;private set; }
@@ -31,20 +28,13 @@ public class AimingComponent : MonoBehaviour
     {
         if (!IsRunning) return;
         GetLookPoint = GetCursorPosition();
-        _crosshair.SetScreenPosition(GetLookPoint);
         GetItem = GetItemUnderCursor();
     }
 
     private void Start()
     {
-
         GetLookPoint = transform.forward;
-        _crosshair = GetComponentInChildren<CrosshairComponent>();
-        _crosshair.transform.SetParent(null);
-        _crosshair.SetCrosshair(Cursors[CursorType.Explore]);
-
         _camera = Camera.main;
-
         IsRunning = true;
     }
 
@@ -64,32 +54,14 @@ public class AimingComponent : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out hit)) //&& hit.collider.CompareTag("Ground")
+        if (Physics.Raycast(ray, out hit))
         {
-            if (hit.collider.GetComponent<NPCUnit>() != null)
-            {
-                _crosshair.SetCrosshair(Cursors[CursorType.EnemyTarget]);
-                var unit = hit.collider.GetComponent<NPCUnit>();
-                return unit;
-            }
-            if (hit.collider.GetComponent<LevelItemTrigger>() != null)
-            {
-                _crosshair.SetCrosshair(Cursors[CursorType.Item]);
-                var item = hit.collider.GetComponent<LevelItemTrigger>();
-                return item;
-            }
-            else
-            {
-                _crosshair.SetCrosshair(Cursors[CursorType.Explore]);
-                return null;
-            }
-            // todo ?
+            var coll = hit.collider;
+            if (coll.GetComponent<NPCUnit>() != null) return coll.GetComponent<NPCUnit>();
+            else if (coll.GetComponent<LevelItemTrigger>() != null) return coll.GetComponent<LevelItemTrigger>();
+            else return null;   
         }
-        else
-        {
-            _crosshair.SetCrosshair(Cursors[CursorType.Explore]);
-            return null;
-        }
+        else return null;
     }
 
 }

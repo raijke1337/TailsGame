@@ -13,7 +13,7 @@ public class InputsPlayer : ControlInputsBase
 
     private IsoCamAdjust _adj;
     public TargetUnitPanel TargetPanel { get; set; }
-
+    private AimingComponent _aim;
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
@@ -24,7 +24,7 @@ public class InputsPlayer : ControlInputsBase
     public bool ComboGained { get; set; } = false;
 
     public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
-    private AimingComponent _aim;
+
 
 
     private void OnDisable()
@@ -195,6 +195,8 @@ public class InputsPlayer : ControlInputsBase
     {
         if (_aim == null) return;
         LerpRotateToTarget(_aim.GetLookPoint);
+
+
         if (_aim.GetItem is NPCUnit) TargetPanel.AssignItem(_aim.GetItem as NPCUnit,true);
         // massive TODO here
     }

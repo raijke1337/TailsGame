@@ -16,7 +16,7 @@ using Zenject;
 using UnityEngine.EventSystems;
 using System.Threading.Tasks;
 
-[RequireComponent(typeof(NavMeshAgent),typeof(Collider),typeof(Rigidbody))]
+[RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public class InputsNPC : ControlInputsBase
 {
     public RoomController UnitRoom { get; set; }
@@ -33,22 +33,23 @@ public class InputsNPC : ControlInputsBase
 
     public EnemyType GetEnemyType => _enemyStats.EnemyType;
 
+    public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.InitiateCombat(pl,isCombat);
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (fsm == null || fsm.CurrentState == null || fsm.CurrentVelocity == null) return;
         Gizmos.color = fsm.CurrentState.StateGizmoColor;
-        Gizmos.DrawLine(fsm.EyesEmpty.position,fsm.EyesEmpty.position+fsm.EyesEmpty.forward*_enemyStats.LookSpereCastRange);
-        Gizmos.DrawWireSphere(fsm.EyesEmpty.forward+fsm.EyesEmpty.position*_enemyStats.LookSpereCastRange,_enemyStats.LookSpereCastRadius);
+        Gizmos.DrawLine(fsm.EyesEmpty.position, fsm.EyesEmpty.position + fsm.EyesEmpty.forward * _enemyStats.LookSpereCastRange);
+        Gizmos.DrawWireSphere(fsm.EyesEmpty.forward + fsm.EyesEmpty.position * _enemyStats.LookSpereCastRange, _enemyStats.LookSpereCastRadius);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + fsm.CurrentVelocity.normalized);
         Gizmos.DrawWireSphere(fsm.NMAgent.destination, fsm.NMAgent.stoppingDistance);
     }
-
-
 #endif
+
+
     public override void BindControllers(bool isEnable)
     {
         base.BindControllers(isEnable);
@@ -64,7 +65,7 @@ public class InputsNPC : ControlInputsBase
         _navMeshAg = GetComponent<NavMeshAgent>();
         fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
 
-        _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent();
+        _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
 
         Bind(isEnable);
@@ -90,38 +91,37 @@ public class InputsNPC : ControlInputsBase
         {
             _handler.RegisterUnitForStatUpdates(fsm);
             fsm.AgressiveActionRequestSM += HandleAttackRequest;
-            fsm.PlayerSpottedSM += OnPlayerSpotted;
             fsm.RotateRequestSM += HandleRotation;
-            fsm.AllyRequestSM += OnFindAlly;
+            fsm.AllyRequestSM += Fsm_AllyRequestSM;
+            fsm.PlayerSpottedSM += Fsm_PlayerSpottedSM;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
         }
         else
         {
             _handler.RegisterUnitForStatUpdates(fsm, false);
             fsm.AgressiveActionRequestSM -= HandleAttackRequest;
-            fsm.PlayerSpottedSM -= OnPlayerSpotted;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
             fsm.RotateRequestSM -= HandleRotation;
-            fsm.AllyRequestSM -= OnFindAlly;
+                fsm.AllyRequestSM -= Fsm_AllyRequestSM;
+            fsm.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
         }
     }
 
+    private void Fsm_PlayerSpottedSM(PlayerUnit arg)
+    {
+        fsm.InitiateCombat(arg, true);
+    }
+
+    private void Fsm_AllyRequestSM()
+    {
+        fsm.SetAlly(UnitRoom.CallBigRobot());
+    }
+
     protected virtual void HandleAttackRequest(CombatActionType type)
-    { 
+    {
         CombatActionSuccessCallback(type);
     }
     protected virtual void HandleRotation() => LerpRotateToTarget(fsm.FoundPlayer.transform.position);
-    protected virtual void OnPlayerSpotted(BaseUnit player)
-    {
-        fsm.FoundPlayer = player as PlayerUnit;
-        fsm.InCombat = true;
-        Debug.Log($"{_statsCtrl.GetDisplayName} spotted {player.GetFullName()}");
-    }
-    protected virtual void OnFindAlly()
-    {
-        Debug.Log($"{_statsCtrl.GetDisplayName} has no FindAlly implemented");
-    }
-
 
 }
 

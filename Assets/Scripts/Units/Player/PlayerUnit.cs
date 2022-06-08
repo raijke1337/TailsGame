@@ -27,7 +27,7 @@ public class PlayerUnit : BaseUnit
         _visualController = GetComponent<VisualsController>();  
         ToggleCamera(true);
 
-        float maxHP = _baseStats.GetBaseStats[BaseStatType.Health].GetMax();
+        float maxHP = _baseStats.GetBaseStats[BaseStatType.Health].GetMax;
         int stages = _visualController.StagesTotal;
         _visualStagesHP = new float[stages];
         var coef = maxHP / stages;
@@ -75,12 +75,12 @@ public class PlayerUnit : BaseUnit
         _playerController.IsControlsBusy = true;
 
         Vector3 start = transform.position;
-        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent();
+        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent;
 
         float p = 0f;
         while (p <= 1f)
         {
-            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent();
+            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent;
             transform.position = Vector3.Lerp(start, end, p);
             yield return null;
         }
@@ -174,7 +174,7 @@ public class PlayerUnit : BaseUnit
 
         // also good enough
         transform.position += Time.deltaTime * desiredDir
-            * GetStats()[BaseStatType.MoveSpeed].GetCurrent();
+            * GetStats()[BaseStatType.MoveSpeed].GetCurrent;
     }
 
     public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;

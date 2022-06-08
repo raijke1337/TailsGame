@@ -13,11 +13,16 @@ using UnityEngine.InputSystem;
 using Zenject;
 
 public class GameManager : MonoInstaller
-{    
+{
+
+    [SerializeField] private CursorManager _cursors;
 
     public override void Start()
     {
-        base.Start();        
+        base.Start();
+        var config = Extensions.GetAssetsFromPath<CursorsDictionary>(Constants.Configs.c_ManagerConfigsPath).First();
+
+        _cursors = new CursorManager(config);
     }
     public override void InstallBindings()
     {
