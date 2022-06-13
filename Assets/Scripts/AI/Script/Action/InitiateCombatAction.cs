@@ -10,17 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-public class CrawlerMechInputs : InputsNPC
+[CreateAssetMenu(menuName = "AIConfig/Action/InitiateCombat")]
+public class InitiateCombatAction : Action
 {
-    protected override void Fsm_CombatPreparationSM()
+    public override void Act(StateMachine controller)
     {
-        fsm.OnRequestAlly();
-    }
-
-    protected override void HandleAttackRequest()
-    {
-        _weaponCtrl.UseWeaponCheck(WeaponType.Melee);
+        controller.OnCombatInitiate();
     }
 }
 

@@ -39,7 +39,7 @@ public class RoomController : MonoBehaviour
             var unit = other.GetComponent<NPCUnit>();
             list.Add(unit);
             unit.UnitRoom = this;
-            Debug.Log($"{this} registered: {unit.GetFullName()}");
+            Debug.Log($"{this} registered: {unit.GetFullName}");
         }
        
     }
@@ -51,9 +51,9 @@ public class RoomController : MonoBehaviour
         _timer.TimerTick(Time.deltaTime);
     }
 
-    public NPCUnit CallBigRobot()
+    public NPCUnit CallAllyInRoom(EnemyType type = EnemyType.Big)
     {
-        var result = list.FirstOrDefault(t => t.GetEnemyType == EnemyType.Big);
+        var result = list.FirstOrDefault(t => t.GetEnemyType == type);
         if (result != null)
         {
             StartCombatCheck(result,true);

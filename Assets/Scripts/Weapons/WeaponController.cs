@@ -55,6 +55,8 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     }
     protected bool Equip(WeaponType type)
     {
+        if (!_currentWeapons.ContainsKey(type)) return false;
+
         var item = _currentWeapons[type].GetObject();
         if (item == null) return false;
         if (type == WeaponType.Melee)

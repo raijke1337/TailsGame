@@ -15,11 +15,8 @@ public class GenericAttackAction : Action
 {
     public override void Act(StateMachine controller)
     {
-        AttackLogic(controller);
-    }
-    protected virtual void AttackLogic(StateMachine controller)
-    { controller.OnAttackRequest(CombatActionType.Melee);  }
-    
+        controller.OnAttackRequest();
+    }   
 
 }
 

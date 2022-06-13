@@ -9,6 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc07e99f0e3ecc94cbda0dffc5408a91, type: 3}
-  m_Name: New Look For Ally Action
+  m_Script: {fileID: 11500000, guid: 37d28a11433942b458ae2a45ffafe01e, type: 3}
+  m_Name: drone_heal
   m_EditorClassIdentifier: 
+  ID: drone_heal
+  SkillType: 1
+  Data:
+    Icon: {fileID: 0}
+    Recharge: 5
+    FinalArea: 4
+    StartArea: 1.1
+    PersistTime: 2
+    SkillCost: 0
+    TargetType: 2

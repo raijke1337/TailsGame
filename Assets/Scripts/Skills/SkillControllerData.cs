@@ -32,12 +32,13 @@ public class SkillControllerData
 
     public virtual bool RequestUse()
     {
+        bool result = _isReady;
         if (_isReady)
         {
             _recTimer.ResetTimer();
             _isReady = false;
         }
-        return _isReady;
+        return result;
     }
     public virtual float Ticks(float time)
     {

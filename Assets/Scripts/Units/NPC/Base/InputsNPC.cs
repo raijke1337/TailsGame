@@ -17,7 +17,7 @@ using UnityEngine.EventSystems;
 using System.Threading.Tasks;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
-public class InputsNPC : ControlInputsBase
+public abstract class InputsNPC : ControlInputsBase
 {
     public RoomController UnitRoom { get; set; }
     [SerializeField] protected List<Transform> patrolPoints;
@@ -33,7 +33,7 @@ public class InputsNPC : ControlInputsBase
 
     public EnemyType GetEnemyType => _enemyStats.EnemyType;
 
-    public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.InitiateCombat(pl,isCombat);
+    public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.StartCombat(pl,isCombat);
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -94,6 +94,7 @@ public class InputsNPC : ControlInputsBase
             fsm.RotateRequestSM += HandleRotation;
             fsm.AllyRequestSM += Fsm_AllyRequestSM;
             fsm.PlayerSpottedSM += Fsm_PlayerSpottedSM;
+            fsm.CombatPreparationSM += Fsm_CombatPreparationSM;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
         }
         else
@@ -104,24 +105,25 @@ public class InputsNPC : ControlInputsBase
             fsm.RotateRequestSM -= HandleRotation;
                 fsm.AllyRequestSM -= Fsm_AllyRequestSM;
             fsm.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
+            fsm.CombatPreparationSM -= Fsm_CombatPreparationSM;
         }
     }
 
+
+
     private void Fsm_PlayerSpottedSM(PlayerUnit arg)
     {
-        fsm.InitiateCombat(arg, true);
+        fsm.StartCombat(arg, true);
     }
 
-    private void Fsm_AllyRequestSM()
+    private void Fsm_AllyRequestSM(EnemyType type)
     {
-        fsm.SetAlly(UnitRoom.CallBigRobot());
+        fsm.SetAlly(UnitRoom.CallAllyInRoom(type));
     }
 
-    protected virtual void HandleAttackRequest(CombatActionType type)
-    {
-        CombatActionSuccessCallback(type);
-    }
+    protected abstract void HandleAttackRequest();
     protected virtual void HandleRotation() => LerpRotateToTarget(fsm.FoundPlayer.transform.position);
+    protected abstract void Fsm_CombatPreparationSM();
 
 }
 

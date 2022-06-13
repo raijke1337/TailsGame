@@ -33,7 +33,7 @@ public class TargetUnitPanel : BaseUnitPanel
     protected override void RunSetup()
     {
         HPc = _unit.GetStats()[BaseStatType.Health];
-        _nameText.text = _unit.GetFullName();
+        _nameText.text = _unit.GetFullName;
     }
 
     protected override void UpdatePanel()

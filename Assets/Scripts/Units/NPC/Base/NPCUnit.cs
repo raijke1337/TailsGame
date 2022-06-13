@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(InputsNPC)), RequireComponent(typeof(EnemyWeaponCtrl))]
-public class NPCUnit : BaseUnit, InteractiveItem
+public abstract class NPCUnit : BaseUnit, InteractiveItem
 {
     private InputsNPC _npcController;
     //public event SimpleEventsHandler<NPCUnit> OnUnitAggro;

@@ -33,12 +33,15 @@ public class StateMachine : IStatsComponentForHandler
     public PlayerUnit FoundPlayer { get; private set; }
     public NPCUnit FoundAlly{ get; private set; }
     public bool InCombat { get; set; }
+    public bool InSupport { get; set; }
+
 
     
-    public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
+    public event StateMachineEvent AgressiveActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
-    public event StateMachineEvent AllyRequestSM;
+    public event StateMachineEvent<EnemyType> AllyRequestSM;
     public event StateMachineEvent RotateRequestSM;
+    public event StateMachineEvent CombatPreparationSM;
 
 
 
@@ -102,15 +105,15 @@ public class StateMachine : IStatsComponentForHandler
         }
         return result;
     }
-    public void OnAttackRequest(CombatActionType type = CombatActionType.Melee) => AgressiveActionRequestSM?.Invoke(type);
-    public void OnRequestAlly() => AllyRequestSM?.Invoke();
+    public void OnAttackRequest() => AgressiveActionRequestSM?.Invoke();
+    public void OnRequestAlly(EnemyType type = EnemyType.Big) => AllyRequestSM?.Invoke(type);
     public void OnRotate() => RotateRequestSM?.Invoke();
     public void SetAlly(NPCUnit ally) => FoundAlly = ally;
-    public void InitiateCombat (PlayerUnit player,bool isCombat)
+    public void StartCombat (PlayerUnit player,bool isCombat)
     {
         InCombat = isCombat; FoundPlayer = player;
     }
+    public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
 
-    
 
 }

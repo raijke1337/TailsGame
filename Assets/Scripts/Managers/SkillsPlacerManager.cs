@@ -37,19 +37,14 @@ public class SkillsPlacerManager : MonoBehaviour
     {
         var skill = Instantiate(_skillsDict[ID]);
         skill.Source = source;
-        //switch (skill.SkillData.SourceType)
-        //{
-        //    case TriggerSourceType.Player:
-        //        skill.Source = source as PlayerUnit;
-        //        break;
-        //    case TriggerSourceType.Enemy:
-        //        skill.Source = source as NPCUnit;
-        //        break;
-        //}
+
         skill.transform.position = source.SkillsPosition.position;
         skill.transform.rotation = source.SkillsPosition.rotation;
         skill.transform.forward = source.transform.forward;
         SkillAreaPlacedEvent?.Invoke(skill);
+
+        Debug.Log($"{source.GetFullName} requested skill {ID}");
+
 
         if (skill is IProjectile)
         {

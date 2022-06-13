@@ -22,7 +22,7 @@ public abstract class BaseUnit : MonoBehaviour
 
     [Inject] protected StatsUpdatesHandler _handler;
 
-    public string GetFullName() => _baseStats.GetDisplayName;
+    public string GetFullName => _baseStats.GetDisplayName;
 
     public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
@@ -169,8 +169,14 @@ public abstract class BaseUnit : MonoBehaviour
         _controller.GetWeaponController.ToggleTriggersOnMelee(result);
     }
 
-    protected virtual void DodgeAction() { }
+    protected virtual void DodgeAction() { Debug.LogWarning($"{GetID}:{_baseStats.GetDisplayName} used dodge but has no logic "); }
     protected virtual void AnimateStagger() {  _animator.SetTrigger("TakeDamage");    }
+
+
+    #endregion
+
+
+
 
     public static IEnumerator ItemDisappearsCoroutine(float time, GameObject item)
     {
@@ -184,6 +190,5 @@ public abstract class BaseUnit : MonoBehaviour
         yield return null;
     }
 
-    #endregion
 
 }

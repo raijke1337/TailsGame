@@ -11,16 +11,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class CrawlerMechInputs : InputsNPC
+public class ServiceDroneUnit : NPCUnit
 {
-    protected override void Fsm_CombatPreparationSM()
-    {
-        fsm.OnRequestAlly();
-    }
-
-    protected override void HandleAttackRequest()
-    {
-        _weaponCtrl.UseWeaponCheck(WeaponType.Melee);
-    }
+        
 }
 

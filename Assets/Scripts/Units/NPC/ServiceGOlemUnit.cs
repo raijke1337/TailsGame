@@ -13,7 +13,6 @@ using UnityEngine.InputSystem;
 
 public class ServiceGolemUnit : NPCUnit
 {
-
     protected override void Start()
     {
         base.Start();
@@ -24,6 +23,10 @@ public class ServiceGolemUnit : NPCUnit
 
     private Coroutine _dodgeCor;
     // stop the dodge like this
+
+    // todo create a separate class for this ? 
+    // mb move to dodge controller? 
+
     private void OnCollisionEnter(Collision collision)
     {
         if (_dodgeCor != null && collision.gameObject.tag != "Ground")
