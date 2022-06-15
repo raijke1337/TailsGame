@@ -155,7 +155,7 @@ public class TriggersProjectilesManager : MonoBehaviour
                 _projectiles.Remove(p);
                 return;
             }
-            p.OnUpdateProj();
+            else p.OnUpdateProj();
         }
     }
 

@@ -114,6 +114,10 @@ public class StateMachine : IStatsComponentForHandler
         InCombat = isCombat; FoundPlayer = player;
     }
     public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
-
+    public bool CheckInStoppingRange()
+    {
+        var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;       
+        return result;
+    }
 
 }

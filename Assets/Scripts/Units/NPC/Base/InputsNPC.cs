@@ -120,8 +120,9 @@ public abstract class InputsNPC : ControlInputsBase
     {
         fsm.SetAlly(UnitRoom.CallAllyInRoom(type));
     }
-
+    //attack action logic is here
     protected abstract void HandleAttackRequest();
+
     protected virtual void HandleRotation() => LerpRotateToTarget(fsm.FoundPlayer.transform.position);
     protected abstract void Fsm_CombatPreparationSM();
 
