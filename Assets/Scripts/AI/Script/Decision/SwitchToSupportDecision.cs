@@ -15,7 +15,7 @@ public class SwitchToSupportDecision : Decision
 {
     public override bool Decide(StateMachine controller)
     {
-        var stats = controller.FoundAlly.GetStats()[BaseStatType.Health];
+        var stats = controller.SelectedUnit.GetStats()[BaseStatType.Health];
         return stats.GetCurrent / stats.GetMax <= 0.5; // todo , now heals at 50% hp left 50/100 = 0.5
     }
 

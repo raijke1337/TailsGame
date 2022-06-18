@@ -15,7 +15,7 @@ public class AllyFoundDecision : Decision
 {
     public override bool Decide(StateMachine controller)
     {
-        return controller.FoundAlly!= null;
+        return controller.SelectedUnit.Side == controller.Unit.Side;
     }
 }
 

@@ -10,14 +10,14 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Ally")]
-public class MoveToAllyAction : Action
+[CreateAssetMenu(menuName = "AIConfig/Action/Attack")]
+public class AttackAction : Action
 {
+    public CombatActionType CombatActionType;
     public override void Act(StateMachine controller)
     {
-        controller.NMAgent.isStopped = false;
-        if (controller.FoundAlly == null) return;
-        controller.NMAgent.SetDestination(controller.FoundAlly.transform.position);
+        controller.OnAttackRequest(CombatActionType);
     }
+
 }
 

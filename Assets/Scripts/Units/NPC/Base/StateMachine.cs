@@ -12,6 +12,7 @@ public class StateMachine : IStatsComponentForHandler
         CurrentState.UpdateState(this);
         CurrentVelocity = NMAgent.velocity;
         TimeInState += deltaTime;
+        if (wasSelectedUnitUpdated) OnUpdatedUnit();
     }
     public void SetupStatsComponent()
     {
@@ -25,22 +26,46 @@ public class StateMachine : IStatsComponentForHandler
     #endregion
 
     [SerializeField] private bool aiActive = true;
+
     public State CurrentState { get; private set; }
     public State RemainState { get; private set; }
     public Vector3 CurrentVelocity { get; protected set; }
     public float TimeInState { get; private set; }
     public EnemyStats GetEnemyStats { get; private set; }
-    public PlayerUnit FoundPlayer { get; private set; }
-    public NPCUnit FoundAlly{ get; private set; }
-    public bool InCombat { get; set; }
-    public bool InSupport { get; set; }
+    public BaseUnit Unit { get; }
 
+    //public PlayerUnit FoundPlayer { get; private set; }
+    //public NPCUnit FoundAlly{ get; private set; }
+
+
+    // set by inputs , bool for potential checks
+    private bool wasSelectedUnitUpdated;
+    public BaseUnit SelectedUnit
+    {
+        get => SelectedUnit;
+        set
+        {
+            SelectedUnit = value;
+            wasSelectedUnitUpdated = false;
+        }
+    }
+    public PlayerUnit PlayerFound { get; private set; }
+    private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
+
+
+
+    public Transform SelectedUnitTransform => SelectedUnit.transform;
+
+    //public bool InCombat { get; set; }
+    //public bool InSupport { get; set; }
+
+    // todo get rid of this ^
 
     
-    public event StateMachineEvent AgressiveActionRequestSM;
+    public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
-    public event StateMachineEvent<EnemyType> AllyRequestSM;
-    public event StateMachineEvent RotateRequestSM;
+    //public event StateMachineEvent<EnemyType> AllyRequestSM;
+    //public event StateMachineEvent RotateRequestSM;
     public event StateMachineEvent CombatPreparationSM;
 
 
@@ -52,12 +77,13 @@ public class StateMachine : IStatsComponentForHandler
     public Transform EyesEmpty { get; private set; } // used for sphere casting to look
 
     #region setups
-    public StateMachine(NavMeshAgent agent, EnemyStats stats, State init, State dummy)
+    public StateMachine(NavMeshAgent agent, EnemyStats stats, State init, State dummy, BaseUnit unit)
     {
         NMAgent = agent;
         GetEnemyStats = stats;
         CurrentState = init;
         RemainState = dummy;
+        Unit = unit;
     }
     public void SetAI(bool setting)
     {
@@ -105,13 +131,12 @@ public class StateMachine : IStatsComponentForHandler
         }
         return result;
     }
-    public void OnAttackRequest() => AgressiveActionRequestSM?.Invoke();
-    public void OnRequestAlly(EnemyType type = EnemyType.Big) => AllyRequestSM?.Invoke(type);
-    public void OnRotate() => RotateRequestSM?.Invoke();
-    public void SetAlly(NPCUnit ally) => FoundAlly = ally;
+    public void OnAttackRequest(CombatActionType type) => AgressiveActionRequestSM?.Invoke(type);
+    //public void OnRequestAlly(EnemyType type = EnemyType.Big) => AllyRequestSM?.Invoke(type);  moved to combatPreparationSm
+    //public void OnRotate() => RotateRequestSM?.Invoke();
     public void StartCombat (PlayerUnit player,bool isCombat)
     {
-        InCombat = isCombat; FoundPlayer = player;
+        SelectedUnit = player;        PlayerFound = player;
     }
     public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
     public bool CheckInStoppingRange()

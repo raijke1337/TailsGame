@@ -31,6 +31,9 @@ public abstract class InputsNPC : ControlInputsBase
     protected NavMeshAgent _navMeshAg;
     protected StateMachine fsm;
 
+
+    
+
     public EnemyType GetEnemyType => _enemyStats.EnemyType;
 
     public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.StartCombat(pl,isCombat);
@@ -63,7 +66,7 @@ public abstract class InputsNPC : ControlInputsBase
     (t => t.ID == _statsCtrl.GetUnitID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
-        fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState);
+        fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState,Unit);
 
         _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
@@ -91,8 +94,6 @@ public abstract class InputsNPC : ControlInputsBase
         {
             _handler.RegisterUnitForStatUpdates(fsm);
             fsm.AgressiveActionRequestSM += HandleAttackRequest;
-            fsm.RotateRequestSM += HandleRotation;
-            fsm.AllyRequestSM += Fsm_AllyRequestSM;
             fsm.PlayerSpottedSM += Fsm_PlayerSpottedSM;
             fsm.CombatPreparationSM += Fsm_CombatPreparationSM;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
@@ -102,8 +103,6 @@ public abstract class InputsNPC : ControlInputsBase
             _handler.RegisterUnitForStatUpdates(fsm, false);
             fsm.AgressiveActionRequestSM -= HandleAttackRequest;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
-            fsm.RotateRequestSM -= HandleRotation;
-                fsm.AllyRequestSM -= Fsm_AllyRequestSM;
             fsm.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
             fsm.CombatPreparationSM -= Fsm_CombatPreparationSM;
         }
@@ -116,14 +115,10 @@ public abstract class InputsNPC : ControlInputsBase
         fsm.StartCombat(arg, true);
     }
 
-    private void Fsm_AllyRequestSM(EnemyType type)
-    {
-        fsm.SetAlly(UnitRoom.CallAllyInRoom(type));
-    }
     //attack action logic is here
-    protected abstract void HandleAttackRequest();
+    protected abstract void HandleAttackRequest(CombatActionType type);
 
-    protected virtual void HandleRotation() => LerpRotateToTarget(fsm.FoundPlayer.transform.position);
+    protected virtual void RotateToSelectedUnit() => LerpRotateToTarget(fsm.SelectedUnitTransform.position);
     protected abstract void Fsm_CombatPreparationSM();
 
 }

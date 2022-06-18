@@ -16,11 +16,9 @@ public class RoomController : MonoBehaviour
     [SerializeField] private List<NPCUnit> list;
     [SerializeField, Tooltip("Delay for units in room aggro")] private float _aggroDelay = 1f;
     private Collider _detectionArea;
-    public UnitsManager Manager;
+    private PlayerUnit _player;
 
-    Timer _timer;
-    Coroutine agCor;
-
+    public void SetPlayer(PlayerUnit p) => _player = p;
 
     private void Start()
     {
@@ -47,37 +45,24 @@ public class RoomController : MonoBehaviour
     private void LateUpdate()
     {
         if (_detectionArea.enabled) _detectionArea.enabled = false;
-        if (_timer == null) _timer = new Timer(_aggroDelay);
-        _timer.TimerTick(Time.deltaTime);
     }
 
-    public NPCUnit CallAllyInRoom(EnemyType type = EnemyType.Big)
-    {
-        var result = list.FirstOrDefault(t => t.GetEnemyType == type);
-        if (result != null)
-        {
-            StartCombatCheck(result,true);
-        }
-        return result;
-    }
     public void StartCombatCheck(NPCUnit unit, bool isCombat = true)
     {
-        unit.EnterCombat(Manager.GetPlayerUnit, isCombat);
-        if (agCor == null) agCor = StartCoroutine(AggroCor());
+        unit.EnterCombat(_player, isCombat);
     }
 
-    private IEnumerator AggroCor()
+    // used by inputs
+    public BaseUnit GetUnitForAI(EnemyType type, bool getPlayer = false)
     {
-        int index = 0;
-        while (!_timer.GetExpired) yield return null;
-        while (index < list.Count)
+        if (getPlayer) return _player;
+        else
         {
-            list[index].EnterCombat(Manager.GetPlayerUnit, true);
-            index++;
-            _timer.ResetTimer();
-            yield return null;
+            return  list.ToList().FirstOrDefault(t => t.GetEnemyType == type);
         }
     }
+
+
 }
 
 

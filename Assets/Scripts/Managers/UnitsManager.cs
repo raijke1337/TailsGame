@@ -20,7 +20,7 @@ public class UnitsManager : MonoBehaviour
         _rooms.AddRange(FindObjectsOfType<RoomController>());
         foreach (var room in _rooms)
         {
-            room.Manager = this;
+            room.SetPlayer(_player);
         }
 
         foreach (var npc in _units)

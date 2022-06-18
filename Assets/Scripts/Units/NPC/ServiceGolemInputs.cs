@@ -10,8 +10,9 @@ public class ServiceGolemInputs : InputsNPC
         base.Bind(isStart);
         _handler.RegisterUnitForStatUpdates(_dodgeCtrl, isStart);
     }
-    protected override void HandleAttackRequest()
+    protected override void HandleAttackRequest(CombatActionType type)
     {
+        //todo
         bool inRange = fsm.CheckInStoppingRange();
 
         if (!inRange && fsm.TimeInState >= 1f) // todo configs

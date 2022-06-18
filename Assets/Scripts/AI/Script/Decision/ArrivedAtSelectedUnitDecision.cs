@@ -11,12 +11,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-[CreateAssetMenu(menuName = "AIConfig/Action/LookForAlly")]
-public class LookForAllyAction : Action
+public class ArrivedAtSelectedUnitDecision : MonoBehaviour
 {
-    public override void Act(StateMachine controller)
-    {
-        controller.OnRequestAlly();
-    }
+        
 }
 

@@ -13,13 +13,15 @@ using UnityEngine.InputSystem;
 
 public class CrawlerMechInputs : InputsNPC
 {
+    // find ally and run to them, then fight
     protected override void Fsm_CombatPreparationSM()
     {
-        fsm.OnRequestAlly();
+        fsm.SelectedUnit = UnitRoom.GetUnitForAI(EnemyType.Big); 
+        if (fsm.SelectedUnit == null) UnitRoom.GetUnitForAI(EnemyType.Small, true);  // no ally found, set player        
     }
 
-    protected override void HandleAttackRequest()
-    {
+    protected override void HandleAttackRequest(CombatActionType type)
+    {// todo
         _weaponCtrl.UseWeaponCheck(WeaponType.Melee);
     }
 }

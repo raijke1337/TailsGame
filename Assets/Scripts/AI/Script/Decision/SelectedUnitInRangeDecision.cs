@@ -10,13 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Player")]
-public class MoveToPlayer : Action
+[CreateAssetMenu(menuName = "AIConfig/Decision/SelectedUnitInRange")]
+public class SelectedUnitInRangeDecision : Decision
 {
-    public override void Act(StateMachine controller)
+    public override bool Decide(StateMachine controller)
     {
-        controller.NMAgent.isStopped = false;
-        controller.NMAgent.SetDestination(controller.FoundPlayer.transform.position);
+        return (controller.GetEnemyStats.AttackRange >= controller.NMAgent.remainingDistance);
     }
 }
 
