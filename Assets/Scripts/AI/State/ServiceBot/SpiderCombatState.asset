@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: SpiderCombatState
   m_EditorClassIdentifier: 
   actions:
-  - {fileID: 11400000, guid: bff442d2fbc87894292653ad44cb2d02, type: 2}
+  - {fileID: 11400000, guid: b747d28f7c5d95c42a9f629a17a568ba, type: 2}
+  - {fileID: 11400000, guid: e107b4c5e1b140443832ec7584f5c86f, type: 2}
   transitions:
-  - decision: {fileID: 11400000, guid: 0d8d1ec4ef419354f9412220067ec85c, type: 2}
+  - decision: {fileID: 11400000, guid: 895cd2fbce6801d4f839b4e5dcb45eed, type: 2}
     trueState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
     falseState: {fileID: 11400000, guid: 073cfd001861d0d41b63efdb4b3056db, type: 2}
+  StateExpiryTime: 2
   StateGizmoColor: {r: 0.9811321, g: 0.16197933, b: 0.16197933, a: 1}

@@ -3,28 +3,43 @@ using UnityEngine;
 public class ServiceGolemInputs : InputsNPC
 {
     private DodgeController _dodgeCtrl;
-    public void SetDodgeCtrl(string ID) => _dodgeCtrl = new DodgeController(ID);
+    public void SetDodgeCtrl(string ID)
+    {
+        _dodgeCtrl = new DodgeController(ID);
+        _handler.RegisterUnitForStatUpdates(_dodgeCtrl, true);
+    }
 
     protected override void Bind(bool isStart)
     {
         base.Bind(isStart);
-        _handler.RegisterUnitForStatUpdates(_dodgeCtrl, isStart);
+        if (!isStart) _handler.RegisterUnitForStatUpdates(_dodgeCtrl, false);
     }
     protected override void HandleAttackRequest(CombatActionType type)
     {
-        //todo
-        bool inRange = fsm.CheckInStoppingRange();
+        bool inRange = fsm.CheckIsInStoppingRange();
 
-        if (!inRange && fsm.TimeInState >= 1f) // todo configs
+        switch (type)
         {
-            if (_dodgeCtrl.IsDodgePossibleCheck())
-            CombatActionSuccessCallback(CombatActionType.Dodge);
+            case CombatActionType.Melee:
+                base.HandleAttackRequest(type);
+                break;
+            case CombatActionType.Ranged:
+                base.HandleAttackRequest(type);
+                break;
+            case CombatActionType.Dodge:
+                if (inRange == false && fsm.TimeInState >= fsm.CurrentState.StateExpiryTime && _dodgeCtrl.IsDodgePossibleCheck())
+                    CombatActionSuccessCallback(CombatActionType.Dodge);
+                break;
+            case CombatActionType.MeleeSpecialQ:
+                base.HandleAttackRequest(type);
+                break;
+            case CombatActionType.RangedSpecialE:
+                base.HandleAttackRequest(type);
+                break;
+            case CombatActionType.ShieldSpecialR:
+                base.HandleAttackRequest(type);
+                break;
         }
-        else if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee) && inRange)
-        {
-            CombatActionSuccessCallback(CombatActionType.Melee);
-        }
-
     }
 
     protected override void Fsm_CombatPreparationSM()

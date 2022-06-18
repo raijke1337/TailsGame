@@ -31,11 +31,6 @@ public class MeleeWeapon : BaseWeapon
         _trigger.Enable = enable;
     }
 
-    public override bool UseWeapon()
-    {
-        return true;
-    }
-
     private void OnDisable()
     {
         _trigger.HitSuccessEvent -= HandleHit;

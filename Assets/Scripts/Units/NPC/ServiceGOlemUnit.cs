@@ -29,7 +29,7 @@ public class ServiceGolemUnit : NPCUnit
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_dodgeCor != null && collision.gameObject.tag != "Ground")
+        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
         {
             _controller.IsControlsBusy = false;
             StopCoroutine(_dodgeCor);

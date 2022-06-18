@@ -10,9 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-public class ArrivedAtSelectedUnitDecision : MonoBehaviour
+[CreateAssetMenu(menuName = "AIConfig/Decision/ArrivedAtUnit")]
+public class ArrivedAtSelectedUnitDecision : Decision
 {
-        
+    public override bool Decide(StateMachine controller)
+    {
+        return controller.CheckIsInStoppingRange();
+    }
 }
 

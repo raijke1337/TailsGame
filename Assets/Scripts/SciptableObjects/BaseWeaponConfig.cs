@@ -21,6 +21,7 @@ public class BaseWeaponConfig : ScriptableObjectID
     public string SkillID;
     public int ComboValue;
     // how much combo increases per hit
+    public float InternalCooldown;
 
 }
 

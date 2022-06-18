@@ -10,12 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-[CreateAssetMenu(menuName = "AIConfig/Decision/DoneIdling")]
-public class DoneIdlingDecision : Decision
+[CreateAssetMenu(menuName = "AIConfig/Decision/StateExpired")]
+public class StateExpiredDecision : Decision
 {
     public override bool Decide(StateMachine controller)
     {
-        return (controller.TimeInState >= controller.GetEnemyStats.IdleTime);
+        return (controller.TimeInState >= controller.CurrentState.StateExpiryTime);
     }
 }
 

@@ -18,6 +18,10 @@ public abstract class BaseUnit : MonoBehaviour
     protected ControlInputsBase _controller;
     public Side Side;
     public Transform SkillsPosition;
+    public UnitType GetUnitType()
+    {
+        return _controller.GetUnitType();
+    }
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
 
     [Inject] protected StatsUpdatesHandler _handler;

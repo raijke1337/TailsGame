@@ -19,6 +19,9 @@ using System.Threading.Tasks;
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public abstract class InputsNPC : ControlInputsBase
 {
+
+    [SerializeField, Tooltip("Show action data in console")] private bool DebugEnabled = false;
+
     public RoomController UnitRoom { get; set; }
     [SerializeField] protected List<Transform> patrolPoints;
     public void SwitchState(bool setting) => fsm.SetAI(setting);
@@ -31,11 +34,10 @@ public abstract class InputsNPC : ControlInputsBase
     protected NavMeshAgent _navMeshAg;
     protected StateMachine fsm;
 
-
-    
-
-    public EnemyType GetEnemyType => _enemyStats.EnemyType;
-
+    public override UnitType GetUnitType()
+    {
+        return _enemyStats.EnemyType;
+    }
     public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.StartCombat(pl,isCombat);
 
 #if UNITY_EDITOR
@@ -116,9 +118,47 @@ public abstract class InputsNPC : ControlInputsBase
     }
 
     //attack action logic is here
-    protected abstract void HandleAttackRequest(CombatActionType type);
+    protected virtual void HandleAttackRequest(CombatActionType type)
+    {
+        bool success;
 
-    protected virtual void RotateToSelectedUnit() => LerpRotateToTarget(fsm.SelectedUnitTransform.position);
+        switch (type)
+        {
+            case CombatActionType.Melee:
+                success = _weaponCtrl.UseWeaponCheck(WeaponType.Melee, out var text);
+                if (!success && DebugEnabled) Debug.Log(text);
+                else CombatActionSuccessCallback(type);
+                break;
+            case CombatActionType.Ranged:
+                success = _weaponCtrl.UseWeaponCheck(WeaponType.Ranged, out text);
+                if (!success && DebugEnabled) Debug.Log(text);
+                else CombatActionSuccessCallback(type);
+                break;
+            case CombatActionType.Dodge:
+                if (DebugEnabled)
+                Debug.LogWarning($"{Unit.GetFullName} requested {type} but {this} has no dodge controller implemented");
+                break;
+            case CombatActionType.MeleeSpecialQ:
+                if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                break;
+            case CombatActionType.RangedSpecialE:
+                if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                break;
+            case CombatActionType.ShieldSpecialR:
+                if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                break;
+        }
+        if (fsm.TimeInState >= fsm.CurrentState.StateExpiryTime)
+        {
+            RotateToSelectedUnit();
+        }
+    }
+    
+    protected virtual void RotateToSelectedUnit()
+    {      
+        LerpRotateToTarget(fsm.SelectedUnitTransform.position);
+       // fsm.TransitionToState(fsm.CurrentState); // reset state timer so that the unit doesnt spin all the time
+    }
     protected abstract void Fsm_CombatPreparationSM();
 
 }

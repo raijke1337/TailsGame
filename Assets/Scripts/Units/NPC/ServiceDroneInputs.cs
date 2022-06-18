@@ -18,20 +18,18 @@ public class ServiceDroneInputs : InputsNPC
     // find ally and move to them, support if low hp; attack player if high hp
     protected override void HandleAttackRequest(CombatActionType type)
     {
-        //todo 
-        RotateToSelectedUnit();
-        if (AllyHP!= null && AllyHP.GetCurrent/AllyHP.GetMax != 0) // TODO
-        {
-            _skillCtrl.RequestSkill(CombatActionType.Ranged,out float c);
-        }
-        _weaponCtrl.UseWeaponCheck(WeaponType.Ranged);
+        //todo
+        base.HandleAttackRequest(type);
     }
 
     protected override void Fsm_CombatPreparationSM()
     {
-        fsm.SelectedUnit = UnitRoom.GetUnitForAI(EnemyType.Big);
+        fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Big);
 
-        if (fsm.SelectedUnit.Side == fsm.Unit.Side) AllyHP = fsm.SelectedUnit.GetStats()[BaseStatType.Health];
+        if (fsm.SelectedUnit == null) fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+
+        if (fsm.SelectedUnit.Side == fsm.StateMachineUnit.Side) AllyHP = fsm.SelectedUnit.GetStats()[BaseStatType.Health];
+
     }
 }
 

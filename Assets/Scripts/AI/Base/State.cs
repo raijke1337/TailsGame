@@ -18,6 +18,8 @@ public class State : ScriptableObject
     public List<Action> actions;
     // possible evaluations
     public List<Transition> transitions;
+    public float StateExpiryTime = 2f; 
+    //time in seconds for various purposes
 
     // for gizmos drawing
     public Color StateGizmoColor = Color.gray;

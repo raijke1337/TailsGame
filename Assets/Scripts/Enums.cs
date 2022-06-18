@@ -63,11 +63,6 @@ public enum TriggerTargetType
     TargetsUser,
     TargetsAllies
 }
-public enum TriggerSourceType
-{ 
-    Player,
-    Enemy
-}
 
 
 public enum CursorType
@@ -77,11 +72,12 @@ public enum CursorType
     EnemyTarget,
     Item,
 }
-public enum EnemyType
+public enum UnitType : byte
 {
-    Small,
-    Big,
-    Boss
+    Small = 0,
+    Big = 1,
+    Boss = 2,
+    Player = 255
 }
 
 public enum TextType

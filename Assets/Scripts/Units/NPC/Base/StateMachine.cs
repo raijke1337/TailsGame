@@ -32,7 +32,8 @@ public class StateMachine : IStatsComponentForHandler
     public Vector3 CurrentVelocity { get; protected set; }
     public float TimeInState { get; private set; }
     public EnemyStats GetEnemyStats { get; private set; }
-    public BaseUnit Unit { get; }
+    public BaseUnit StateMachineUnit { get; }
+
 
     //public PlayerUnit FoundPlayer { get; private set; }
     //public NPCUnit FoundAlly{ get; private set; }
@@ -40,12 +41,13 @@ public class StateMachine : IStatsComponentForHandler
 
     // set by inputs , bool for potential checks
     private bool wasSelectedUnitUpdated;
+    private BaseUnit _selectedUnit;
     public BaseUnit SelectedUnit
     {
-        get => SelectedUnit;
+        get { return _selectedUnit; }
         set
         {
-            SelectedUnit = value;
+            _selectedUnit = value;
             wasSelectedUnitUpdated = false;
         }
     }
@@ -54,21 +56,11 @@ public class StateMachine : IStatsComponentForHandler
 
 
 
-    public Transform SelectedUnitTransform => SelectedUnit.transform;
-
-    //public bool InCombat { get; set; }
-    //public bool InSupport { get; set; }
-
-    // todo get rid of this ^
-
+    public Transform SelectedUnitTransform => _selectedUnit.transform;
     
     public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
-    //public event StateMachineEvent<EnemyType> AllyRequestSM;
-    //public event StateMachineEvent RotateRequestSM;
     public event StateMachineEvent CombatPreparationSM;
-
-
 
     public NavMeshAgent NMAgent { get; private set; }
     public Transform [] PatrolPoints;
@@ -83,7 +75,7 @@ public class StateMachine : IStatsComponentForHandler
         GetEnemyStats = stats;
         CurrentState = init;
         RemainState = dummy;
-        Unit = unit;
+        StateMachineUnit = unit;
     }
     public void SetAI(bool setting)
     {
@@ -132,14 +124,13 @@ public class StateMachine : IStatsComponentForHandler
         return result;
     }
     public void OnAttackRequest(CombatActionType type) => AgressiveActionRequestSM?.Invoke(type);
-    //public void OnRequestAlly(EnemyType type = EnemyType.Big) => AllyRequestSM?.Invoke(type);  moved to combatPreparationSm
-    //public void OnRotate() => RotateRequestSM?.Invoke();
+
     public void StartCombat (PlayerUnit player,bool isCombat)
     {
         SelectedUnit = player;        PlayerFound = player;
     }
     public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
-    public bool CheckInStoppingRange()
+    public bool CheckIsInStoppingRange()
     {
         var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;       
         return result;

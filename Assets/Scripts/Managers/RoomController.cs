@@ -14,7 +14,6 @@ using UnityEngine.InputSystem;
 public class RoomController : MonoBehaviour
 {
     [SerializeField] private List<NPCUnit> list;
-    [SerializeField, Tooltip("Delay for units in room aggro")] private float _aggroDelay = 1f;
     private Collider _detectionArea;
     private PlayerUnit _player;
 
@@ -37,9 +36,15 @@ public class RoomController : MonoBehaviour
             var unit = other.GetComponent<NPCUnit>();
             list.Add(unit);
             unit.UnitRoom = this;
+            unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
             Debug.Log($"{this} registered: {unit.GetFullName}");
         }
        
+    }
+
+    private void Unit_BaseUnitDiedEvent(BaseUnit arg)
+    {
+        list.Remove(arg as NPCUnit);
     }
 
     private void LateUpdate()
@@ -53,12 +58,13 @@ public class RoomController : MonoBehaviour
     }
 
     // used by inputs
-    public BaseUnit GetUnitForAI(EnemyType type, bool getPlayer = false)
+    public BaseUnit GetUnitForAI(UnitType type)
     {
-        if (getPlayer) return _player;
+        if (type == UnitType.Player) return _player;
         else
         {
-            return  list.ToList().FirstOrDefault(t => t.GetEnemyType == type);
+            var res = list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+            return res;
         }
     }
 

@@ -26,7 +26,7 @@ public abstract class ControlInputsBase : MonoBehaviour
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
     public event SimpleEventsHandler StaggerHappened;
 
-
+    public abstract UnitType GetUnitType();
     public virtual void InitControllers(BaseStatsController stats)
     {
         _statsCtrl = stats;

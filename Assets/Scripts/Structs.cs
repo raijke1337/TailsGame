@@ -176,7 +176,7 @@ public static class Constants
     public float LookSpereCastRange;
     public float IdleTime;
 
-    public EnemyType EnemyType;
+    public UnitType EnemyType;
     public EnemyStats(EnemyStatsConfig cfg)
     {
         TimeBetweenAttacks = cfg.atkCD;
@@ -211,7 +211,8 @@ public interface IStatsAddEffects
 public interface IWeapon : IHasGameObject
 {
     BaseUnit Owner { get; set; }
-    bool UseWeapon();
+    bool UseWeapon(out string reason);
+    void UpdateInDelta(float deltaTime);
     int GetAmmo { get; }
     string GetRelatedSkillID();
     event SimpleEventsHandler<float> TargetHit;
@@ -238,7 +239,7 @@ public interface IAppliesTriggers
 { event TriggerEventApplication TriggerApplicationRequestEvent; }
 
 
-public interface InteractiveItem
+public interface IInteractiveItem
 {
     public InteractiveItemType IIType {get;}
 

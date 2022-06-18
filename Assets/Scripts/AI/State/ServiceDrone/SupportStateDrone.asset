@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a508959b46515f9468888516043b3121, type: 3}
   m_Name: SupportStateDrone
   m_EditorClassIdentifier: 
-  actions: []
-  transitions: []
-  StateGizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  actions:
+  - {fileID: 11400000, guid: 54c16f70373b96a48b9babb546c209b4, type: 2}
+  transitions:
+  - decision: {fileID: 11400000, guid: 3e90ba65d71b78545b62e2a2059c0f3e, type: 2}
+    trueState: {fileID: 11400000, guid: 309516a6d81cb2441bf1017a7ba5fa18, type: 2}
+    falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
+  StateExpiryTime: 2
+  StateGizmoColor: {r: 0.3260057, g: 0.6226415, b: 0.34017104, a: 1}

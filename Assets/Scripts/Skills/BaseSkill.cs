@@ -24,8 +24,6 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
 
     private Collider _coll;
 
-    public TriggerSourceType GetSourceType => throw new NotImplementedException();
-
     protected virtual void OnTriggerEnter(Collider other)
     {
         PlaceAndSubEffect(other.transform);

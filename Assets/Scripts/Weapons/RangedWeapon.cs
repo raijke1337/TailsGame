@@ -32,15 +32,24 @@ public class RangedWeapon : BaseWeapon
         if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");
     }
 
-    public override bool UseWeapon()
+    public override bool UseWeapon(out string reason)
     {
-        if (IsBusy) return false;
-        else
+        bool ok = base.UseWeapon(out string result);
+        reason = result;
+        // todo wtf?
+
+        if (IsBusy)
+        {
+            reason = "Weapon is busy";
+            return false;
+        }
+
+        if (ok)
         {
             IsBusy = true;
             StartCoroutine(ShootingCoroutine(shotsToDo));
-            return true;
         }
+        return ok;
     }
 
     protected virtual IEnumerator ShootingCoroutine(int shots)

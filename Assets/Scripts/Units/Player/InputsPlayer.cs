@@ -129,14 +129,16 @@ public class InputsPlayer : ControlInputsBase
 
     protected void RangedAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged))
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged, out string text))
             CombatActionSuccessCallback(CombatActionType.Ranged);
+        else Debug.Log(text);
 
     }
     protected void MeleeAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee))
+        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee, out string text))
             CombatActionSuccessCallback(CombatActionType.Melee);
+        else Debug.Log(text);
     }
     protected void SkillR_performed(CallbackContext obj)
     {
@@ -211,5 +213,8 @@ public class InputsPlayer : ControlInputsBase
 
     }
 
-
+    public override UnitType GetUnitType()
+    {
+        return UnitType.Player;
+    }
 }

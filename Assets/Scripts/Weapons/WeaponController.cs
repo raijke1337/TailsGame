@@ -9,7 +9,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 {
     [SerializeField]
     protected BaseWeapon[] _weaponPrefabs;
-    protected SerializableDictionaryBase<WeaponType, IWeapon> _currentWeapons;
+    protected Dictionary<WeaponType, IWeapon> _currentWeapons;
 
     [SerializeField] protected Transform _meleeWeaponEmpty;
     [SerializeField] protected Transform _rangedWeaponEmpty;
@@ -74,10 +74,21 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 
     public int GetAmmoByType(WeaponType type) => _currentWeapons[type].GetAmmo;
 
-    public virtual bool UseWeaponCheck(WeaponType type)
+    public virtual bool UseWeaponCheck(WeaponType type,out string result)
     {
+        if (!_currentWeapons.ContainsKey(type))
+        {
+            result = ($"{_owner.GetFullName} used {type} but has no weapon of this type available;");
+            return false;
+        }
+
         if (CurrentWeaponType != type) { SwitchWeapon(type); }
-        return _currentWeapons[type].UseWeapon();
+        bool isOk = _currentWeapons[type].UseWeapon(out var s);
+
+        if (isOk) result = ($"{_owner.GetFullName} used {_currentWeapons[type]}");
+        else result = ($"{_owner.GetFullName} used {_currentWeapons[type]} but failed: {s}");
+        return isOk;
+
     }
     public void ToggleTriggersOnMelee(bool isEnable)
     {
@@ -91,7 +102,7 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
     [ContextMenu(itemName:"Run setup")]
     public virtual void SetupStatsComponent()
     {
-        _currentWeapons = new SerializableDictionaryBase<WeaponType, IWeapon>();
+        _currentWeapons = new Dictionary<WeaponType, IWeapon>();
 
         foreach (var prefab in _weaponPrefabs)
         {
@@ -120,7 +131,10 @@ public class WeaponController : MonoBehaviour, IStatsComponentForHandler
 
     public void UpdateInDelta(float deltaTime)
     {
-        // logic here? for cooldowns in weapons if they are not Monos
+        foreach (var w in _currentWeapons.Values)
+        {
+            w.UpdateInDelta(deltaTime);
+        }
     }
 
     public List<string> GetSkillIDs()

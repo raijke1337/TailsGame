@@ -1,9 +1,8 @@
+
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEditor;
 
 public static class Extensions
 {/// <summary>
@@ -16,8 +15,10 @@ public static class Extensions
     public static List<T> GetAssetsFromPath<T> (string path,bool includeSubDirs = true) where T: class
     {
         List<T> result = new List<T>();
-        List<string> workPaths = new List<string>();
-        workPaths.Add(path);
+        List<string> workPaths = new List<string>
+        {
+            path
+        };
 
         if (includeSubDirs)
         {

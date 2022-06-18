@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class LevelItemTrigger : BaseTrigger,InteractiveItem
+public class LevelItemTrigger : BaseTrigger,IInteractiveItem
 {
     [SerializeField] protected List<string> TriggerIDs;
     [SerializeField] protected bool disappearsOnPickup = true;

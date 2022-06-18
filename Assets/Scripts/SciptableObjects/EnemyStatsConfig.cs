@@ -22,7 +22,7 @@ public class EnemyStatsConfig : ScriptableObjectID
     public float atkCD;
     public float atkRange;
     public float idleTime;
-    public EnemyType Type;
+    public UnitType Type;
 
 }
 
