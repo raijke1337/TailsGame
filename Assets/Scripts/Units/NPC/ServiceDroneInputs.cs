@@ -13,23 +13,38 @@ using UnityEngine.InputSystem;
 
 public class ServiceDroneInputs : InputsNPC
 {
-    protected StatValueContainer AllyHP;
 
     // find ally and move to them, support if low hp; attack player if high hp
     protected override void HandleAttackRequest(CombatActionType type)
     {
-        //todo
+        //SwitchRanges((type == CombatActionType.Ranged));
+
         base.HandleAttackRequest(type);
     }
 
     protected override void Fsm_CombatPreparationSM()
     {
-        fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Big);
-
-        if (fsm.SelectedUnit == null) fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
-
-        if (fsm.SelectedUnit.Side == fsm.StateMachineUnit.Side) AllyHP = fsm.SelectedUnit.GetStats()[BaseStatType.Health];
-
+        // find ally
+        fsm.FocusUnit = UnitRoom.GetUnitForAI(UnitType.Big);
     }
+
+    private void SwitchRanges(bool isSupporting)
+    {
+        if (isSupporting)
+        {
+            fsm.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea; // heal when in range
+        }
+        else
+        {
+            fsm.NMAgent.stoppingDistance = _enemyStats.AttackRange;
+        }
+    }
+
+    protected override void Fsm_AggroRequestedSM()
+    {
+        base.Fsm_AggroRequestedSM();
+        SwitchRanges(false);
+    }
+
 }
 

@@ -16,14 +16,15 @@ public class StateMachine : IStatsComponentForHandler
     }
     public void SetupStatsComponent()
     {
-        EyesEmpty = new GameObject().transform;
-        EyesEmpty.position = NMAgent.transform.position;
-        EyesEmpty.rotation = NMAgent.transform.rotation;
-        EyesEmpty.parent = NMAgent.transform;
-        EyesEmpty.localPosition += EyesEmpty.transform.up;
-        EyesEmpty.localPosition += EyesEmpty.transform.forward;
+        var eyes = new GameObject("SphereCaster");
+        eyes.transform.SetPositionAndRotation(StateMachineUnit.transform.position, StateMachineUnit.transform.rotation);
+        eyes.transform.position += (Vector3.up * GetEnemyStats.LookSpereCastRadius); // move up to not cast at floor only
+        eyes.transform.SetParent(StateMachineUnit.transform, true);
+
+        EyesEmpty = eyes.transform;
     }
     #endregion
+
 
     [SerializeField] private bool aiActive = true;
 
@@ -33,12 +34,6 @@ public class StateMachine : IStatsComponentForHandler
     public float TimeInState { get; private set; }
     public EnemyStats GetEnemyStats { get; private set; }
     public BaseUnit StateMachineUnit { get; }
-
-
-    //public PlayerUnit FoundPlayer { get; private set; }
-    //public NPCUnit FoundAlly{ get; private set; }
-
-
     // set by inputs , bool for potential checks
     private bool wasSelectedUnitUpdated;
     private BaseUnit _selectedUnit;
@@ -51,20 +46,22 @@ public class StateMachine : IStatsComponentForHandler
             wasSelectedUnitUpdated = false;
         }
     }
-    public PlayerUnit PlayerFound { get; private set; }
+    public BaseUnit FocusUnit { get; set; }
+
+
     private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
 
-
-
-    public Transform SelectedUnitTransform => _selectedUnit.transform;
-    
+        
     public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
     public event StateMachineEvent CombatPreparationSM;
+    public event StateMachineEvent AggroRequestedSM;
+    public event StateMachineEvent RotationRequestedSM;
+
 
     public NavMeshAgent NMAgent { get; private set; }
-    public Transform [] PatrolPoints;
-    public int CurrentPatrolPointIndex = 0;
+    [HideInInspector] public Transform [] PatrolPoints;
+    [HideInInspector] public int CurrentPatrolPointIndex = 0;
 
     public Transform EyesEmpty { get; private set; } // used for sphere casting to look
 
@@ -88,7 +85,10 @@ public class StateMachine : IStatsComponentForHandler
     {
         if (nextState != RemainState)
         {
-           CurrentState = nextState;
+#if UNITY_EDITOR
+            if (Debugging) Debug.Log($"{StateMachineUnit} switched states: {CurrentState} -> {nextState}, time elapsed: {TimeInState}");
+#endif
+            CurrentState = nextState;
            OnExitState();
         }
     }
@@ -102,7 +102,6 @@ public class StateMachine : IStatsComponentForHandler
         for (int i = 0; i < points.Count; i++)
         {
             PatrolPoints[i] = points[i];
-            //Debug.Log($"Set patrol point index {i}, {points[i]}");
         }
     }
     public void OnPatrolPointReached()
@@ -110,30 +109,47 @@ public class StateMachine : IStatsComponentForHandler
         CurrentPatrolPointIndex++;
         if (CurrentPatrolPointIndex == PatrolPoints.Length) CurrentPatrolPointIndex = 0;
     }
-    public bool CanSeePlayerCast()
+    public bool OnLookSphereCast()
     {
         Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSpereCastRadius,EyesEmpty.forward, out var hit, GetEnemyStats.LookSpereCastRange);
         if (hit.collider == null) return false;
         var _coll = hit.collider;
-
+#if UNITY_EDITOR
+        if (Debugging)
+        {
+            string newtxt = $"Hit {_coll}";
+            if (newtxt != sphereDebugTxt)
+            {
+                sphereDebugTxt = newtxt;
+                Debug.Log(sphereDebugTxt);
+            }
+        }
+#endif
         var result = _coll.CompareTag("Player");
         if (result)
         {
-            PlayerSpottedSM?.Invoke(_coll.GetComponent<PlayerUnit>()) ;
+            PlayerSpottedSM?.Invoke(_coll.GetComponent<PlayerUnit>());
         }
         return result;
     }
     public void OnAttackRequest(CombatActionType type) => AgressiveActionRequestSM?.Invoke(type);
-
-    public void StartCombat (PlayerUnit player,bool isCombat)
-    {
-        SelectedUnit = player;        PlayerFound = player;
-    }
     public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
     public bool CheckIsInStoppingRange()
     {
         var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;       
         return result;
     }
+    public void OnAggroRequest() => AggroRequestedSM?.Invoke();
+    public bool OnAllyNeedsHelp()
+    {
+        return FocusUnit.GetStats()[BaseStatType.Health].GetCurrent / FocusUnit.GetStats()[BaseStatType.Health].GetMax <= 0.5f;  // HUGE todo
+    }
+    public void OnRotateRequest() => RotationRequestedSM?.Invoke();
+
+#if UNITY_EDITOR
+    [HideInInspector] public bool Debugging;
+    string sphereDebugTxt;
+#endif
+
 
 }

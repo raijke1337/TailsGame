@@ -4,8 +4,8 @@ public class AllyFoundDecision : Decision
 {
     public override bool Decide(StateMachine controller)
     {
-        if (controller.SelectedUnit == null) return false;
-        return controller.SelectedUnit.Side == controller.StateMachineUnit.Side;
+        if (controller.FocusUnit == null) return false;
+        return controller.FocusUnit.Side == controller.StateMachineUnit.Side;
     }
 }
 

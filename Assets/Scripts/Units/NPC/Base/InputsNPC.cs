@@ -19,8 +19,10 @@ using System.Threading.Tasks;
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public abstract class InputsNPC : ControlInputsBase
 {
+#if UNITY_EDITOR
+    [SerializeField, Tooltip("Show action data in console")] public bool DebugEnabled = false;
+#endif
 
-    [SerializeField, Tooltip("Show action data in console")] private bool DebugEnabled = false;
 
     public RoomController UnitRoom { get; set; }
     [SerializeField] protected List<Transform> patrolPoints;
@@ -28,33 +30,13 @@ public abstract class InputsNPC : ControlInputsBase
 
     [SerializeField] protected State InitialState;
     [SerializeField] protected State DummyState;
-    [SerializeField, ReadOnly] protected State CurrentState;
+    [SerializeField] protected State CurrentState;
 
     protected EnemyStats _enemyStats;
     protected NavMeshAgent _navMeshAg;
-    protected StateMachine fsm;
+    [SerializeField] protected StateMachine fsm;
 
-    public override UnitType GetUnitType()
-    {
-        return _enemyStats.EnemyType;
-    }
-    public void EnterCombat(PlayerUnit pl, bool isCombat = true) => fsm.StartCombat(pl,isCombat);
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (fsm == null || fsm.CurrentState == null || fsm.CurrentVelocity == null) return;
-        Gizmos.color = fsm.CurrentState.StateGizmoColor;
-        Gizmos.DrawLine(fsm.EyesEmpty.position, fsm.EyesEmpty.position + fsm.EyesEmpty.forward * _enemyStats.LookSpereCastRange);
-        Gizmos.DrawWireSphere(fsm.EyesEmpty.forward + fsm.EyesEmpty.position * _enemyStats.LookSpereCastRange, _enemyStats.LookSpereCastRadius);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + fsm.CurrentVelocity.normalized);
-        Gizmos.DrawWireSphere(fsm.NMAgent.destination, fsm.NMAgent.stoppingDistance);
-    }
-#endif
-
-
+    public override UnitType GetUnitType() => _enemyStats.EnemyType;
     public override void BindControllers(bool isEnable)
     {
         base.BindControllers(isEnable);
@@ -84,6 +66,15 @@ public abstract class InputsNPC : ControlInputsBase
         if (fsm == null) return;
         CurrentState = fsm.CurrentState;
         velocityVector = fsm.CurrentVelocity;
+
+#if UNITY_EDITOR
+        if (DebugEnabled)
+        {
+            if (UnitRoom == null) Debug.LogError($"{this} has no room assigned");
+            fsm.Debugging = DebugEnabled;
+        }
+#endif
+
     }
     protected virtual void OnDisable()
     {
@@ -96,47 +87,60 @@ public abstract class InputsNPC : ControlInputsBase
         {
             _handler.RegisterUnitForStatUpdates(fsm);
             fsm.AgressiveActionRequestSM += HandleAttackRequest;
-            fsm.PlayerSpottedSM += Fsm_PlayerSpottedSM;
+            fsm.PlayerSpottedSM += OnPlayerSpottedSM;
             fsm.CombatPreparationSM += Fsm_CombatPreparationSM;
+            fsm.AggroRequestedSM += Fsm_AggroRequestedSM;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
+            fsm.RotationRequestedSM += Fsm_RotationRequestedSM;
         }
         else
         {
             _handler.RegisterUnitForStatUpdates(fsm, false);
             fsm.AgressiveActionRequestSM -= HandleAttackRequest;
             _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
-            fsm.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
+            fsm.PlayerSpottedSM -= OnPlayerSpottedSM;
             fsm.CombatPreparationSM -= Fsm_CombatPreparationSM;
+            fsm.AggroRequestedSM -= Fsm_AggroRequestedSM; 
+            fsm.RotationRequestedSM -= Fsm_RotationRequestedSM;
         }
     }
+    #region state machine
 
-
-
-    private void Fsm_PlayerSpottedSM(PlayerUnit arg)
+    private void Fsm_RotationRequestedSM()
     {
-        fsm.StartCombat(arg, true);
+        RotateToSelectedUnit();
     }
+
+    protected virtual void Fsm_AggroRequestedSM()
+    {
+        fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+    }
+
+    protected virtual void OnPlayerSpottedSM(PlayerUnit arg)
+    {
+        (Unit as NPCUnit).OnUnitSpottedPlayer();
+        fsm.SelectedUnit = arg;
+    }
+
 
     //attack action logic is here
     protected virtual void HandleAttackRequest(CombatActionType type)
     {
         bool success;
+        string text;
 
         switch (type)
         {
             case CombatActionType.Melee:
-                success = _weaponCtrl.UseWeaponCheck(WeaponType.Melee, out var text);
-                if (!success && DebugEnabled) Debug.Log(text);
-                else CombatActionSuccessCallback(type);
+                success = _weaponCtrl.UseWeaponCheck(WeaponType.Melee, out text);
+                if (success) CombatActionSuccessCallback(type);
                 break;
             case CombatActionType.Ranged:
                 success = _weaponCtrl.UseWeaponCheck(WeaponType.Ranged, out text);
-                if (!success && DebugEnabled) Debug.Log(text);
-                else CombatActionSuccessCallback(type);
+                if (success) CombatActionSuccessCallback(type);
                 break;
             case CombatActionType.Dodge:
-                if (DebugEnabled)
-                Debug.LogWarning($"{Unit.GetFullName} requested {type} but {this} has no dodge controller implemented");
+                text = ($"{Unit.GetFullName} requested {type} but {this} has no dodge controller implemented");
                 break;
             case CombatActionType.MeleeSpecialQ:
                 if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
@@ -148,18 +152,53 @@ public abstract class InputsNPC : ControlInputsBase
                 if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
                 break;
         }
-        if (fsm.TimeInState >= fsm.CurrentState.StateExpiryTime)
-        {
-            RotateToSelectedUnit();
-        }
     }
-    
+
     protected virtual void RotateToSelectedUnit()
     {      
-        LerpRotateToTarget(fsm.SelectedUnitTransform.position);
-       // fsm.TransitionToState(fsm.CurrentState); // reset state timer so that the unit doesnt spin all the time
+        LerpRotateToTarget(fsm.SelectedUnit.transform.position);
     }
     protected abstract void Fsm_CombatPreparationSM();
+
+
+
+
+    #endregion
+
+    #region room manager
+
+    public void ForceCombat(PlayerUnit player) => fsm.SelectedUnit = player;
+
+    #endregion
+
+
+
+
+
+
+
+
+
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (!DebugEnabled || fsm == null || CurrentState == null) return;
+        // state gizmos
+        Gizmos.color = CurrentState.StateGizmoColor;
+        Gizmos.DrawSphere(fsm.EyesEmpty.position, 0.1f);
+        Gizmos.DrawLine(fsm.EyesEmpty.position,fsm.EyesEmpty.position+fsm.EyesEmpty.forward*_enemyStats.LookSpereCastRange);
+        //navmesh gizmos
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(fsm.NMAgent.transform.position, fsm.NMAgent.transform.position+fsm.NMAgent.transform.forward);
+    }
+#endif
+
+
+
+
+
+
 
 }
 

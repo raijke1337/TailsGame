@@ -154,15 +154,15 @@ public abstract class BaseUnit : MonoBehaviour
                 break;
             case CombatActionType.MeleeSpecialQ:
                 _animator.SetTrigger("QSpecial");
-                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.MeleeSpecialQ), this);
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                 break;
             case CombatActionType.RangedSpecialE:
                 _animator.SetTrigger("ESpecial");
-                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.RangedSpecialE), this);
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                 break;
             case CombatActionType.ShieldSpecialR:
                 _animator.SetTrigger("RSpecial");
-                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(CombatActionType.ShieldSpecialR), this);
+                SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                 break;
         }
     }

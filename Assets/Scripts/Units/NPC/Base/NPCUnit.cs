@@ -17,11 +17,12 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
 {
     private InputsNPC _npcController;
 
-    public RoomController UnitRoom
-    {
-        get => _npcController.UnitRoom;
-        set => _npcController.UnitRoom = value;        
-    }
+    public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
+
+
+    public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
+    public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
+
 
     public InteractiveItemType IIType => InteractiveItemType.Enemy;
 
@@ -45,26 +46,21 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
                 break;
         }
     }
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-
-    }
-
-    #region behavior
 
     public void AiToggle(bool isProcessing)
     {
         _npcController.SwitchState(isProcessing);
     }
+    public virtual void ReactToDamage(PlayerUnit player)
+    {
+        _npcController.ForceCombat(player);
+    }
 
     protected override void HealthChangedEvent(float value, float prevValue)
     {
         base.HealthChangedEvent(value, prevValue);
-        UnitRoom.StartCombatCheck(this);
+        OnUnitAttackedEvent?.Invoke(this);
     }
-
-    public void EnterCombat(PlayerUnit player, bool isCombat = true) => _npcController.EnterCombat(player, isCombat);
-    #endregion
+    public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this); 
 }
 

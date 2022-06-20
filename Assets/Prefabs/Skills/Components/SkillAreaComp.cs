@@ -20,28 +20,31 @@ public class SkillAreaComp : MonoBehaviour
     {
         var comp = other.GetComponent<BaseUnit>();
         if (comp == null) return;
+        TargetHitEvent?.Invoke(comp);
 
-        switch (Data.TargetType)
-        {
-            case TriggerTargetType.TargetsEnemies:
-                if (comp.Side != Source.Side)
-                {
-                    TargetHitEvent?.Invoke(comp);
-                }
-                break;
-            case TriggerTargetType.TargetsUser:
-                if (comp == Source)
-                {
-                    TargetHitEvent?.Invoke(comp);
-                }
-                break;
-            case TriggerTargetType.TargetsAllies:
-                if (comp.Side == Source.Side)
-                { 
-                    TargetHitEvent?.Invoke(comp);
-                }
-                break;
-        }
+        // hopefully replaced by multiple triggers per skill  
+
+        //switch (Data.TargetType)
+        //{
+        //    case TriggerTargetType.TargetsEnemies:
+        //        if (comp.Side != Source.Side)
+        //        {
+        //            TargetHitEvent?.Invoke(comp);
+        //        }
+        //        break;
+        //    case TriggerTargetType.TargetsUser:
+        //        if (comp == Source)
+        //        {
+        //            TargetHitEvent?.Invoke(comp);
+        //        }
+        //        break;
+        //    case TriggerTargetType.TargetsAllies:
+        //        if (comp.Side == Source.Side)
+        //        { 
+        //            TargetHitEvent?.Invoke(comp);
+        //        }
+        //        break;
+        //}
 
     }
     private void Awake()

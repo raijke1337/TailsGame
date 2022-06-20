@@ -18,8 +18,6 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
     public SkillData SkillData;
     public GameObject EffectPrefab;
 
-
-
     public event TriggerEventApplication TriggerApplicationRequestEvent;
 
     private Collider _coll;
@@ -28,7 +26,7 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
     {
         PlaceAndSubEffect(other.transform);
     }
-
+    
 
     private void Awake()
     {
@@ -37,10 +35,14 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
         _coll.isTrigger = true;
     }
 
-    // use this to apply a trigger effect
-    protected virtual void CallTriggerHit(string ID, BaseUnit target)
+    // use this to apply all trigger effects set in SKillData
+    protected virtual void CallTriggerHit(BaseUnit target)
     {
-        TriggerApplicationRequestEvent?.Invoke(ID,target,Source);
+        if (SkillData.TriggerIDs == null) return;
+        foreach (var id in SkillData.TriggerIDs)
+        {
+            TriggerApplicationRequestEvent?.Invoke(id, target, Source);
+        }
     }
     protected SkillAreaComp PlaceAndSubEffect(Transform tr)
     {
@@ -48,7 +50,7 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
         item.Data = SkillData;
         item.Source = Source;
         item.transform.position = tr.position;
-        item.TargetHitEvent += (t) => CallTriggerHit(SkillID, t);
+        item.TargetHitEvent += (t) => CallTriggerHit(t);
         return item;
     }
 

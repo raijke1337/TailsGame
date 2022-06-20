@@ -10,6 +10,8 @@ internal class MoveToUnitAction : Action
 {
     public override void Act(StateMachine controller)
     {
-        controller.NMAgent.SetDestination(controller.SelectedUnitTransform.position);
+        //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false;
+        controller.NMAgent.Resume();
+        controller.NMAgent.SetDestination(controller.SelectedUnit.transform.position);
     }
 }

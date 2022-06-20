@@ -16,16 +16,17 @@ public class SkillControllerData
 {
     public string ID;
     public CombatActionType SkillType;
+    public SkillData GetSkillData { get; }
 
     private Timer _recTimer;
     private bool _isReady = true;
+    public float GetCD => _recTimer.GetRemaining;
 
-    private SkillData _data;
-    public float GetCost => _data.SkillCost;
+
+
+    
 
     // todo for ui
-    public float GetCD => _recTimer.GetRemaining;
-    public Sprite GetSkillImage => _data.Icon;
 
     public string SkillUpgradeID { get; set; } // todo implement 
 
@@ -49,8 +50,8 @@ public class SkillControllerData
     {
         ID = cfg.ID;
         SkillType = cfg.SkillType;
-        _data = new SkillData(cfg.Data);
-        _recTimer = new Timer(_data.Recharge);
+        GetSkillData = new SkillData(cfg.Data);
+        _recTimer = new Timer(GetSkillData.Recharge);
         _recTimer.TimeUp += _recTimer_TimeUp;
     }
     private void _recTimer_TimeUp(Timer arg)

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d28a11433942b458ae2a45ffafe01e, type: 3}
+  m_Name: spider_bot_explode
+  m_EditorClassIdentifier: 
+  ID: spider_bot_explode
+  SkillType: 3
+  Data:
+    Icon: {fileID: 0}
+    Recharge: 20
+    FinalArea: 3
+    StartArea: 1
+    PersistTime: 1
+    SkillCost: 0
+    TriggerIDs:
+    - bot_explode_self
+    - bot_explode
+    TargetType: 0

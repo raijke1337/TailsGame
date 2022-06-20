@@ -31,7 +31,7 @@ public class SkillsController : IStatsComponentForHandler
     public bool RequestSkill (CombatActionType type, out float cost)
     {
         var result = _skills[type].RequestUse();
-        cost = _skills[type].GetCost;
+        cost = _skills[type].GetSkillData.SkillCost;
         if (result)
         {
             switch (type)
@@ -67,6 +67,7 @@ public class SkillsController : IStatsComponentForHandler
     }
 
     public string GetSkillIDByType(CombatActionType type) => _skills[type].ID;
+    public SkillData GetSkillDataByType(CombatActionType type) => _skills[type].GetSkillData;
 
 }
 

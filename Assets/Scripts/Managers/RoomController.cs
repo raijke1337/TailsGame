@@ -19,10 +19,15 @@ public class RoomController : MonoBehaviour
 
     public void SetPlayer(PlayerUnit p) => _player = p;
 
-    private void Start()
+    private void Start() 
     {
         UpdateUnits();
     }
+    private void LateUpdate() 
+    {
+        if (_detectionArea.enabled) _detectionArea.enabled = false;
+    }
+
     public void UpdateUnits()
     {
         list = new List<NPCUnit>();
@@ -35,27 +40,41 @@ public class RoomController : MonoBehaviour
         {
             var unit = other.GetComponent<NPCUnit>();
             list.Add(unit);
-            unit.UnitRoom = this;
+            unit.SetUnitRoom(this);
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
+            unit.OnUnitSpottedPlayerEvent += Unit_OnUnitSpottedPlayerEvent;
+            unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
+            
             Debug.Log($"{this} registered: {unit.GetFullName}");
         }
        
     }
+    #region unit events
 
-    private void Unit_BaseUnitDiedEvent(BaseUnit arg)
+    private void Unit_OnUnitAttackedEvent(NPCUnit arg)
     {
-        list.Remove(arg as NPCUnit);
+        arg.ReactToDamage(_player);
+        Debug.Log($"{this}: {arg} was attacked");
     }
 
-    private void LateUpdate()
+    private void Unit_OnUnitSpottedPlayerEvent(NPCUnit arg)
     {
-        if (_detectionArea.enabled) _detectionArea.enabled = false;
+        Debug.Log($"{this}: {arg} saw player");
     }
 
-    public void StartCombatCheck(NPCUnit unit, bool isCombat = true)
+    private void Unit_BaseUnitDiedEvent(BaseUnit unit)
     {
-        unit.EnterCombat(_player, isCombat);
+        list.Remove(unit as NPCUnit);
+        if(unit is NPCUnit n)
+        {
+            n.OnUnitSpottedPlayerEvent -= Unit_OnUnitSpottedPlayerEvent;
+            n.OnUnitAttackedEvent -= Unit_OnUnitAttackedEvent;
+        }
     }
+
+    #endregion
+
+
 
     // used by inputs
     public BaseUnit GetUnitForAI(UnitType type)

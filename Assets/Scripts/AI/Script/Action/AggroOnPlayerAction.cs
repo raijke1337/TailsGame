@@ -10,7 +10,7 @@ internal class AggroOnPlayerAction : Action
 {
     public override void Act(StateMachine controller)
     {
-        controller.SelectedUnit = controller.PlayerFound;
+        controller.OnAggroRequest();
     }
 }
 

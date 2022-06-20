@@ -77,6 +77,7 @@ public enum UnitType : byte
     Small = 0,
     Big = 1,
     Boss = 2,
+    Any = 254,
     Player = 255
 }
 

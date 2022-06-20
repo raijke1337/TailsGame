@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a508959b46515f9468888516043b3121, type: 3}
+  m_Name: GolemIdleAtPointState
+  m_EditorClassIdentifier: 
+  actions:
+  - {fileID: 11400000, guid: 3ac42ecf27e2e54459fdfff49b882039, type: 2}
+  transitions:
+  - decision: {fileID: 11400000, guid: 25c847b3dc3567747885aa806c4c5931, type: 2}
+    trueState: {fileID: 11400000, guid: 00a1c4bd2963923488a7b5a134fc1d95, type: 2}
+    falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
+  StateExpiryTime: 2
+  StateGizmoColor: {r: 0.29586098, g: 0.5849056, b: 0.20692417, a: 1}

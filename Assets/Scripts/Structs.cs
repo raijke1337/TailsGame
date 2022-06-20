@@ -159,31 +159,29 @@ public static class Constants
     public float StartArea;
     public float PersistTime;
     public float SkillCost;
+    public string[] TriggerIDs;
 
-    public TriggerTargetType TargetType;
+    //public TriggerTargetType TargetType;
 
     public SkillData(SkillData refs)
     {
-        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; TargetType = refs.TargetType;
+        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; //TargetType = refs.TargetType;
+        TriggerIDs = refs.TriggerIDs;
     }
 }
 [Serializable] public struct EnemyStats
 {
     public float AttackRange;
-    public float TimeBetweenAttacks;
 
     public float LookSpereCastRadius;
     public float LookSpereCastRange;
-    public float IdleTime;
 
     public UnitType EnemyType;
     public EnemyStats(EnemyStatsConfig cfg)
     {
-        TimeBetweenAttacks = cfg.atkCD;
         LookSpereCastRadius = cfg.lookSphereRad;
         LookSpereCastRange = cfg.lookRange;
         AttackRange = cfg.atkRange;
-        IdleTime = cfg.idleTime;
         EnemyType = cfg.Type;
     }
 }

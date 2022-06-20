@@ -15,7 +15,6 @@ public class IsoCameraController : MonoBehaviour
 {
 
     private Transform _target;
-    [SerializeField] private float _camMoveSpeed = 1.4f;
 
     private Vector3 _offset;
     private Vector3 _desiredPos;

@@ -19,9 +19,9 @@ public class EnemyStatsConfig : ScriptableObjectID
 
     public float lookRange;
     public float lookSphereRad;
-    public float atkCD;
+
     public float atkRange;
-    public float idleTime;
+
     public UnitType Type;
 
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: drone_heal
   m_EditorClassIdentifier: 
   ID: drone_heal
-  SkillType: 1
+  SkillType: 4
   Data:
     Icon: {fileID: 0}
     Recharge: 5
@@ -21,4 +21,6 @@ MonoBehaviour:
     StartArea: 1.1
     PersistTime: 2
     SkillCost: 0
+    TriggerIDs:
+    - drone_heal
     TargetType: 2
