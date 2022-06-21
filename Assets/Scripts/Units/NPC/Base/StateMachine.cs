@@ -51,8 +51,9 @@ public class StateMachine : IStatsComponentForHandler
 
     private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
 
-        
+
     public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
+    public event StateMachineEvent<CombatActionType> ChangeRangeActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
     public event StateMachineEvent CombatPreparationSM;
     public event StateMachineEvent AggroRequestedSM;
@@ -60,7 +61,7 @@ public class StateMachine : IStatsComponentForHandler
 
 
     public NavMeshAgent NMAgent { get; private set; }
-    [HideInInspector] public Transform [] PatrolPoints;
+    [HideInInspector] public Transform[] PatrolPoints;
     [HideInInspector] public int CurrentPatrolPointIndex = 0;
 
     public Transform EyesEmpty { get; private set; } // used for sphere casting to look
@@ -89,7 +90,7 @@ public class StateMachine : IStatsComponentForHandler
             if (Debugging) Debug.Log($"{StateMachineUnit} switched states: {CurrentState} -> {nextState}, time elapsed: {TimeInState}");
 #endif
             CurrentState = nextState;
-           OnExitState();
+            OnExitState();
         }
     }
     private void OnExitState() => TimeInState = 0f;
@@ -111,7 +112,7 @@ public class StateMachine : IStatsComponentForHandler
     }
     public bool OnLookSphereCast()
     {
-        Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSpereCastRadius,EyesEmpty.forward, out var hit, GetEnemyStats.LookSpereCastRange);
+        Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSpereCastRadius, EyesEmpty.forward, out var hit, GetEnemyStats.LookSpereCastRange);
         if (hit.collider == null) return false;
         var _coll = hit.collider;
 #if UNITY_EDITOR
@@ -132,19 +133,27 @@ public class StateMachine : IStatsComponentForHandler
         }
         return result;
     }
-    public void OnAttackRequest(CombatActionType type) => AgressiveActionRequestSM?.Invoke(type);
+    public void OnAttackRequest(CombatActionType type)
+    {
+        AgressiveActionRequestSM?.Invoke(type);
+    }
     public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
     public bool CheckIsInStoppingRange()
     {
-        var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;       
+        var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;
         return result;
     }
     public void OnAggroRequest() => AggroRequestedSM?.Invoke();
     public bool OnAllyNeedsHelp()
     {
+        if (FocusUnit == null) return false;
         return FocusUnit.GetStats()[BaseStatType.Health].GetCurrent / FocusUnit.GetStats()[BaseStatType.Health].GetMax <= 0.5f;  // HUGE todo
     }
     public void OnRotateRequest() => RotationRequestedSM?.Invoke();
+    public void OnSwapRanges(CombatActionType type) => ChangeRangeActionRequestSM?.Invoke(type);
+
+
+
 
 #if UNITY_EDITOR
     [HideInInspector] public bool Debugging;

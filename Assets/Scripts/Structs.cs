@@ -47,6 +47,10 @@ public static class Constants
     {
         public const string c_TextsPath = "/Texts/";
     }
+    public static class StateMachineData
+    {
+        public const string c_MethodPrefix = "Fsm_";
+    }
 }
 #region structs 
 [Serializable] public class Timer 

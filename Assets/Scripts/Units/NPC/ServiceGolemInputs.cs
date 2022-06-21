@@ -14,30 +14,30 @@ public class ServiceGolemInputs : InputsNPC
         base.Bind(isStart);
         if (!isStart) _handler.RegisterUnitForStatUpdates(_dodgeCtrl, false);
     }
-    protected override void HandleAttackRequest(CombatActionType type)
+    protected override void Fsm_AgressiveActionRequestSM(CombatActionType type)
     {
-        bool inRange = fsm.CheckIsInStoppingRange();
+        bool inRange = _stateMachine.CheckIsInStoppingRange();
 
         switch (type)
         {
             case CombatActionType.Melee:
-                base.HandleAttackRequest(type);
+                base.Fsm_AgressiveActionRequestSM(type);
                 break;
             case CombatActionType.Ranged:
-                base.HandleAttackRequest(type);
+                base.Fsm_AgressiveActionRequestSM(type);
                 break;
             case CombatActionType.Dodge:
-                if (inRange == false && fsm.TimeInState >= fsm.CurrentState.StateExpiryTime && _dodgeCtrl.IsDodgePossibleCheck())
+                if (inRange == false && _stateMachine.TimeInState >= _stateMachine.CurrentState.StateExpiryTime && _dodgeCtrl.IsDodgePossibleCheck())
                     CombatActionSuccessCallback(CombatActionType.Dodge);
                 break;
             case CombatActionType.MeleeSpecialQ:
-                base.HandleAttackRequest(type);
+                base.Fsm_AgressiveActionRequestSM(type);
                 break;
             case CombatActionType.RangedSpecialE:
-                base.HandleAttackRequest(type);
+                base.Fsm_AgressiveActionRequestSM(type);
                 break;
             case CombatActionType.ShieldSpecialR:
-                base.HandleAttackRequest(type);
+                base.Fsm_AgressiveActionRequestSM(type);
                 break;
         }
     }

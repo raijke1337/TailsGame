@@ -1,20 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.AI;
-using Zenject;
-using UnityEngine.EventSystems;
-using System.Threading.Tasks;
+using System.Reflection;
+using System;
+using System.Text;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public abstract class InputsNPC : ControlInputsBase
@@ -23,20 +13,23 @@ public abstract class InputsNPC : ControlInputsBase
     [SerializeField, Tooltip("Show action data in console")] public bool DebugEnabled = false;
 #endif
 
+    #region fields
 
     public RoomController UnitRoom { get; set; }
     [SerializeField] protected List<Transform> patrolPoints;
-    public void SwitchState(bool setting) => fsm.SetAI(setting);
-
-    [SerializeField] protected State InitialState;
+    
+    public void SwitchState(bool setting) => _stateMachine.SetAI(setting);
+    [Space,SerializeField] protected State InitialState;
     [SerializeField] protected State DummyState;
     [SerializeField] protected State CurrentState;
 
     protected EnemyStats _enemyStats;
     protected NavMeshAgent _navMeshAg;
-    [SerializeField] protected StateMachine fsm;
-
+    [Space,SerializeField] protected StateMachine _stateMachine;
     public override UnitType GetUnitType() => _enemyStats.EnemyType;
+
+    #endregion
+    #region init
     public override void BindControllers(bool isEnable)
     {
         base.BindControllers(isEnable);
@@ -50,81 +43,164 @@ public abstract class InputsNPC : ControlInputsBase
     (t => t.ID == _statsCtrl.GetUnitID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
-        fsm = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState,Unit);
+        _stateMachine = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState,Unit);
 
         _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
 
         Bind(isEnable);
-        fsm.SetPatrolPoints(patrolPoints);
+        _stateMachine.SetPatrolPoints(patrolPoints);
 
     }
 
+    protected virtual void Bind(bool isStart)
+    {
+#if UNITY_EDITOR
+       //if (DebugEnabled && isStart) ReflexionBinds(isStart);
+#endif
+
+        if (isStart)
+        {
+            _handler.RegisterUnitForStatUpdates(_stateMachine);
+            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
+
+            _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
+            _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
+            _stateMachine.CombatPreparationSM += Fsm_CombatPreparationSM;
+            _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
+            _stateMachine.RotationRequestedSM += Fsm_RotationRequestedSM;
+            _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
+        }
+        else
+        {
+            _handler.RegisterUnitForStatUpdates(_stateMachine, false);
+            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
+
+            _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
+            _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
+            _stateMachine.CombatPreparationSM -= Fsm_CombatPreparationSM;
+            _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
+            _stateMachine.RotationRequestedSM -= Fsm_RotationRequestedSM;
+            _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
+        }
+    }
+
+    #endregion
     protected virtual void LateUpdate()
     {
         // todo too many bandaids
-        if (fsm == null) return;
-        CurrentState = fsm.CurrentState;
-        velocityVector = fsm.CurrentVelocity;
+        if (_stateMachine == null) return;
+        CurrentState = _stateMachine.CurrentState;
+        velocityVector = _stateMachine.CurrentVelocity;
 
 #if UNITY_EDITOR
         if (DebugEnabled)
         {
             if (UnitRoom == null) Debug.LogError($"{this} has no room assigned");
-            fsm.Debugging = DebugEnabled;
+            _stateMachine.Debugging = DebugEnabled;
         }
-#endif
-
-    }
-    protected virtual void OnDisable()
-    {
-        Bind(false);
+        #endif
     }
 
-    protected virtual void Bind(bool isStart)
+
+    #region reflection excercise
+
+    protected virtual void ReflexionBinds(bool isStart)
     {
+        // here we find all events in class and sub to them
+        string prefix = Constants.StateMachineData.c_MethodPrefix;
+        // get methods from inputs
+        Type _inputs = typeof(InputsNPC);
+        MethodInfo[] responses = _inputs.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.NonPublic);
+
+        // filter by prefix to only get proper methods
+        List<MethodInfo> filtered = new List<MethodInfo>();
+        foreach (var r in responses)
+        {
+            bool result;
+            result = r.Name.Contains(Constants.StateMachineData.c_MethodPrefix);
+            if (result)
+            {
+                filtered.Add(r);
+            }
+        }
+
+        List<(EventInfo, MethodInfo, Delegate)> values = new List<(EventInfo, MethodInfo, Delegate)>();
+
+        // get event data from state machine 
+        Type _fsm = typeof(StateMachine);
+        var events = _fsm.GetEvents();
+        
+        // extablish desired methods and delegates and record into tuples
+        foreach (var @event in events)
+        {
+            string desiredMethod = string.Concat(prefix, @event.Name);
+            MethodInfo found = null;
+            foreach (var method in filtered)
+            {
+                if (method.Name == desiredMethod) found = method;
+            }
+            if (found == null) Debug.LogWarning($"{_fsm.Name}{@event.Name} has no appropriate method {desiredMethod} in {this}");
+            else
+            {
+                var delType = @event.EventHandlerType;
+                var argument = found.GetParameters();
+
+                Delegate del = Delegate.CreateDelegate(delType,argument.First(),found);
+
+                values.Add((@event, found, del));
+            }
+        }
+
+        //sub here
+
         if (isStart)
         {
-            _handler.RegisterUnitForStatUpdates(fsm);
-            fsm.AgressiveActionRequestSM += HandleAttackRequest;
-            fsm.PlayerSpottedSM += OnPlayerSpottedSM;
-            fsm.CombatPreparationSM += Fsm_CombatPreparationSM;
-            fsm.AggroRequestedSM += Fsm_AggroRequestedSM;
-            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
-            fsm.RotationRequestedSM += Fsm_RotationRequestedSM;
+            foreach (var record in values)
+            {
+                record.Item1.AddEventHandler(_stateMachine, record.Item3);
+                Debug.Log($"Subbing event {record.Item1} to {record.Item2}, delegate is {record.Item3}");
+            }
         }
         else
         {
-            _handler.RegisterUnitForStatUpdates(fsm, false);
-            fsm.AgressiveActionRequestSM -= HandleAttackRequest;
-            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
-            fsm.PlayerSpottedSM -= OnPlayerSpottedSM;
-            fsm.CombatPreparationSM -= Fsm_CombatPreparationSM;
-            fsm.AggroRequestedSM -= Fsm_AggroRequestedSM; 
-            fsm.RotationRequestedSM -= Fsm_RotationRequestedSM;
+            foreach (var record in values)
+            {
+                record.Item1.RemoveEventHandler(_stateMachine, record.Item3);
+                Debug.Log($"Unubbing event {record.Item1} to {record.Item2}, delegate is {record.Item3}");
+            }
         }
     }
+
+    #endregion
+
     #region state machine
 
-    private void Fsm_RotationRequestedSM()
+    protected virtual void Fsm_RotationRequestedSM()
     {
         RotateToSelectedUnit();
     }
 
-    protected virtual void Fsm_AggroRequestedSM()
+
+    protected virtual void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
     {
-        fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+        Debug.Log($"{Unit.GetFullName} used switch ranges action but it has no logic in {this}");
     }
 
-    protected virtual void OnPlayerSpottedSM(PlayerUnit arg)
+    protected virtual void Fsm_AggroRequestedSM()
+    {
+        _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+    }
+
+    protected virtual void Fsm_PlayerSpottedSM(PlayerUnit arg)
     {
         (Unit as NPCUnit).OnUnitSpottedPlayer();
-        fsm.SelectedUnit = arg;
+        _stateMachine.SelectedUnit = arg;
     }
 
 
     //attack action logic is here
-    protected virtual void HandleAttackRequest(CombatActionType type)
+    protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
     {
         bool success;
         string text;
@@ -156,9 +232,12 @@ public abstract class InputsNPC : ControlInputsBase
 
     protected virtual void RotateToSelectedUnit()
     {      
-        LerpRotateToTarget(fsm.SelectedUnit.transform.position);
+        LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position);
     }
-    protected abstract void Fsm_CombatPreparationSM();
+    protected virtual void Fsm_CombatPreparationSM()
+    {
+        Debug.Log($"{Unit.GetFullName} used combat prepare action but it has no logic in {this}");
+    }
 
 
 
@@ -167,11 +246,15 @@ public abstract class InputsNPC : ControlInputsBase
 
     #region room manager
 
-    public void ForceCombat(PlayerUnit player) => fsm.SelectedUnit = player;
+    public void ForceCombat(PlayerUnit player) => _stateMachine.SelectedUnit = player;
 
     #endregion
 
 
+    protected virtual void OnDisable()
+    {
+        Bind(false);
+    }
 
 
 
@@ -183,14 +266,14 @@ public abstract class InputsNPC : ControlInputsBase
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (!DebugEnabled || fsm == null || CurrentState == null) return;
+        if (!DebugEnabled || _stateMachine == null || CurrentState == null) return;
         // state gizmos
         Gizmos.color = CurrentState.StateGizmoColor;
-        Gizmos.DrawSphere(fsm.EyesEmpty.position, 0.1f);
-        Gizmos.DrawLine(fsm.EyesEmpty.position,fsm.EyesEmpty.position+fsm.EyesEmpty.forward*_enemyStats.LookSpereCastRange);
+        Gizmos.DrawSphere(_stateMachine.EyesEmpty.position, 0.1f);
+        Gizmos.DrawLine(_stateMachine.EyesEmpty.position,_stateMachine.EyesEmpty.position+_stateMachine.EyesEmpty.forward*_enemyStats.LookSpereCastRange);
         //navmesh gizmos
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(fsm.NMAgent.transform.position, fsm.NMAgent.transform.position+fsm.NMAgent.transform.forward);
+        Gizmos.DrawLine(_stateMachine.NMAgent.transform.position, _stateMachine.NMAgent.transform.position+_stateMachine.NMAgent.transform.forward);
     }
 #endif
 

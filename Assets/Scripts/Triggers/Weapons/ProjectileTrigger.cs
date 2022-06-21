@@ -17,10 +17,13 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
     public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
     private ProjectileData ProjData;
 
+    public string ID;
+
     private float _exp;
     private int _penetr;
 
-    public string GetID { get; set; }
+
+    public string GetID { get => ID; }
 
     BaseUnit IProjectile.Source => Source;
 

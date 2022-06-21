@@ -45,7 +45,7 @@ public class RoomController : MonoBehaviour
             unit.OnUnitSpottedPlayerEvent += Unit_OnUnitSpottedPlayerEvent;
             unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
             
-            Debug.Log($"{this} registered: {unit.GetFullName}");
+            //Debug.Log($"{this} registered: {unit.GetFullName}");
         }
        
     }

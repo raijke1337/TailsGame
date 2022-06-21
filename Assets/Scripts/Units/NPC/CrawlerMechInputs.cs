@@ -16,20 +16,24 @@ public class CrawlerMechInputs : InputsNPC
     // find ally and run to them, then fight
     protected override void Fsm_CombatPreparationSM()
     {
-        fsm.FocusUnit = UnitRoom.GetUnitForAI(UnitType.Big); 
-        fsm.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);   
+        _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(UnitType.Big); 
+        _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+        if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
     }
 
-    protected override void HandleAttackRequest(CombatActionType type)
+    protected override void Fsm_AgressiveActionRequestSM(CombatActionType type)
     {
-        base.HandleAttackRequest(type);
+        base.Fsm_AgressiveActionRequestSM(type);
     }
 
     protected override void Fsm_AggroRequestedSM()
     {
-        fsm.FocusUnit = fsm.StateMachineUnit; // for self-destruct skill
+        _stateMachine.FocusUnit = _stateMachine.StateMachineUnit; // for self-destruct skill
         base.Fsm_AggroRequestedSM();
-
+    }
+    protected void Unsub(BaseUnit unit)
+    {
+        if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
     }
 }
 

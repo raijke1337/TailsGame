@@ -10,16 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a508959b46515f9468888516043b3121, type: 3}
-  m_Name: GolemUpdateRotationState
+  m_Name: GolemAssessCombatState
   m_EditorClassIdentifier: 
-  actions:
-  - {fileID: 11400000, guid: 23326765cfe65d144a9d7ec1588400dc, type: 2}
+  actions: []
   transitions:
   - decision: {fileID: 11400000, guid: 6b9df456fcf9bd343b8d8a817d6f9fd8, type: 2}
-    trueState: {fileID: 11400000, guid: 3a547cc291450364aaf8b004794c512b, type: 2}
-    falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
-  - decision: {fileID: 11400000, guid: 3192282aa66795c44b165c8c023ac226, type: 2}
     trueState: {fileID: 11400000, guid: 00a1c4bd2963923488a7b5a134fc1d95, type: 2}
-    falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
+    falseState: {fileID: 11400000, guid: 62af9ee1f0b60f141a3584efa6e00fee, type: 2}
   StateExpiryTime: 2
-  StateGizmoColor: {r: 1, g: 0.56, b: 0.56, a: 1}
+  StateGizmoColor: {r: 0.546, g: 0.096352935, b: 0.096352935, a: 1}

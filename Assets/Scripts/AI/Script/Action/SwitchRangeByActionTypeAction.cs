@@ -10,20 +10,14 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-using UnityEngine.AI;
+[CreateAssetMenu(menuName = "AIConfig/Action/Switch Range by desired combat action")]
 
-public class navmeshtest : MonoBehaviour
+public class SwitchRangeByActionTypeAction : Action
 {
-    public Transform[] target;
-    NavMeshAgent agent;
-    private void Start()
+    public CombatActionType DesiredType;
+    public override void Act(StateMachine controller)
     {
-        agent = GetComponent<NavMeshAgent>();        
-    }
-
-    private void Update()
-    {
-        agent.SetDestination(target[0].position);
+        throw new NotImplementedException();
     }
 }
 

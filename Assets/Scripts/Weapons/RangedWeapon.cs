@@ -19,7 +19,6 @@ public class RangedWeapon : BaseWeapon
     
     
     [SerializeField] private ProjectileTrigger _projectilePrefab;
-    [SerializeField] private string _projectileID;
 
 
     protected int shotsToDo = 1;
@@ -75,7 +74,6 @@ public class RangedWeapon : BaseWeapon
         pr.Source = Owner;
         pr.transform.forward = Owner.transform.forward;
         pr.SetTriggerIDS(_effectsIDs);
-        pr.GetID = _projectileID;
 
         PlacedProjectileEvent?.Invoke(pr);
     }
