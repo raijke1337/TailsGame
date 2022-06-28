@@ -66,7 +66,7 @@ public abstract class InputsNPC : ControlInputsBase
 
             _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
-            _stateMachine.CombatPreparationSM += Fsm_CombatPreparationSM;
+            _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
             _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
             _stateMachine.RotationRequestedSM += Fsm_RotationRequestedSM;
             _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
@@ -78,7 +78,7 @@ public abstract class InputsNPC : ControlInputsBase
 
             _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
-            _stateMachine.CombatPreparationSM -= Fsm_CombatPreparationSM;
+            _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
             _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
             _stateMachine.RotationRequestedSM -= Fsm_RotationRequestedSM;
             _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
@@ -184,7 +184,7 @@ public abstract class InputsNPC : ControlInputsBase
 
     protected virtual void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
     {
-        Debug.Log($"{Unit.GetFullName} used switch ranges action but it has no logic in {this}");
+        Debug.Log($"{Unit.GetFullName} used switch ranges for {arg} but it has no logic in {this}");
     }
 
     protected virtual void Fsm_AggroRequestedSM()
@@ -234,14 +234,18 @@ public abstract class InputsNPC : ControlInputsBase
     {      
         LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position);
     }
-    protected virtual void Fsm_CombatPreparationSM()
+    protected virtual void Fsm_GetFocusUnitSM(UnitType type)
     {
-        Debug.Log($"{Unit.GetFullName} used combat prepare action but it has no logic in {this}");
+        if (type != UnitType.Self) _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(type);
+        else if (type == UnitType.Self) _stateMachine.FocusUnit = Unit;
+
+        if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
     }
-
-
-
-
+    protected void Unsub(BaseUnit unit)
+    {
+        if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
+        unit.BaseUnitDiedEvent -= Unsub;
+    }
     #endregion
 
     #region room manager

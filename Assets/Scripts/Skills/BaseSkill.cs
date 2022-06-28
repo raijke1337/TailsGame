@@ -22,12 +22,18 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
 
     private Collider _coll;
 
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Collider");
+        var point = collision.contacts[0];
+        var place = point.point;
+        PlaceAndSubEffect(place);
+    }
     protected virtual void OnTriggerEnter(Collider other)
     {
-        PlaceAndSubEffect(other.transform);
+        Debug.Log("Trigger");
+        PlaceAndSubEffect(transform.position);
     }
-    
-
     private void Awake()
     {
         if (EffectPrefab == null || EffectPrefab.GetComponent<SkillAreaComp>() == null) Debug.LogError($"Set prefab for {this}");
@@ -44,12 +50,13 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
             TriggerApplicationRequestEvent?.Invoke(id, target, Source);
         }
     }
-    protected SkillAreaComp PlaceAndSubEffect(Transform tr)
+    protected SkillAreaComp PlaceAndSubEffect(Vector3 tr)
     {
         var item = Instantiate(EffectPrefab).GetComponent<SkillAreaComp>();
         item.Data = SkillData;
-        item.Source = Source;
-        item.transform.position = tr.position;
+        item.transform.parent = null;
+        item.transform.position = tr;
+
         item.TargetHitEvent += (t) => CallTriggerHit(t);
         return item;
     }

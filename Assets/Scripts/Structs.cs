@@ -141,7 +141,7 @@ public static class Constants
     }
 }
 
-[Serializable] public struct ProjectileData
+[Serializable] public class ProjectileData
 {
     public float TimeToLive;
     public float Speed;

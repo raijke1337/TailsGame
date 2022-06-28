@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a508959b46515f9468888516043b3121, type: 3}
-  m_Name: DroneCombatAttackingState
+  m_Name: DroneFiringCombatState
   m_EditorClassIdentifier: 
   actions:
+  - {fileID: 11400000, guid: 23326765cfe65d144a9d7ec1588400dc, type: 2}
   - {fileID: 11400000, guid: 1d7477cd9f8524243a88d8455dd488b3, type: 2}
-  - {fileID: 11400000, guid: e107b4c5e1b140443832ec7584f5c86f, type: 2}
+  - {fileID: 11400000, guid: e4e6806edd4fd6f4fadc3b90e733c625, type: 2}
   transitions:
   - decision: {fileID: 11400000, guid: 33d673708abd0354189fd2e55ad8187e, type: 2}
-    trueState: {fileID: 11400000, guid: 22ad3985e8d79af4f9e507a00bccd51a, type: 2}
+    trueState: {fileID: 11400000, guid: 6a0ce204fc941a84cb388ef0a2dc08dd, type: 2}
     falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   StateExpiryTime: 2
   StateGizmoColor: {r: 1, g: 0, b: 0, a: 1}

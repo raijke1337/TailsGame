@@ -135,6 +135,9 @@ public class TriggersProjectilesManager : MonoBehaviour
     private void NewProjectile (IProjectile proj)
     {
         _projectiles.Add(proj);
+        
+
+
         proj.SetProjectileData(_projectilesD[proj.GetID]);
         RegisterTrigger(proj);
         proj.ExpiryEventProjectile += ProjectileExpiryHandling;

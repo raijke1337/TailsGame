@@ -15,9 +15,13 @@ MonoBehaviour:
   actions:
   - {fileID: 11400000, guid: b013501c37ac4404da7bd0ddf5795822, type: 2}
   - {fileID: 11400000, guid: e107b4c5e1b140443832ec7584f5c86f, type: 2}
+  - {fileID: 11400000, guid: 854ea56fb1d918248ad77d9c230fb2f9, type: 2}
   transitions:
   - decision: {fileID: 11400000, guid: 895cd2fbce6801d4f839b4e5dcb45eed, type: 2}
     trueState: {fileID: 11400000, guid: 55e2445b85ee259418fdf63ada8149dc, type: 2}
+    falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
+  - decision: {fileID: 11400000, guid: 33d673708abd0354189fd2e55ad8187e, type: 2}
+    trueState: {fileID: 11400000, guid: c3eb002c1709ae146a9fc38a204506c5, type: 2}
     falseState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   StateExpiryTime: 2
   StateGizmoColor: {r: 0, g: 0.54901963, b: 0.12156863, a: 1}

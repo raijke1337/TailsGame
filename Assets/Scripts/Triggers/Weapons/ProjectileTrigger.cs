@@ -19,10 +19,6 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
 
     public string ID;
 
-    private float _exp;
-    private int _penetr;
-
-
     public string GetID { get => ID; }
 
     BaseUnit IProjectile.Source => Source;
@@ -37,8 +33,8 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
 
         base.OnTriggerEnter(other);
 
-        if (_penetr == 0) Stuck(other);
-        _penetr--;
+        if (ProjData.Penetration == 0) Stuck(other);
+        ProjData.Penetration--;
     }
 
     private void Stuck(Collider other)
@@ -50,19 +46,18 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
     public void OnSpawnProj()
     {
         base.Awake();
-        _exp = ProjData.TimeToLive;
-        _penetr = ProjData.Penetration;
 
         var oldx = transform.localEulerAngles.x;
         transform.Rotate(new Vector3(-oldx, 0, 0));
+        transform.parent = null;
         // fix vertical rotation
     }
 
     public void OnUpdateProj()
     {
         transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
-        _exp -= Time.deltaTime;
-        if (_exp <= 0) ExpiryEventProjectile?.Invoke(this);
+        ProjData.TimeToLive -= Time.deltaTime;
+        if (ProjData.TimeToLive <= 0) ExpiryEventProjectile?.Invoke(this);
     }
 
     public void OnExpiryProj()

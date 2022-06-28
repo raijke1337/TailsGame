@@ -37,13 +37,11 @@ public class SkillsPlacerManager : MonoBehaviour
     {
         var skill = Instantiate(_skillsDict[ID]);
         skill.Source = source;
+        skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
 
-        skill.transform.position = source.SkillsPosition.position;
-        skill.transform.rotation = source.SkillsPosition.rotation;
-        skill.transform.forward = source.transform.forward;
         SkillAreaPlacedEvent?.Invoke(skill);
 
-        Debug.Log($"{source.GetFullName} requested skill {ID}");
+        //Debug.Log($"{source.GetFullName} requested skill {ID}");
 
 
         if (skill is IProjectile)

@@ -15,38 +15,13 @@ public class SkillAreaComp : MonoBehaviour
 {
     public event SimpleEventsHandler<BaseUnit> TargetHitEvent;
     public SkillData Data;
-    public BaseUnit Source;
     protected virtual void OnTriggerEnter(Collider other)
     {
         var comp = other.GetComponent<BaseUnit>();
         if (comp == null) return;
         TargetHitEvent?.Invoke(comp);
-
-        // hopefully replaced by multiple triggers per skill  
-
-        //switch (Data.TargetType)
-        //{
-        //    case TriggerTargetType.TargetsEnemies:
-        //        if (comp.Side != Source.Side)
-        //        {
-        //            TargetHitEvent?.Invoke(comp);
-        //        }
-        //        break;
-        //    case TriggerTargetType.TargetsUser:
-        //        if (comp == Source)
-        //        {
-        //            TargetHitEvent?.Invoke(comp);
-        //        }
-        //        break;
-        //    case TriggerTargetType.TargetsAllies:
-        //        if (comp.Side == Source.Side)
-        //        { 
-        //            TargetHitEvent?.Invoke(comp);
-        //        }
-        //        break;
-        //}
-
     }
+
     private void Awake()
     {
         GetComponent<Collider>().isTrigger = true;

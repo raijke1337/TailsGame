@@ -44,16 +44,16 @@ public class ProjectileSkill : BaseSkill, IProjectile
         if (_exp <= 0f) ExpiryEventProjectile?.Invoke(this);
     }
 
-
-    protected override void OnTriggerEnter(Collider other)
+    protected override void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Ground")) return;
+        if (collision.transform.GetComponent<BaseUnit>() == Source) return;
+        base.OnCollisionEnter(collision);
         if (_penetr > 0)
         {
-            PlaceAndSubEffect(transform);            
             _penetr--;
         }
         if (_penetr == 0) ExpiryEventProjectile?.Invoke(this);
+
     }
 
 }

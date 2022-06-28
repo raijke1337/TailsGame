@@ -13,38 +13,24 @@ using UnityEngine.InputSystem;
 
 public class ServiceDroneInputs : InputsNPC
 {
-
-    // find ally and move to them, support if low hp; attack player if high hp
-    protected override void Fsm_AgressiveActionRequestSM(CombatActionType type)
+    protected override void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
     {
-        //SwitchRanges((type == CombatActionType.Ranged));
-
-        base.Fsm_AgressiveActionRequestSM(type);
-    }
-
-    protected override void Fsm_CombatPreparationSM()
-    {
-        // find ally
-        _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(UnitType.Big);
-    }
-
-    private void SwitchRanges(bool isSupporting)
-    {
-        if (isSupporting)
+        switch (arg)
         {
-            _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea; // heal when in range
-        }
-        else
-        {
-            _stateMachine.NMAgent.stoppingDistance = _enemyStats.AttackRange;
+            case CombatActionType.Melee:
+                break;
+            case CombatActionType.Ranged:
+                _stateMachine.NMAgent.stoppingDistance = _enemyStats.AttackRange;
+                break;
+            case CombatActionType.Dodge:
+                break;
+            case CombatActionType.MeleeSpecialQ:
+                break;
+            case CombatActionType.RangedSpecialE:
+                _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea / 2;
+                break;
+            case CombatActionType.ShieldSpecialR:
+                break;
         }
     }
-
-    protected override void Fsm_AggroRequestedSM()
-    {
-        base.Fsm_AggroRequestedSM();
-        SwitchRanges(false);
-    }
-
 }
-

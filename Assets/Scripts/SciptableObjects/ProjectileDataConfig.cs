@@ -16,7 +16,7 @@ public class ProjectileDataConfig : ScriptableObjectID
 
     public float TimeToLive;
     public float ProjectileSpeed;
-    public int ProjectilePenetration;
+    [Range(1,999)] public int ProjectilePenetration;
 
 }
 

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7480995966857918065}
   - component: {fileID: 7480995966855116269}
   - component: {fileID: 7480995966856178869}
-  - component: {fileID: 9122963008473924918}
   - component: {fileID: -5257698494259970991}
   m_Layer: 0
   m_Name: crossbow
@@ -83,18 +82,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9122963008473924918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7480995966858221551}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0871f748c48352f4593c03df6c2009ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-5257698494259970991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,6 +101,5 @@ MonoBehaviour:
   _spreadMax: 0.1
   _projectilePrefab: {fileID: 7390308057254535331, guid: fb4a746d684c53c43bcd799d45e5e582,
     type: 3}
-  _projectileID: crossbow_bolt
   _shotsPause: 0.1
   _shots: 3

@@ -17,7 +17,7 @@ public class SwitchRangeByActionTypeAction : Action
     public CombatActionType DesiredType;
     public override void Act(StateMachine controller)
     {
-        throw new NotImplementedException();
+        controller.OnSwapRanges(DesiredType);
     }
 }
 

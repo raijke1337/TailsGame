@@ -55,7 +55,7 @@ public class StateMachine : IStatsComponentForHandler
     public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
     public event StateMachineEvent<CombatActionType> ChangeRangeActionRequestSM;
     public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
-    public event StateMachineEvent CombatPreparationSM;
+    public event StateMachineEvent<UnitType> RequestFocusSM;
     public event StateMachineEvent AggroRequestedSM;
     public event StateMachineEvent RotationRequestedSM;
 
@@ -137,7 +137,7 @@ public class StateMachine : IStatsComponentForHandler
     {
         AgressiveActionRequestSM?.Invoke(type);
     }
-    public void OnCombatInitiate() => CombatPreparationSM?.Invoke();
+    public void OnSetFocus(UnitType type) => RequestFocusSM?.Invoke(type);
     public bool CheckIsInStoppingRange()
     {
         var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;

@@ -1111,6 +1111,7 @@ Transform:
   - {fileID: 2657373002740467464}
   - {fileID: 7848322816234588232}
   - {fileID: 1770567327657065018}
+  - {fileID: 9034192346424899965}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -165, z: 0}
@@ -1161,7 +1162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StatsID: player
   Side: 0
-  SkillsPosition: {fileID: 2657373002724019057}
+  SkillsPosition: {fileID: 9034192346424899965}
 --- !u!114 &2657373002772585165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1238,37 +1239,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e07e63b09fbe22408cd9b2ce0a8da22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Cursors:
-    reorderableList:
-      canAdd: 1
-      canRemove: 1
-      draggable: 1
-      expandable: 1
-      multipleSelection: 1
-      isExpanded: 1
-      label:
-        m_Text: Keys
-        m_Image: {fileID: 0}
-        m_Tooltip: 
-      headerHeight: 18
-      footerHeight: 13
-      slideEasing: 0.15
-      verticalSpacing: 2
-      showDefaultBackground: 1
-      elementDisplayType: 0
-      elementNameProperty: 
-      elementNameOverride: 
-      elementIcon: {fileID: 0}
-    reqReferences: {fileID: 0}
-    isExpanded: 1
-    _keyValues: 01000000000000000200000003000000
-    _keys: 01000000000000000200000003000000
-    _values:
-    - {fileID: 21300000, guid: 5988a2020badc834c96521b52b6a08f5, type: 3}
-    - {fileID: 21300000, guid: 5988a2020badc834c96521b52b6a08f5, type: 3}
-    - {fileID: 21300000, guid: 8589811d8f6629443ad2c9be7e027110, type: 3}
-    - {fileID: 21300000, guid: 4c1d44382b9c700468f015c68363321f, type: 3}
-  _raycastPrefab: {fileID: 0}
   _vertOffset: 0.1
 --- !u!1 &2657373002795105093
 GameObject:
@@ -2230,4 +2200,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2657373003384081157}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8027596951362378991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9034192346424899965}
+  m_Layer: 0
+  m_Name: SkillsEmpty
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9034192346424899965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8027596951362378991}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.000000074505806, y: 1, z: 0.50000006}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2657373003384081157}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

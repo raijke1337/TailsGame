@@ -79,15 +79,30 @@ public class RoomController : MonoBehaviour
     // used by inputs
     public BaseUnit GetUnitForAI(UnitType type)
     {
-        if (type == UnitType.Player) return _player;
-        else
+        BaseUnit res = null;
+        switch (type)
         {
-            var res = list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
-            return res;
+            case UnitType.Small:
+                res = list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                break;
+            case UnitType.Big:
+                res= list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                break;
+            case UnitType.Boss:
+                res= list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                break;
+            case UnitType.Self:
+                Debug.LogWarning(type+" was somehow requested, this should not happen");
+                break;
+            case UnitType.Any:
+                Debug.LogWarning(type + " NYI");
+                break;
+            case UnitType.Player:
+                res = _player;
+                break;
         }
+        return res;
     }
-
-
 }
 
 

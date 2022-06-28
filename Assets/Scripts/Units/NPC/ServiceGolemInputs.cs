@@ -42,11 +42,6 @@ public class ServiceGolemInputs : InputsNPC
         }
     }
 
-    protected override void Fsm_CombatPreparationSM()
-    {
-        Debug.Log($"{_statsCtrl.GetDisplayName} readied for combat!");
-    }
-
     public DodgeController GetDodgeController => _dodgeCtrl;
 
 

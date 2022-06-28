@@ -1,16 +1,6 @@
- using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Zenject;
+
 
 public class RangedWeapon : BaseWeapon
 {
@@ -70,11 +60,14 @@ public class RangedWeapon : BaseWeapon
     {
         _currentCharges--;
 
-        var pr = Instantiate(_projectilePrefab, transform.position, transform.rotation);
+        var pr = Instantiate(_projectilePrefab);
         pr.Source = Owner;
-        pr.transform.forward = Owner.transform.forward;
-        pr.SetTriggerIDS(_effectsIDs);
 
+        pr.transform.position = transform.position;
+        pr.transform.forward = Owner.transform.forward;
+
+
+        pr.SetTriggerIDS(_effectsIDs);
         PlacedProjectileEvent?.Invoke(pr);
     }
     protected virtual void CheckReload()

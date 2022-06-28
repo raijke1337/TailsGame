@@ -1091,7 +1091,7 @@ PrefabInstance:
     - target: {fileID: 2287890532406416135, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2362514951427222889, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
@@ -1282,7 +1282,7 @@ PrefabInstance:
         type: 3}
       propertyPath: InitialState
       value: 
-      objectReference: {fileID: 11400000, guid: ed34c033010f5e44689f8325edcf6852,
+      objectReference: {fileID: 11400000, guid: 3b9d2469e39432e4e96aea831858e999,
         type: 2}
     - target: {fileID: 6263001806029482478, guid: 14d10bf5fb869e04798107531f519075,
         type: 3}
@@ -7934,6 +7934,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1748906682}
     m_Modifications:
+    - target: {fileID: 2657373002772585166, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: _weaponPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: -5257698494259970991, guid: b1836079eb052ef488c0adb519459f14,
+        type: 3}
     - target: {fileID: 2657373002772585167, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
       propertyPath: m_Name
@@ -8537,7 +8543,7 @@ PrefabInstance:
     - target: {fileID: 8811871022688349231, guid: 951d7a59e5e33c445a3482874a653741,
         type: 3}
       propertyPath: DebugEnabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8811871022688349231, guid: 951d7a59e5e33c445a3482874a653741,
         type: 3}
@@ -10798,7 +10804,7 @@ PrefabInstance:
     - target: {fileID: 4526033784034212071, guid: 6a4815322473fa14692b5257cf2ec11e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4526033785566503248, guid: 6a4815322473fa14692b5257cf2ec11e,
         type: 3}

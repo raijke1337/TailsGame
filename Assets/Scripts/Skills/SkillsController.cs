@@ -26,8 +26,6 @@ public class SkillsController : IStatsComponentForHandler
         IDs.AddRange(skills);
     }
 
-
-    // todo layer switching doesnt work properly
     public bool RequestSkill (CombatActionType type, out float cost)
     {
         var result = _skills[type].RequestUse();

@@ -13,13 +13,18 @@ using UnityEngine.InputSystem;
 
 public class SelfSkill : BaseSkill
 {
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag(Source.tag))
+        { 
+            base.OnCollisionEnter(collision);
+        }
+    }
     protected override void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(Source.tag))
-        {
-            var eff = PlaceAndSubEffect(other.transform);
-            Destroy(gameObject);
-        }
+        if (Source == null) return; // test
+
+        if(other.CompareTag(Source.tag)) base.OnTriggerEnter(other);
     }
 }
 
