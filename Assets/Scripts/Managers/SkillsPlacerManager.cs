@@ -39,10 +39,8 @@ public class SkillsPlacerManager : MonoBehaviour
         skill.Source = source;
         skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
 
+        skill.SkillCompletedEvent += OnSkillCompleted;
         SkillAreaPlacedEvent?.Invoke(skill);
-
-        //Debug.Log($"{source.GetFullName} requested skill {ID}");
-
 
         if (skill is IProjectile)
         {
@@ -69,6 +67,12 @@ public class SkillsPlacerManager : MonoBehaviour
             skill.SkillData = new SkillData(dataCfg.Data);
         }
     }
+    private void OnSkillCompleted(BaseSkill skill)
+    {
+        skill.SkillCompletedEvent -= OnSkillCompleted;  
+        Destroy(skill);
+    }
+
 #if UNITY_EDITOR
     [ContextMenu("Load skills and configs")]
     public void RefreshStuff()

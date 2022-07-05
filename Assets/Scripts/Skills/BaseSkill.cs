@@ -19,20 +19,14 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
     public GameObject EffectPrefab;
 
     public event TriggerEventApplication TriggerApplicationRequestEvent;
+    public event SimpleEventsHandler<BaseSkill> SkillCompletedEvent;
 
     private Collider _coll;
 
-    protected virtual void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Collider");
-        var point = collision.contacts[0];
-        var place = point.point;
-        PlaceAndSubEffect(place);
-    }
     protected virtual void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger");
         PlaceAndSubEffect(transform.position);
+        _coll.enabled = false;
     }
     private void Awake()
     {
@@ -58,8 +52,10 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers
         item.transform.position = tr;
 
         item.TargetHitEvent += (t) => CallTriggerHit(t);
+        item.SkillAreaDoneEvent += SkillCompleted;
         return item;
     }
+    protected void SkillCompleted() => SkillCompletedEvent?.Invoke(this);
 
 }
 

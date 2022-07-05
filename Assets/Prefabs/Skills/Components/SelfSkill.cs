@@ -13,13 +13,6 @@ using UnityEngine.InputSystem;
 
 public class SelfSkill : BaseSkill
 {
-    protected override void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.CompareTag(Source.tag))
-        { 
-            base.OnCollisionEnter(collision);
-        }
-    }
     protected override void OnTriggerEnter(Collider other)
     {
         if (Source == null) return; // test

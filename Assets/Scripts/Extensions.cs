@@ -56,6 +56,28 @@ public static class Extensions
         return Random.Range(0, max);
     }
 
+    public static System.Random Randoms = new System.Random();
+
+    /// <summary>
+    /// Return a shuffled list using Fisher-Yates method
+    /// </summary>
+    /// <typeparam name="T">anything</typeparam>
+    /// <param name="input">List<></param>
+    /// <returns>same list but mixed</returns>
+    public static List<T> ShuffledList<T> (List<T> input)
+    {
+        for (int i = input.Count - 1; i >= 1; i--)
+        {
+            int j = Randoms.Next(i + 1);
+            T tmp = input[i];
+            input[i] = input[j];
+            input[j] = tmp;
+        }
+        return input;
+    }
+
+
+
 #if UNITY_EDITOR
 
 

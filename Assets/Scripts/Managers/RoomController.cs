@@ -16,23 +16,39 @@ public class RoomController : MonoBehaviour
     [SerializeField] private List<NPCUnit> list;
     private Collider _detectionArea;
     private PlayerUnit _player;
-
     public void SetPlayer(PlayerUnit p) => _player = p;
+    private Puzzle.PuzzleManager _puzMan;
+
+
 
     private void Start() 
     {
         UpdateUnits();
+        _puzMan = FindObjectOfType<Puzzle.PuzzleManager>();
+        if (_puzMan != null)
+        {
+            _puzMan.GameCompletedEvent += _puzMan_GameCompletedEvent;
+        }
     }
+
+    private void _puzMan_GameCompletedEvent(Puzzle.GameResult arg)
+    {
+        Debug.Log($"Puzzle solved {arg.isWin}");
+    }
+
     private void LateUpdate() 
     {
         if (_detectionArea.enabled) _detectionArea.enabled = false;
     }
 
+    #region units
+
+
     public void UpdateUnits()
     {
         list = new List<NPCUnit>();
         _detectionArea = GetComponent<Collider>();
-        _detectionArea.isTrigger = true;
+        if (_detectionArea != null) _detectionArea.isTrigger = true;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -44,8 +60,6 @@ public class RoomController : MonoBehaviour
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
             unit.OnUnitSpottedPlayerEvent += Unit_OnUnitSpottedPlayerEvent;
             unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
-            
-            //Debug.Log($"{this} registered: {unit.GetFullName}");
         }
        
     }
@@ -103,6 +117,16 @@ public class RoomController : MonoBehaviour
         }
         return res;
     }
+
+    #endregion
+
+    #region puzzles
+
+
+
+
+    #endregion
+
 }
 
 

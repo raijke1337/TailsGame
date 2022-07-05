@@ -44,10 +44,10 @@ public class ProjectileSkill : BaseSkill, IProjectile
         if (_exp <= 0f) ExpiryEventProjectile?.Invoke(this);
     }
 
-    protected override void OnCollisionEnter(Collision collision)
+    protected override void OnTriggerEnter(Collider other)
     {
-        if (collision.transform.GetComponent<BaseUnit>() == Source) return;
-        base.OnCollisionEnter(collision);
+        if (other = Source.GetComponent<Collider>()) return; // todo optimization
+        base.OnTriggerEnter(other);
         if (_penetr > 0)
         {
             _penetr--;

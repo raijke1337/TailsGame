@@ -14,6 +14,9 @@ using UnityEngine.InputSystem;
 public class SkillAreaComp : MonoBehaviour
 {
     public event SimpleEventsHandler<BaseUnit> TargetHitEvent;
+    public event SimpleEventsHandler SkillAreaDoneEvent;
+
+
     public SkillData Data;
     protected virtual void OnTriggerEnter(Collider other)
     {
@@ -43,6 +46,7 @@ public class SkillAreaComp : MonoBehaviour
             yield return null;
         }
         Destroy(gameObject);
+        SkillAreaDoneEvent?.Invoke();
         yield return null;
     }
 }
