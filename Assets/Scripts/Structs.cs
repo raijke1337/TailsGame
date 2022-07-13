@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -7,9 +8,9 @@ public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 public delegate void SimpleEventsHandler<T1,T2>(T1 arg1,T2 arg2);
 
-public delegate void WeaponSwitchEventHandler(WeaponType type);
+public delegate void WeaponSwitchEventHandler(EquipItemType type);
 public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
-public delegate void SkillRequestedEvent(string ID, BaseUnit source);
+public delegate void SkillRequestedEvent(string ID, BaseUnit source, Transform where);
 
 
 public delegate void StateMachineEvent();
@@ -52,6 +53,7 @@ public static class Constants
         public const string c_MethodPrefix = "Fsm_";
     }
 }
+
 #region structs 
 [Serializable] public class Timer 
 {
@@ -100,18 +102,27 @@ public static class Constants
     [SerializeField] private float _start;
     [SerializeField] private float _max;
     [SerializeField] private float _min;
+
+
+
+    private float _calcStart;
+    private float _calcMax;
+    private float _calcMin;
     private float _current;
     private float _last;
+    private List<StatValueModifier> _mods;
+
     /// <summary>
     /// current, previous
     /// </summary>
-    public SimpleEventsHandler<float,float> ValueChangedEvent;
+    public SimpleEventsHandler<float, float> ValueChangedEvent;
 
     public float GetCurrent { get => _current; }
-    public float GetMax { get => _max; }
-    public float GetMin {get => _min;}
-    public float GetStart {get => _start;}
-    public float GetLast {get => _last;}
+    public float GetMax { get => _calcMax; }
+    public float GetMin { get => _calcMin; }
+    public float GetStart { get => _calcStart; }
+    public float GetLast { get => _last; }
+    public IEnumerable<StatValueModifier> GetMods{get=> _mods;}
 
     /// <summary>
     /// adds the value, clamped by min and max
@@ -130,7 +141,34 @@ public static class Constants
         // this is for lazy people
         // case: only start value is set
         if (_max == 0) _max = _start;
+        _mods = new List<StatValueModifier>();
+        RefreshValues();
     }
+    public void AddMod(StatValueModifier mod)
+    {
+        _mods.Add(mod);
+    }
+    public void RemoveMod(StatValueModifier mod)
+    {
+        _mods.Remove(mod); 
+    }
+    public void RemoveMod(string modID)
+    {
+        var f = _mods.First(t => t.ID == modID);
+        if (f == null) return;
+        _mods.Remove(f);
+    }
+    private void RefreshValues()
+    {
+        _calcMin = _min + _mods.Sum(t => t.MinChange);
+        if (_calcMin <= 0f)
+        {
+            ValueChangedEvent?.Invoke(0f, _min);
+        }
+        _calcMax = _max + _mods.Sum(t => t.MaxChange);
+        _calcStart = _start + _mods.Sum(t => t.StartChange);
+    }
+
 
     public StatValueContainer(StatValueContainer preset)
     {
@@ -139,6 +177,20 @@ public static class Constants
         _min = preset._min;
         Setup();
     }
+}
+
+public class StatValueModifier:IHasID
+{
+    public string ID = "Not set";
+    public float MaxChange;
+    public float MinChange;
+    public float StartChange;
+
+    public StatValueModifier(float max,float min,float st)
+    {
+        MaxChange = max; MinChange = min; StartChange = st;
+    }
+    public string GetID => ID;
 }
 
 [Serializable] public class ProjectileData
@@ -196,6 +248,14 @@ public static class Constants
     public TextType Type;
     public string[] Texts;
 }
+[Serializable] public struct ItemEmpties
+{
+    public Transform MeleeWeaponEmpty;
+    public Transform RangedWeaponEmpty;
+    public Transform SheathedWeaponEmpty;
+    public Transform SkillsEmpty;
+    public Transform OthersEmpty;
+}
 
 #endregion
 
@@ -203,6 +263,7 @@ public static class Constants
 
 public interface IStatsComponentForHandler
 {
+    bool IsReady { get; }
     void UpdateInDelta(float deltaTime);
     void SetupStatsComponent();
 }
@@ -210,42 +271,68 @@ public interface IStatsAddEffects
 {
     void AddTriggeredEffect(TriggeredEffect effect);
 }
-public interface IWeapon : IHasGameObject
-{
-    BaseUnit Owner { get; set; }
-    bool UseWeapon(out string reason);
-    void UpdateInDelta(float deltaTime);
-    int GetAmmo { get; }
-    string GetRelatedSkillID();
-    event SimpleEventsHandler<float> TargetHit;
-}
 
-public interface IHasGameObject
-{ public GameObject GetObject(); }
-
-
-public interface IProjectile : IAppliesTriggers, IHasID
-{
-    void OnSpawnProj();
-    void OnUpdateProj();
-    void OnExpiryProj();
-    event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
-    void SetProjectileData(ProjectileDataConfig cfg);
-    BaseUnit Source { get; }
-}
 public interface IHasID
 { string GetID { get; } }
+public interface IHasGameObject
+{ public GameObject GetObject(); }
+public interface IHasOwner
+{ BaseUnit Owner { get; set; } }
+
+public interface IAppliesTriggers : IHasGameObject
+{
+    event TriggerEventApplication TriggerApplicationRequestEvent;
+}
+public interface IInventoryItem : IHasID
+{
+    public ItemContent ItemContents { get; }
+}
+public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
+{
+    void OnEquip(ItemContent content);
+}
+public interface IWeapon : IEquippable
+{
+    bool UseWeapon(out string reason);
+    int GetAmmo { get; }
+    event SimpleEventsHandler<float> TargetHit;
+    void UpdateInDelta(float deltaTime);
+    void SetUpWeapon(BaseWeaponConfig cfg);
+}
+
+public interface IExpires : IHasGameObject
+{
+    event SimpleEventsHandler<IExpires> HasExpiredEvent;
+}
+public interface ISkill : IHasID, IAppliesTriggers, IHasOwner , IExpires, IHasGameObject
+{
+    void OnUse();
+    void OnUpdate();
+}
+public interface IProjectile : ISkill
+{
+    void SetProjectileData(ProjectileDataConfig cfg);
+}
+public interface IUsesItems : INeedsEmpties
+{
+    void LoadItem(IEquippable item);
+    IEnumerable<string> GetSkillStrings();
+
+}
+public interface INeedsEmpties
+{ ItemEmpties Empties { get; } }
 
 
-public interface IAppliesTriggers
-{ event TriggerEventApplication TriggerApplicationRequestEvent; }
+
+#region todo
 
 
 public interface IInteractiveItem
 {
-    public InteractiveItemType IIType {get;}
-
+    public InteractiveItemType IIType {get; }
 }
+
+#endregion
 
 
 

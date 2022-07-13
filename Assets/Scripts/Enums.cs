@@ -1,24 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-
-//side
 public enum Side
 {
     PlayerSide,
     EnemySide
 }
 
-// all used stats 
 public enum BaseStatType : byte
 {
     Health,
@@ -33,11 +18,14 @@ public enum ShieldStatType
     ShieldAbsorbMult
 }
 
-public enum WeaponType
+public enum EquipItemType
 {
     None,
-    Melee,
-    Ranged
+    MeleeWeap,
+    RangedWeap,
+    Shield,
+    Booster,
+    Other = 255
 }
 public enum DodgeStatType
 {
@@ -62,6 +50,14 @@ public enum TriggerTargetType
     TargetsEnemies,
     TargetsUser,
     TargetsAllies
+}
+public enum TriggerChangedValue
+{
+    Health,
+    Shield,
+    Combo,
+    MoveSpeed,
+
 }
 
 

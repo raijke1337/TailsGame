@@ -8,6 +8,9 @@ namespace Assets.Scripts.Units
     public class StunnerComponent : IStatsComponentForHandler
     {
         public int StaggerCounter { get; } // total hits it takes to stagger a unit
+
+        public bool IsReady => true;
+
         private int currentCount; // current hits left to stagger
         private float counterReset; // how long it takes to reset stun counter
         private float currentReset; // current time

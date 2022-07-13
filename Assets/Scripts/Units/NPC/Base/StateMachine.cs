@@ -23,6 +23,8 @@ public class StateMachine : IStatsComponentForHandler
 
         EyesEmpty = eyes.transform;
     }
+    public bool IsReady { get => true; }
+
     #endregion
 
 
@@ -60,7 +62,7 @@ public class StateMachine : IStatsComponentForHandler
     public event StateMachineEvent RotationRequestedSM;
 
 
-    public NavMeshAgent NMAgent { get; private set; }
+    public NavMeshAgent NMAgent { get; }
     [HideInInspector] public Transform[] PatrolPoints;
     [HideInInspector] public int CurrentPatrolPointIndex = 0;
 

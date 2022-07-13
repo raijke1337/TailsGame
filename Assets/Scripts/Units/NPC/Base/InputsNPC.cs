@@ -30,6 +30,13 @@ public abstract class InputsNPC : ControlInputsBase
 
     #endregion
     #region init
+
+    public override void InitControllers(BaseStatsController stats)
+    {
+        base.InitControllers(stats);
+        _weaponCtrl = new EnemyWeaponCtrl(Empties); // todo? bandaid
+    }
+
     public override void BindControllers(bool isEnable)
     {
         base.BindControllers(isEnable);
@@ -43,14 +50,13 @@ public abstract class InputsNPC : ControlInputsBase
     (t => t.ID == _statsCtrl.GetUnitID));
 
         _navMeshAg = GetComponent<NavMeshAgent>();
-        _stateMachine = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState,Unit);
 
         _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
+        _stateMachine = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState, Unit);
 
         Bind(isEnable);
-        _stateMachine.SetPatrolPoints(patrolPoints);
-
+      _stateMachine.SetPatrolPoints(patrolPoints);
     }
 
     protected virtual void Bind(bool isStart)
@@ -62,8 +68,6 @@ public abstract class InputsNPC : ControlInputsBase
         if (isStart)
         {
             _handler.RegisterUnitForStatUpdates(_stateMachine);
-            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent += (current, old) => _navMeshAg.speed = current;
-
             _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
             _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
@@ -74,8 +78,6 @@ public abstract class InputsNPC : ControlInputsBase
         else
         {
             _handler.RegisterUnitForStatUpdates(_stateMachine, false);
-            _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].ValueChangedEvent -= (current, old) => _navMeshAg.speed = current;
-
             _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
             _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
@@ -208,11 +210,11 @@ public abstract class InputsNPC : ControlInputsBase
         switch (type)
         {
             case CombatActionType.Melee:
-                success = _weaponCtrl.UseWeaponCheck(WeaponType.Melee, out text);
+                success = _weaponCtrl.UseWeaponCheck(EquipItemType.MeleeWeap, out text);
                 if (success) CombatActionSuccessCallback(type);
                 break;
             case CombatActionType.Ranged:
-                success = _weaponCtrl.UseWeaponCheck(WeaponType.Ranged, out text);
+                success = _weaponCtrl.UseWeaponCheck(EquipItemType.RangedWeap, out text);
                 if (success) CombatActionSuccessCallback(type);
                 break;
             case CombatActionType.Dodge:

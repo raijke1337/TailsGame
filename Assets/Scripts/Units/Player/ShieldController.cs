@@ -12,21 +12,41 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
-public class ShieldController : IStatsComponentForHandler
+public class ShieldController : IStatsComponentForHandler, IUsesItems
 {
-    public ShieldController(string ID)
+    public IEquippable EquippedShieldItem { get; private set; }
+    public ItemEmpties Empties { get; }
+    public ShieldController(ItemEmpties ie) => Empties = ie;
+    public void LoadItem(IEquippable item)
     {
-        settingsID = ID;
+        if (item.ItemContents.ItemType == EquipItemType.Shield)
+        {
+            EquippedShieldItem = item;
+            IsReady = true;
+        }
     }
-    public string settingsID { get; }
+
+    public IEnumerable<string> GetSkillStrings()
+    {
+        if (!IsReady) return null;
+        else return new string[1] { EquippedShieldItem.ItemContents.SkillString };
+    }
+    public bool IsReady { get; private set; } = false;
+
 
     private List<TriggeredEffect> _effects = new List<TriggeredEffect>();
     private Dictionary<ShieldStatType, StatValueContainer> _stats = new Dictionary<ShieldStatType, StatValueContainer>();
-    public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get { return _stats; } }
+    public StatValueContainer GetShieldStats(ShieldStatType type) 
+    {
+        if (!(_stats.ContainsKey(type))) return null;
+            else return _stats[type];
+    }
+
+
 
     public void SetupStatsComponent()
     {
-        var cfg = Extensions.GetAssetsFromPath<ShieldSettings>(Constants.Configs.c_ShieldConfigsPath).First(T => T.ID == settingsID);
+        var cfg = Extensions.GetAssetsFromPath<ShieldSettings>(Constants.Configs.c_ShieldConfigsPath).First(T => T.ID == EquippedShieldItem.ItemContents.ID);
         var _keys = cfg.Stats.Keys.ToArray();
         var _values = cfg.Stats.Values.ToArray();
 

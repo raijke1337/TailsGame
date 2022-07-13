@@ -26,11 +26,11 @@ public class UnitsManager : MonoBehaviour
         foreach (var npc in _units)
         {
             npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-            npc.SkillRequestSuccessEvent += (id, user) => RequestToPlaceSkills?.Invoke(id, user);
+            npc.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
             
         }
         _player.BaseUnitDiedEvent += HandleUnitDeath;
-        _player.SkillRequestSuccessEvent += (id, user) => RequestToPlaceSkills?.Invoke(id, user);
+        _player.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
     }
     private void Start()
     {

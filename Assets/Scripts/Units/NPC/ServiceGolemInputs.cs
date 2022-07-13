@@ -2,18 +2,7 @@ using UnityEngine;
 
 public class ServiceGolemInputs : InputsNPC
 {
-    private DodgeController _dodgeCtrl;
-    public void SetDodgeCtrl(string ID)
-    {
-        _dodgeCtrl = new DodgeController(ID);
-        _handler.RegisterUnitForStatUpdates(_dodgeCtrl, true);
-    }
 
-    protected override void Bind(bool isStart)
-    {
-        base.Bind(isStart);
-        if (!isStart) _handler.RegisterUnitForStatUpdates(_dodgeCtrl, false);
-    }
     protected override void Fsm_AgressiveActionRequestSM(CombatActionType type)
     {
         bool inRange = _stateMachine.CheckIsInStoppingRange();
@@ -42,9 +31,6 @@ public class ServiceGolemInputs : InputsNPC
         }
     }
 
-    public DodgeController GetDodgeController => _dodgeCtrl;
-
-
-
 }
+
 

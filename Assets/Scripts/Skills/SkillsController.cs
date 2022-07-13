@@ -13,18 +13,24 @@ using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
-public class SkillsController : IStatsComponentForHandler
+public class SkillsController : IStatsComponentForHandler, INeedsEmpties
 {
     private List<string> IDs;
     private Dictionary <CombatActionType, SkillControllerData> _skills;
 
-    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; 
+    public WeaponSwitchEventHandler SwitchAnimationLayersEvent;
+    public ItemEmpties Empties { get; }
+    public SkillsController(ItemEmpties ie) => Empties = ie;
 
-    public SkillsController(List<string> skills)
+    public bool IsReady { get; private set; } = false;
+
+    public void LoadSkills (List<string> skills)
     {
         IDs = new List<string>();
         IDs.AddRange(skills);
+        if (IDs.Count > 0) IsReady = true;
     }
+
 
     public bool RequestSkill (CombatActionType type, out float cost)
     {
@@ -35,10 +41,10 @@ public class SkillsController : IStatsComponentForHandler
             switch (type)
             {
                 case CombatActionType.MeleeSpecialQ:
-                    SwitchAnimationLayersEvent?.Invoke(WeaponType.Melee);
+                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
                     break;
                 case CombatActionType.RangedSpecialE:
-                    SwitchAnimationLayersEvent?.Invoke(WeaponType.Ranged);
+                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
                     break;
             }
         }

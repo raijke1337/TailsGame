@@ -892,9 +892,9 @@ GameObject:
   - component: {fileID: 1229093803892301225}
   - component: {fileID: 7711334822126299358}
   - component: {fileID: 8811871022688349231}
-  - component: {fileID: 1867402080882196941}
   - component: {fileID: 1616352762732222702}
   - component: {fileID: 1394203379183514854}
+  - component: {fileID: 7462110948608160970}
   m_Layer: 0
   m_Name: ServiceGolem
   m_TagString: Enemy
@@ -988,27 +988,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extraSkills: []
+  DebugEnabled: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: afbe920454ade2b4ab20de1fb1104fe9, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   CurrentState: {fileID: 0}
---- !u!114 &1867402080882196941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5157316843177516174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82dbf0566f710dc4884bb6c63d2bf6da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _weaponPrefabs:
-  - {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824, type: 3}
-  _meleeWeaponEmpty: {fileID: 965050323710725567}
-  _rangedWeaponEmpty: {fileID: 7359830087074885046}
-  _sheathedWeaponEmpty: {fileID: 569145520939935362}
+  _stateMachine:
+    aiActive: 0
+    PatrolPoints: []
+    CurrentPatrolPointIndex: 0
+    Debugging: 0
 --- !u!136 &1616352762732222702
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1039,6 +1028,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &7462110948608160970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5157316843177516174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 494b41e1fe5761548aa635130884824b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemsToEquip:
+  - {fileID: 11400000, guid: 0d988b98dff2f824d956bb7aa133a040, type: 2}
+  Bag: []
 --- !u!1 &5157317743340567560
 GameObject:
   m_ObjectHideFlags: 0

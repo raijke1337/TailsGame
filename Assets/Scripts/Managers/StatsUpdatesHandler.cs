@@ -17,6 +17,11 @@ public class StatsUpdatesHandler : MonoBehaviour
     public void RegisterUnitForStatUpdates(IStatsComponentForHandler stats, bool IsAdd = true)
     {
         if (_list == null) _list = new List<IStatsComponentForHandler>();
+        if (!stats.IsReady)
+        {
+            Debug.LogWarning($"{stats} component is not ready for registration");
+            return;
+        }
 
         if (!IsAdd)
         {

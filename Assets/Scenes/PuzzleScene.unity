@@ -528,6 +528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c98718ce4298c4a9b81ad875d0a949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tilePrefab: {fileID: 326165095027924090, guid: b0962342f210a8e4991fba07a6834c64,
+    type: 3}
   _closed: {fileID: 21300000, guid: 514399301d7bb5843b2d7e66e9afa646, type: 3}
   _open:
   - {fileID: 21300000, guid: b2018d1c639d14e4c92a35a58aa1580a, type: 3}
@@ -537,10 +539,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0c077932bbd872b4dab5f4c07943fb89, type: 3}
   - {fileID: 21300000, guid: d999d2e30df93e749b36934853d40a6d, type: 3}
   - {fileID: 21300000, guid: 479091e56b59552478553274735f248d, type: 3}
-  _tileHeight: 190
-  _tileWidth: 130
-  _tilePrefab: {fileID: 326165095027924090, guid: b0962342f210a8e4991fba07a6834c64,
-    type: 3}
+  _graceTimer: 1
+  _tileHeight: 100
+  _tileWidth: 100
   _field: {fileID: 1849368198}
   _results: {fileID: 2000575053}
 --- !u!4 &1657821820

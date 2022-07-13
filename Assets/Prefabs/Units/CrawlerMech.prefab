@@ -757,9 +757,9 @@ GameObject:
   - component: {fileID: 4526033784034212065}
   - component: {fileID: 4526033784034212066}
   - component: {fileID: 4526033784034212067}
-  - component: {fileID: 4526033784034212070}
   - component: {fileID: 3002787149684881543}
   - component: {fileID: 3948697573803483042}
+  - component: {fileID: 6772558524402193222}
   m_Layer: 0
   m_Name: CrawlerMech
   m_TagString: Enemy
@@ -856,23 +856,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &4526033784034212070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4526033784034212071}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82dbf0566f710dc4884bb6c63d2bf6da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _weaponPrefabs:
-  - {fileID: -681159650048992341, guid: 942432e4fca2c804b9969def343ce95d, type: 3}
-  _meleeWeaponEmpty: {fileID: 4526033784423807780}
-  _rangedWeaponEmpty: {fileID: 4526033784423807780}
-  _sheathedWeaponEmpty: {fileID: 4526033784423807780}
 --- !u!114 &3002787149684881543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -906,11 +889,26 @@ MonoBehaviour:
   InitialState: {fileID: 11400000, guid: b0eb904fb2c8562449235464840592fb, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   CurrentState: {fileID: 0}
-  fsm:
+  _stateMachine:
     aiActive: 0
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+--- !u!114 &6772558524402193222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4526033784034212071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 494b41e1fe5761548aa635130884824b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemsToEquip:
+  - {fileID: 11400000, guid: 414e59ccb736d7947a420175265de3b9, type: 2}
+  Bag: []
 --- !u!1 &4526033784423807781
 GameObject:
   m_ObjectHideFlags: 0

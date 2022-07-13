@@ -9,9 +9,6 @@ public class TriggersProjectilesManager : MonoBehaviour
     // transform, destroy
     private List<IProjectile> _projectiles = new List<IProjectile>();
 
-    //private List<BaseStatTriggerConfig> _configs = new List<BaseStatTriggerConfig>();
-    //private List<ProjectileDataConfig> _projectileCfgs = new List<ProjectileDataConfig>();
-
     private Dictionary<string, BaseStatTriggerConfig> _triggersD = new Dictionary<string, BaseStatTriggerConfig>();
     private Dictionary<string, ProjectileDataConfig> _projectilesD = new Dictionary<string, ProjectileDataConfig>();
 
@@ -125,9 +122,6 @@ public class TriggersProjectilesManager : MonoBehaviour
         finaltgt.ApplyEffect(effect);
     }
 
-
-
-
     private void RegisterTrigger(IAppliesTriggers item)
     {
         item.TriggerApplicationRequestEvent += ApplyTriggerEffect;
@@ -135,33 +129,30 @@ public class TriggersProjectilesManager : MonoBehaviour
     private void NewProjectile (IProjectile proj)
     {
         _projectiles.Add(proj);
-        
-
-
         proj.SetProjectileData(_projectilesD[proj.GetID]);
         RegisterTrigger(proj);
-        proj.ExpiryEventProjectile += ProjectileExpiryHandling;
-        proj.OnSpawnProj();
+        proj.OnUse();
+        proj.HasExpiredEvent += DeleteExpired;
     }
 
-    private void ProjectileExpiryHandling(IProjectile proj)
-    {
-        _projectiles.Remove(proj);
-        proj.OnExpiryProj();
-    }
     private void Update()
+    {
+        UpdateProjectiles(_projectiles);
+    }
+
+    private void UpdateProjectiles(IEnumerable<IProjectile> list)
     {
         foreach (var p in _projectiles.ToList())
         {
-            if (p == null)
-            {
-                _projectiles.Remove(p);
-                return;
-            }
-            else p.OnUpdateProj();
+            p.OnUpdate();
         }
     }
-
+    private void DeleteExpired(IExpires item)
+    {
+        item.HasExpiredEvent -= DeleteExpired;
+        Destroy(item.GetObject());
+        _projectiles.Remove(item as IProjectile);
+    }
 
     [ContextMenu(itemName: "Update configurations")]
     public void UpdateDatas()

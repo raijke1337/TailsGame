@@ -16,6 +16,8 @@ public class ComboController : IStatsComponentForHandler
 
     public StatValueContainer ComboContainer { get; }
 
+    public bool IsReady => true;
+
     protected float Degen;
     protected float Timeout;
     private float _currentTimeout = 0f;

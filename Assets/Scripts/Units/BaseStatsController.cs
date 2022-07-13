@@ -22,6 +22,8 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
     public string GetDisplayName { get; }
     public string GetUnitID { get; }
 
+    public bool IsReady { get; protected set; } = false;
+
     private List<TriggeredEffect> _effects;
 
     public void SetupStatsComponent()
@@ -53,6 +55,7 @@ public class BaseStatsController : IStatsComponentForHandler, IStatsAddEffects
 
         GetDisplayName = cfg.displayName;
         GetUnitID = cfg.ID;
+        IsReady = true;
     }
     #region handler
     // regeneration and degradation of stats goes here

@@ -5,50 +5,50 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(ControlInputsBase))]
+[RequireComponent(typeof(ControlInputsBase),typeof(InventoryManager))]
 
-public abstract class BaseUnit : MonoBehaviour
+public abstract class BaseUnit : MonoBehaviour, IHasID
 {
     [SerializeField] protected string StatsID;
+
+    [Inject] protected StatsUpdatesHandler _handler;
     public string GetID => StatsID;
 
     protected Animator _animator;
     protected Rigidbody _rigidbody;
+    public Collider GetCollider { get; private set; }
     protected BaseStatsController _baseStats;
     protected ControlInputsBase _controller;
-    public Side Side;
-    public Transform SkillsPosition;
-    public UnitType GetUnitType()
-    {
-        return _controller.GetUnitType();
-    }
-    public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
 
-    [Inject] protected StatsUpdatesHandler _handler;
+    public Side Side;
+
+    public UnitType GetUnitType() => _controller.GetUnitType();
+    public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+    public ControlInputsBase GetInputs() => _controller;
+
+
 
     public string GetFullName => _baseStats.GetDisplayName;
 
     public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event SkillRequestedEvent SkillRequestSuccessEvent;
-    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit);
+    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit,unit.GetInputs().GetEmpties.SkillsEmpty);
 
     private Camera _faceCam;
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
     #region setups
+
     protected virtual void Awake()
     {
         _baseStats = new BaseStatsController(StatsID);
-    }
-    protected void OnValidate()
-    {
-        if (SkillsPosition == null) SkillsPosition = GetComponentsInChildren<Transform>().First();
     }
     protected virtual void OnEnable()
     {
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
+
         _controller = GetComponent<ControlInputsBase>();
         _controller.InitControllers(_baseStats);
         _controller.SetUnit(this);
@@ -56,6 +56,8 @@ public abstract class BaseUnit : MonoBehaviour
 
         _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
+
+        GetCollider = GetComponent<Collider>();
     }
     protected virtual void UnitBinds(bool isEnable)
     {
@@ -179,9 +181,7 @@ public abstract class BaseUnit : MonoBehaviour
 
     #endregion
 
-
-
-
+    #region misc
     public static IEnumerator ItemDisappearsCoroutine(float time, GameObject item)
     {
         float passed = 0f;
@@ -193,6 +193,6 @@ public abstract class BaseUnit : MonoBehaviour
         Destroy(item);
         yield return null;
     }
-
+    #endregion
 
 }

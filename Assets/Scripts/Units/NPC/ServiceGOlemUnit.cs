@@ -13,11 +13,7 @@ using UnityEngine.InputSystem;
 
 public class ServiceGolemUnit : NPCUnit
 {
-    protected override void Start()
-    {
-        base.Start();
-        (_controller as ServiceGolemInputs).SetDodgeCtrl(GetID);
-    }
+
 
     #region dodge
 

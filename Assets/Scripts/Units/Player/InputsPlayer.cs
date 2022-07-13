@@ -7,19 +7,15 @@ public class InputsPlayer : ControlInputsBase
 {
     private PlayerControls _controls;
 
-    [SerializeField] private DodgeController _dodgeCtrl;
-    [SerializeField] private ShieldController _shieldCtrl;
     [SerializeField] private ComboController _comboCtrl;
 
     private IsoCamAdjust _adj;
     public TargetUnitPanel TargetPanel { get; set; }
     private AimingComponent _aim;
 
-    public DodgeController GetDodgeController => _dodgeCtrl;
-    public ShieldController GetShieldController => _shieldCtrl;
     public ComboController GetComboController => _comboCtrl;
 
-    public event SimpleEventsHandler<WeaponType> ChangeLayerEvent;
+    public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
     // only one gain per swing, changed by unit
     public bool ComboGained { get; set; } = false;
 
@@ -34,11 +30,9 @@ public class InputsPlayer : ControlInputsBase
 
     public override void BindControllers(bool isEnable)
     {
-        base.BindControllers(isEnable);
         _controls = new PlayerControls();
-        _shieldCtrl = new ShieldController(_statsCtrl.GetUnitID);
-        _dodgeCtrl = new DodgeController(_statsCtrl.GetUnitID);
         _comboCtrl = new ComboController(_statsCtrl.GetUnitID);
+        base.BindControllers(isEnable);
     }
 
     private void Start()
@@ -53,13 +47,8 @@ public class InputsPlayer : ControlInputsBase
         {
             _controls.Game.Enable();
             Cursor.visible = false;
-
-
-            //_playerWeaponCtrl = _weaponCtrl as PlayerWeaponController;
-
             _adj = new IsoCamAdjust();
-            _handler.RegisterUnitForStatUpdates(_dodgeCtrl);
-            _handler.RegisterUnitForStatUpdates(_shieldCtrl);
+
             _handler.RegisterUnitForStatUpdates(_comboCtrl);
 
 
@@ -116,9 +105,9 @@ public class InputsPlayer : ControlInputsBase
             ComboGained = true;
         }
     }
-    private void SwitchAnimatorLayer(WeaponType type)
+    private void SwitchAnimatorLayer(EquipItemType type)
     {
-        if (_weaponCtrl.GetCurrentWeaponType != type)
+        if (_weaponCtrl.CurrentWeaponType != type)
         {
             ChangeLayerEvent?.Invoke(type);
         }
@@ -129,14 +118,14 @@ public class InputsPlayer : ControlInputsBase
 
     protected void RangedAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Ranged, out string text))
+        if (_weaponCtrl.UseWeaponCheck(EquipItemType.RangedWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Ranged);
         else Debug.Log(text);
 
     }
     protected void MeleeAttack_performed(CallbackContext obj)
     {
-        if (_weaponCtrl.UseWeaponCheck(WeaponType.Melee, out string text))
+        if (_weaponCtrl.UseWeaponCheck(EquipItemType.MeleeWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Melee);
         else Debug.Log(text);
     }

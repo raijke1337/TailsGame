@@ -5,28 +5,31 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class DodgeController : IStatsComponentForHandler
+public class DodgeController : IStatsComponentForHandler, IUsesItems
 {
+    public IEquippable EquippedDodgeItem { get; private set; }
 
     Dictionary<DodgeStatType, StatValueContainer> _stats;
 
     public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
+
+
+
+    public bool IsReady {get; private set;}
+    public ItemEmpties Empties { get; }
+    public DodgeController(ItemEmpties ie) => Empties = ie;
     public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
 
     private Queue<Timer> _timerQueue = new Queue<Timer>();
 
-
-    public DodgeController(string unitID)
+    public void SetupStatsComponent()
     {
         _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-        var cfg = Extensions.GetAssetsFromPath<DodgeStatsConfig>(Constants.Configs.c_DodgeConfigsPath).First(t=>t.ID == unitID);
+        var cfg = Extensions.GetAssetsFromPath<DodgeStatsConfig>(Constants.Configs.c_DodgeConfigsPath).First(t => t.ID == EquippedDodgeItem.ItemContents.ID);
         foreach (var c in cfg.Stats)
         {
             _stats[c.Key] = new StatValueContainer(c.Value);
         }
-    }
-    public void SetupStatsComponent()
-    {
         foreach (var st in _stats.Values)
         { st.Setup(); }        
     }
@@ -56,11 +59,20 @@ public class DodgeController : IStatsComponentForHandler
         foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
     }
 
+    public void LoadItem(IEquippable item)
+    {
+        if (!(item.ItemContents.ItemType == EquipItemType.Booster)) return;
+        else
+        {
+            IsReady = true;
+            EquippedDodgeItem = item;
+        }         
+    }
 
-
-
-
-
+    public IEnumerable<string> GetSkillStrings()
+    {
+        return null;
+    }
 }
 
 

@@ -22,10 +22,10 @@ public class TextTrigger : BaseTrigger
         if (!other.CompareTag("Player")) return;
         ShowTextEvent?.Invoke(TextID, true);
     }
-    protected override void OnTriggerExit(Collider other)
+    protected void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        ShowTextEvent?.Invoke(TextID, false);
+        ShowTextEvent?.Invoke(TextID, false);        
     }
 }
 

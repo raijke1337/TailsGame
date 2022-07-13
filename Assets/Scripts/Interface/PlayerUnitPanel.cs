@@ -61,7 +61,7 @@ public class PlayerUnitPanel : BaseUnitPanel
 
         HPc = _player.GetStats()[BaseStatType.Health];
         HEc = _combo.ComboContainer;
-        SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+        SHc = _shield.GetShieldStats(ShieldStatType.Shield);
 
         HPc.ValueChangedEvent += ResetTicker; // only hp because other stats regen 
     }
@@ -77,31 +77,40 @@ public class PlayerUnitPanel : BaseUnitPanel
     {
         if (FillLerp < 1f) FillLerp += Mathf.Clamp01(Time.deltaTime * _barFillRateMult);
 
-        _currentAmmo = _weapons.GetAmmoByType(WeaponType.Ranged);
+        _currentAmmo = _weapons.GetAmmoByType(EquipItemType.RangedWeap);
         _currentDodges = _dodge.GetDodgeCharges();
 
+        if (HPc != null)
+        {
+            _hpText.text = string.Concat(Math.Round(HPc.GetCurrent, 0), " / ", HPc.GetMax);
+            ColorTexts(_hpText, HPc.GetMax, HPc.GetCurrent, minColorDefault, maxColorDefault);
+            PrettyLerp(_hpBar, HPc);
+        }
+        else _hpText.text = "You dun goofd";
+        if (HEc != null)
+        {
 
-        _hpText.text = string.Concat(Math.Round(HPc.GetCurrent, 0), " / ", HPc.GetMax);
-        _spText.text = string.Concat(Math.Round(SHc.GetCurrent, 0), " / ", SHc.GetMax);
-        _heText.text = string.Concat(Math.Round(HEc.GetCurrent, 0), " / ", HEc.GetMax);
+            _heText.text = string.Concat(Math.Round(HEc.GetCurrent, 0), " / ", HEc.GetMax);
+            ColorTexts(_heText, HEc.GetMax, HEc.GetCurrent, minColorDefault, maxColorDefault);
+            PrettyLerp(_heBar, HEc);
+        }
+        else _heText.text = "No combo value";
+        if (SHc != null)
+        {
+            _spText.text = string.Concat(Math.Round(SHc.GetCurrent, 0), " / ", SHc.GetMax);
+            ColorTexts(_spText, SHc.GetMax, SHc.GetCurrent, minColorDefault, maxColorDefault);
+            PrettyLerp(_shBar, SHc);
+        }
+        else _spText.text = "Shield not equipped";
 
         _dodgeText.text = _currentDodges.ToString();
         _ammoText.text = _currentAmmo.ToString();
 
-        ColorTexts(_hpText, HPc.GetMax, HPc.GetCurrent, minColorDefault, maxColorDefault);
-        ColorTexts(_spText, SHc.GetMax, SHc.GetCurrent, minColorDefault, maxColorDefault);
-        ColorTexts(_heText, HEc.GetMax, HEc.GetCurrent, minColorDefault, maxColorDefault);
-
-        PrettyLerp();
-
     }
 
-    protected void PrettyLerp()
+    protected void PrettyLerp(Image bar,StatValueContainer cont)
     {
-        _hpBar.fillAmount = Mathf.Lerp(HPc.GetLast / HPc.GetMax, HPc.GetCurrent / HPc.GetMax, FillLerp);
-        _shBar.fillAmount = Mathf.Lerp(SHc.GetLast / SHc.GetMax, SHc.GetCurrent / SHc.GetMax, FillLerp);
-        _heBar.fillAmount = Mathf.Lerp(HEc.GetLast / HEc.GetMax, HEc.GetCurrent / HEc.GetMax, FillLerp);
-
+        bar.fillAmount = Mathf.Lerp(cont.GetLast / cont.GetMax, cont.GetCurrent / cont.GetMax, FillLerp);
     }
 
 

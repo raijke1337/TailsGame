@@ -14,11 +14,14 @@ using UnityEngine.InputSystem;
 [Serializable]
 public class EnemyWeaponCtrl : WeaponController
 {
+    public EnemyWeaponCtrl(ItemEmpties ie) : base(ie)
+    {
+    }
 
     public override void SetupStatsComponent()
     {
         base.SetupStatsComponent();
-        if (!Equip(WeaponType.Melee)) Equip(WeaponType.Ranged);
+        if (!Equip(EquipItemType.MeleeWeap)) Equip(EquipItemType.RangedWeap);
     }
 
 }

@@ -14,9 +14,10 @@ using Zenject;
 
 public class WeaponTriggerComponent : BaseTrigger
 {
-    public BaseUnit Source;
+    public BaseUnit Owner { get; set; }
     protected List<string> TriggerEffectIDs;
     public SimpleEventsHandler HitSuccessEvent;
+
 
     public void SetTriggerIDS(IEnumerable<string> ids)
     {
@@ -31,7 +32,7 @@ public class WeaponTriggerComponent : BaseTrigger
         HitSuccessEvent?.Invoke();
         foreach (var id in TriggerEffectIDs)
         {
-            TriggerCallback(id, comp, Source);
+            TriggerCallback(id, comp, Owner);
         }
     }
 }

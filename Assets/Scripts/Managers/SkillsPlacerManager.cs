@@ -33,22 +33,23 @@ public class SkillsPlacerManager : MonoBehaviour
         _unitsM.RequestToPlaceSkills -= PlaceSkill;
     }
 
-    private void PlaceSkill(string ID, BaseUnit source)
+    private void PlaceSkill(string ID, BaseUnit source,Transform empty)
     {
         var skill = Instantiate(_skillsDict[ID]);
-        skill.Source = source;
-        skill.transform.SetPositionAndRotation(source.SkillsPosition.position, source.SkillsPosition.rotation);
-
-        skill.SkillCompletedEvent += OnSkillCompleted;
-        SkillAreaPlacedEvent?.Invoke(skill);
-
+        skill.Owner = source;
+        skill.transform.SetPositionAndRotation(empty.position, empty.rotation);
         if (skill is IProjectile)
         {
             var sk = skill as IProjectile;
-            ProjectileSkillCreatedEvent?.Invoke(sk);            
+            ProjectileSkillCreatedEvent?.Invoke(sk);
+            // further handling by projectiles manager (expiry, movement)
+        }
+        else
+        {
+            SkillAreaPlacedEvent?.Invoke(skill);
+            skill.HasExpiredEvent += HandleSkillExpiry;
         }
     }
-
 
     private void LoadBaseSkills()
     {
@@ -67,10 +68,11 @@ public class SkillsPlacerManager : MonoBehaviour
             skill.SkillData = new SkillData(dataCfg.Data);
         }
     }
-    private void OnSkillCompleted(BaseSkill skill)
+
+    private void HandleSkillExpiry(IExpires item)
     {
-        skill.SkillCompletedEvent -= OnSkillCompleted;  
-        Destroy(skill);
+        item.HasExpiredEvent -= HandleSkillExpiry;
+        Destroy(item.GetObject());
     }
 
 #if UNITY_EDITOR

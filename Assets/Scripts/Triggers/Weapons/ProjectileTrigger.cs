@@ -18,12 +18,9 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
     private ProjectileData ProjData;
 
     public string ID;
+    public event SimpleEventsHandler<IExpires> HasExpiredEvent;
 
     public string GetID { get => ID; }
-
-    BaseUnit IProjectile.Source => Source;
-
-    public event SimpleEventsHandler<IProjectile> ExpiryEventProjectile;
 
     protected override void OnTriggerEnter(Collider other)
     {
@@ -43,7 +40,7 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
         transform.parent = other.transform;
         _coll.enabled = false;
     }
-    public void OnSpawnProj()
+    public void OnUse()
     {
         base.Awake();
 
@@ -53,17 +50,11 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
         // fix vertical rotation
     }
 
-    public void OnUpdateProj()
+    public void OnUpdate()
     {
         transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
         ProjData.TimeToLive -= Time.deltaTime;
-        if (ProjData.TimeToLive <= 0) ExpiryEventProjectile?.Invoke(this);
+        if (ProjData.TimeToLive <= 0) HasExpiredEvent?.Invoke(this);
     }
-
-    public void OnExpiryProj()
-    {
-        Destroy(gameObject);
-    }
-
 }
 

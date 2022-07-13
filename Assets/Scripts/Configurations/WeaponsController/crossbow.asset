@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: crossbow
   WType: 2
-  _charges: 9
+  Charges:
+    _start: 6
+    _max: 0
+    _min: 0
   TriggerIDs:
   - bolt_hit
   SkillID: crossbow_explosive

@@ -18,6 +18,7 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
 
     protected Collider _coll;
     public event TriggerEventApplication TriggerApplicationRequestEvent;
+
     protected void TriggerCallback(string ID, BaseUnit unit,BaseUnit source) => TriggerApplicationRequestEvent?.Invoke(ID,unit,source);
 
     public virtual bool Enable
@@ -35,6 +36,7 @@ public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
 
     protected abstract void OnTriggerEnter(Collider other);
 
-    protected virtual void OnTriggerExit(Collider other) { }
+    public GameObject GetObject() => gameObject;
+
 }
 

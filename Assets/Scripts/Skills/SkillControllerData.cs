@@ -23,14 +23,6 @@ public class SkillControllerData
     public float GetCD => _recTimer.GetRemaining;
 
 
-
-    
-
-    // todo for ui
-
-    public string SkillUpgradeID { get; set; } // todo implement 
-
-
     public virtual bool RequestUse()
     {
         bool result = _isReady;

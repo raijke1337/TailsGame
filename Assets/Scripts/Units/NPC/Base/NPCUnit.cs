@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(InputsNPC)), RequireComponent(typeof(EnemyWeaponCtrl))]
+[RequireComponent(typeof(InputsNPC))]
 public abstract class NPCUnit : BaseUnit, IInteractiveItem
 {
     private InputsNPC _npcController;

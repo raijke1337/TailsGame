@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: drone_gun
   WType: 2
-  _charges: 3
+  Charges:
+    _start: 3
+    _max: 0
+    _min: 0
   TriggerIDs:
   - drone_shot
   SkillID: drone_heal

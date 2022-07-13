@@ -23,9 +23,8 @@ public class PlayerUnit : BaseUnit
     protected override void OnEnable()
     {
         base.OnEnable();
-        _playerController = _controller as InputsPlayer;     
-        _visualController = GetComponent<VisualsController>();  
         ToggleCamera(true);
+        _visualController = GetComponent<VisualsController>();
 
         float maxHP = _baseStats.GetBaseStats[BaseStatType.Health].GetMax;
         int stages = _visualController.StagesTotal;
@@ -91,17 +90,17 @@ public class PlayerUnit : BaseUnit
 
     #endregion
 
-    private void ChangeAnimatorLayer(WeaponType type)
+    private void ChangeAnimatorLayer(EquipItemType type)
     {     
         // 1  2 is ranged 3  is melee
         switch (type)
         {
-            case WeaponType.Melee:
+            case EquipItemType.MeleeWeap:
                 _animator.SetLayerWeight(0, 0f);
                 _animator.SetLayerWeight(1, 0f);
                 _animator.SetLayerWeight(2, 100f);
                 break;
-            case WeaponType.Ranged:
+            case EquipItemType.RangedWeap:
                 _animator.SetLayerWeight(0, 100f);
                 _animator.SetLayerWeight(1, 100f);
                 _animator.SetLayerWeight(2, 0f);
@@ -137,6 +136,7 @@ public class PlayerUnit : BaseUnit
 
         if (isEnable)
         {
+            _playerController = _controller as InputsPlayer;
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
             _playerController.MenuToggleRequest += (t) => ToggleMenuEvent?.Invoke(t);
         }
