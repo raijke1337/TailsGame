@@ -3,61 +3,111 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using System;
+using System.Linq;
 
 public static class Extensions
-{/// <summary>
-/// get assets of T type
-/// </summary>
-/// <typeparam name="T">any class</typeparam>
-/// <param name="path">refer to Constants</param>
-/// <param name="includeSubDirs">look in subfolders </param>
-/// <returns>list of assets in specified folder</returns>
-    public static List<T> GetAssetsFromPath<T> (string path,bool includeSubDirs = true) where T: class
+{
+    /// <summary>
+    /// get configs of T type
+    /// </summary>
+    /// <typeparam name="T">any class</typeparam>
+    /// <param name="path">refer to Constants</param>
+    /// <param name="includeSubDirs">look in subfolders </param>
+    /// <returns>list of assets in specified folder</returns>
+    public static T GetConfigByID<T>(string ID) where T : ScriptableObjectID
     {
-        List<T> result = new List<T>();
-        List<string> workPaths = new List<string>
-        {
-            path
-        };
+        string path = Constants.Configs.c_AllConfigsPath;
 
-        if (includeSubDirs)
+        string appPath = Application.dataPath;
+
+        List<T> all = new List<T>();
+
+        List<string> files = new List<string>();
+
+        Stack<string> workPaths = new Stack<string>(new string[1] { path });
+        while (workPaths.Count > 0)
         {
-            var folders = Directory.GetDirectories(Application.dataPath + path);
-            List<string> fixedFolders = new List<string>();
-            foreach (var folder in folders)
+            string currFolder = workPaths.Pop();
+            string[] foundSubfolders = Directory.GetDirectories(appPath + currFolder);
+            string[] foundFiles = Directory.GetFiles(appPath + currFolder);
+            files.AddRange(foundFiles);
+
+            foreach (string foundpath in foundSubfolders)
             {
-                string foldername = folder.Substring(folder.LastIndexOf("/") + 1);
-                workPaths.Add(path + foldername + "/");
+                int index = foundpath.IndexOf(path);
+                var foldername = foundpath.Substring(index);
+                workPaths.Push(foldername + "/");
             }
         }
-        List<string> filesAtPaths = new List<string>();
-        foreach (var folder in workPaths)
-        {
-            var res = (Directory.GetFiles(Application.dataPath + folder));
-            filesAtPaths.AddRange(res);
-        }        
 
-        foreach (string found in filesAtPaths)
+        foreach (string found in files)
         {
-            var replace = Application.dataPath;
-            var foundRelativ = found.Replace(replace.ToString(), "Assets");
+            var foundRelativ = found.Replace(appPath.ToString(), "Assets");
 
             var file = AssetDatabase.LoadAssetAtPath(foundRelativ, typeof(T));
             if (file is T)
             {
-                result.Add(file as T);
+                all.Add(file as T);
             }
         }
-        return result;
+        try
+        { 
+            return all.First(t => t.ID == ID);
+        }
+        catch (InvalidOperationException e)
+        {
+            Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
+            return null;
+        }
     }
 
-    public static float GetRandomFloat(float max)
+    /// <summary>
+    /// get assets of T type
+    /// </summary>
+    /// <typeparam name="T">any class</typeparam>
+    /// <param name="path">refer to Constants</param>
+    /// <param name="includeSubDirs">look in subfolders </param>
+    /// <returns>list of assets in specified folder</returns>
+    public static IEnumerable<T> GetAssetsOfType<T>(string path) where T : class
     {
-        return Random.Range(0, max);
+        string appPath = Application.dataPath;
+
+        List<T> all = new List<T>();
+
+        List<string> files = new List<string>();
+
+        Stack<string> workPaths = new Stack<string>(new string[1] { path });
+        while (workPaths.Count > 0)
+        {
+            string currFolder = workPaths.Pop();
+            string[] foundSubfolders = Directory.GetDirectories(appPath + currFolder);
+            string[] foundFiles = Directory.GetFiles(appPath + currFolder);
+            files.AddRange(foundFiles);
+
+            foreach (string foundpath in foundSubfolders)
+            {
+                int index = foundpath.IndexOf(path);
+                var foldername = foundpath.Substring(index);                
+                workPaths.Push(foldername + "/");
+            }
+        }
+
+        foreach (string found in files)
+        {
+            var foundRelativ = found.Replace(appPath.ToString(), "Assets");
+
+            var file = AssetDatabase.LoadAssetAtPath(foundRelativ, typeof(T));
+            if (file is T)
+            {
+                all.Add(file as T);
+            }
+        }
+        return all; 
     }
 
+    #region random
     public static System.Random Randoms = new System.Random();
-
     /// <summary>
     /// Return a shuffled list using Fisher-Yates method
     /// </summary>
@@ -75,28 +125,6 @@ public static class Extensions
         }
         return input;
     }
-
-
-
-#if UNITY_EDITOR
-
-
-    //[CustomPropertyDrawer(typeof(DodgeController))]
-    //public class DodgeControllerPropertyDrawer : PropertyDrawer
-    //{
-    //    public override VisualElement CreatePropertyGUI(SerializedProperty property)
-    //    {
-    //        var display = new VisualElement();
-            
-    //        var currentcharges = new PropertyField(property.FindPropertyRelative("charges"));
-    //        display.Add(currentcharges);
-            
-    //        return base.CreatePropertyGUI(property);
-    //    }
-    //}
-
-    // todo display
-
-#endif
-
+    #endregion
 }
+

@@ -56,7 +56,11 @@ public class SkillsController : IStatsComponentForHandler, INeedsEmpties
         _skills = new Dictionary<CombatActionType, SkillControllerData>();
         foreach (string id in IDs)
         {
-            var cfg = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath).First(t => t.ID == id);
+            var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(id);
+            if (cfg == null)
+            {
+                throw new InvalidDataException($"Missing cfg for {this} ID {id}");
+            }
             var type = cfg.SkillType;
             _skills[type] =  new SkillControllerData(cfg);
         }

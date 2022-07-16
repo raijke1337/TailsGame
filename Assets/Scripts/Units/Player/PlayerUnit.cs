@@ -26,7 +26,11 @@ public class PlayerUnit : BaseUnit
         ToggleCamera(true);
         _visualController = GetComponent<VisualsController>();
 
-        float maxHP = _baseStats.GetBaseStats[BaseStatType.Health].GetMax;
+        var stats = _controller.GetStatsController;
+
+        float maxHP = stats.GetBaseStats[BaseStatType.Health].GetMax;
+        stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
+
         int stages = _visualController.StagesTotal;
         _visualStagesHP = new float[stages];
         var coef = maxHP / stages;
@@ -38,57 +42,6 @@ public class PlayerUnit : BaseUnit
         _currentVisualStageIndex = 0;
     }    
 
-
-    public override void ApplyEffect(TriggeredEffect eff)
-        // shield damage reduction logic
-    {
-        switch (eff.StatID)
-        {
-            case BaseStatType.Health:
-                _baseStats.AddTriggeredEffect(_playerController.GetShieldController.ProcessHealthChange(eff));
-                break;
-            case BaseStatType.MoveSpeed:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-        }
-    }
-    #region dodge
-
-    private Coroutine _dodgeCor;
-    // stop the dodge like this
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground")&& !collision.gameObject.CompareTag("Enemy")) // also dodge through enemies
-        {
-            _playerController.IsControlsBusy = false;
-            StopCoroutine(_dodgeCor);
-        }
-    }
-    protected override void DodgeAction()
-    {
-        _dodgeCor = StartCoroutine(DodgingMovement());
-    }
-    private IEnumerator DodgingMovement()
-    {
-        var stats = _playerController.GetDodgeController.GetDodgeStats;
-        _playerController.IsControlsBusy = true;
-
-        Vector3 start = transform.position;
-        Vector3 end = start + _controller.MoveDirection * stats[DodgeStatType.Range].GetCurrent;
-
-        float p = 0f;
-        while (p <= 1f)
-        {
-            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent;
-            transform.position = Vector3.Lerp(start, end, p);
-            yield return null;
-        }
-        _playerController.IsControlsBusy = false;
-        yield return null;
-    }
-
-
-    #endregion
 
     private void ChangeAnimatorLayer(EquipItemType type)
     {     
@@ -118,9 +71,8 @@ public class PlayerUnit : BaseUnit
         _playerController.ComboGained = false;
     }
 
-    protected override void HealthChangedEvent(float value,float prevvalue)
+    private void ChangeVisualStage(float value,float prevvalue)
     {
-        base.HealthChangedEvent(value,prevvalue);
         int newIndex = _currentVisualStageIndex + 1;
         if (newIndex >= _visualStagesHP.Count()) return;
         if (value <= _visualStagesHP[newIndex])

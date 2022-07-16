@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: golem_bot
   m_EditorClassIdentifier: 
   ID: golem_bot
-  WType: 1
-  _charges: 0
+  Charges:
+    _start: 0
+    _max: 0
+    _min: 0
   TriggerIDs:
   - golem_bot_hit
-  SkillID: golem_bot_charge
-  ComboValue: 0
+  - stun15
   InternalCooldown: 2

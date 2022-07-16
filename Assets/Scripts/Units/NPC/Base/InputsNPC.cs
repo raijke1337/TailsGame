@@ -46,8 +46,8 @@ public abstract class InputsNPC : ControlInputsBase
             patrolPoints.Add(transform);
         }
 
-        _enemyStats = new EnemyStats(Extensions.GetAssetsFromPath<EnemyStatsConfig>(Constants.Configs.c_EnemyStatConfigsPath).First
-    (t => t.ID == _statsCtrl.GetUnitID));
+        _enemyStats = new EnemyStats(Extensions.GetConfigByID<EnemyStatsConfig>(Unit.GetID));
+
 
         _navMeshAg = GetComponent<NavMeshAgent>();
 

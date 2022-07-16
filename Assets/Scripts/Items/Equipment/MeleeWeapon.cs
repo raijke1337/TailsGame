@@ -16,12 +16,12 @@ public class MeleeWeapon : BaseWeapon
 {
     private WeaponTriggerComponent _trigger;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         _trigger = GetComponent<WeaponTriggerComponent>();
         _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.Enable = false;
-        _trigger.HitSuccessEvent += HandleHit;
         _trigger.Owner = Owner;
     }
 
@@ -31,13 +31,7 @@ public class MeleeWeapon : BaseWeapon
         _trigger.Enable = enable;
     }
 
-    private void OnDisable()
-    {
-        _trigger.HitSuccessEvent -= HandleHit;
-    }
-    protected void HandleHit()
-    {
-        TargetHitCallback(ComboVal);
-    }
+
+
 }
 

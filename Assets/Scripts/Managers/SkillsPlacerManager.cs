@@ -53,7 +53,7 @@ public class SkillsPlacerManager : MonoBehaviour
 
     private void LoadBaseSkills()
     {
-        var skills = Extensions.GetAssetsFromPath<BaseSkill>(Constants.Combat.c_SkillPrefabs,true); 
+        var skills = Extensions.GetAssetsOfType<BaseSkill>(Constants.Combat.c_SkillPrefabs); 
         foreach (var skill in skills)
         {
             _skillsDict[skill.SkillID] = skill;
@@ -61,7 +61,7 @@ public class SkillsPlacerManager : MonoBehaviour
     }
     private void LoadDatasIntoSkills()
     {
-        var cfgs = Extensions.GetAssetsFromPath<SkillControllerDataConfig>(Constants.Configs.c_SkillConfigsPath);
+        var cfgs = Extensions.GetAssetsOfType<SkillControllerDataConfig>(Constants.Configs.c_AllConfigsPath);
         foreach (var skill in _skillsDict.Values)
         {
             var dataCfg = cfgs.First(t => t.ID == skill.SkillID);

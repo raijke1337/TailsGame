@@ -10,9 +10,11 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
-public class InventoryComponent : MonoBehaviour
+[CreateAssetMenu(fileName = "New Stuns COntroller Config", menuName = "Configurations/Stuns")]
+public class StunsControllerConfig : ScriptableObjectID
 {
-        
+    public StatValueContainer StunResistance;
+    public float RegenPerSec;
+    public float GracePeriod;
 }
 

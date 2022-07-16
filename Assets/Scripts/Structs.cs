@@ -16,21 +16,23 @@ public delegate void SkillRequestedEvent(string ID, BaseUnit source, Transform w
 public delegate void StateMachineEvent();
 public delegate void StateMachineEvent<T>(T arg);
 
+public delegate void EquipmentChangeEvent<ItemContent>(bool isEquip);
 public static class Constants
 {
     public static class Configs
     {
-        public const string c_TriggersConfigsPath = "/Scripts/Configurations/TriggersManager/";
-        public const string c_WeapConfigsPath = "/Scripts/Configurations/WeaponsController/";
-        public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseUnit/";
-        public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/InputsNPC/";
-        public const string c_ProjectileConfigsPath = "/Scripts/Configurations/ProjectilesManager/";
-        public const string c_SkillConfigsPath = "/Scripts/Configurations/SkillsManager/";
-        public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
-        public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
-        public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
+        //public const string c_TriggersConfigsPath = "/Scripts/Configurations/TriggersManager/";
+        //public const string c_WeapConfigsPath = "/Scripts/Configurations/WeaponsController/";
+        //public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseUnit/";
+        //public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/InputsNPC/";
+        //public const string c_ProjectileConfigsPath = "/Scripts/Configurations/ProjectilesManager/";
+        //public const string c_SkillConfigsPath = "/Scripts/Configurations/SkillsManager/";
+        //public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
+        //public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
+        //public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
 
-        public const string c_ManagerConfigsPath = "/Scripts/Configurations/";
+        //public const string c_ManagerConfigsPath = "/Scripts/Configurations/";
+        public const string c_AllConfigsPath = "/Scripts/Configurations/";
 
     }
     public static class Objects
@@ -259,17 +261,21 @@ public class StatValueModifier:IHasID
 
 #endregion
 
+
+
+
 #region interfaces
+
+public interface ITakesTriggers
+{
+    void AddTriggeredEffect(TriggeredEffect effect);
+}
 
 public interface IStatsComponentForHandler
 {
     bool IsReady { get; }
     void UpdateInDelta(float deltaTime);
     void SetupStatsComponent();
-}
-public interface IStatsAddEffects
-{
-    void AddTriggeredEffect(TriggeredEffect effect);
 }
 
 public interface IHasID
@@ -316,9 +322,10 @@ public interface IProjectile : ISkill
 public interface IUsesItems : INeedsEmpties
 {
     void LoadItem(IEquippable item);
-    IEnumerable<string> GetSkillStrings();
-
 }
+public interface IGivesSkills : IUsesItems
+{ IEnumerable<string> GetSkillStrings();  }
+
 public interface INeedsEmpties
 { ItemEmpties Empties { get; } }
 

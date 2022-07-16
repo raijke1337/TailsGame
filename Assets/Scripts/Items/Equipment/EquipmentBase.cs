@@ -20,7 +20,7 @@ public abstract class EquipmentBase : ItemBase, IEquippable
     {
         ItemContents = content;
     }
-    protected void Start()
+    protected virtual void Start()
     {
         if (ItemContents == null) Debug.LogError("OnEquip not run for " + this);
     }

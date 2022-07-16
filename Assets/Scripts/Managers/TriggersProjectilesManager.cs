@@ -12,8 +12,10 @@ public class TriggersProjectilesManager : MonoBehaviour
     private Dictionary<string, BaseStatTriggerConfig> _triggersD = new Dictionary<string, BaseStatTriggerConfig>();
     private Dictionary<string, ProjectileDataConfig> _projectilesD = new Dictionary<string, ProjectileDataConfig>();
 
-
     private SkillsPlacerManager _skillsMan;
+
+    [SerializeField]
+    List<BaseStatTriggerConfig> _list;
 
     private void Start()
     {
@@ -38,7 +40,18 @@ public class TriggersProjectilesManager : MonoBehaviour
 
     private void ApplyTriggerEffect(string ID, BaseUnit target, BaseUnit source)
     {
-        var config = _triggersD[ID];
+        BaseStatTriggerConfig config = null;
+
+        try
+        {
+            config = _triggersD[ID];
+        }
+        catch (KeyNotFoundException e)
+        {
+            Debug.LogWarning($"Failed to apply trigger ID {ID} to {target.GetFullName} : {e.Message}");
+            return;
+        }
+
         TriggeredEffect effect = new TriggeredEffect(config);
         BaseUnit finaltgt = null;
 
@@ -119,7 +132,7 @@ public class TriggersProjectilesManager : MonoBehaviour
             return;
         }
 
-        finaltgt.ApplyEffect(effect);
+        finaltgt.AddTriggeredEffect(effect);
     }
 
     private void RegisterTrigger(IAppliesTriggers item)
@@ -157,16 +170,20 @@ public class TriggersProjectilesManager : MonoBehaviour
     [ContextMenu(itemName: "Update configurations")]
     public void UpdateDatas()
     {
-        var configs = Extensions.GetAssetsFromPath<BaseStatTriggerConfig>(Constants.Configs.c_TriggersConfigsPath,true);
+        _list = new List<BaseStatTriggerConfig>();
+        var configs = Extensions.GetAssetsOfType<BaseStatTriggerConfig>(Constants.Configs.c_AllConfigsPath);
         foreach (var cfg in configs)
         {
             _triggersD[cfg.ID] = cfg;
+            _list.Add(cfg);
         }
-        var projectileCfgs = Extensions.GetAssetsFromPath<ProjectileDataConfig>(Constants.Configs.c_ProjectileConfigsPath);
+        var projectileCfgs = Extensions.GetAssetsOfType<ProjectileDataConfig>(Constants.Configs.c_AllConfigsPath);
         foreach (var cfg in projectileCfgs)
         {
             _projectilesD[cfg.ID] = cfg;
         }
+
+        
     }
 
 }

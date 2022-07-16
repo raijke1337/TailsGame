@@ -61,7 +61,7 @@ public class PlayerUnitPanel : BaseUnitPanel
 
         HPc = _player.GetStats()[BaseStatType.Health];
         HEc = _combo.ComboContainer;
-        SHc = _shield.GetShieldStats(ShieldStatType.Shield);
+        SHc = _shield.GetShieldStats[ShieldStatType.Shield];
 
         HPc.ValueChangedEvent += ResetTicker; // only hp because other stats regen 
     }

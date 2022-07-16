@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "New Cursors Dict", menuName = "Configurations/Cursors", order = 1)]
-public class CursorsDictionary : ScriptableObject
+public class CursorsDictionary : ScriptableObjectID
 {
     [SerializeField] SerializableDictionaryBase<CursorType, Texture2D> _dict;
     public Dictionary<CursorType, Texture2D> GetCursors { get

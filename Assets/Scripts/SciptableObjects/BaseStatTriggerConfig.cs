@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "New BaseStatTriggerConfiguration",menuName = "Configurations/BaseStatTrigger",order =1 )]
 public class BaseStatTriggerConfig : ScriptableObjectID
 {
-    public BaseStatType StatID;
+    public TriggerChangedValue ChangedValueType;
     public float InitialValue;
     public float RepeatedValue;
     public float RepeatApplicationDelay;

@@ -6,9 +6,7 @@ public class BaseWeaponConfig : ScriptableObjectID
 {
     public StatValueContainer Charges;
     public List<string> TriggerIDs;
-   //  public string SkillID; removed because this is now stored in ItemContent
-    public int ComboValue;
-    // how much combo increases per hit
+
     public float InternalCooldown;
 
 }

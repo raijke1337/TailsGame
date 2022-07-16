@@ -5,9 +5,9 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(ControlInputsBase),typeof(InventoryManager))]
+[RequireComponent(typeof(ControlInputsBase),typeof(UnitInventoryComponent))]
 
-public abstract class BaseUnit : MonoBehaviour, IHasID
+public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 {
     [SerializeField] protected string StatsID;
 
@@ -17,23 +17,24 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
     protected Animator _animator;
     protected Rigidbody _rigidbody;
     public Collider GetCollider { get; private set; }
-    protected BaseStatsController _baseStats;
     protected ControlInputsBase _controller;
 
     public Side Side;
 
     public UnitType GetUnitType() => _controller.GetUnitType();
+    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _controller.GetStatsController.GetBaseStats;
+
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
-    public ControlInputsBase GetInputs() => _controller;
+    public UnitInventoryComponent Inventory { get; protected set; }
+
+
+    public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
 
 
-    public string GetFullName => _baseStats.GetDisplayName;
-
-    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _baseStats.GetBaseStats;
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event SkillRequestedEvent SkillRequestSuccessEvent;
-    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit,unit.GetInputs().GetEmpties.SkillsEmpty);
+    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit,unit._controller.GetEmpties.SkillsEmpty);
 
     private Camera _faceCam;
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
@@ -42,7 +43,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
 
     protected virtual void Awake()
     {
-        _baseStats = new BaseStatsController(StatsID);
+        Inventory = GetComponent<UnitInventoryComponent>(); //todo placeholder
     }
     protected virtual void OnEnable()
     {
@@ -50,8 +51,9 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
         _rigidbody = GetComponent<Rigidbody>();
 
         _controller = GetComponent<ControlInputsBase>();
-        _controller.InitControllers(_baseStats);
         _controller.SetUnit(this);
+        _controller.InitControllers(new BaseStatsController(StatsID));
+
         _controller.BindControllers(true);
 
         _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
@@ -63,17 +65,15 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
     {
         if (isEnable)
         {
-            _handler.RegisterUnitForStatUpdates(_baseStats);
-            GetStats()[BaseStatType.Health].ValueChangedEvent += HealthChangedEvent;
+            _controller.GetStatsController.UnitDiedEvent += OnDeath;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened += AnimateStagger; 
         }
         else
         {
-            GetStats()[BaseStatType.Health].ValueChangedEvent -= HealthChangedEvent;
+            _controller.GetStatsController.UnitDiedEvent -= OnDeath;
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
-            _handler.RegisterUnitForStatUpdates(_baseStats, false);
-            _controller.StaggerHappened += AnimateStagger;
+            _controller.StaggerHappened -= AnimateStagger;
         }
     }
     protected virtual void Start()
@@ -92,18 +92,19 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
     }
     #endregion
     #region stats
-    protected virtual void HealthChangedEvent(float value, float prevValue)
+    protected virtual void OnDeath()
     {
-        if (value <= 0f)
-        {
+
             _animator.SetTrigger("Death");
             BaseUnitDiedEvent?.Invoke(this);
             UnitBinds(false);
             _controller.IsControlsBusy = true;
-            StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));
-        }
+            StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));        
     }
-    public abstract void ApplyEffect(TriggeredEffect eff);
+    public virtual void AddTriggeredEffect(TriggeredEffect eff)
+    {
+        _controller.AddTriggeredEffect(eff);
+    }
     #endregion
     #region movement
     //sets animator values 
@@ -175,8 +176,12 @@ public abstract class BaseUnit : MonoBehaviour, IHasID
         _controller.GetWeaponController.ToggleTriggersOnMelee(result);
     }
 
-    protected virtual void DodgeAction() { Debug.LogWarning($"{GetID}:{_baseStats.GetDisplayName} used dodge but has no logic "); }
-    protected virtual void AnimateStagger() {  _animator.SetTrigger("TakeDamage");    }
+    protected virtual void DodgeAction() { Debug.LogWarning($"{GetID}:{GetFullName} used dodge but has no logic "); }
+    protected virtual void AnimateStagger()
+    {  
+        _animator.SetTrigger("TakeDamage");
+        Debug.Log($"{_controller.GetStatsController.GetDisplayName} got stunned!");
+    }
 
 
     #endregion

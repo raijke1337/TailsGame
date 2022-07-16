@@ -48,7 +48,7 @@ public class SkillsControllerProperyDrawer : PropertyDrawer
         EditorGUI.LabelField(position, label, new GUIContent("TODO"));
     }
 }
-[CustomPropertyDrawer(typeof(StunnerComponent))]
+[CustomPropertyDrawer(typeof(StunsController))]
 public class StunnerComponentProperyDrawer : PropertyDrawer
 {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

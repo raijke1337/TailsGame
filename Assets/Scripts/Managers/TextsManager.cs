@@ -29,7 +29,7 @@ public class TextsManager : MonoBehaviour
             trigger.ShowTextEvent += ShowTexts;
         }
         TextPanel.SetActive(false);
-        var ids = Extensions.GetAssetsFromPath<TextContainerSO>(Constants.Texts.c_TextsPath);
+        var ids = Extensions.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
         foreach (var id in ids)
         {
             containers.Add(id.container);

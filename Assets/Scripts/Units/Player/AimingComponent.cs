@@ -48,6 +48,7 @@ public class AimingComponent : MonoBehaviour
             _prevPos = v;
             return v;
         }
+
         else return _prevPos;
     }
     private IInteractiveItem GetItemUnderCursor()

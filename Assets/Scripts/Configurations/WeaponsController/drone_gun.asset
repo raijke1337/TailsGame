@@ -13,14 +13,12 @@ MonoBehaviour:
   m_Name: drone_gun
   m_EditorClassIdentifier: 
   ID: drone_gun
-  WType: 2
   Charges:
     _start: 3
     _max: 0
     _min: 0
   TriggerIDs:
   - drone_shot
-  SkillID: drone_heal
-  ComboValue: 0
+  - stun15
   InternalCooldown: 2
   ProjectileID: drone_gun_proj

@@ -7,7 +7,6 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
 
     protected StatValueContainer WeaponUses;
 
-    protected int ComboVal;
     protected float InternalCooldown;
     protected float _currentCooldown;
 
@@ -53,7 +52,6 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
             AddTriggerData(triggerID);
         }
         WeaponUses = new StatValueContainer(config.Charges);
-        ComboVal = config.ComboValue;
         InternalCooldown = config.InternalCooldown;
     }
     public void UpdateInDelta(float deltaTime)

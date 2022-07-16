@@ -16,14 +16,23 @@ public class GameManager : MonoInstaller
 {
 
     [SerializeField] private CursorManager _cursors;
+    public PlayerInventoryManager InventoryManager { get;private set; }
+    public UnitsManager UnitsManager { get; private set; }
+    public PlayerUnit GetPlayer => UnitsManager.GetPlayerUnit;
 
     public override void Start()
     {
         base.Start();
-        var config = Extensions.GetAssetsFromPath<CursorsDictionary>(Constants.Configs.c_ManagerConfigsPath).First();
+        var config = Extensions.GetConfigByID<CursorsDictionary>("default");
 
+        InventoryManager = GetComponent<PlayerInventoryManager>();
         _cursors = new CursorManager(config);
+
+        InventoryManager.GameManager = this;
+        UnitsManager = GetComponent<UnitsManager>();
     }
+
+
     public override void InstallBindings()
     {
         Container.BindInstance(FindObjectOfType<PlayerUnit>()).AsSingle();
@@ -31,8 +40,6 @@ public class GameManager : MonoInstaller
         Container.BindInstance(GetComponent<TriggersProjectilesManager>()).AsSingle();
         Container.BindInstance(GetComponent<UnitsManager>()).AsSingle();
     }
-
-
 
 
 }

@@ -51,13 +51,14 @@ public enum TriggerTargetType
     TargetsUser,
     TargetsAllies
 }
-public enum TriggerChangedValue
+public enum TriggerChangedValue : byte
 {
-    Health,
-    Shield,
-    Combo,
-    MoveSpeed,
-
+    Health = 0,
+    Shield = 10,
+    Combo = 20,
+    MoveSpeed = 30,
+    TurnSpeed = 40,
+    Stagger = 50
 }
 
 

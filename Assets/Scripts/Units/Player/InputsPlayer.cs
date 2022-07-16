@@ -7,8 +7,6 @@ public class InputsPlayer : ControlInputsBase
 {
     private PlayerControls _controls;
 
-    [SerializeField] private ComboController _comboCtrl;
-
     private IsoCamAdjust _adj;
     public TargetUnitPanel TargetPanel { get; set; }
     private AimingComponent _aim;
@@ -31,13 +29,13 @@ public class InputsPlayer : ControlInputsBase
     public override void BindControllers(bool isEnable)
     {
         _controls = new PlayerControls();
-        _comboCtrl = new ComboController(_statsCtrl.GetUnitID);
         base.BindControllers(isEnable);
+        PlayerBind();
     }
 
     private void Start()
     {
-        PlayerBind();
+
         transform.LookAt(transform.forward);
     }
 
@@ -46,11 +44,7 @@ public class InputsPlayer : ControlInputsBase
         if (enable)
         {
             _controls.Game.Enable();
-            Cursor.visible = false;
             _adj = new IsoCamAdjust();
-
-            _handler.RegisterUnitForStatUpdates(_comboCtrl);
-
 
             _aim = GetComponent<AimingComponent>();
 
@@ -70,13 +64,12 @@ public class InputsPlayer : ControlInputsBase
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
 
-            _weaponCtrl.TargetHitByWeaponEvent += HandleComboGain;
+            //_weaponCtrl.TargetHitByWeaponEvent += HandleComboGain;
 
         }
         else
         {
             _controls.Game.Disable();
-            Cursor.visible = true;
 
             _controls.Game.Dash.performed -= Dash_performed;
             _controls.Game.SkillE.performed -= SkillE_performed;
@@ -91,20 +84,20 @@ public class InputsPlayer : ControlInputsBase
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
-            _weaponCtrl.TargetHitByWeaponEvent -= HandleComboGain;
+            //_weaponCtrl.TargetHitByWeaponEvent -= HandleComboGain;
 
         }
     }
 
-    private void HandleComboGain(float value)
-    {
-        if (ComboGained) return;
-        else
-        {
-            _comboCtrl.AddCombo(value);
-            ComboGained = true;
-        }
-    }
+    //private void HandleComboGain(float value)
+    //{
+    //    if (ComboGained) return;
+    //    else
+    //    {
+    //        _comboCtrl.AddCombo(value);
+    //        ComboGained = true;
+    //    }
+    //}
     private void SwitchAnimatorLayer(EquipItemType type)
     {
         if (_weaponCtrl.CurrentWeaponType != type)

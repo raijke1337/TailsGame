@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class WeaponController : IStatsComponentForHandler, IUsesItems, IHasOwner
+public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwner
 {
 
     #region inventoryManager
@@ -28,7 +28,7 @@ public class WeaponController : IStatsComponentForHandler, IUsesItems, IHasOwner
     #endregion
 
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
-    public event SimpleEventsHandler<float> TargetHitByWeaponEvent; // for comboctrl, used by input
+    //public event SimpleEventsHandler<float> TargetHitByWeaponEvent; // for comboctrl, used by input
 
     public BaseUnit Owner { get; set; }
 
@@ -116,18 +116,24 @@ public class WeaponController : IStatsComponentForHandler, IUsesItems, IHasOwner
         foreach (IWeapon iweap in CurrentWeapons.Values.ToList())
         {
             var weap = GameObject.Instantiate(iweap.ItemContents.ContentItem, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
-            BaseWeaponConfig config = Extensions.GetAssetsFromPath<BaseWeaponConfig> (Constants.Configs.c_WeapConfigsPath).First(t => t.ID == iweap.GetID);
+            BaseWeaponConfig config = Extensions.GetConfigByID<BaseWeaponConfig> (iweap.GetID);
+            if (config == null)
+            { 
+                IsReady = false;
+                throw new Exception($"Failed to config weapon {weap.GetID} : {this}");            
+            }
+
             var w = weap as BaseWeapon;
             w.SetUpWeapon(config);
             CurrentWeapons[iweap.ItemContents.ItemType] = w;
             w.OnEquip(iweap.ItemContents);
+            w.Owner = Owner;
             // here we replace the actual prefab that is stored in the ItemContent with our cloned one
         }
-        foreach (IWeapon weapon in CurrentWeapons.Values)
-        {
-            weapon.TargetHit += (f) => TargetHitByWeaponEvent?.Invoke(f);
-            weapon.Owner = Owner;
-        }
+        //foreach (IWeapon weapon in CurrentWeapons.Values)
+        //{
+        //    weapon.Owner = Owner;
+        //}
     }
 
 

@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: hammer
   m_EditorClassIdentifier: 
   ID: hammer
-  WType: 1
-  _charges: 0
+  Charges:
+    _start: 0
+    _max: 0
+    _min: 0
   TriggerIDs:
   - hammer_hit
-  SkillID: hammer_spin
+  - combo15
   ComboValue: 15
   InternalCooldown: 0.1

@@ -11,12 +11,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 [Serializable]
-public class ComboController : IStatsComponentForHandler
+public class ComboController : BaseController, IStatsComponentForHandler, ITakesTriggers
 {
 
     public StatValueContainer ComboContainer { get; }
 
-    public bool IsReady => true;
+    public override bool IsReady { get; protected set; } = false;
 
     protected float Degen;
     protected float Timeout;
@@ -24,12 +24,15 @@ public class ComboController : IStatsComponentForHandler
 
     public ComboController(string ID)
     {
-        var cfg = Extensions.GetAssetsFromPath<ComboStatsConfig>(Constants.Configs.c_ComboConfigsPath).First(t => t.ID == ID);
+        var cfg = Extensions.GetConfigByID<ComboStatsConfig>(ID);
+        if (cfg == null) return;
+        IsReady = true;
+
         ComboContainer = new StatValueContainer(cfg.ComboContainer);
         Degen = cfg.DegenCoeff;
         Timeout = cfg.HeatTimeout;
     }
-
+    // todo replace with triggers
     public void AddCombo(float value)
     {
         ComboContainer.ChangeCurrent(value);
@@ -43,18 +46,25 @@ public class ComboController : IStatsComponentForHandler
         return result;
     }
 
-    public void SetupStatsComponent()
+    public override void SetupStatsComponent()
     {
         ComboContainer.Setup();
     }
-    public void UpdateInDelta(float deltaTime)
+    public override void UpdateInDelta(float deltaTime)
     {
+
+        base.UpdateInDelta(deltaTime);
         if (_currentTimeout <= Timeout)
         {
             _currentTimeout += deltaTime;
             return;
         }
         ComboContainer.ChangeCurrent(-Degen * deltaTime);
+    }
+
+    protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+    {
+        return ComboContainer;  
     }
 }
 

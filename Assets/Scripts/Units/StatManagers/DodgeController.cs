@@ -5,27 +5,30 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class DodgeController : IStatsComponentForHandler, IUsesItems
+public class DodgeController : BaseController, IStatsComponentForHandler, IUsesItems, ITakesTriggers
 {
     public IEquippable EquippedDodgeItem { get; private set; }
 
     Dictionary<DodgeStatType, StatValueContainer> _stats;
-
     public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
-
-
-
-    public bool IsReady {get; private set;}
+        public override bool IsReady { get; protected set; }
     public ItemEmpties Empties { get; }
     public DodgeController(ItemEmpties ie) => Empties = ie;
     public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
 
     private Queue<Timer> _timerQueue = new Queue<Timer>();
 
-    public void SetupStatsComponent()
+    public override void SetupStatsComponent()
     {
         _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-        var cfg = Extensions.GetAssetsFromPath<DodgeStatsConfig>(Constants.Configs.c_DodgeConfigsPath).First(t => t.ID == EquippedDodgeItem.ItemContents.ID);
+        var cfg = Extensions.GetConfigByID<DodgeStatsConfig>(EquippedDodgeItem.ItemContents.ID);
+
+        if (cfg == null)
+        {
+            IsReady = false;
+            throw new Exception($"Mising cfg by ID {EquippedDodgeItem.ItemContents.ID} from item {EquippedDodgeItem.GetID} : {this}");
+        }
+
         foreach (var c in cfg.Stats)
         {
             _stats[c.Key] = new StatValueContainer(c.Value);
@@ -54,9 +57,10 @@ public class DodgeController : IStatsComponentForHandler, IUsesItems
         _stats[DodgeStatType.Charges].ChangeCurrent(1);
     }
 
-    public void UpdateInDelta(float deltaTime)
+    public override void UpdateInDelta(float deltaTime)
     {
         foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
+        base.UpdateInDelta(deltaTime);
     }
 
     public void LoadItem(IEquippable item)
@@ -69,9 +73,9 @@ public class DodgeController : IStatsComponentForHandler, IUsesItems
         }         
     }
 
-    public IEnumerable<string> GetSkillStrings()
+    protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
     {
-        return null;
+        return _stats[DodgeStatType.Charges];
     }
 }
 

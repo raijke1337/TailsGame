@@ -1732,6 +1732,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2451150719815068502, guid: 9502839f06e805a42a53fdf2facc1312,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5825795693228986369, guid: 9502839f06e805a42a53fdf2facc1312,
         type: 3}
       propertyPath: m_IsActive
@@ -1767,6 +1772,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8543687933063746076, guid: 9502839f06e805a42a53fdf2facc1312,
+        type: 3}
+      propertyPath: inventoryManager
+      value: 
+      objectReference: {fileID: 1681955252388181780}
     - target: {fileID: 9100273389000064651, guid: 9502839f06e805a42a53fdf2facc1312,
         type: 3}
       propertyPath: m_FontData.m_BestFit
@@ -2635,6 +2645,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -3104,6 +3115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -3568,6 +3580,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -6940,6 +6953,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -7207,6 +7221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -8009,8 +8024,18 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
+      propertyPath: Equipments.isExpanded
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
       propertyPath: ItemsToEquip.Array.size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: EquippedItems.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
@@ -8024,6 +8049,145 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 7e03941af3fb9474c9fc200ffbb8395b,
         type: 2}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keys.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._values.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keys.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keys.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keys.Array.data[2]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keys.Array.data[3]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keyValues.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._values.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: dad5f358bc560794c86cae0db39f5b4a,
+        type: 2}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._values.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7e03941af3fb9474c9fc200ffbb8395b,
+        type: 2}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._values.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f69dcf6732035848bd11213aa66eef6,
+        type: 2}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._values.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: a1f3c023a8a050340be0b27fd9110b5c,
+        type: 2}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.canAdd
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keyValues.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keyValues.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keyValues.Array.data[2]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments._keyValues.Array.data[3]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.canRemove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.draggable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.expandable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.isExpanded
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.slideEasing
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.footerHeight
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.headerHeight
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.label.m_Text
+      value: Keys
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.verticalSpacing
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.multipleSelection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 134691008369917280, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: Equipments.reorderableList.showDefaultBackground
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2657373002772585165, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
       propertyPath: Empties.OthersEmpty
@@ -8034,6 +8198,11 @@ PrefabInstance:
       propertyPath: Empties.SkillsEmpty
       value: 
       objectReference: {fileID: 205118230}
+    - target: {fileID: 2657373002772585165, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: extraSkills.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2657373002772585165, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
       propertyPath: Empties.MeleeWeaponEmpty
@@ -8129,6 +8298,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5282001648752123645, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7954660078476576454, guid: 23a708fce4d0f5f4aaa001024d28d9d7,
         type: 3}
@@ -13944,6 +14118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -14119,6 +14294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -14960,6 +15136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerIDs:
   - trap_small
+  - stun100
   disappearsOnPickup: 0
   pickupEffect: {fileID: 0}
   pickupEffectDuration: 0
@@ -16104,7 +16281,7 @@ GameObject:
   - component: {fileID: 9175915545894483419}
   - component: {fileID: 7633380981394668432}
   - component: {fileID: 5065316199085917918}
-  - component: {fileID: 1681955252388181779}
+  - component: {fileID: 1681955252388181780}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -16112,7 +16289,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1681955252388181779
+--- !u!114 &1681955252388181780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -16121,11 +16298,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1681955252388181778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 494b41e1fe5761548aa635130884824b, type: 3}
+  m_Script: {fileID: 11500000, guid: eacd94ca62efbd245a464739819098a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemsToEquip: []
-  Bag: []
+  BagItems:
+  - {fileID: 11400000, guid: def2a067837772a41a4cdaefb63e8935, type: 2}
+  - {fileID: 11400000, guid: 0d988b98dff2f824d956bb7aa133a040, type: 2}
 --- !u!114 &1891357408655149100
 MonoBehaviour:
   m_ObjectHideFlags: 0

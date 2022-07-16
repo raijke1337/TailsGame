@@ -34,18 +34,19 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
         _npcController = _controller as InputsNPC;        
     }
 
-    public override void ApplyEffect(TriggeredEffect eff)
-    {
-        switch (eff.StatID)
-        {
-            case BaseStatType.Health:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-            case BaseStatType.MoveSpeed:
-                _baseStats.AddTriggeredEffect(eff);
-                break;
-        }
-    }
+    // move to controller
+    //public override void ApplyEffect(TriggeredEffect eff)
+    //{
+    //    switch (eff.StatID)
+    //    {
+    //        case BaseStatType.Health:
+    //            _baseStats.AddTriggeredEffect(eff);
+    //            break;
+    //        case BaseStatType.MoveSpeed:
+    //            _baseStats.AddTriggeredEffect(eff);
+    //            break;
+    //    }
+    //}
 
     public void AiToggle(bool isProcessing)
     {
@@ -56,11 +57,6 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
         _npcController.ForceCombat(player);
     }
 
-    protected override void HealthChangedEvent(float value, float prevValue)
-    {
-        base.HealthChangedEvent(value, prevValue);
-        OnUnitAttackedEvent?.Invoke(this);
-    }
     public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this); 
 }
 
