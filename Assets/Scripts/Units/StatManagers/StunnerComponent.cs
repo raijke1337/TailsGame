@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
-
+    [Serializable]
     public class StunsController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
         public override bool IsReady { get; protected set; } = false;
@@ -14,10 +14,12 @@ namespace Assets.Scripts.Units
         private StatValueContainer CurrentValue;
         private float _graceTime;
         private float _regen;
-        private bool isGracePeriod = false;
-
+        [SerializeField] private bool isGracePeriod = false;
         private Timer _timer;
 
+#if UNITY_EDITOR
+        [SerializeField] private float _currValue;
+#endif
 
 
         public StunsController(string ID = "default")
@@ -40,6 +42,9 @@ namespace Assets.Scripts.Units
             }
             _timer.TimerTick(deltaTime);
             CurrentValue.ChangeCurrent(deltaTime * _regen);
+#if UNITY_EDITOR
+            _currValue = CurrentValue.GetCurrent;
+#endif
         }
 
         public override void SetupStatsComponent()

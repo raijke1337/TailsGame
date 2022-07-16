@@ -27,7 +27,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     protected ShieldController _shieldCtrl;
     protected SkillsController _skillCtrl;
     protected ComboController _comboCtrl;
-    protected StunsController _stunsCtrl;
+    [SerializeField]protected StunsController _stunsCtrl;
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
