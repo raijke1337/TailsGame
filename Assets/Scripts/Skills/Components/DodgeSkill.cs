@@ -11,9 +11,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class ServiceGolemUnit : NPCUnit
+public class DodgeSkill : SelfSkill
 {
-
 
 
 }

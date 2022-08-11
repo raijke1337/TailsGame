@@ -32,7 +32,7 @@ public static class Constants
         //public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
 
         //public const string c_ManagerConfigsPath = "/Scripts/Configurations/";
-        public const string c_AllConfigsPath = "/Scripts/Configurations/";
+        public const string c_AllConfigsPath = "/Resources/Configurations/";
 
     }
     public static class Objects

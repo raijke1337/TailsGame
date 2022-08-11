@@ -59,10 +59,13 @@ public class SkillsController : IStatsComponentForHandler, INeedsEmpties
             var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(id);
             if (cfg == null)
             {
-                throw new InvalidDataException($"Missing cfg for {this} ID {id}");
+                return;
             }
-            var type = cfg.SkillType;
-            _skills[type] =  new SkillControllerData(cfg);
+            else
+            {
+                var type = cfg.SkillType;
+                _skills[type] = new SkillControllerData(cfg);
+            }
         }
     }
 

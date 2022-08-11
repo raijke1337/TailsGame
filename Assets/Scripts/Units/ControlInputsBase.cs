@@ -1,4 +1,5 @@
 using Assets.Scripts.Units;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -62,33 +63,44 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public virtual void BindControllers(bool isEnable)
     {
 
-        
+
         _inventoryManager.AddItemUser(_weaponCtrl);
         _inventoryManager.AddItemUser(_shieldCtrl);
         _inventoryManager.AddItemUser(_dodgeCtrl);
         // todo proper inventory
 
         IsControlsBusy = false;
-        _weaponCtrl.Owner  = Unit;
+        _weaponCtrl.Owner = Unit;
 
         _handler.RegisterUnitForStatUpdates(_inventoryManager, isEnable);
         // inv manager loads items into managers and they set their isReady status
 
-        _handler.RegisterUnitForStatUpdates(_dodgeCtrl,isEnable);  // maybe todo: turn dodge into a SelfSkill
-        _handler.RegisterUnitForStatUpdates(_shieldCtrl,isEnable);
+        _handler.RegisterUnitForStatUpdates(_dodgeCtrl, isEnable);  // maybe todo: turn dodge into a SelfSkill
+        _handler.RegisterUnitForStatUpdates(_shieldCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_weaponCtrl, isEnable);
-        _handler.RegisterUnitForStatUpdates(_stunsCtrl, isEnable);   
+        _handler.RegisterUnitForStatUpdates(_stunsCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_statsCtrl, isEnable);
         _handler.RegisterUnitForStatUpdates(_comboCtrl, isEnable);
         // only registered if (isReady)
 
-        // needs data from set up weaponctrl
-        List<string> skills = (List<string>)_weaponCtrl.GetSkillStrings();
+
+        List<string> skills = new List<string>(); 
         foreach (var skill in extraSkills) { skills.Add(skill); }
-        skills.AddRange(_shieldCtrl.GetSkillStrings());
+
+
+        if (_weaponCtrl.GetSkillStrings() != null && _weaponCtrl.IsReady)
+        {
+            skills.AddRange(_weaponCtrl.GetSkillStrings());
+        }
+
+        if (_shieldCtrl.GetSkillStrings() != null && _shieldCtrl.IsReady)
+        {
+            skills.AddRange(_shieldCtrl.GetSkillStrings());
+        }  
 
         _skillCtrl.LoadSkills(skills);
         _handler.RegisterUnitForStatUpdates(_skillCtrl, isEnable);
+        
         _stunsCtrl.StunHappenedEvent += StunEventCallback;
 
     }
@@ -146,5 +158,46 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
                 break;
         }
     }
+
+    #region dodge
+    public void PerformDodging()
+    {
+        _dodgeCor = StartCoroutine(DodgingMovement());
+    }
+
+    private Coroutine _dodgeCor;
+    // stop the dodge like this
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
+        {
+            IsControlsBusy = false;
+            StopCoroutine(_dodgeCor);
+        }
+    }
+
+    private IEnumerator DodgingMovement()
+    {
+        var stats = _dodgeCtrl.GetDodgeStats;
+        IsControlsBusy = true;
+
+        Vector3 start = transform.position;
+        Vector3 end = start + MoveDirection * stats[DodgeStatType.Range].GetCurrent;
+
+        float p = 0f;
+        while (p <= 1f)
+        {
+            p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent;
+            transform.position = Vector3.Lerp(start, end, p);
+            yield return null;
+        }
+        IsControlsBusy = false;
+        yield return null;
+    }
+
+
+    #endregion
+
 }
 

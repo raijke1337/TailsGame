@@ -38,6 +38,8 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
 
     public override void SetupStatsComponent()
     {
+        if (!IsReady) return;
+
         var cfg = Extensions.GetConfigByID<ShieldSettings>(EquippedShieldItem.ItemContents.ID);
 
         if (cfg == null) return;

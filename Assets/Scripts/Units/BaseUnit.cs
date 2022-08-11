@@ -153,7 +153,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
                 break;
             case CombatActionType.Dodge:
                 _animator.SetTrigger("Dodge");
-                DodgeAction();
+                _controller.PerformDodging();
                 break;
             case CombatActionType.MeleeSpecialQ:
                 _animator.SetTrigger("QSpecial");
@@ -176,7 +176,6 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         _controller.GetWeaponController.ToggleTriggersOnMelee(result);
     }
 
-    protected virtual void DodgeAction() { Debug.LogWarning($"{GetID}:{GetFullName} used dodge but has no logic "); }
     protected virtual void AnimateStagger()
     {  
         _animator.SetTrigger("TakeDamage");

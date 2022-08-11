@@ -31,32 +31,26 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
         base.OnEnable();
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
-        _npcController = _controller as InputsNPC;        
+
+        _controller.GetStatsController.GetBaseStats[BaseStatType.Health].ValueChangedEvent += OnOuch;
     }
 
-    // move to controller
-    //public override void ApplyEffect(TriggeredEffect eff)
-    //{
-    //    switch (eff.StatID)
-    //    {
-    //        case BaseStatType.Health:
-    //            _baseStats.AddTriggeredEffect(eff);
-    //            break;
-    //        case BaseStatType.MoveSpeed:
-    //            _baseStats.AddTriggeredEffect(eff);
-    //            break;
-    //    }
-    //}
-
+    private void OnOuch(float curr, float prev)
+    {
+        if (curr < prev) OnUnitAttackedEvent?.Invoke(this);
+    }
     public void AiToggle(bool isProcessing)
     {
+        if (_npcController == null) SetNPCInputs();
         _npcController.SwitchState(isProcessing);
+        // todo thi is a bandaid
     }
     public virtual void ReactToDamage(PlayerUnit player)
     {
         _npcController.ForceCombat(player);
     }
 
+    private void SetNPCInputs() => _npcController = _controller as InputsNPC;
     public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this); 
 }
 

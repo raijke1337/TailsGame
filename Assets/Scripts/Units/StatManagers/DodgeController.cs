@@ -11,7 +11,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
 
     Dictionary<DodgeStatType, StatValueContainer> _stats;
     public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
-        public override bool IsReady { get; protected set; }
+    public override bool IsReady { get; protected set; }
     public ItemEmpties Empties { get; }
     public DodgeController(ItemEmpties ie) => Empties = ie;
     public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
@@ -77,6 +77,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
     {
         return _stats[DodgeStatType.Charges];
     }
+
 }
 
 

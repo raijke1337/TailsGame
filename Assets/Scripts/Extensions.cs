@@ -17,6 +17,12 @@ public static class Extensions
     /// <returns>list of assets in specified folder</returns>
     public static T GetConfigByID<T>(string ID) where T : ScriptableObjectID
     {
+        Debug.Log($"Loading config {typeof(T)} with ID {ID}");
+        if (ID == "")
+        {
+            Debug.Log($"ID was empty");
+            return null;
+        }
         string path = Constants.Configs.c_AllConfigsPath;
 
         string appPath = Application.dataPath;
