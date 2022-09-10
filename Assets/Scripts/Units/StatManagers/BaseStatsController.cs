@@ -18,8 +18,6 @@ public class BaseStatsController : BaseController, IStatsComponentForHandler, IT
     public SerializableDictionaryBase<BaseStatType, StatValueContainer> GetBaseStats { get;private set; }
     public event SimpleEventsHandler UnitDiedEvent;
     public string GetDisplayName { get; }
-    public override bool IsReady { get; protected set; } = false;
-
 
 
     #region ihandler

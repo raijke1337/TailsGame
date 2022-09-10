@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwner
+public class WeaponController : BaseController, IGivesSkills, IHasOwner
 {
 
     #region inventoryManager
@@ -20,21 +20,36 @@ public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwn
         if (!(item is IWeapon)) return;
         else
         {
-            CurrentWeapons[item.ItemContents.ItemType] = item as IWeapon;
+            var weap = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
+            var w = weap as BaseWeapon;
+            CurrentWeapons[item.GetContents.ItemType] = w;
+
+            BaseWeaponConfig config = Extensions.GetConfigByID<BaseWeaponConfig>(w.GetID);
+
+            if (config == null)
+            {
+                IsReady = false;
+                throw new Exception($"Failed to config weapon {w.GetContents.ID} on {Owner}");
+            }
+
+            w.SetUpWeapon(config);
+            w.Owner = Owner;
+
+
             IsReady = true;
+            // here we replace the actual prefab that is stored in the ItemContent with our cloned one
         }
     }
 
     #endregion
 
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
-    //public event SimpleEventsHandler<float> TargetHitByWeaponEvent; // for comboctrl, used by input
-
     public BaseUnit Owner { get; set; }
 
     public EquipItemType CurrentWeaponType { get; private set; } = EquipItemType.None;
 
-    public bool IsReady { get; private set; } = false;
+    //public bool IsReady { get; private set; } = false;
+
     public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
     protected virtual void SwitchWeapon(EquipItemType type)
     {
@@ -56,6 +71,7 @@ public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwn
                 break;
         }
         CurrentWeaponType = type;
+        
     }
 
     protected void Sheathe(EquipItemType type)
@@ -83,7 +99,11 @@ public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwn
         return true;
     }
 
-    public int GetAmmoByType(EquipItemType type) => CurrentWeapons[type].GetAmmo;
+    public int GetAmmoByType(EquipItemType type)
+    {
+        if (!CurrentWeapons.ContainsKey(type)) return 0;
+        else return CurrentWeapons[type].GetAmmo;
+    }
 
     public virtual bool UseWeaponCheck(EquipItemType type,out string result)
     {
@@ -103,41 +123,18 @@ public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwn
     }
     public void ToggleTriggersOnMelee(bool isEnable)
     {
+        if (CurrentWeapons.ContainsKey(EquipItemType.MeleeWeap))
         (CurrentWeapons[EquipItemType.MeleeWeap] as MeleeWeapon).ToggleColliders(isEnable);
     }
 
 
+    public override void SetupStatsComponent()
+    {
 
-    // load weapon stats from configs
-    // set trigger info for weapon
-    [ContextMenu(itemName:"Run setup")]
-    public virtual void SetupStatsComponent()
-    {        
-        foreach (IWeapon iweap in CurrentWeapons.Values.ToList())
-        {
-            var weap = GameObject.Instantiate(iweap.ItemContents.ContentItem, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
-            BaseWeaponConfig config = Extensions.GetConfigByID<BaseWeaponConfig> (iweap.GetID);
-            if (config == null)
-            { 
-                IsReady = false;
-                throw new Exception($"Failed to config weapon {weap.GetID} : {this}");            
-            }
-
-            var w = weap as BaseWeapon;
-            w.SetUpWeapon(config);
-            CurrentWeapons[iweap.ItemContents.ItemType] = w;
-            w.OnEquip(iweap.ItemContents);
-            w.Owner = Owner;
-            // here we replace the actual prefab that is stored in the ItemContent with our cloned one
-        }
-        //foreach (IWeapon weapon in CurrentWeapons.Values)
-        //{
-        //    weapon.Owner = Owner;
-        //}
     }
 
 
-    public void UpdateInDelta(float deltaTime)
+    public override void UpdateInDelta(float deltaTime)
     {
         foreach (var w in CurrentWeapons.Values)
         {
@@ -150,7 +147,7 @@ public class WeaponController : IStatsComponentForHandler, IGivesSkills, IHasOwn
         var list = new List<string>();
         foreach (IWeapon w in CurrentWeapons.Values)
         {
-            list.Add(w.ItemContents.SkillString);
+            list.Add(w.GetContents.SkillString);
         }
         return list;
     }

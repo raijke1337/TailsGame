@@ -20,11 +20,16 @@ public class PlayerUnit : BaseUnit
 
     public event SimpleEventsHandler<GameMenuType> ToggleMenuEvent;
 
+    protected override void Awake()
+    {
+        base.Awake(); 
+        _visualController = GetComponent<VisualsController>();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
         ToggleCamera(true);
-        _visualController = GetComponent<VisualsController>();
 
         var stats = _controller.GetStatsController;
 
@@ -40,8 +45,57 @@ public class PlayerUnit : BaseUnit
             maxHP -= coef;
         }
         _currentVisualStageIndex = 0;
-    }    
+    }
 
+
+    protected override void UnitBinds(bool isEnable)
+    {
+        base.UnitBinds(isEnable);
+
+        if (isEnable)
+        {
+            _playerController = _controller as InputsPlayer;
+            _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+            _playerController.MenuToggleRequest += (t) => ToggleMenuEvent?.Invoke(t);
+        }
+        else
+        {
+            _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
+            _playerController.MenuToggleRequest -= (t) => ToggleMenuEvent?.Invoke(t);
+        }
+    }
+
+    #region works
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        PlayerMovement(_playerController.MoveDirection);
+    }
+
+
+    //private Vector3 currVelocity;
+    //[SerializeField,Tooltip("How quickly the inertia of movement fades")] private float massDamp = 3f;
+
+
+    private void PlayerMovement(Vector3 desiredDir)
+    {
+        if (_controller.IsControlsBusy) return;
+        // DO NOT FIX WHAT ISNT BROKEN //
+
+        //if (desiredDir == Vector3.zero)
+        //{
+        //    if (currVelocity.sqrMagnitude < 0.1f) currVelocity = Vector3.zero;
+        //    else currVelocity = Vector3.Lerp(currVelocity, Vector3.zero, Time.deltaTime * massDamp);
+        //}
+        //else currVelocity = desiredDir;
+        //transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * currVelocity;
+        // too slide-y
+
+        // also good enough
+        transform.position += Time.deltaTime * desiredDir
+            * GetStats()[BaseStatType.MoveSpeed].GetCurrent;
+    }
 
     private void ChangeAnimatorLayer(EquipItemType type)
     {     
@@ -82,52 +136,8 @@ public class PlayerUnit : BaseUnit
         }
     }
 
-    protected override void UnitBinds(bool isEnable)
-    {
-        base.UnitBinds(isEnable);
+    #endregion
 
-        if (isEnable)
-        {
-            _playerController = _controller as InputsPlayer;
-            _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
-            _playerController.MenuToggleRequest += (t) => ToggleMenuEvent?.Invoke(t);
-        }
-        else
-        {
-            _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-            _playerController.MenuToggleRequest -= (t) => ToggleMenuEvent?.Invoke(t);
-        }
-    }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-        PlayerMovement(_playerController.MoveDirection);
-    }
-
-
-    //private Vector3 currVelocity;
-    //[SerializeField,Tooltip("How quickly the inertia of movement fades")] private float massDamp = 3f;
-
-
-    private void PlayerMovement(Vector3 desiredDir)
-    {
-        if (_controller.IsControlsBusy) return;
-        // DO NOT FIX WHAT ISNT BROKEN //
-
-        //if (desiredDir == Vector3.zero)
-        //{
-        //    if (currVelocity.sqrMagnitude < 0.1f) currVelocity = Vector3.zero;
-        //    else currVelocity = Vector3.Lerp(currVelocity, Vector3.zero, Time.deltaTime * massDamp);
-        //}
-        //else currVelocity = desiredDir;
-        //transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * currVelocity;
-        // too slide-y
-
-        // also good enough
-        transform.position += Time.deltaTime * desiredDir
-            * GetStats()[BaseStatType.MoveSpeed].GetCurrent;
-    }
 
     public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
 }

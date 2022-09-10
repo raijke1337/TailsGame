@@ -20,5 +20,4 @@ public class ItemContent : ScriptableObjectID
     public string DisplayName;
     public EquipItemType ItemType;
     public string SkillString;
-    public EquipmentBase ContentItem;
 }

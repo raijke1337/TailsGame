@@ -90,10 +90,7 @@ public class TriggersProjectilesManager : MonoBehaviour
                     }
                     break;
                 case TriggerTargetType.TargetsUser:
-                    if (target == source)
-                    {
-                        finaltgt = source;
-                    }
+                    finaltgt = source;
                     break;
                 case TriggerTargetType.TargetsAllies:
                     if (target != source && target.Side == source.Side)

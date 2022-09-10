@@ -16,9 +16,8 @@ public class MeleeWeapon : BaseWeapon
 {
     private WeaponTriggerComponent _trigger;
 
-    protected override void Start()
+    protected virtual void Start()
     {
-        base.Start();
         _trigger = GetComponent<WeaponTriggerComponent>();
         _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.Enable = false;

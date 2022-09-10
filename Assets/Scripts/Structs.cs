@@ -21,19 +21,7 @@ public static class Constants
 {
     public static class Configs
     {
-        //public const string c_TriggersConfigsPath = "/Scripts/Configurations/TriggersManager/";
-        //public const string c_WeapConfigsPath = "/Scripts/Configurations/WeaponsController/";
-        //public const string c_BaseStatConfigsPath = "/Scripts/Configurations/BaseUnit/";
-        //public const string c_EnemyStatConfigsPath = "/Scripts/Configurations/InputsNPC/";
-        //public const string c_ProjectileConfigsPath = "/Scripts/Configurations/ProjectilesManager/";
-        //public const string c_SkillConfigsPath = "/Scripts/Configurations/SkillsManager/";
-        //public const string c_ShieldConfigsPath = "/Scripts/Configurations/ShieldController/";
-        //public const string c_DodgeConfigsPath = "/Scripts/Configurations/DodgeController/";
-        //public const string c_ComboConfigsPath = "/Scripts/Configurations/ComboController/";
-
-        //public const string c_ManagerConfigsPath = "/Scripts/Configurations/";
         public const string c_AllConfigsPath = "/Resources/Configurations/";
-
     }
     public static class Objects
     {
@@ -41,8 +29,8 @@ public static class Constants
     }
     public static class Combat
     {
-        public const string c_WeaponPrefabsPath = "/Prefabs/Weapons/";
-        public const string c_SkillPrefabs = "/Prefabs/Skills/";
+        public const string c_ItemPrefabsPath = "/Resources/Prefabs/Items/";
+        public const string c_SkillPrefabs = "/Resources/Prefabs/Skills/";
         public const float c_RemainsDisappearTimer = 3f;
         public const float c_StaggeringHitHealthPercent = 0.1f; // 10% max hp
     }
@@ -55,9 +43,8 @@ public static class Constants
         public const string c_MethodPrefix = "Fsm_";
     }
 }
-
-#region structs 
-[Serializable] public class Timer 
+[Serializable]
+public class Timer
 {
     public delegate void TimerEvents<T>(T arg) where T : Timer;
     public event TimerEvents<Timer> TimeUp;
@@ -66,7 +53,7 @@ public static class Constants
     public bool GetExpired { get => _expired; }
     private bool _expired;
     public Timer(float t)
-    { 
+    {
         GetInitial = t;
         GetRemaining = t;
     }
@@ -85,7 +72,7 @@ public static class Constants
         else if (GetRemaining > 0)
         {
             GetRemaining -= deltatime;
-        }    
+        }
         return GetRemaining;
     }
     public void ResetTimer()
@@ -99,7 +86,8 @@ public static class Constants
         GetRemaining = t;
     }
 }
-[Serializable] public class StatValueContainer
+[Serializable]
+public class StatValueContainer
 {
     [SerializeField] private float _start;
     [SerializeField] private float _max;
@@ -124,7 +112,7 @@ public static class Constants
     public float GetMin { get => _calcMin; }
     public float GetStart { get => _calcStart; }
     public float GetLast { get => _last; }
-    public IEnumerable<StatValueModifier> GetMods{get=> _mods;}
+    public IEnumerable<StatValueModifier> GetMods { get => _mods; }
 
     /// <summary>
     /// adds the value, clamped by min and max
@@ -152,7 +140,7 @@ public static class Constants
     }
     public void RemoveMod(StatValueModifier mod)
     {
-        _mods.Remove(mod); 
+        _mods.Remove(mod);
     }
     public void RemoveMod(string modID)
     {
@@ -181,21 +169,22 @@ public static class Constants
     }
 }
 
-public class StatValueModifier:IHasID
+public class StatValueModifier : IHasID
 {
     public string ID = "Not set";
     public float MaxChange;
     public float MinChange;
     public float StartChange;
 
-    public StatValueModifier(float max,float min,float st)
+    public StatValueModifier(float max, float min, float st)
     {
         MaxChange = max; MinChange = min; StartChange = st;
     }
     public string GetID => ID;
 }
 
-[Serializable] public class ProjectileData
+[Serializable]
+public class ProjectileData
 {
     public float TimeToLive;
     public float Speed;
@@ -208,6 +197,8 @@ public class StatValueModifier:IHasID
         Penetration = config.ProjectilePenetration;
     }
 }
+
+#region structs 
 
 [Serializable] public struct SkillData
 {
@@ -274,8 +265,10 @@ public interface ITakesTriggers
 public interface IStatsComponentForHandler
 {
     bool IsReady { get; }
+    event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent;
     void UpdateInDelta(float deltaTime);
     void SetupStatsComponent();
+    void Ping();
 }
 
 public interface IHasID
@@ -291,11 +284,11 @@ public interface IAppliesTriggers : IHasGameObject
 }
 public interface IInventoryItem : IHasID
 {
-    public ItemContent ItemContents { get; }
+    public ItemContent GetContents { get; }
 }
 public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
 {
-    void OnEquip(ItemContent content);
+    public EquipmentBase GetEquipmentBase();
 }
 public interface IWeapon : IEquippable
 {

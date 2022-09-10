@@ -4,7 +4,7 @@ using Zenject;
 public abstract class BaseWeapon : EquipmentBase, IWeapon
 {
 
-
+    public bool IsSetup { get; private set; } = false;
     protected StatValueContainer WeaponUses;
 
     protected float InternalCooldown;
@@ -53,6 +53,7 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
         }
         WeaponUses = new StatValueContainer(config.Charges);
         InternalCooldown = config.InternalCooldown;
+        IsSetup = true;
     }
     public void UpdateInDelta(float deltaTime)
     {

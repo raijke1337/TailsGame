@@ -84,20 +84,11 @@ public class InputsPlayer : ControlInputsBase
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
-            //_weaponCtrl.TargetHitByWeaponEvent -= HandleComboGain;
 
         }
     }
 
-    //private void HandleComboGain(float value)
-    //{
-    //    if (ComboGained) return;
-    //    else
-    //    {
-    //        _comboCtrl.AddCombo(value);
-    //        ComboGained = true;
-    //    }
-    //}
+
     private void SwitchAnimatorLayer(EquipItemType type)
     {
         if (_weaponCtrl.CurrentWeaponType != type)

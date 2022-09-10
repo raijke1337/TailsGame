@@ -8,8 +8,6 @@ namespace Assets.Scripts.Units
     [Serializable]
     public class StunsController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
-        public override bool IsReady { get; protected set; } = false;
-
         public event SimpleEventsHandler StunHappenedEvent;
         private StatValueContainer CurrentValue;
         private float _graceTime;

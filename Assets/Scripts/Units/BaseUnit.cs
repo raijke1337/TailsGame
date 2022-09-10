@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(ControlInputsBase),typeof(UnitInventoryComponent))]
+[RequireComponent(typeof(ControlInputsBase))]
 
 public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 {
@@ -25,12 +25,8 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _controller.GetStatsController.GetBaseStats;
 
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
-    public UnitInventoryComponent Inventory { get; protected set; }
-
 
     public string GetFullName => _controller.GetStatsController.GetDisplayName;
-
-
 
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event SkillRequestedEvent SkillRequestSuccessEvent;
@@ -39,28 +35,79 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     private Camera _faceCam;
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
+
+    [SerializeField] protected EquipmentBase[] Equipments;
+
+
+
     #region setups
+
+    protected UnitInventoryComponent Inventory;
+    // run in enaable
+    // npcs override to load a list of item ids
+    // player overrides to load a json with stored items
+    // todo 
+    public void InitInventory(ItemsEquipmentsHandler handler)
+    {
+        Inventory = new UnitInventoryComponent(handler);
+        foreach (var item in Equipments)
+        {
+            var equipd = Inventory.EquipItem(item.GetID);
+            if (equipd != null)
+            {
+                HandleStartingEquipment(equipd);
+            }
+        }
+
+    }
+
+    private void HandleStartingEquipment(IEquippable item)
+    {
+        string skill = item.GetContents.SkillString;
+        if (skill.Length != 0) _controller.AddSkillString(skill);
+
+        switch (item.GetContents.ItemType)
+        {
+            case EquipItemType.None:
+                Debug.Log($"No logic to equip {item} {item.GetContents.ItemType}");
+                break;
+            case EquipItemType.MeleeWeap:
+                _controller.GetWeaponController.LoadItem(item);
+                break;
+            case EquipItemType.RangedWeap:
+                _controller.GetWeaponController.LoadItem(item);
+                break;
+            case EquipItemType.Shield:
+                _controller.GetShieldController.LoadItem(item);
+                break;
+            case EquipItemType.Booster:
+                _controller.GetDodgeController.LoadItem(item);
+                break;
+            case EquipItemType.Other:
+                Debug.Log($"No logic to equip {item} {item.GetContents.ItemType}");
+                break;
+        }
+    }
 
     protected virtual void Awake()
     {
-        Inventory = GetComponent<UnitInventoryComponent>(); //todo placeholder
-    }
-    protected virtual void OnEnable()
-    {
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
-
         _controller = GetComponent<ControlInputsBase>();
-        _controller.SetUnit(this);
-        _controller.InitControllers(new BaseStatsController(StatsID));
-
-        _controller.BindControllers(true);
+        GetCollider = GetComponent<Collider>();
 
         _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
-
-        GetCollider = GetComponent<Collider>();
     }
+
+    protected virtual void OnEnable()
+    {
+        _controller.SetUnit(this);
+        _controller.InitControllers(StatsID);
+        _controller.BindControllers(true);
+    }
+
+
     protected virtual void UnitBinds(bool isEnable)
     {
         if (isEnable)
@@ -199,4 +246,9 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     }
     #endregion
 
+
+
+
+
 }
+ 

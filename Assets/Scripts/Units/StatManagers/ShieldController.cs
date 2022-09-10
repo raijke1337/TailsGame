@@ -16,13 +16,12 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
 {
     public Dictionary<ShieldStatType, StatValueContainer> GetShieldStats { get; private set; }
 
-    public override bool IsReady { get; protected set; } = false;
     public IEquippable EquippedShieldItem { get; private set; }
     public ItemEmpties Empties { get; }
     public ShieldController(ItemEmpties ie) => Empties = ie;
     public void LoadItem(IEquippable item)
     {
-        if (item.ItemContents.ItemType == EquipItemType.Shield)
+        if (item.GetContents.ItemType == EquipItemType.Shield)
         {
             EquippedShieldItem = item;
             IsReady = true;
@@ -31,7 +30,7 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
     public IEnumerable<string> GetSkillStrings()
     {
         if (!IsReady) return null;
-        else return new string[1] { EquippedShieldItem.ItemContents.SkillString };
+        else return new string[1] { EquippedShieldItem.GetContents.SkillString };
     }
 
 
@@ -40,7 +39,7 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
     {
         if (!IsReady) return;
 
-        var cfg = Extensions.GetConfigByID<ShieldSettings>(EquippedShieldItem.ItemContents.ID);
+        var cfg = Extensions.GetConfigByID<ShieldSettings>(EquippedShieldItem.GetContents.ID);
 
         if (cfg == null) return;
 

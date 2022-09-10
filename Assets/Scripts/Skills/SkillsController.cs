@@ -1,34 +1,28 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
 
 [Serializable]
-public class SkillsController : IStatsComponentForHandler, INeedsEmpties
+public class SkillsController : BaseController, INeedsEmpties
 {
-    private List<string> IDs;
-    private Dictionary <CombatActionType, SkillControllerData> _skills;
-
+    // this is used in game for skill requests
+    private Dictionary <CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>(); 
+    
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent;
     public ItemEmpties Empties { get; }
     public SkillsController(ItemEmpties ie) => Empties = ie;
 
-    public bool IsReady { get; private set; } = false;
 
-    public void LoadSkills (List<string> skills)
+    public void UpdateSkills (string skillID ,bool isAdd)
     {
-        IDs = new List<string>();
-        IDs.AddRange(skills);
-        if (IDs.Count > 0) IsReady = true;
+        var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(skillID);
+        if (cfg == null) { return; }
+        else
+        {
+            var type = cfg.SkillType;
+            _skills[type] = new SkillControllerData(cfg);
+        }
     }
 
 
@@ -51,25 +45,10 @@ public class SkillsController : IStatsComponentForHandler, INeedsEmpties
         return result;
     }
 
-    public void SetupStatsComponent()
-    {
-        _skills = new Dictionary<CombatActionType, SkillControllerData>();
-        foreach (string id in IDs)
-        {
-            var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(id);
-            if (cfg == null)
-            {
-                return;
-            }
-            else
-            {
-                var type = cfg.SkillType;
-                _skills[type] = new SkillControllerData(cfg);
-            }
-        }
-    }
+    public override void SetupStatsComponent()
+    {  }
 
-    public void UpdateInDelta(float deltaTime)
+    public override void UpdateInDelta(float deltaTime)
     {
         foreach (var sk in _skills.Values)
         {
@@ -81,4 +60,6 @@ public class SkillsController : IStatsComponentForHandler, INeedsEmpties
     public SkillData GetSkillDataByType(CombatActionType type) => _skills[type].GetSkillData;
 
 }
+
+
 

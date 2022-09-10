@@ -17,19 +17,17 @@ namespace Puzzle
         public delegate void MiniGameEvents<T> (T arg);
         public event SimpleEventsHandler<GameResult> GameCompletedEvent;
 
+        [SerializeField] private RectTransform _field;
+        [SerializeField,Space] private Text _results;
+
         [SerializeField] private TileComponent _tilePrefab;
         [SerializeField] private Sprite _closed;
         [SerializeField] private List<Sprite> _open;
-        //[SerializeField,Range(2,14),Tooltip("Rounded up to even number, 14 max because only 7 pics for now")] private int _totalTiles;
         [SerializeField, Tooltip("Time the opened tiles are shown")] private float _graceTimer = 1f;
+        [SerializeField, Tooltip("Total pairs to show")] private int _pairsTotal = 7;
 
-        [SerializeField,Space] private int _tileHeight;
-        [SerializeField] private int _tileWidth;
-
-        // todo - setup by number of tiles desired, not by size
-
-        [Space, SerializeField] private RectTransform _field;
-        [SerializeField] private Text _results;
+        [SerializeField,Space] private Vector2 _tileOffsets;
+        [SerializeField,Space] private Vector2 _desiredTileSize;
 
         private List<TileComponent> _tiles = new List<TileComponent>();
         private TileComponent[] _selected = new TileComponent[2]; 
@@ -49,49 +47,25 @@ namespace Puzzle
         }
         private void PlaceTiles()
         {
-            int fieldHeight = (int)_field.rect.height;
-            int fieldWidth = (int)_field.rect.width;
-
-
-            int tilesHor = fieldWidth / _tileWidth;
-            int tilesVert = fieldHeight / _tileHeight;
-            //Debug.Log($"Calculated tiles: horizontal {tilesHor} vertical {tilesVert}");
-            //Debug.Log($"Field size: height {fieldHeight} width {fieldWidth}");
-
-
-            int allTilesWidth = _tileWidth * tilesHor;
-            int allTilesHeight = _tileHeight * tilesVert;
-
-            int totalOffsetWidth = fieldWidth - allTilesWidth;
-            int totalOffsetHeight = fieldHeight - allTilesHeight;
-
-            int singleOffsetWidth = totalOffsetWidth / (tilesHor + 1);
-            int singleOffsetHeight = -(totalOffsetHeight / (tilesVert + 1));
-
-            Vector2 DefaultOffset = new Vector2(singleOffsetWidth, singleOffsetHeight);
-
-            //Debug.Log($"Calculated offsets: Vert {singleOffsetHeight} Hor {singleOffsetWidth}");
-            if (tilesHor * tilesVert > 14) Debug.LogError("Please set bigger tiles, number > 14 not implemented");
-
-            for (int i = 0; i < tilesHor; i++)
+            var points = Extensions.GetTilePositions(_field, _tileOffsets, _desiredTileSize);
+            for (int i = 0; i < _pairsTotal*2; i++)  
             {
-                for (int j = 0; j < tilesVert; j++)
-                {
+
+                    var coord = points[i];
+                    
                     var item = Instantiate(_tilePrefab); _tiles.Add(item);
                     item.SetImages(false, _closed);
 
                     var rect = item.GetComponent<RectTransform>();
                     item.transform.SetParent(_field, false);
 
-                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _tileWidth);
-                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _tileHeight);
+                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _desiredTileSize.x);
+                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _desiredTileSize.y);
+                    rect.anchoredPosition += coord;
 
-                    rect.anchoredPosition += DefaultOffset;
-                    rect.anchoredPosition += new Vector2(i * (singleOffsetWidth + _tileWidth), j * (singleOffsetHeight - _tileHeight));
-                    //Debug.Log($"Tile {i} {j} pos: {rect.anchoredPosition}");
                     item.OnFlipEvent += Item_OnFlipEvent;
-                    item.name = $"Tile {i},{j}";
-                }
+                    item.name = $"Tile {i}";
+
             }
         }
         private void AssignPairs()

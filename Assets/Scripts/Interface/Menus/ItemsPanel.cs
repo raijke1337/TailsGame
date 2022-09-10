@@ -23,32 +23,33 @@ public class ItemsPanel : MenuPanel
     private IEnumerable <ItemContent> _bag;
 
 
-    [SerializeField] private PlayerInventoryManager inventoryManager;
+    [SerializeField] private ItemsEquipmentsHandler inventoryManager;
 
-    public override void OnToggle()
-    {
-        if (inventoryManager == null) inventoryManager = FindObjectOfType<PlayerInventoryManager>(); 
-        base.OnToggle();
+    //public override void OnToggle()
+   // {
+        //if (inventoryManager == null) inventoryManager = FindObjectOfType<ItemsEquipmentsHandler>(); 
+        //base.OnToggle();
 
-        _equip = inventoryManager.GetEquippedItems;
-        _bag = inventoryManager.GetBagItems;
-        var equipsTiles = PlaceTiles(_equippedPanel, TilePrefab);
-        var baggedTiles = PlaceTiles(_bagPanel, TilePrefab);
+        //_equip = inventoryManager.GetEquippedItems;
+        //_bag = inventoryManager.GetBagItems;
+        //var equipsTiles = PlaceTiles(_equippedPanel, TilePrefab);
+        //var baggedTiles = PlaceTiles(_bagPanel, TilePrefab);
 
-        for (int i = 0; i < equipsTiles.Length; i++)
-        { 
-            var tile = equipsTiles[i];
-            tile.Content = _equip.ElementAt(i);
-            tile.ItemClickedEvent += Tile_ItemClickedEvent;
-        }
-        for (int i = 0; i < _bag.Count(); i++)
-        {
-            var tile = baggedTiles[i];
-            tile.Content = _bag.ElementAt(i);
-            tile.ItemClickedEvent += Tile_ItemClickedEvent;
-        }
+        //for (int i = 0; i < equipsTiles.Length; i++)
+        //{ 
+        //    var tile = equipsTiles[i];
+        //    tile.Content = _equip.ElementAt(i);
+        //    tile.ItemClickedEvent += Tile_ItemClickedEvent;
+        //}
+        //for (int i = 0; i < _bag.Count(); i++)
+        //{
+        //    var tile = baggedTiles[i];
+        //    tile.Content = _bag.ElementAt(i);
+        //    tile.ItemClickedEvent += Tile_ItemClickedEvent;
+        //}
 
-    }
+        // todo
+   // }
 
     private void Tile_ItemClickedEvent(ItemContent arg)
     {
@@ -57,53 +58,46 @@ public class ItemsPanel : MenuPanel
 
 
     // logic from puzzle updated
-    private ItemTileComponent[] PlaceTiles(RectTransform panel, ItemTileComponent tile)
-    {
-        List<ItemTileComponent> list = new List<ItemTileComponent>();
+    //private ItemTileComponent[] PlaceTiles(RectTransform panel, ItemTileComponent tile)
+    //{
+    //    List<ItemTileComponent> list = new List<ItemTileComponent>();
 
-        var fieldHeight = panel.rect.height;
-        var fieldWidth = panel.rect.width;
-        var _tileWidth = tile.GetRekt.rect.width;
-        var _tileHeight = tile.GetRekt.rect.height;
-
-
-        int tilesHor = Mathf.RoundToInt(fieldWidth / _tileWidth);
-        int tilesVert = Mathf.RoundToInt(fieldHeight / _tileHeight);
+    //    var fieldHeight = panel.rect.height;
+    //    var fieldWidth = panel.rect.width;
+    //    var _tileWidth = tile.GetRekt.rect.width;
+    //    var _tileHeight = tile.GetRekt.rect.height;
 
 
-        var allTilesWidth = _tileWidth * tilesHor;
-        var allTilesHeight = _tileHeight * tilesVert;
-
-        //var totalOffsetWidth = fieldWidth - allTilesWidth;
-        //var totalOffsetHeight = fieldHeight - allTilesHeight;
-
-        //int singleOffsetWidth = totalOffsetWidth / (tilesHor + 1);
-        //int singleOffsetHeight = -(totalOffsetHeight / (tilesVert + 1));
-
-        Vector2 DefaultOffset = new Vector2(tileOffsetPx, tileOffsetPx);
-
-        //Debug.Log($"Calculated offsets: Vert {singleOffsetHeight} Hor {singleOffsetWidth}");
+    //    int tilesHor = Mathf.RoundToInt(fieldWidth / _tileWidth);
+    //    int tilesVert = Mathf.RoundToInt(fieldHeight / _tileHeight);
 
 
-        for (int i = 0; i < tilesHor; i++)
-        {
-            for (int j = 0; j < tilesVert; j++)
-            {
-                var item = Instantiate(tile); list.Add(item);
+    //    var allTilesWidth = _tileWidth * tilesHor;
+    //    var allTilesHeight = _tileHeight * tilesVert;
 
-                var rect = item.GetRekt;
-                item.transform.SetParent(panel, false);
+    //    Vector2 DefaultOffset = new Vector2(tileOffsetPx, -tileOffsetPx);
 
-                rect.anchoredPosition += DefaultOffset;
-                rect.anchoredPosition += new Vector2(i * (tileOffsetPx + _tileWidth), j * (tileOffsetPx - _tileHeight));
 
-                item.name = $"Tile {i},{j}";
-            }
-        }
 
-        return list.ToArray();
+    //    for (int i = 0; i < tilesHor; i++)
+    //    {
+    //        for (int j = 0; j < tilesVert; j++)
+    //        {
+    //            var item = Instantiate(tile); list.Add(item);
 
-    }
+    //            var rect = item.GetRekt;
+    //            item.transform.SetParent(panel, false);
+
+    //            rect.anchoredPosition += DefaultOffset;
+    //            rect.anchoredPosition += new Vector2(i * (tileOffsetPx + _tileWidth), j * (tileOffsetPx - _tileHeight));
+
+    //            item.name = $"Tile {i},{j}";
+    //        }
+    //    }
+
+    //    return list.ToArray();
+
+    //}
 
 }
 

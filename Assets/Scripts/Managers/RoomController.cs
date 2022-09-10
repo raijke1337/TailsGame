@@ -19,6 +19,7 @@ public class RoomController : MonoBehaviour
     public void SetPlayer(PlayerUnit p) => _player = p;
     private Puzzle.PuzzleManager _puzMan;
 
+    private bool isGameStarted = false;
 
 
     private void Start() 
@@ -29,6 +30,7 @@ public class RoomController : MonoBehaviour
         {
             _puzMan.GameCompletedEvent += _puzMan_GameCompletedEvent;
         }
+        isGameStarted = true;
     }
 
     private void _puzMan_GameCompletedEvent(Puzzle.GameResult arg)
@@ -52,6 +54,7 @@ public class RoomController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (!isGameStarted) return;
         if (other.CompareTag("Enemy"))
         {
             var unit = other.GetComponent<NPCUnit>();

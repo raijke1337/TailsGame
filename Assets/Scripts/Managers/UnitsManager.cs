@@ -7,13 +7,19 @@ public class UnitsManager : MonoBehaviour
     private List<RoomController> _rooms = new List<RoomController>();
 
     private List<NPCUnit> _units = new List<NPCUnit>();
+    private List<BaseUnit> _allUnits = new List<BaseUnit>();
     private PlayerUnit _player;
     public PlayerUnit GetPlayerUnit { get => _player; }
     public List<NPCUnit> GetNPCs() => _units;
     public SkillRequestedEvent RequestToPlaceSkills;
 
+    [SerializeField] private ItemsEquipmentsHandler itemsHandler;
+
+
     private void Awake()
     {
+        itemsHandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath)));
+
         _units.AddRange(FindObjectsOfType<NPCUnit>());
         _player = FindObjectOfType<PlayerUnit>();
 
@@ -22,16 +28,19 @@ public class UnitsManager : MonoBehaviour
         {
             room.SetPlayer(_player);
         }
+        _allUnits.Add(_player);
+        _allUnits.AddRange(_units);       
 
-        foreach (var npc in _units)
+        foreach (var u in _allUnits)
         {
-            npc.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-            npc.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
-            
+            u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+            u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
+            u.InitInventory(itemsHandler);            
         }
-        _player.BaseUnitDiedEvent += HandleUnitDeath;
-        _player.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
+
     }
+
+
     private void Start()
     {
         SetAIStateGlobal(true);
@@ -58,6 +67,7 @@ public class UnitsManager : MonoBehaviour
         if (isOpen) { Time.timeScale = 0f;  }
         else { Time.timeScale = 1f; }
     }
+    // called in enable
 
 
     private void HandleUnitDeath(BaseUnit unit)
@@ -72,7 +82,5 @@ public class UnitsManager : MonoBehaviour
             Debug.LogWarning("You died");
         }
     }
-
-
 }
 

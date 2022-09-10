@@ -11,11 +11,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using RotaryHeart.Lib.SerializableDictionary;
 
 [RequireComponent(typeof(InputsNPC))]
 public abstract class NPCUnit : BaseUnit, IInteractiveItem
 {
     private InputsNPC _npcController;
+
+
+    [SerializeField] protected ItemsEquipmentsHandler.DroppableItem[] Drops;
+
 
     public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
 
@@ -33,6 +38,9 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
             Debug.LogWarning($"Set enemy tag for{name}");
 
         _controller.GetStatsController.GetBaseStats[BaseStatType.Health].ValueChangedEvent += OnOuch;
+
+        if (Equipments.Count() == 0 || Equipments == null)
+            Debug.LogWarning($"{this} has no equipments");
     }
 
     private void OnOuch(float curr, float prev)

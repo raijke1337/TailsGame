@@ -11,7 +11,6 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
 
     Dictionary<DodgeStatType, StatValueContainer> _stats;
     public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
-    public override bool IsReady { get; protected set; }
     public ItemEmpties Empties { get; }
     public DodgeController(ItemEmpties ie) => Empties = ie;
     public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
@@ -20,13 +19,14 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
 
     public override void SetupStatsComponent()
     {
+        if (!IsReady) return;
         _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-        var cfg = Extensions.GetConfigByID<DodgeStatsConfig>(EquippedDodgeItem.ItemContents.ID);
+        var cfg = Extensions.GetConfigByID<DodgeStatsConfig>(EquippedDodgeItem.GetContents.ID);
 
         if (cfg == null)
         {
             IsReady = false;
-            throw new Exception($"Mising cfg by ID {EquippedDodgeItem.ItemContents.ID} from item {EquippedDodgeItem.GetID} : {this}");
+            throw new Exception($"Mising cfg by ID {EquippedDodgeItem.GetContents.ID} from item {EquippedDodgeItem.GetID} : {this}");
         }
 
         foreach (var c in cfg.Stats)
@@ -65,11 +65,11 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
 
     public void LoadItem(IEquippable item)
     {
-        if (!(item.ItemContents.ItemType == EquipItemType.Booster)) return;
+        if (!(item.GetContents.ItemType == EquipItemType.Booster)) return;
         else
         {
-            IsReady = true;
             EquippedDodgeItem = item;
+            IsReady = true;
         }         
     }
 

@@ -14,15 +14,14 @@ using UnityEngine.InputSystem;
 public abstract class EquipmentBase : ItemBase, IEquippable
 {
     public BaseUnit Owner { get; set; }
-    public GameObject GetObject() => gameObject;
 
-    public void OnEquip(ItemContent content)
+    public EquipmentBase GetEquipmentBase()
     {
-        ItemContents = content;
+        return this;
     }
-    protected virtual void Start()
-    {
-        if (ItemContents == null) Debug.LogError("OnEquip not run for " + this);
-    }
+
+    public GameObject GetObject() => gameObject;
+     
+
 }
 

@@ -15,9 +15,8 @@ public class RangedWeapon : BaseWeapon
 
     public event SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
 
-    protected override void Start()
+    protected virtual void Start()
     {
-        base.Start();
         if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");
     }
 

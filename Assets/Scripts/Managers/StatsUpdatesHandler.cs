@@ -17,21 +17,21 @@ public class StatsUpdatesHandler : MonoBehaviour
     public void RegisterUnitForStatUpdates(IStatsComponentForHandler stats, bool IsAdd = true)
     {
         if (_list == null) _list = new List<IStatsComponentForHandler>();
-        if (!stats.IsReady)
-        {
-            Debug.LogWarning($"{stats} component is not ready for registration");
-            return;
-        }
-
         if (!IsAdd)
         {
+            Debug.Log($"Unregistered {stats}");
             _list.Remove(stats);
             return;
         }
         else        
         {
-            _list.Add(stats);
             stats.SetupStatsComponent();
+            if (!_list.Contains(stats))
+            {
+                _list.Add(stats);
+                Debug.Log($"Registered {stats}");
+                // to prevent double registration for weapons ctrl
+            }
         }
     }
 

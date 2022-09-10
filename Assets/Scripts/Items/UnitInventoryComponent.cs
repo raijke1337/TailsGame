@@ -1,53 +1,36 @@
 using RotaryHeart.Lib.SerializableDictionary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class UnitInventoryComponent : MonoBehaviour, IStatsComponentForHandler
+
+public class UnitInventoryComponent
 {
-    [SerializeField] private SerializableDictionaryBase<EquipItemType,ItemContent> Equipments;
+    private Dictionary<EquipItemType, IEquippable> Equipments;
 
-    // item receivers
-    private List<IUsesItems> _slots = new List<IUsesItems>();
+    ItemsEquipmentsHandler Handler;
 
-    public bool IsReady => Equipments.Count() > 0;
-
-    public void AddItemUser(IUsesItems slot) => _slots.Add(slot);
-
-    public IEnumerable<ItemContent> GetEquippedItems() => Equipments.Values;
-    public ItemContent GetEquippedItem(EquipItemType type) => Equipments[type];
-
-
-
-    private void OnValidate()
+    public UnitInventoryComponent (ItemsEquipmentsHandler handler)
     {
-        foreach (var item in Equipments.Values)
+        Handler = handler;
+        Equipments = new Dictionary<EquipItemType, IEquippable> ();
+    }
+    public IEquippable EquipItem(string ID)
+    {
+        var item = Handler.GetItemByID(ID);
+        if (item is IEquippable)
         {
-            item.ContentItem.ItemContents = item; // yikes
+            var i = item as IEquippable;
+            Equipments[i.GetContents.ItemType] = i;
+            return i;
+        }
+        else
+        {
+            Debug.LogWarning($"Tried to equip {ID}");
+            return null;
         }
     }
-    public void UpdateInDelta(float deltaTime) { }
-
-    public void SetupStatsComponent()
-    {
-        foreach (var user in _slots)
-        {
-            foreach (var item in Equipments.Values)
-            {
-                user.LoadItem(item.ContentItem);
-                // todo
-            }
-        }
-    }
-
-    public void EquipItem(ItemContent content,bool isEquip)
-    {
-        if (isEquip) Equipments[content.ItemType] = content;
-        else Equipments[content.ItemType] = null;
-        SetupStatsComponent();
-    }
-
-
 
 }
 

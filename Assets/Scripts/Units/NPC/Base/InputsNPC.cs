@@ -31,10 +31,10 @@ public abstract class InputsNPC : ControlInputsBase
     #endregion
     #region init
 
-    public override void InitControllers(BaseStatsController stats)
+    public override void InitControllers(string stats)
     {
         base.InitControllers(stats);
-        _weaponCtrl = new EnemyWeaponCtrl(Empties); // todo? bandaid
+        //_weaponCtrl = new EnemyWeaponCtrl(Empties); // todo? bandaid
     }
 
     public override void BindControllers(bool isEnable)

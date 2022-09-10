@@ -15,7 +15,31 @@ public abstract class BaseController : IStatsComponentForHandler
 {
     protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
 
-    public abstract bool IsReady { get; protected set; }
+    private bool _isReady = false;
+
+    public event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent;
+    
+    protected void StateChangeCallback(bool val, IStatsComponentForHandler comp)
+    {
+        ComponentChangedStateToEvent?.Invoke(val, comp);
+        Debug.Log($"{this} called state change with value {val}");
+    }
+    public virtual bool IsReady 
+    { 
+        get => _isReady; 
+        protected set
+        {
+            _isReady = value;
+            StateChangeCallback(value, this);
+        }
+    }
+
+    public void Ping()
+    {
+        IsReady = _isReady;
+    }
+    // used by inputrs to properly register some components
+
 
     public virtual void HandleEffects(float deltaTime)
     {
@@ -52,11 +76,19 @@ public abstract class BaseController : IStatsComponentForHandler
         _activeEffects.Add(effect);
     }
 
-    protected abstract StatValueContainer SelectStatValueContainer(TriggeredEffect effect);
+    protected virtual StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+    {
+        Debug.Log($"{this} was requested to select a StatValueContainer by effect {effect}, and nothing happened");
+        return null;
+    }
     public virtual void UpdateInDelta(float deltaTime)
     {
         HandleEffects(deltaTime);
     }
-    public abstract void SetupStatsComponent();
+    public virtual void SetupStatsComponent()
+    {
+        Debug.Log(this + " was setup");
+    }
+
 }
 

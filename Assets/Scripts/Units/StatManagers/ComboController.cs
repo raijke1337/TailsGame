@@ -16,7 +16,6 @@ public class ComboController : BaseController, IStatsComponentForHandler, ITakes
 
     public StatValueContainer ComboContainer { get; }
 
-    public override bool IsReady { get; protected set; } = false;
 
     protected float Degen;
     protected float Timeout;
