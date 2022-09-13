@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -6,38 +7,53 @@ public class UnitsManager : MonoBehaviour
 {
     private List<RoomController> _rooms = new List<RoomController>();
 
-    private List<NPCUnit> _units = new List<NPCUnit>();
-    private List<BaseUnit> _allUnits = new List<BaseUnit>();
+    private List<NPCUnit> _npcs = new List<NPCUnit>();
     private PlayerUnit _player;
     public PlayerUnit GetPlayerUnit { get => _player; }
-    public List<NPCUnit> GetNPCs() => _units;
+    public List<NPCUnit> GetNPCs() => _npcs;
     public SkillRequestedEvent RequestToPlaceSkills;
 
-    [SerializeField] private ItemsEquipmentsHandler itemsHandler;
-
+    private ItemsEquipmentsHandler invHandler;
 
     private void Awake()
     {
-        itemsHandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath)));
-
-        _units.AddRange(FindObjectsOfType<NPCUnit>());
+        invHandler = GameManager.GetItemsHandler();
         _player = FindObjectOfType<PlayerUnit>();
+        if (_player == null)
+        {
+            Debug.Log("No player found, aborting init");
+            return;
+        }
+        UnitSubs(_player);
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
+        if (_rooms.Count == 0)
+        {
+            Debug.Log($"No rooms found, {this} stopping init for npcs");
+            return;
+        }
         foreach (var room in _rooms)
         {
             room.SetPlayer(_player);
         }
-        _allUnits.Add(_player);
-        _allUnits.AddRange(_units);       
-
-        foreach (var u in _allUnits)
+        _npcs.AddRange(FindObjectsOfType<NPCUnit>());
+        if (_npcs.Count == 0)
         {
-            u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-            u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
-            u.InitInventory(itemsHandler);            
+            Debug.Log($"No npc found, {this} stopping init for npcs");
+            return;
         }
 
+        foreach (var npc in _npcs)
+        {
+            UnitSubs(npc);
+        }
+
+    }
+    private void UnitSubs (BaseUnit u)
+    {
+        u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+        u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
+        u.InitInventory(invHandler);
     }
 
 
@@ -52,7 +68,7 @@ public class UnitsManager : MonoBehaviour
     }
     public void SetAIStateGlobal(bool isProcessing)
     {
-        foreach (var npc in _units)
+        foreach (var npc in _npcs)
         {
             SetAIStateUnit(isProcessing, npc);
         }
@@ -82,5 +98,11 @@ public class UnitsManager : MonoBehaviour
             Debug.LogWarning("You died");
         }
     }
+    public void OnStartGamePlay(bool isStart)
+    {
+        
+    }
+
+
 }
 

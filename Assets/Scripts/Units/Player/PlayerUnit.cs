@@ -18,6 +18,21 @@ public class PlayerUnit : BaseUnit
     private float[] _visualStagesHP;
     private int _currentVisualStageIndex;
 
+    private SaveData _currentSave;
+
+    #region items
+    public override void InitInventory(ItemsEquipmentsHandler handler)
+    {
+        _currentSave = GameManager.GetGameManager().GetSaveData();
+        if (_currentSave.Equipments == null) return; // wtf? todo
+        foreach (var eq in _currentSave.Equipments)
+        {
+            HandleStartingEquipment(eq);
+        }
+    }       
+
+    #endregion
+
     public event SimpleEventsHandler<GameMenuType> ToggleMenuEvent;
 
     protected override void Awake()
@@ -68,7 +83,7 @@ public class PlayerUnit : BaseUnit
     #region works
 
     protected override void FixedUpdate()
-    {
+    {        
         base.FixedUpdate();
         PlayerMovement(_playerController.MoveDirection);
     }
@@ -140,4 +155,5 @@ public class PlayerUnit : BaseUnit
 
 
     public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
+
 }

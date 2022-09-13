@@ -1,34 +1,65 @@
+//using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
+using UnityEngine;
+using System.Linq;
 using Newtonsoft.Json;
 
 public class GameManager : MonoBehaviour
 {
-    private SaveData saveData;
+    private SaveData _saveData;
+    private static ItemsEquipmentsHandler _itemshandler;
+    private static GameManager instance;
 
-    
-    private void Start()
+    [SerializeField] private InventorySO _defaultInventory;
+
+
+    public static GameManager GetGameManager() => instance;
+    public static ItemsEquipmentsHandler GetItemsHandler()
     {
-        saveData = LoadDataFromJSON();
-        Debug.Log($"Loaded save, levels: {saveData.LastLevelIndex}, items: {saveData.Items.Length}");
+        if (_itemshandler == null )
+        {
+            _itemshandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath)));
+        }
+        return _itemshandler;
     }
 
+    private void Awake()
+    {
+        instance = this;
+        LoadDataFromJSON();
+    }
 
-    [MenuItem("Saves/Load existing save json")]
-    public static SaveData LoadDataFromJSON()
+    private void OnDisable()
+    {
+        SaveDataToJSON();
+    }
+
+    public SaveData GetSaveData()
+    {
+        if (_saveData == null) LoadDataFromJSON();
+        return _saveData;
+    }
+
+    private void LoadDataFromJSON()
     {
         string json = string.Empty;
-        var path = string.Concat(Application.dataPath, "/", "test.json");
+        var path = string.Concat(Application.dataPath, "/save.json");
+        try
+        {
+            StreamReader sr = new StreamReader(path);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($" No save file {ex.Message}");
+            SaveDataToJSON();
+            // it is null so we just create a new one 
+        }
+
+
+
         using (StreamReader sr = new StreamReader(path))
         {
             using (JsonReader reader = new JsonTextReader(sr))
@@ -36,17 +67,36 @@ public class GameManager : MonoBehaviour
                 json = reader.ReadAsString();
             }
         }
-        var data = JsonConvert.DeserializeObject<SaveData>(json);
-        return data;
+        _saveData = (SaveData)JsonUtility.FromJson(json,typeof(SaveData));
+        AssetDatabase.Refresh();
     }
 
-    [MenuItem("Saves/Create new save json")]
-    public static void SaveDataToJSON()
+    private void SaveDataToJSON()
     {
-        var data = JsonConvert.SerializeObject(new SaveData { LastLevelIndex = 3, Items = new ItemBase[3]});
-        // todo
+        string data;
 
-        var path = string.Concat(Application.dataPath, "/", "test.json");
+        if (_saveData != null)
+        {
+            //data = JsonConvert.SerializeObject(_saveData);
+            // this cant serialize gameobjects
+            data = JsonUtility.ToJson(_saveData);
+
+            Debug.Log($"Saving existing file; {data}");
+        }
+        else
+        {
+            var all = Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath);
+            var backp = from item in all
+                        where _defaultInventory.itemIDs.Contains(item.GetID)
+                        select item;
+            var b  = backp.ToList();
+
+
+            data = JsonUtility.ToJson(new SaveData(b)); // case : no save
+            Debug.Log($"Saving new file; {data}");
+        }
+
+        var path = string.Concat(Application.dataPath, "/save.json");
         using (StreamWriter stream = new StreamWriter(path))
         {
             using (JsonWriter writer = new JsonTextWriter(stream))
@@ -57,11 +107,23 @@ public class GameManager : MonoBehaviour
         AssetDatabase.Refresh();
     }
 }
-
 [Serializable]
-public struct SaveData
+public class SaveData
 {
     public int LastLevelIndex;
-    public ItemBase[] Items;
+    public List<ItemBase> BackPack;
+    public List<IEquippable> Equipments;
+    public SaveData(int lastLevelIndex, List<ItemBase> backPack, List<IEquippable> equipments)
+    {
+        LastLevelIndex = lastLevelIndex;
+        BackPack = backPack;
+        Equipments = equipments;
+    }
+    public SaveData(List<ItemBase> backPack)
+    {
+        BackPack = backPack;
+        Equipments = new List<IEquippable>();
+    }
 }
+
 

@@ -15,7 +15,7 @@ using Zenject;
 public class InGameManager : MonoInstaller
 {
 
-    [SerializeField] private CursorManager _cursors;
+    private CursorManager _cursors;
 
     private UnitsManager UnitsManager { get; set; }
     public PlayerUnit GetPlayer => UnitsManager.GetPlayerUnit;

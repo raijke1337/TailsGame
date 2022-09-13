@@ -32,8 +32,8 @@ public class GameInterfaceManager : MonoBehaviour
 
 
         // hides the menus
-        _items.OnToggle(_items.PanelID);
-        _pause.OnToggle(_pause.PanelID);
+        _items.OnToggle(false);
+        _pause.OnToggle(false);
     }
 
     private void GameInterfaceManager_ToggleMenuEvent(GameMenuType arg)
@@ -42,12 +42,12 @@ public class GameInterfaceManager : MonoBehaviour
         switch (arg)
         {
             case GameMenuType.Items:
-                _items.OnToggle(_items.PanelID);
+                _items.OnToggle(true);
                 panel = _items;
                 _unitsM.MenuOpened(panel.gameObject.activeSelf);
                 break;
             case GameMenuType.Pause:
-                _pause.OnToggle(_pause.PanelID);
+                _pause.OnToggle(true);
                 panel = _pause;
                 _unitsM.MenuOpened(panel.gameObject.activeSelf);
                 break;

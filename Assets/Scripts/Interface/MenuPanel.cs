@@ -11,33 +11,50 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public abstract class MenuPanel : MonoBehaviour
+public class MenuPanel : MonoBehaviour, IHasID
 {
-    public string PanelID;
+    [SerializeField] protected string _id;
+    public string GetID => _id;
 
-    protected Coroutine scalerCor;
-    private Vector2 _openSize;
-    private RectTransform _rect;
+    public bool IsOpen { get; protected set; } = false;
+    public bool StartClosed = false;
+    public event SimpleEventsHandler<string,MenuPanel> SwitchToWindow;
 
-    private void Awake()
+    protected Vector2[] _elementsLoc;
+    [SerializeField] protected ItemTileComponent TilePrefab;
+    protected ItemTileComponent[] _tiles;
+
+
+    protected virtual void Awake()
     {
-        _rect = GetComponent<RectTransform>();
-        _openSize = _rect.sizeDelta;
+        gameObject.name = _id;
     }
 
-    public virtual void OnToggle(string ID)
+    public virtual void OnToggle(bool isShow)
     {
-        if (ID == PanelID)
-        {
-            bool needToHide = _openSize == _rect.sizeDelta;
-            scalerCor = StartCoroutine(LerpScale(needToHide));
-        }         
+        gameObject.SetActive(isShow);
+        IsOpen = isShow;
     }
 
-    protected IEnumerator LerpScale(bool isHide)
+    private RectTransform currentArea;
+    [SerializeField, Tooltip("offset between internal elements")] private Vector2 _offsets;
+    [SerializeField, Tooltip("internal element size")] private Vector2 _tileSize;
+
+
+    protected virtual void Start()
     {
-        yield return null;
+        currentArea = GetComponent<RectTransform>();
+        _elementsLoc = Extensions.GetTilePositions(currentArea, _offsets, _tileSize);
+
+        _tiles = new ItemTileComponent[_elementsLoc.Length];
+        gameObject.SetActive(!StartClosed);
     }
+
+
+    #region unity
+    public void OtherMenuButtonClicked(string menu) => SwitchToWindow?.Invoke(menu,this);
+
+    #endregion
 
 }
 

@@ -28,6 +28,9 @@ public class SkillsController : BaseController, INeedsEmpties
 
     public bool RequestSkill (CombatActionType type, out float cost)
     {
+        cost = 0f;
+        if (!_skills.ContainsKey(type)) return false;
+
         var result = _skills[type].RequestUse();
         cost = _skills[type].GetSkillData.SkillCost;
         if (result)

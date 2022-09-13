@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class TriggeredEffect 
+public class TriggeredEffect : ICloneable
 {
     public string ID; // used to load info
     public TriggerChangedValue StatType; // used to pick changed stat
@@ -37,5 +37,9 @@ public class TriggeredEffect
         CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType;
     }
 
+    public object Clone()
+    {
+        return new TriggeredEffect(ID,StatType,InitialValue,RepeatedValue,RepeatApplicationDelay,TotalDuration, Icon);  
+    }
 }
 

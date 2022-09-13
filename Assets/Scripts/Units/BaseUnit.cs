@@ -36,32 +36,29 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
 
-    [SerializeField] protected EquipmentBase[] Equipments;
-
-
-
     #region setups
+    private bool _isGame = false; // when actual gameplay happens set to true
+    public bool IsGamePlay
+    {
+        get
+        {
+            return _isGame;
+        }
+        set
+        {
+            _isGame = value;
+            _controller.IsControlsBusy = value;
+        }
+    }
 
-    protected UnitInventoryComponent Inventory;
+
     // run in enaable
     // npcs override to load a list of item ids
     // player overrides to load a json with stored items
     // todo 
-    public void InitInventory(ItemsEquipmentsHandler handler)
-    {
-        Inventory = new UnitInventoryComponent(handler);
-        foreach (var item in Equipments)
-        {
-            var equipd = Inventory.EquipItem(item.GetID);
-            if (equipd != null)
-            {
-                HandleStartingEquipment(equipd);
-            }
-        }
+    public abstract void InitInventory(ItemsEquipmentsHandler handler); // this is run by unit manager
 
-    }
-
-    private void HandleStartingEquipment(IEquippable item)
+    protected virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
         string skill = item.GetContents.SkillString;
         if (skill.Length != 0) _controller.AddSkillString(skill);
@@ -123,6 +120,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
             _controller.StaggerHappened -= AnimateStagger;
         }
     }
+
     protected virtual void Start()
     {
         UnitBinds(true);
@@ -133,20 +131,23 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         UnitBinds(false);
         _controller.BindControllers(false);
     }
+
+
+
+
     protected virtual void FixedUpdate()
-    {   
+    {
         AnimateMovement();
     }
     #endregion
     #region stats
     protected virtual void OnDeath()
     {
-
-            _animator.SetTrigger("Death");
-            BaseUnitDiedEvent?.Invoke(this);
-            UnitBinds(false);
-            _controller.IsControlsBusy = true;
-            StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));        
+        _animator.SetTrigger("Death");
+        BaseUnitDiedEvent?.Invoke(this);
+        UnitBinds(false);
+        //_controller.IsControlsBusy = true;
+        StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));        
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)
     {
@@ -231,6 +232,12 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
 
     #endregion
+
+
+
+
+
+
 
     #region misc
     public static IEnumerator ItemDisappearsCoroutine(float time, GameObject item)

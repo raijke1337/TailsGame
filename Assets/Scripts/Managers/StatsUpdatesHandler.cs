@@ -29,7 +29,7 @@ public class StatsUpdatesHandler : MonoBehaviour
             if (!_list.Contains(stats))
             {
                 _list.Add(stats);
-                Debug.Log($"Registered {stats}");
+                // Debug.Log($"Registered {stats}");
                 // to prevent double registration for weapons ctrl
             }
         }

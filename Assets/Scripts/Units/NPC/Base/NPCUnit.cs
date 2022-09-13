@@ -20,7 +20,7 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
 
 
     [SerializeField] protected ItemsEquipmentsHandler.DroppableItem[] Drops;
-
+    [SerializeField] protected EquipmentBase[] NPCEquipments;
 
     public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
 
@@ -39,8 +39,15 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
 
         _controller.GetStatsController.GetBaseStats[BaseStatType.Health].ValueChangedEvent += OnOuch;
 
-        if (Equipments.Count() == 0 || Equipments == null)
+        if (NPCEquipments.Count() == 0 || NPCEquipments == null)
             Debug.LogWarning($"{this} has no equipments");
+    }
+    public override void InitInventory(ItemsEquipmentsHandler handler)
+    {
+        foreach (var item in NPCEquipments)
+        {
+            HandleStartingEquipment(item);
+        }
     }
 
     private void OnOuch(float curr, float prev)
@@ -59,6 +66,7 @@ public abstract class NPCUnit : BaseUnit, IInteractiveItem
     }
 
     private void SetNPCInputs() => _npcController = _controller as InputsNPC;
-    public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this); 
+    public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this);
+
 }
 

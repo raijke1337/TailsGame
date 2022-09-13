@@ -5,13 +5,13 @@ using System.Linq;
 using UnityEngine;
 
 
-public class UnitInventoryComponent
+public class UnitEquipmentComponent
 {
     private Dictionary<EquipItemType, IEquippable> Equipments;
 
     ItemsEquipmentsHandler Handler;
 
-    public UnitInventoryComponent (ItemsEquipmentsHandler handler)
+    public UnitEquipmentComponent (ItemsEquipmentsHandler handler)
     {
         Handler = handler;
         Equipments = new Dictionary<EquipItemType, IEquippable> ();
@@ -31,6 +31,8 @@ public class UnitInventoryComponent
             return null;
         }
     }
+
+    public List<IEquippable> GetEquippedItems => Equipments.Values.ToList();
 
 }
 

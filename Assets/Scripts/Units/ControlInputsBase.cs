@@ -13,7 +13,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public void SetUnit(BaseUnit u) => Unit = u;
     public abstract UnitType GetUnitType();
 
-    public bool IsControlsBusy { get; set; } // todo ?
+    [SerializeField] public bool IsControlsBusy; // todo ?
 
 
     [Inject] protected StatsUpdatesHandler _handler;
@@ -95,6 +95,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 
     public virtual void BindControllers(bool isEnable)
     {
+        Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
         IsControlsBusy = false;
         _weaponCtrl.Owner = Unit;
         _stunsCtrl.StunHappenedEvent += StunEventCallback;    
@@ -105,8 +106,6 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     {
         BindControllers(false);
     }
-
-
 
     public void ToggleBusyControls_AnimationEvent(int state)
     {

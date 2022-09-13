@@ -16,7 +16,7 @@ public class PausePanel : MenuPanel
 
     public void OnResume()
     {
-        OnToggle(PanelID);
+        OnToggle(false);
     }
     public void OnQuit()
     {

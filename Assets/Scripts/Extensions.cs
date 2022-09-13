@@ -76,7 +76,7 @@ public static class Extensions
     /// <param name="path">refer to Constants</param>
     /// <param name="includeSubDirs">look in subfolders </param>
     /// <returns>list of assets in specified folder</returns>
-    public static IEnumerable<T> GetAssetsOfType<T>(string path) where T : class
+    public static T[] GetAssetsOfType<T>(string path) where T : class
     {
         string appPath = Application.dataPath;
 
@@ -110,7 +110,7 @@ public static class Extensions
                 all.Add(file as T);
             }
         }
-        return all; 
+        return all.ToArray(); 
     }
 #endregion
 
@@ -120,6 +120,14 @@ public static class Extensions
     #endregion
 
     #region tiles
+
+    /// <summary>
+    /// Return from top left with desired tile size considered
+    /// </summary>
+    /// <param name="assignedSpace"></param>
+    /// <param name="tileOffsets"></param>
+    /// <param name="desiredTileSize"></param>
+    /// <returns></returns>
     public static Vector2[] GetTilePositions(RectTransform assignedSpace, Vector2 tileOffsets, Vector2 desiredTileSize)
     {
 
@@ -155,6 +163,7 @@ public static class Extensions
         currentIndex = 0;
         return points;
     }
+
     #endregion
 
     #region random

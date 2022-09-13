@@ -91,7 +91,7 @@ public abstract class InputsNPC : ControlInputsBase
     protected virtual void LateUpdate()
     {
         // todo too many bandaids
-        if (_stateMachine == null) return;
+        if (_stateMachine == null || IsControlsBusy) return;
         CurrentState = _stateMachine.CurrentState;
         velocityVector = _stateMachine.CurrentVelocity;
 

@@ -22,7 +22,7 @@ public abstract class BaseController : IStatsComponentForHandler
     protected void StateChangeCallback(bool val, IStatsComponentForHandler comp)
     {
         ComponentChangedStateToEvent?.Invoke(val, comp);
-        Debug.Log($"{this} called state change with value {val}");
+        //Debug.Log($"{this} called state change with value {val}");
     }
     public virtual bool IsReady 
     { 

@@ -40,6 +40,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
 
     public bool IsDodgePossibleCheck()
     {
+        if (_stats == null) return false;
         if (_stats[DodgeStatType.Charges].GetCurrent == 0f) return false;
         else
         {

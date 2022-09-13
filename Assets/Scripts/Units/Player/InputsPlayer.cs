@@ -35,7 +35,6 @@ public class InputsPlayer : ControlInputsBase
 
     private void Start()
     {
-
         transform.LookAt(transform.forward);
     }
 
@@ -64,8 +63,6 @@ public class InputsPlayer : ControlInputsBase
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
 
-            //_weaponCtrl.TargetHitByWeaponEvent += HandleComboGain;
-
         }
         else
         {
@@ -91,6 +88,7 @@ public class InputsPlayer : ControlInputsBase
 
     private void SwitchAnimatorLayer(EquipItemType type)
     {
+        if (IsControlsBusy) return;
         if (_weaponCtrl.CurrentWeaponType != type)
         {
             ChangeLayerEvent?.Invoke(type);
@@ -102,6 +100,7 @@ public class InputsPlayer : ControlInputsBase
 
     protected void RangedAttack_performed(CallbackContext obj)
     {
+        if (IsControlsBusy) return;
         if (_weaponCtrl.UseWeaponCheck(EquipItemType.RangedWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Ranged);
         else Debug.Log(text);
@@ -109,6 +108,7 @@ public class InputsPlayer : ControlInputsBase
     }
     protected void MeleeAttack_performed(CallbackContext obj)
     {
+        if (IsControlsBusy) return;
         if (_weaponCtrl.UseWeaponCheck(EquipItemType.MeleeWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Melee);
         else Debug.Log(text);
@@ -150,8 +150,9 @@ public class InputsPlayer : ControlInputsBase
     }
     #endregion
 
-    private void Update()
+    private void LateUpdate()
     {
+        if (IsControlsBusy) return;
         CalculateMovement();
         Aiming();
     }
