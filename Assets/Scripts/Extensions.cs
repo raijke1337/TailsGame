@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Linq;
+using System.Xml.Serialization;
 
 public static class Extensions
 {
@@ -110,11 +111,45 @@ public static class Extensions
                 all.Add(file as T);
             }
         }
-        return all.ToArray(); 
+        return all.ToArray();
     }
-#endregion
+    #endregion
 
-    #region JSON
+    #region XML
+
+    public static class SaveLoad
+    {
+
+        public static void SaveDataXML(SaveData data, string savepath)
+        {
+            XmlSerializer ser = new XmlSerializer(typeof(SaveData));
+            FileStream fs = new FileStream(savepath, FileMode.Create);
+            ser.Serialize(fs, data);
+            fs.Close();
+            AssetDatabase.Refresh();
+        }
+        public static SaveData LoadSaveDataFromXML(string savepath)
+        {
+            SaveData data = new SaveData();
+            try
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(SaveData));
+                FileStream fs = new FileStream(savepath, FileMode.Open);
+                data = (SaveData)ser.Deserialize(fs);
+                fs.Close();
+
+                AssetDatabase.Refresh();
+                return data;
+            }
+            catch (FileNotFoundException e)
+            {
+                Debug.Log(e);
+                return null;
+            }
+            
+        }
+    
+    }
 
 
     #endregion

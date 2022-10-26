@@ -22,6 +22,7 @@ public static class Constants
     public static class Configs
     {
         public const string c_AllConfigsPath = "/Resources/Configurations/";
+        public const string c_SavesPath = "/Saves/Save.xml";
     }
     public static class Objects
     {
@@ -29,10 +30,14 @@ public static class Constants
     }
     public static class Combat
     {
-        public const string c_ItemPrefabsPath = "/Resources/Prefabs/Items/";
-        public const string c_SkillPrefabs = "/Resources/Prefabs/Skills/";
         public const float c_RemainsDisappearTimer = 3f;
         public const float c_StaggeringHitHealthPercent = 0.1f; // 10% max hp
+    }
+    public static class PrefabsPaths
+    {
+        public const string c_ItemPrefabsPath = "/Resources/Prefabs/Items/";
+        public const string c_SkillPrefabs = "/Resources/Prefabs/Skills/";
+        public const string c_InterfacePrefabs = "/Resources/Prefabs/Interface/";
     }
     public static class Texts
     {
@@ -42,6 +47,7 @@ public static class Constants
     {
         public const string c_MethodPrefix = "Fsm_";
     }
+
 }
 [Serializable]
 public class Timer
@@ -195,6 +201,23 @@ public class ProjectileData
         TimeToLive = config.TimeToLive;
         Speed = config.ProjectileSpeed;
         Penetration = config.ProjectilePenetration;
+    }
+}
+[Serializable]
+public class UnitInventoryItems
+{
+    public List<string> EquipmentIDs;
+    public List<string> InventoryIDs;
+    public List<string> DropsIDs; 
+    public UnitInventoryItems (string preset)
+    {
+       var cfg =  Extensions.GetConfigByID<UnitItemsSO>(preset);
+        EquipmentIDs = new List<string>(cfg.Items.EquipmentIDs);
+        InventoryIDs = new List<string>(cfg.Items.InventoryIDs);
+        DropsIDs = new List<string> (cfg.Items.DropsIDs);
+    }
+    public UnitInventoryItems() { EquipmentIDs = new List<string>(); InventoryIDs = new List<string>();
+        DropsIDs = new List<string>(); 
     }
 }
 

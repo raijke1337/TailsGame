@@ -53,7 +53,7 @@ public class SkillsPlacerManager : MonoBehaviour
 
     private void LoadBaseSkills()
     {
-        var skills = Extensions.GetAssetsOfType<BaseSkill>(Constants.Combat.c_SkillPrefabs); 
+        var skills = Extensions.GetAssetsOfType<BaseSkill>(Constants.PrefabsPaths.c_SkillPrefabs); 
         foreach (var skill in skills)
         {
             _skillsDict[skill.SkillID] = skill;

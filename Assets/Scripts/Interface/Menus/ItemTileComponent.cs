@@ -16,12 +16,12 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
     public event SimpleEventsHandler<ItemContent> ItemClickedEvent;
 
     private Image _imageComp;
+    
 
     [SerializeField] private Sprite DefaultImg;
     [SerializeField] private ItemContent _content;
 
-    [SerializeField] private RectTransform _textPanel;
-    private RectTransform _instantiatedTooltip;
+    private TooltipComp tooltipComp;
 
     public ItemContent Content
     { 
@@ -38,6 +38,18 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
     {
         _imageComp = GetComponent<Image>();
         _imageComp.sprite = DefaultImg;
+
+        try
+        {
+            tooltipComp = Instantiate(Extensions.GetAssetsOfType<TooltipComp>(Constants.PrefabsPaths.c_InterfacePrefabs).First(t => t.name == "ItemText"));
+            tooltipComp.transform.parent = transform;
+            tooltipComp.gameObject.SetActive(false);
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"Mising tooltip prefab");
+        }
+
     }
 
     public RectTransform GetRekt => GetComponent<RectTransform>();
@@ -50,15 +62,15 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (_content == null) return;
-        var pos = eventData.position;
-        _instantiatedTooltip = Instantiate(_textPanel, pos, Quaternion.identity);
-        var txt = _instantiatedTooltip.GetComponentInChildren<Text>();
-        txt.text = _content.DisplayName;
+
+        tooltipComp.Content = _content;
+        tooltipComp.gameObject.SetActive(true);
+        tooltipComp.UpdateLocation(eventData.position);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_instantiatedTooltip != null) Destroy(_instantiatedTooltip.gameObject);
+        tooltipComp.gameObject.SetActive(false);
     }
     private void OnItemSet(ItemContent content)
     {

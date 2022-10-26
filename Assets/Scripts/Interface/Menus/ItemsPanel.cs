@@ -26,11 +26,13 @@ public class ItemsPanel : MenuPanel
             _tiles[i].GetRekt.anchoredPosition = _elementsLoc[i];
         }
 
-        saveData = GameManager.GetGameManager().GetSaveData();
+        saveData = GameManager.GetGameManager.GetSaveData;
 
-        for (int i = 0; i < saveData.BackPack.Count; i++)
+        for (int i = 0; i < saveData.PlayerItems.InventoryIDs.Count; i++)
         {
-            _tiles[i].Content = saveData.BackPack[i].GetContents;
+            _tiles[i].Content = GameManager.GetItemsHandler().
+                GetItemByID<ItemBase>(saveData.PlayerItems.InventoryIDs[i]).GetContents;
+            // yikes but should work
         }
 
     }

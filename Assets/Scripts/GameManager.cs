@@ -6,22 +6,32 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
+using System.Runtime.CompilerServices;
 
 public class GameManager : MonoBehaviour
 {
-    private SaveData _saveData;
+    private SaveData _loadedSave;
+    public SaveData GetSaveData { get => _loadedSave; } 
+
+
+    private string _savepath;
     private static ItemsEquipmentsHandler _itemshandler;
     private static GameManager instance;
 
-    [SerializeField] private InventorySO _defaultInventory;
+    public static GameManager GetGameManager
+    {
+        get 
+        {
+            return instance;
+        }
 
-
-    public static GameManager GetGameManager() => instance;
+    }
     public static ItemsEquipmentsHandler GetItemsHandler()
     {
-        if (_itemshandler == null )
+        if (_itemshandler == null)
         {
-            _itemshandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath)));
+            _itemshandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.PrefabsPaths.c_ItemPrefabsPath)));
         }
         return _itemshandler;
     }
@@ -29,101 +39,44 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        LoadDataFromJSON();
+        _savepath = Application.dataPath + Constants.Configs.c_SavesPath;
+
+        var data = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
+        if (data == null)
+        {
+            data = CreateDefaultSave();
+        }
+        _loadedSave = (data);
     }
 
     private void OnDisable()
     {
-        SaveDataToJSON();
+        Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
     }
 
-    public SaveData GetSaveData()
+    private SaveData CreateDefaultSave()
     {
-        if (_saveData == null) LoadDataFromJSON();
-        return _saveData;
-    }
-
-    private void LoadDataFromJSON()
-    {
-        string json = string.Empty;
-        var path = string.Concat(Application.dataPath, "/save.json");
-        try
-        {
-            StreamReader sr = new StreamReader(path);
-        }
-        catch (Exception ex)
-        {
-            Debug.Log($" No save file {ex.Message}");
-            SaveDataToJSON();
-            // it is null so we just create a new one 
-        }
-
-
-
-        using (StreamReader sr = new StreamReader(path))
-        {
-            using (JsonReader reader = new JsonTextReader(sr))
-            {
-                json = reader.ReadAsString();
-            }
-        }
-        _saveData = (SaveData)JsonUtility.FromJson(json,typeof(SaveData));
-        AssetDatabase.Refresh();
-    }
-
-    private void SaveDataToJSON()
-    {
-        string data;
-
-        if (_saveData != null)
-        {
-            //data = JsonConvert.SerializeObject(_saveData);
-            // this cant serialize gameobjects
-            data = JsonUtility.ToJson(_saveData);
-
-            Debug.Log($"Saving existing file; {data}");
-        }
-        else
-        {
-            var all = Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath);
-            var backp = from item in all
-                        where _defaultInventory.itemIDs.Contains(item.GetID)
-                        select item;
-            var b  = backp.ToList();
-
-
-            data = JsonUtility.ToJson(new SaveData(b)); // case : no save
-            Debug.Log($"Saving new file; {data}");
-        }
-
-        var path = string.Concat(Application.dataPath, "/save.json");
-        using (StreamWriter stream = new StreamWriter(path))
-        {
-            using (JsonWriter writer = new JsonTextWriter(stream))
-            {
-                writer.WriteValue(data);
-            }
-        }
-        AssetDatabase.Refresh();
+        SaveData data = new SaveData(0, new UnitInventoryItems("player")); //todo
+        return data;
     }
 }
-[Serializable]
+
+[XmlRoot("GameSave"),Serializable]
 public class SaveData
 {
     public int LastLevelIndex;
-    public List<ItemBase> BackPack;
-    public List<IEquippable> Equipments;
-    public SaveData(int lastLevelIndex, List<ItemBase> backPack, List<IEquippable> equipments)
+    public UnitInventoryItems PlayerItems;
+
+    public SaveData(int lastLevelIndex, UnitInventoryItems items)
     {
         LastLevelIndex = lastLevelIndex;
-        BackPack = backPack;
-        Equipments = equipments;
+        PlayerItems = items;
     }
-    public SaveData(List<ItemBase> backPack)
+    public SaveData (SaveData data)
     {
-        BackPack = backPack;
-        Equipments = new List<IEquippable>();
+        LastLevelIndex = data.LastLevelIndex; PlayerItems = data.PlayerItems;
     }
+    public SaveData() { LastLevelIndex = 0; }
 }
 
 

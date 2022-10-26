@@ -19,12 +19,13 @@ public class EquipsPanel : MenuPanel
     {
         base.Start();
         _tiles = GetComponentsInChildren<ItemTileComponent>();
-        saveData = GameManager.GetGameManager().GetSaveData();
-        if (saveData.Equipments == null) return; // also todo
+        saveData = GameManager.GetGameManager.GetSaveData;
+        if (saveData.PlayerItems.EquipmentIDs == null) return;
 
-        for (int i = 0; i < saveData.Equipments.Count;i++)
+        for (int i = 0; i < saveData.PlayerItems.EquipmentIDs.Count;i++)
         {
-            _tiles[i].Content = saveData.Equipments[i].GetContents; 
+            _tiles[i].Content = GameManager.GetItemsHandler().GetItemByID<ItemBase>(saveData.PlayerItems.EquipmentIDs[i]).GetContents; 
+            // yikes but should work
         }
 
     }

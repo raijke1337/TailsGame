@@ -23,11 +23,12 @@ public class PlayerUnit : BaseUnit
     #region items
     public override void InitInventory(ItemsEquipmentsHandler handler)
     {
-        _currentSave = GameManager.GetGameManager().GetSaveData();
-        if (_currentSave.Equipments == null) return; // wtf? todo
-        foreach (var eq in _currentSave.Equipments)
+        _currentSave = GameManager.GetGameManager.GetSaveData;
+        if (_currentSave.PlayerItems.EquipmentIDs == null) return; // wtf? todo
+        foreach (var eq in _currentSave.PlayerItems.EquipmentIDs)
         {
-            HandleStartingEquipment(eq);
+            var item = GameManager.GetItemsHandler().GetItemByID<IEquippable>(eq);
+            HandleStartingEquipment(item);
         }
     }       
 

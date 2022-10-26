@@ -27,7 +27,10 @@ public class ItemsEquipmentsHandler
         }
     }
 
-    public IInventoryItem GetItemByID(string id) => AllItems[id];
+    public T GetItemByID<T>(string id) where T : IInventoryItem
+    {
+        return (T)AllItems[id];
+    }
 
 
     [Serializable]
