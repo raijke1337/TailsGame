@@ -16,6 +16,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
     public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
 
     private Queue<Timer> _timerQueue = new Queue<Timer>();
+    private EquipmentBase instantiatedItem;
 
     public override void SetupStatsComponent()
     {
@@ -70,10 +71,21 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
         else
         {
             EquippedDodgeItem = item;
+            instantiatedItem = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
             IsReady = true;
         }         
     }
-
+    /// <summary>
+    /// used by equips screen mgr, 
+    /// can cause code to malfunction because stats wont init properly but 
+    /// it shouldnt happen as everything reinits ojn gameplay level load anyway
+    /// </summary>
+    public void ClearItems()
+    {
+        EquippedDodgeItem = null;
+        GameObject.Destroy(instantiatedItem);
+        IsReady = false;
+    }
     protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
     {
         return _stats[DodgeStatType.Charges];

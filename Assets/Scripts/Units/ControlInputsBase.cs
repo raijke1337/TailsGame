@@ -9,14 +9,17 @@ using static UnityEngine.InputSystem.InputAction;
 [RequireComponent(typeof(BaseUnit))]
 public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 {
-    protected BaseUnit Unit;
+    protected BaseUnit Unit; 
+    protected StatsUpdatesHandler _handler;
+
+
     public void SetUnit(BaseUnit u) => Unit = u;
+    public void SetHandler(StatsUpdatesHandler h) => _handler = h;
     public abstract UnitType GetUnitType();
 
     [SerializeField] public bool IsControlsBusy; // todo ?
 
 
-    [Inject] protected StatsUpdatesHandler _handler;
 
     [SerializeField] protected ItemEmpties Empties;
     public ItemEmpties GetEmpties => Empties;
@@ -52,9 +55,12 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 
 
     protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
+
     public virtual void InitControllers(string statsID)
     {
         // these three need a ping to properly register for updates
+        
+        
         _statsCtrl = new BaseStatsController(statsID);
         _comboCtrl = new ComboController(Unit.GetID);
         _stunsCtrl = new StunsController(); // using default "default" for now 
@@ -78,24 +84,17 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
         {
             ctrl.ComponentChangedStateToEvent += RegisterController;
             if (ctrl.IsReady) ctrl.Ping();
-            //if (ctrl is IGivesSkills)
-            //{
-            //    ctrl.ComponentChangedStateToEvent += LoadSkills;
-            //}
-            // done by unit comp now
         }
-
-
     }
 
     protected void RegisterController(bool isEnable, IStatsComponentForHandler cont)
-    {
+    {        
         _handler.RegisterUnitForStatUpdates(cont, isEnable);
     }
 
     public virtual void BindControllers(bool isEnable)
     {
-        Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
+        //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
         IsControlsBusy = false;
         _weaponCtrl.Owner = Unit;
         _stunsCtrl.StunHappenedEvent += StunEventCallback;    

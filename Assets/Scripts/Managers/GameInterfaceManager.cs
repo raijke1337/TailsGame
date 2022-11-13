@@ -16,7 +16,6 @@ public class GameInterfaceManager : MonoBehaviour
 {
     [SerializeField] private TargetUnitPanel _tgt;
     [SerializeField] private PlayerUnitPanel _player;
-    [SerializeField] private MenuPanel _items;
     [SerializeField] private MenuPanel _pause;
 
     private UnitsManager _unitsM;
@@ -26,13 +25,13 @@ public class GameInterfaceManager : MonoBehaviour
         await Task.Yield();
 
         _unitsM = FindObjectOfType<UnitsManager>();
+        if (_player == null) return;
         _player.AssignItem(_unitsM.GetPlayerUnit,true);
+
         _unitsM.GetPlayerUnit.SetInfoPanel(_tgt);
         _unitsM.GetPlayerUnit.ToggleMenuEvent += GameInterfaceManager_ToggleMenuEvent;
 
 
-        // hides the menus
-        _items.OnToggle(false);
         _pause.OnToggle(false);
     }
 
@@ -41,11 +40,6 @@ public class GameInterfaceManager : MonoBehaviour
         MenuPanel panel;
         switch (arg)
         {
-            case GameMenuType.Items:
-                _items.OnToggle(true);
-                panel = _items;
-                _unitsM.MenuOpened(panel.gameObject.activeSelf);
-                break;
             case GameMenuType.Pause:
                 _pause.OnToggle(true);
                 panel = _pause;

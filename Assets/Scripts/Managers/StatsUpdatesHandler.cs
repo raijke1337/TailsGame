@@ -19,7 +19,7 @@ public class StatsUpdatesHandler : MonoBehaviour
         if (_list == null) _list = new List<IStatsComponentForHandler>();
         if (!IsAdd)
         {
-            Debug.Log($"Unregistered {stats}");
+            //Debug.Log($"Unregistered {stats}");
             _list.Remove(stats);
             return;
         }
@@ -35,14 +35,17 @@ public class StatsUpdatesHandler : MonoBehaviour
         }
     }
 
+
     private void Update()
     {
+        
         if (_list == null) return;
         foreach (var u in _list.ToList())
         {
             u.UpdateInDelta(Time.deltaTime);      
         }
     }
+
 
 
 

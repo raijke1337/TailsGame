@@ -11,9 +11,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class GalleryMenuComp : MenuPanel
+public class MainMenuComp : MenuPanel
 {
-        
-
+    public void OnStartGame()
+    {
+        LevelsLoaderManager.GetInstance.RequestLevelLoad(2);
+    }
 }
 

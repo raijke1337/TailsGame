@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 [Serializable]
-public class CursorManager
+public class CursorManager : MonoBehaviour
 {
-    private CursorType _currentType;
-    [SerializeField] private Texture2D _texture;
+    [SerializeField] Texture2D currentShape;
+    [SerializeField] string CursorsSetName = "default";
 
-    private Dictionary<CursorType, Texture2D> _shapes = new Dictionary<CursorType, Texture2D>();
+    private Dictionary<CursorType, Texture2D> _shapes;
     public void SetCursor(CursorType type)
     {
-        _currentType = type;
-        _texture = _shapes[_currentType];
+        if (_shapes == null) return;
+        currentShape = _shapes[type];
         Cursor.SetCursor(_shapes[type], Vector2.zero, CursorMode.Auto);
+        Cursor.visible = true;
     }
 
     public void ResetCursor()
@@ -20,24 +21,17 @@ public class CursorManager
         SetCursor(CursorType.Menu);
         Cursor.visible = true;
     }
-
-    public CursorManager(CursorsDictionary dict)
+    private void Awake()
     {
+        var dict = Extensions.GetConfigByID<CursorsDictionary>(CursorsSetName);
+        _shapes = new Dictionary<CursorType, Texture2D>();
         foreach (var key in dict.GetCursors.Keys)
         {
             _shapes[key] = dict.GetCursors[key];
         }
         ResetCursor();
+    }
 
-    }
-    public CursorManager(Dictionary<CursorType, Texture2D> shapes)
-    {
-        foreach (var key in shapes.Keys)
-        {
-            _shapes[key] = shapes[key];
-        }
-        ResetCursor();
-    }
 
 }
 

@@ -13,6 +13,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerUnit : BaseUnit
 {
+    private GameManager gm;
+
     private InputsPlayer _playerController;
     private VisualsController _visualController;
     private float[] _visualStagesHP;
@@ -23,14 +25,20 @@ public class PlayerUnit : BaseUnit
     #region items
     public override void InitInventory(ItemsEquipmentsHandler handler)
     {
-        _currentSave = GameManager.GetGameManager.GetSaveData;
-        if (_currentSave.PlayerItems.EquipmentIDs == null) return; // wtf? todo
+        gm = GameManager.GetInstance;
+        _currentSave = gm.GetSaveData;
+
         foreach (var eq in _currentSave.PlayerItems.EquipmentIDs)
         {
-            var item = GameManager.GetItemsHandler().GetItemByID<IEquippable>(eq);
+            var item = GameManager.GetItemsHandler.GetItemByID<IEquippable>(eq);
             HandleStartingEquipment(item);
         }
-    }       
+    }
+    public void ClearAllItems()
+    {
+        _playerController.ClearAllItems();
+    }
+ 
 
     #endregion
 
@@ -39,6 +47,7 @@ public class PlayerUnit : BaseUnit
     protected override void Awake()
     {
         base.Awake(); 
+        
         _visualController = GetComponent<VisualsController>();
     }
 

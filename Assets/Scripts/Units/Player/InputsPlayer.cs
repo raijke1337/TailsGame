@@ -191,4 +191,15 @@ public class InputsPlayer : ControlInputsBase
     {
         return UnitType.Player;
     }
+
+    /// <summary>
+    /// used by equips screen manager to reload items
+    /// </summary>
+    public void ClearAllItems()
+    {
+        _weaponCtrl.ClearItems();
+        //_shieldCtrl.ClearItems(); no visual - doesnt matter ATM TODO
+        _dodgeCtrl.ClearItems();
+    }
+
 }

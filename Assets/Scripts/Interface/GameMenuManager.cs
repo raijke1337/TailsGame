@@ -38,7 +38,7 @@ public class GameMenuManager : MonoBehaviour
         }
         catch (InvalidOperationException e)
         {
-            Debug.Log($"{e.TargetSite} had an invalid opration");
+            Debug.Log($"{e.TargetSite} had an invalid operation");
         }
     }
 

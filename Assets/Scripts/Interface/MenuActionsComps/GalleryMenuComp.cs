@@ -11,8 +11,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class LevelSelectMenuComp : MenuPanel
+public class GalleryMenuComp : MenuPanelTiled
 {
         
+
 }
 

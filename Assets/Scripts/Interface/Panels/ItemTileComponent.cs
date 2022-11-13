@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
     public event SimpleEventsHandler<ItemContent> ItemClickedEvent;
+    public event SimpleEventsHandler<ItemContent, bool> ItemTooltipEvent;
 
     private Image _imageComp;
     
@@ -21,7 +22,6 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
     [SerializeField] private Sprite DefaultImg;
     [SerializeField] private ItemContent _content;
 
-    private TooltipComp tooltipComp;
 
     public ItemContent Content
     { 
@@ -33,23 +33,16 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
             OnItemSet(_content);
         }
     }
+    public void Clear()
+    {
+        Content = null;
+        OnItemSet(null);
+    }
 
     private void Awake()
     {
         _imageComp = GetComponent<Image>();
         _imageComp.sprite = DefaultImg;
-
-        try
-        {
-            tooltipComp = Instantiate(Extensions.GetAssetsOfType<TooltipComp>(Constants.PrefabsPaths.c_InterfacePrefabs).First(t => t.name == "ItemText"));
-            tooltipComp.transform.parent = transform;
-            tooltipComp.gameObject.SetActive(false);
-        }
-        catch (Exception e)
-        {
-            Debug.Log($"Mising tooltip prefab");
-        }
-
     }
 
     public RectTransform GetRekt => GetComponent<RectTransform>();
@@ -61,16 +54,12 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_content == null) return;
-
-        tooltipComp.Content = _content;
-        tooltipComp.gameObject.SetActive(true);
-        tooltipComp.UpdateLocation(eventData.position);
+        ItemTooltipEvent?.Invoke(Content,true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        tooltipComp.gameObject.SetActive(false);
+        ItemTooltipEvent?.Invoke(Content,false);   
     }
     private void OnItemSet(ItemContent content)
     {

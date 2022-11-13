@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -221,6 +222,34 @@ public class UnitInventoryItems
     }
 }
 
+
+[XmlRoot("GameSave"), Serializable]
+public class SaveData
+{
+    public int LastLevelIndex;
+    public UnitInventoryItems PlayerItems;
+
+    public SaveData(int lastLevelIndex, UnitInventoryItems items)
+    {
+        LastLevelIndex = lastLevelIndex;
+        PlayerItems = items;
+    }
+    public SaveData(SaveData data)
+    {
+        LastLevelIndex = data.LastLevelIndex; PlayerItems = data.PlayerItems;
+    }
+    public SaveData() { LastLevelIndex = 2;  } // level build index, 2 is the first game level
+}
+[Serializable]
+public class LevelData 
+{
+    public int SceneLoaderIndex;
+    public string LevelNameShort;
+    public string TextContainerID;
+
+}
+
+
 #region structs 
 
 [Serializable] public struct SkillData
@@ -321,6 +350,9 @@ public interface IWeapon : IEquippable
     void UpdateInDelta(float deltaTime);
     void SetUpWeapon(BaseWeaponConfig cfg);
 }
+public interface IClearItem
+{ void ClearItem(); }
+
 
 public interface IExpires : IHasGameObject
 {

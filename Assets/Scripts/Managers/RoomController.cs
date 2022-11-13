@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
+[RequireComponent(typeof(Collider))]
 public class RoomController : MonoBehaviour
 {
     [SerializeField] private List<NPCUnit> list;
@@ -63,6 +63,7 @@ public class RoomController : MonoBehaviour
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
             unit.OnUnitSpottedPlayerEvent += Unit_OnUnitSpottedPlayerEvent;
             unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
+            Debug.Log($"Set up unit:{unit.GetFullName}");
         }
        
     }
@@ -71,12 +72,12 @@ public class RoomController : MonoBehaviour
     private void Unit_OnUnitAttackedEvent(NPCUnit arg)
     {
         arg.ReactToDamage(_player);
-        Debug.Log($"{this}: {arg} was attacked");
+        //Debug.Log($"{this}: {arg} was attacked");
     }
 
     private void Unit_OnUnitSpottedPlayerEvent(NPCUnit arg)
     {
-        Debug.Log($"{this}: {arg} saw player");
+        //Debug.Log($"{this}: {arg} saw player");
     }
 
     private void Unit_BaseUnitDiedEvent(BaseUnit unit)

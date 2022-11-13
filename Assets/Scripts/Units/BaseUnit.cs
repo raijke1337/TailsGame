@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -11,7 +12,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 {
     [SerializeField] protected string StatsID;
 
-    [Inject] protected StatsUpdatesHandler _handler;
+    protected StatsUpdatesHandler _handler;
     public string GetID => StatsID;
 
     protected Animator _animator;
@@ -58,8 +59,12 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     // todo 
     public abstract void InitInventory(ItemsEquipmentsHandler handler); // this is run by unit manager
 
-    protected virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
+
+    protected async virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
+        UpdateComponents();
+        await Task.Yield(); // bandaid lol to let things init
+
         string skill = item.GetContents.SkillString;
         if (skill.Length != 0) _controller.AddSkillString(skill);
 
@@ -86,20 +91,29 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         }
     }
 
+
+    protected void UpdateComponents()
+    {
+        if (_animator == null) _animator = GetComponent<Animator>();
+        if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
+        if (_controller == null) _controller = GetComponent<ControlInputsBase>();
+        if (_handler == null) _handler = FindObjectOfType<StatsUpdatesHandler>(); // placeholder TODO
+        if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
+    }
+
     protected virtual void Awake()
     {
-        _animator = GetComponent<Animator>();
-        _rigidbody = GetComponent<Rigidbody>();
-        _controller = GetComponent<ControlInputsBase>();
+        UpdateComponents();
+
         GetCollider = GetComponent<Collider>();
 
-        _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         _faceCam.enabled = false;
     }
 
     protected virtual void OnEnable()
     {
         _controller.SetUnit(this);
+        _controller.SetHandler(_handler);
         _controller.InitControllers(StatsID);
         _controller.BindControllers(true);
     }

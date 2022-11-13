@@ -17,13 +17,17 @@ public static class Extensions
     /// <param name="path">refer to Constants</param>
     /// <param name="includeSubDirs">look in subfolders </param>
     /// <returns>list of assets in specified folder</returns>
-    public static T GetConfigByID<T>(string ID) where T : ScriptableObjectID
+    public static T GetConfigByID<T>(string ID="default") where T : ScriptableObjectID
     {
         //Debug.Log($"Loading config {typeof(T)} with ID {ID}");
         if (ID == "")
         {
             Debug.Log($"ID was empty");
             return null;
+        }
+        if (ID == "default")
+        {
+            Debug.Log($"Loading default config of type {typeof(T)}");
         }
         string path = Constants.Configs.c_AllConfigsPath;
 
@@ -143,7 +147,7 @@ public static class Extensions
             }
             catch (FileNotFoundException e)
             {
-                Debug.Log(e);
+                Debug.Log("Save file not found, creating new");
                 return null;
             }
             

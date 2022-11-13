@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public class UnitsManager : MonoBehaviour
 
     private void Awake()
     {
-        invHandler = GameManager.GetItemsHandler();
+        invHandler = GameManager.GetItemsHandler;
         _player = FindObjectOfType<PlayerUnit>();
         if (_player == null)
         {
@@ -26,11 +27,10 @@ public class UnitsManager : MonoBehaviour
         }
         UnitSubs(_player);
 
-        _rooms.AddRange(FindObjectsOfType<RoomController>());
+        _rooms.AddRange(GetComponentsInChildren<RoomController>());
         if (_rooms.Count == 0)
         {
-            Debug.Log($"No rooms found, {this} stopping init for npcs");
-            return;
+            Debug.LogError($"No rooms found! Create some collider boxes with Room Controller");            
         }
         foreach (var room in _rooms)
         {
@@ -98,11 +98,5 @@ public class UnitsManager : MonoBehaviour
             Debug.LogWarning("You died");
         }
     }
-    public void OnStartGamePlay(bool isStart)
-    {
-        
-    }
-
-
 }
 

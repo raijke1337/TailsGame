@@ -18,6 +18,7 @@ public class SkillsController : BaseController, INeedsEmpties
     {
         var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(skillID);
         if (cfg == null) { return; }
+        if (_skills == null) _skills = new Dictionary<CombatActionType, SkillControllerData>();
         else
         {
             var type = cfg.SkillType;

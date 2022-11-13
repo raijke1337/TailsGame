@@ -2,6 +2,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 [Serializable]
@@ -97,6 +98,20 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
             item.transform.parent = Empties.RangedWeaponEmpty;
         }
         return true;
+    }
+    public void ClearItems()
+    {
+        foreach (var weapon in CurrentWeapons.Values)
+        {
+            weapon.GetObject().SetActive(false);
+        }
+        var sheathed = Empties.SheathedWeaponEmpty.GetComponentInChildren<BaseWeapon>();
+        if (sheathed != null)
+        {
+            sheathed.GetObject().SetActive(false);
+        }
+        CurrentWeapons.Clear();
+        IsReady = false;
     }
 
     public int GetAmmoByType(EquipItemType type)

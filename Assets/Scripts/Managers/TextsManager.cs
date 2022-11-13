@@ -13,15 +13,30 @@ using UnityEngine.InputSystem;
 using System.Text;
 using TMPro;
 
-public class TextsManager : MonoBehaviour
+public class TextsManager : SingletonManagerBase
 {
     private List<TextTrigger> triggers = new List<TextTrigger>();
-    private List<TextContainer> containers = new List<TextContainer>();
+    private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
+
+
     [SerializeField] private GameObject TextPanel;
     private Text Txt;
-    private void Awake()
+
+    private void ShowTexts(string ID,bool isShow)
     {
-        if (TextPanel == null) Debug.LogError($"Set up the panel ref {this}");
+        TextPanel.SetActive(isShow);
+        string result = string.Join("\n", textContainers[ID].Texts);
+        Txt.text = result;
+    }
+
+    public TextContainer GetContainerByID(string ID) => textContainers[ID];
+
+    public override void SetupManager()
+    {
+        if (TextPanel == null)
+        { Debug.LogWarning($"Set up the panel ref {this}");
+            return;
+        } 
         Txt = TextPanel.GetComponentInChildren<Text>();
         triggers.AddRange(FindObjectsOfType<TextTrigger>());
         foreach (var trigger in triggers)
@@ -29,21 +44,36 @@ public class TextsManager : MonoBehaviour
             trigger.ShowTextEvent += ShowTexts;
         }
         TextPanel.SetActive(false);
-        var ids = Extensions.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
-        foreach (var id in ids)
+        var texts = Extensions.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
+
+        foreach (var text in texts)
         {
-            containers.Add(id.container);
+            textContainers[text.container.ID] = text.container;
         }
+        Debug.Log($"Found total {textContainers.Count} texts");
+
         Txt.text = "";
         TextPanel.SetActive(false);
     }
-    private void ShowTexts(string ID,bool isShow)
-    {
-        TextPanel.SetActive(isShow);
-        var cont = containers.First(t => t.ID == ID);
-        string result = string.Join("\n", cont.Texts);
-        Txt.text = result;
-    }
 
+
+    #region SingletonLogic
+
+    protected static TextsManager _instance = null;
+    public override void InitSingleton()
+    {
+        if (_instance == null)
+            _instance = this;
+        else if (_instance == this) Destroy(gameObject); // remove copies just in case
+        SetupManager();
+    }
+    public static TextsManager GetInstance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+    #endregion
 }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "New Cursors Dict", menuName = "Configurations/Cursors", order = 1)]
+[CreateAssetMenu(fileName = "New Cursors Dict", menuName = "Dictionary/Cursors", order = 1)]
 public class CursorsDictionary : ScriptableObjectID
 {
     [SerializeField] SerializableDictionaryBase<CursorType, Texture2D> _dict;

@@ -31,6 +31,10 @@ public class ItemsEquipmentsHandler
     {
         return (T)AllItems[id];
     }
+    public ItemContent GetItemCOntentByID(string ID)
+    {
+        return AllItems[ID].GetContents;
+    }
 
 
     [Serializable]

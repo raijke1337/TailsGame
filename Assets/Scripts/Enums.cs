@@ -82,7 +82,8 @@ public enum UnitType : byte
 public enum TextType
 {
     Tutorial,
-    Story
+    Story,
+    Description
 }
 
 public enum GameMenuType
@@ -96,4 +97,11 @@ public enum InteractiveItemType : byte
     Enemy = 0,
     Pickup = 10,
 
+}
+
+public enum GameMode
+{
+    Menus,
+    Paused,
+    Gameplay
 }
