@@ -19,11 +19,12 @@ public class InputsPlayer : ControlInputsBase
 
     public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
 
-
+    private bool bindsComplete = false;
 
     private void OnDisable()
     {
         PlayerBind(false);
+        bindsComplete = false;
     }
 
     public override void BindControllers(bool isEnable)
@@ -42,6 +43,7 @@ public class InputsPlayer : ControlInputsBase
     {
         if (enable)
         {
+            if (bindsComplete) return;
             _controls.Game.Enable();
             _adj = new IsoCamAdjust();
 
@@ -62,6 +64,7 @@ public class InputsPlayer : ControlInputsBase
 
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
+            bindsComplete = enable;
 
         }
         else
@@ -81,6 +84,7 @@ public class InputsPlayer : ControlInputsBase
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
+            bindsComplete = enable;
 
         }
     }
@@ -201,5 +205,7 @@ public class InputsPlayer : ControlInputsBase
         //_shieldCtrl.ClearItems(); no visual - doesnt matter ATM TODO
         _dodgeCtrl.ClearItems();
     }
+
+    
 
 }
