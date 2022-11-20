@@ -15,9 +15,25 @@ public class GameManager : SingletonManagerBase
 {
     private SaveData _loadedSave;
     public SaveData GetSaveData { get => _loadedSave; } 
-
     private string _savepath;
 
+
+    private GameMode _mode;
+    public GameMode Mode
+    {
+        get
+        {
+            return _mode;   
+        }
+
+        set
+        {
+            _mode = value;
+            Debug.Log($"Game mode set to:{value}");
+            OnGameModeChanged?.Invoke(value);
+        }    
+    }
+    public SimpleEventsHandler<GameMode> OnGameModeChanged;
 
     public override void SetupManager()
     {
@@ -69,6 +85,7 @@ public class GameManager : SingletonManagerBase
             _instance = this;
         else if (_instance == this) Destroy(gameObject); // remove copies just in case
         SetupManager();
+        Mode = GameMode.Menus;
     }
     public static GameManager GetInstance
     {

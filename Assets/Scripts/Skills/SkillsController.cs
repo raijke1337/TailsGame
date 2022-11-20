@@ -1,3 +1,4 @@
+using ModestTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ public class SkillsController : BaseController, INeedsEmpties
             var type = cfg.SkillType;
             _skills[type] = new SkillControllerData(cfg);
         }
+        IsReady = _skills.HasAtLeast(1);
     }
 
 

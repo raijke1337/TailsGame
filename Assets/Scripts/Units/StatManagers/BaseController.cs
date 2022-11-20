@@ -10,12 +10,12 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
-
+[Serializable]
 public abstract class BaseController : IStatsComponentForHandler
 {
     protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
 
-    private bool _isReady = false;
+    [SerializeField] private bool _isReady = false;
 
     public event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent;
     

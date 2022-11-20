@@ -86,11 +86,6 @@ public enum TextType
     Description
 }
 
-public enum GameMenuType
-{
-    Items = 0,
-    Pause = 255
-}
 
 public enum InteractiveItemType : byte
 {
@@ -104,4 +99,11 @@ public enum GameMode
     Menus,
     Paused,
     Gameplay
+}
+
+public enum LevelEventType
+{
+    TextDisplay,
+    LevelComplete,
+    Cutscene
 }

@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class ManagersBootStrapper : MonoBehaviour
 {
-    public GameMode CurrentGameMode = GameMode.Menus;
 
     public GameManager GameManager;
     public TextsManager TextsManager;
@@ -23,12 +22,7 @@ public class ManagersBootStrapper : MonoBehaviour
         if (TextsManager.GetInstance == null) { Instantiate(TextsManager, transform); TextsManager.InitSingleton(); }
         if (LevelsLoaderManager.GetInstance == null) { Instantiate(LevelsLoaderManager, transform); LevelsLoaderManager.InitSingleton(); }
 
-        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         DontDestroyOnLoad(gameObject);
     }
 
-    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
-    {
-
-    }
 }

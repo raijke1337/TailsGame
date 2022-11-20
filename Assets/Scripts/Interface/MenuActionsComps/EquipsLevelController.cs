@@ -118,7 +118,6 @@ public class EquipsLevelController : MonoBehaviour
             saveData.PlayerItems.InventoryIDs.Add(cont.ID);
         }
         GameManager.GetInstance.UpdateSaveData();
-        _player.ClearAllItems();
         _player.InitInventory(_items);
     }
 

@@ -30,7 +30,7 @@ public class UnitsManager : MonoBehaviour
         _rooms.AddRange(GetComponentsInChildren<RoomController>());
         if (_rooms.Count == 0)
         {
-            Debug.LogError($"No rooms found! Create some collider boxes with Room Controller");            
+            Debug.LogWarning($"No rooms found! Create some collider boxes with Room Controller");            
         }
         foreach (var room in _rooms)
         {

@@ -24,12 +24,12 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     [SerializeField] protected ItemEmpties Empties;
     public ItemEmpties GetEmpties => Empties;
 
-    protected BaseStatsController _statsCtrl;
-    protected WeaponController _weaponCtrl;
-    protected DodgeController _dodgeCtrl;
-    protected ShieldController _shieldCtrl;
+    [SerializeField] protected BaseStatsController _statsCtrl;
+    [SerializeField] protected WeaponController _weaponCtrl;
+    [SerializeField] protected DodgeController _dodgeCtrl;
+    [SerializeField] protected ShieldController _shieldCtrl;
     [SerializeField] protected SkillsController _skillCtrl;
-    protected ComboController _comboCtrl;
+    [SerializeField] protected ComboController _comboCtrl;
     [SerializeField]protected StunsController _stunsCtrl;
 
     public DodgeController GetDodgeController => _dodgeCtrl;
@@ -58,8 +58,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 
     public virtual void InitControllers(string statsID)
     {
-        // these three need a ping to properly register for updates
-        
+        // these three need a ping to properly register for updates       
         
         _statsCtrl = new BaseStatsController(statsID);
         _comboCtrl = new ComboController(Unit.GetID);
@@ -94,12 +93,11 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 
     public virtual void BindControllers(bool isEnable)
     {
-        //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
+                //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
         IsControlsBusy = false;
         _weaponCtrl.Owner = Unit;
         _stunsCtrl.StunHappenedEvent += StunEventCallback;    
     }
-
 
     private void OnDisable()
     {

@@ -75,17 +75,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
             IsReady = true;
         }         
     }
-    /// <summary>
-    /// used by equips screen mgr, 
-    /// can cause code to malfunction because stats wont init properly but 
-    /// it shouldnt happen as everything reinits ojn gameplay level load anyway
-    /// </summary>
-    public void ClearItems()
-    {
-        EquippedDodgeItem = null;
-        GameObject.Destroy(instantiatedItem);
-        IsReady = false;
-    }
+
     protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
     {
         return _stats[DodgeStatType.Charges];

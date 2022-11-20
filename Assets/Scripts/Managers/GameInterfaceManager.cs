@@ -16,7 +16,6 @@ public class GameInterfaceManager : MonoBehaviour
 {
     [SerializeField] private TargetUnitPanel _tgt;
     [SerializeField] private PlayerUnitPanel _player;
-    [SerializeField] private MenuPanel _pause;
 
     private UnitsManager _unitsM;
 
@@ -29,24 +28,9 @@ public class GameInterfaceManager : MonoBehaviour
         _player.AssignItem(_unitsM.GetPlayerUnit,true);
 
         _unitsM.GetPlayerUnit.SetInfoPanel(_tgt);
-        _unitsM.GetPlayerUnit.ToggleMenuEvent += GameInterfaceManager_ToggleMenuEvent;
 
-
-        _pause.OnToggle(false);
     }
 
-    private void GameInterfaceManager_ToggleMenuEvent(GameMenuType arg)
-    {
-        MenuPanel panel;
-        switch (arg)
-        {
-            case GameMenuType.Pause:
-                _pause.OnToggle(true);
-                panel = _pause;
-                _unitsM.MenuOpened(panel.gameObject.activeSelf);
-                break;
-        }        
-    }
 
 
 

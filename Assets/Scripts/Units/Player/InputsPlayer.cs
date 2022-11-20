@@ -17,7 +17,7 @@ public class InputsPlayer : ControlInputsBase
     // only one gain per swing, changed by unit
     public bool ComboGained { get; set; } = false;
 
-    public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
+    //public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
 
     private bool bindsComplete = false;
 
@@ -41,11 +41,13 @@ public class InputsPlayer : ControlInputsBase
 
     private void PlayerBind(bool enable = true)
     {
+        if (GameManager.GetInstance.Mode == GameMode.Menus) return; // simple but efficient
+        //Debug.Log($"Doing playerbinds in {this} with bool {enable}");
         if (enable)
         {
             if (bindsComplete) return;
             _controls.Game.Enable();
-            _adj = new IsoCamAdjust();
+
 
             _aim = GetComponent<AimingComponent>();
 
@@ -55,8 +57,6 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.SkillR.performed += SkillR_performed;
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
-            _controls.Game.Pause.performed += (t) => MenuToggleRequest?.Invoke(GameMenuType.Pause);
-            _controls.Game.Items.performed += (t) => MenuToggleRequest?.Invoke(GameMenuType.Items);
 
 
 
@@ -64,8 +64,6 @@ public class InputsPlayer : ControlInputsBase
 
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
-            bindsComplete = enable;
-
         }
         else
         {
@@ -77,16 +75,13 @@ public class InputsPlayer : ControlInputsBase
             _controls.Game.SkillR.performed -= SkillR_performed;
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
-            _controls.Game.Pause.performed -= (t) => MenuToggleRequest?.Invoke(GameMenuType.Pause);
-            _controls.Game.Items.performed -= (t) => MenuToggleRequest?.Invoke(GameMenuType.Items);
 
 
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
-            bindsComplete = enable;
-
         }
+        bindsComplete = enable;
     }
 
 
@@ -147,6 +142,7 @@ public class InputsPlayer : ControlInputsBase
     private void Dash_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
+        if (velocityVector == Vector3.zero) return; //can't dash from standing
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
             CombatActionSuccessCallback(CombatActionType.Dodge);
@@ -156,7 +152,9 @@ public class InputsPlayer : ControlInputsBase
 
     private void LateUpdate()
     {
+        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
         if (IsControlsBusy) return;
+        if (_adj == null) _adj = new IsoCamAdjust();
         CalculateMovement();
         Aiming();
     }
@@ -194,16 +192,6 @@ public class InputsPlayer : ControlInputsBase
     public override UnitType GetUnitType()
     {
         return UnitType.Player;
-    }
-
-    /// <summary>
-    /// used by equips screen manager to reload items
-    /// </summary>
-    public void ClearAllItems()
-    {
-        _weaponCtrl.ClearItems();
-        //_shieldCtrl.ClearItems(); no visual - doesnt matter ATM TODO
-        _dodgeCtrl.ClearItems();
     }
 
     

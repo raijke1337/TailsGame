@@ -36,22 +36,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     private Camera _faceCam;
     public void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
-
-    #region setups
-    private bool _isGame = false; // when actual gameplay happens set to true
-    public bool IsGamePlay
-    {
-        get
-        {
-            return _isGame;
-        }
-        set
-        {
-            _isGame = value;
-            _controller.IsControlsBusy = value;
-        }
-    }
-
+    protected bool bindsComplete = false;
 
     // run in enaable
     // npcs override to load a list of item ids
@@ -60,10 +45,9 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     public abstract void InitInventory(ItemsEquipmentsHandler handler); // this is run by unit manager
 
 
-    protected async virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
+    protected  virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
         UpdateComponents();
-        await Task.Yield(); // bandaid lol to let things init
 
         string skill = item.GetContents.SkillString;
         if (skill.Length != 0) _controller.AddSkillString(skill);
@@ -92,7 +76,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     }
 
 
-    protected void UpdateComponents()
+    protected virtual void UpdateComponents()
     {
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
@@ -133,16 +117,28 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened -= AnimateStagger;
         }
+        bindsComplete = isEnable;
     }
 
     protected virtual void Start()
     {
-        UnitBinds(true);
+        switch (GameManager.GetInstance.Mode)
+        {
+            case GameMode.Menus:
+                _animator.SetLayerWeight(3, 100); // 3 is idle layer for equip menus
+                break;
+            case GameMode.Paused:
+                break;
+            case GameMode.Gameplay:
+                _animator.SetLayerWeight(3, 0);
+                UnitBinds(true);
+                break;
+        }
     }
 
     protected virtual void OnDisable()
     {
-        UnitBinds(false);
+        if (bindsComplete) UnitBinds(false);
         _controller.BindControllers(false);
     }
 
@@ -151,16 +147,15 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     protected virtual void FixedUpdate()
     {
+        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
         AnimateMovement();
     }
-    #endregion
     #region stats
     protected virtual void OnDeath()
     {
         _animator.SetTrigger("Death");
         BaseUnitDiedEvent?.Invoke(this);
         UnitBinds(false);
-        //_controller.IsControlsBusy = true;
         StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));        
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)
@@ -205,6 +200,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     #region combat
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
+        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
         switch (type)
         {
             case CombatActionType.Melee:

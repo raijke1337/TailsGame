@@ -99,20 +99,7 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
         }
         return true;
     }
-    public void ClearItems()
-    {
-        foreach (var weapon in CurrentWeapons.Values)
-        {
-            weapon.GetObject().SetActive(false);
-        }
-        var sheathed = Empties.SheathedWeaponEmpty.GetComponentInChildren<BaseWeapon>();
-        if (sheathed != null)
-        {
-            sheathed.GetObject().SetActive(false);
-        }
-        CurrentWeapons.Clear();
-        IsReady = false;
-    }
+
 
     public int GetAmmoByType(EquipItemType type)
     {

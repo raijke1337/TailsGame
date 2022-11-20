@@ -90,6 +90,7 @@ public abstract class InputsNPC : ControlInputsBase
     #endregion
     protected virtual void LateUpdate()
     {
+        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
         // todo too many bandaids
         if (_stateMachine == null || IsControlsBusy) return;
         CurrentState = _stateMachine.CurrentState;

@@ -350,9 +350,6 @@ public interface IWeapon : IEquippable
     void UpdateInDelta(float deltaTime);
     void SetUpWeapon(BaseWeaponConfig cfg);
 }
-public interface IClearItem
-{ void ClearItem(); }
-
 
 public interface IExpires : IHasGameObject
 {

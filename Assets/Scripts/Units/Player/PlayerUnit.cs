@@ -28,28 +28,40 @@ public class PlayerUnit : BaseUnit
         gm = GameManager.GetInstance;
         _currentSave = gm.GetSaveData;
 
-        foreach (var eq in _currentSave.PlayerItems.EquipmentIDs)
+        UpdateComponents();
+
+        switch (GameManager.GetInstance.Mode)
         {
-            var item = GameManager.GetItemsHandler.GetItemByID<IEquippable>(eq);
-            HandleStartingEquipment(item);
+            case GameMode.Menus:
+
+                if (_visualController == null) _visualController = GetComponent<VisualsController>();
+                _visualController.Empties = _controller.GetEmpties;
+                _visualController.ClearVisualItems();
+                _visualController.AddItem(GameManager.GetInstance.GetSaveData.PlayerItems.EquipmentIDs.ToArray());
+
+                break;
+            case GameMode.Paused:
+                break;
+            case GameMode.Gameplay:
+                foreach (var eq in _currentSave.PlayerItems.EquipmentIDs)
+                {
+                    var item = GameManager.GetItemsHandler.GetItemByID<IEquippable>(eq);
+                    HandleStartingEquipment(item);
+                }
+                break;
         }
     }
-    public void ClearAllItems()
-    {
-        _playerController.ClearAllItems();
-    }
- 
 
     #endregion
 
-    public event SimpleEventsHandler<GameMenuType> ToggleMenuEvent;
 
-    protected override void Awake()
+    protected override void UpdateComponents()
     {
-        base.Awake(); 
-        
-        _visualController = GetComponent<VisualsController>();
+        base.UpdateComponents();
+        if (_visualController == null) _visualController = GetComponent<VisualsController>();
+        _visualController.Empties = _controller.GetEmpties;
     }
+
 
     protected override void OnEnable()
     {
@@ -81,12 +93,10 @@ public class PlayerUnit : BaseUnit
         {
             _playerController = _controller as InputsPlayer;
             _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
-            _playerController.MenuToggleRequest += (t) => ToggleMenuEvent?.Invoke(t);
         }
         else
         {
             _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-            _playerController.MenuToggleRequest -= (t) => ToggleMenuEvent?.Invoke(t);
         }
     }
 
@@ -95,7 +105,7 @@ public class PlayerUnit : BaseUnit
     protected override void FixedUpdate()
     {        
         base.FixedUpdate();
-        PlayerMovement(_playerController.MoveDirection);
+        if (bindsComplete) PlayerMovement(_playerController.MoveDirection); // weird ass null here sometimes
     }
 
 

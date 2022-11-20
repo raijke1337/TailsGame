@@ -56,6 +56,7 @@ public class LevelsLoaderManager : SingletonManagerBase
     {
         if (index >= 2)
         {
+            GameManager.GetInstance.Mode = GameMode.Menus;
             _reqLevel = index;
             SceneManager.LoadScene(1); // item selection
         }
@@ -66,7 +67,8 @@ public class LevelsLoaderManager : SingletonManagerBase
     /// </summary>
     public void RequestLevelLoad()
     {
-        SceneManager.LoadScene(_reqLevel);
+        GameManager.GetInstance.Mode = GameMode.Gameplay;
+        SceneManager.LoadScene(_reqLevel);        
     }
 
 }
