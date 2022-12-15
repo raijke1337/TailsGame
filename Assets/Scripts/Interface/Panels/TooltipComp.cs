@@ -28,7 +28,7 @@ public class TooltipComp : MonoBehaviour
         {
             descC = (TextsManager.GetInstance as TextsManager).GetContainerByID(content.ID);
         }
-        catch (Exception e)
+        catch
         {
             Debug.LogWarning($"No text description for {content.ID}");
         }

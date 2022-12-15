@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Zenject.ReflectionBaking.Mono.Cecil;
 using static UnityEditor.Progress;
+using ModestTree;
 
 public class VisualsController : MonoBehaviour
 {
@@ -58,7 +59,8 @@ public class VisualsController : MonoBehaviour
 
     private void RemoveEffects(GameMode mode)
     {
-        SetMaterialStage(0);    
+        SetMaterialStage(0);
+        if (_items.Count == 0) return;
         foreach (var i in _items.ToList())
         {
             Destroy(i.gameObject);

@@ -19,6 +19,7 @@ public class PlayerUnit : BaseUnit
     private VisualsController _visualController;
     private float[] _visualStagesHP;
     private int _currentVisualStageIndex;
+    public AimingComponent GetPlayerAim => _playerController.GetAimingComponent;
 
     private SaveData _currentSave;
 
@@ -174,6 +175,5 @@ public class PlayerUnit : BaseUnit
     #endregion
 
 
-    public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
 
 }

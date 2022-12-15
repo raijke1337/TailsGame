@@ -31,12 +31,6 @@ public class ComboController : BaseController, IStatsComponentForHandler, ITakes
         Degen = cfg.DegenCoeff;
         Timeout = cfg.HeatTimeout;
     }
-    // todo replace with triggers
-    public void AddCombo(float value)
-    {
-        ComboContainer.ChangeCurrent(value);
-        _currentTimeout = 0f;
-    }
 
     public bool UseCombo(float value)
     {

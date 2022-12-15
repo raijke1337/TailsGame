@@ -8,10 +8,10 @@ public class InputsPlayer : ControlInputsBase
     private PlayerControls _controls;
 
     private IsoCamAdjust _adj;
-    public TargetUnitPanel TargetPanel { get; set; }
     private AimingComponent _aim;
 
     public ComboController GetComboController => _comboCtrl;
+    public AimingComponent GetAimingComponent => _aim;
 
     public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
     // only one gain per swing, changed by unit
@@ -173,10 +173,6 @@ public class InputsPlayer : ControlInputsBase
     {
         if (_aim == null) return;
         LerpRotateToTarget(_aim.GetLookPoint);
-
-
-        if (_aim.GetItem is NPCUnit) TargetPanel.AssignItem(_aim.GetItem as NPCUnit,true);
-        // massive TODO here
     }
 
     private void OnDrawGizmos()

@@ -13,8 +13,9 @@ using UnityEngine.InputSystem;
 using Zenject;
 using System.Threading.Tasks;
 using RotaryHeart.Lib.SerializableDictionary;
+using TMPro;
 
-public class PlayerUnitPanel : BaseUnitPanel
+public class PlayerUnitPanel : SelectedItemPanel
 {
 
     private PlayerUnit _player;
@@ -24,56 +25,64 @@ public class PlayerUnitPanel : BaseUnitPanel
     private ShieldController _shield;
     private ComboController _combo;
 
-    private StatValueContainer HPc;
+
     private StatValueContainer SHc;
     private StatValueContainer HEc;
 
 
     protected List<StatValueContainer> _cont = new List<StatValueContainer>();
-    [SerializeField] protected float FillLerp = 0f;
 
 
-    [SerializeField] private Image _hpBar;
     [SerializeField] private Image _shBar;
     [SerializeField] private Image _heBar;
 
-    [SerializeField] private Text _hpText;
-    [SerializeField] private Text _spText;
-    [SerializeField] private Text _heText;
-    [SerializeField] private Text _dodgeText;
-    [SerializeField] private Text _ammoText;
+
+    [SerializeField] private TextMeshProUGUI _spText;
+    [SerializeField] private TextMeshProUGUI _heText;
+    [SerializeField] private TextMeshProUGUI _dodgeText;
+    [SerializeField] private TextMeshProUGUI _ammoText;
 
 
-    private float _currentAmmo;
-    private float _currentDodges;
-
-    public override void AssignItem(BaseUnit item, bool isSelect)
+    public override void AssignItem(BasicSelectableItemData data, bool isSelect)
     {
-        _player = item as PlayerUnit;
-        base.AssignItem(item, isSelect);
+        _player = (data as SelectableUnitData).Unit as PlayerUnit;
+        RunSetup();
+        base.AssignItem(data, isSelect);
+
     }
-    protected override void RunSetup()
+    protected void RunSetup()
     {
+
         _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
         _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
         _combo = _player.GetInputs<InputsPlayer>().GetComboController;
 
-        _shield.ComponentChangedStateToEvent += _shield_ComponentChangedStateToEvent;
-        _combo.ComponentChangedStateToEvent += _combo_ComponentChangedStateToEvent;
+        Debug.Log($"dodge {_dodge.IsReady} weapons {_weapons.IsReady} shield {_shield.IsReady} combo {_combo.IsReady}");
 
         HPc = _player.GetStats()[BaseStatType.Health];
         HPc.ValueChangedEvent += ResetTicker;
 
+        if (_combo.IsReady)
+        {
+            HEc = _combo.ComboContainer;
+            _combo.ComponentChangedStateToEvent += Combo_ComponentChangedStateToEvent;
+        }
+        if (_shield.IsReady)
+        {
+            _shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent;
+            SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+        }
+        
     }
 
-    private void _combo_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
+    private void Combo_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
     {
         if (arg1)
         HEc = _combo.ComboContainer;
     }
 
-    private void _shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
+    private void Shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
     {
         if (arg1)
             SHc = _shield.GetShieldStats[ShieldStatType.Shield]; 
@@ -86,23 +95,18 @@ public class PlayerUnitPanel : BaseUnitPanel
 
 
 
-    protected override void UpdatePanel()
+    protected override void UpdateBars()
     {
         if (FillLerp < 1f) FillLerp += Mathf.Clamp01(Time.deltaTime * _barFillRateMult);
 
-        _currentAmmo = _weapons.GetAmmoByType(EquipItemType.RangedWeap);
-        _currentDodges = _dodge.GetDodgeCharges();
-
-        if (HPc != null)
+        if (_weapons.IsReady)
         {
-            _hpText.text = string.Concat(Math.Round(HPc.GetCurrent, 0), " / ", HPc.GetMax);
-            ColorTexts(_hpText, HPc.GetMax, HPc.GetCurrent, minColorDefault, maxColorDefault);
-            PrettyLerp(_hpBar, HPc);
+            _ammoText.text = _weapons.GetAmmoByType(EquipItemType.RangedWeap).ToString();
         }
-        else _hpText.text = "You dun goofd";
+        else _ammoText.text = "0";
+
         if (HEc != null)
         {
-
             _heText.text = string.Concat(Math.Round(HEc.GetCurrent, 0), " / ", HEc.GetMax);
             ColorTexts(_heText, HEc.GetMax, HEc.GetCurrent, minColorDefault, maxColorDefault);
             PrettyLerp(_heBar, HEc);
@@ -116,15 +120,15 @@ public class PlayerUnitPanel : BaseUnitPanel
         }
         else _spText.text = "Shield not equipped";
 
-        _dodgeText.text = _currentDodges.ToString();
-        _ammoText.text = _currentAmmo.ToString();
+        if (_dodge.IsReady)
+        {
+            _dodgeText.text = _dodge.GetDodgeCharges().ToString();
+        }
+        else _dodgeText.text = "None";
 
+        base.UpdateBars();
     }
 
-    protected void PrettyLerp(Image bar,StatValueContainer cont)
-    {
-        bar.fillAmount = Mathf.Lerp(cont.GetLast / cont.GetMax, cont.GetCurrent / cont.GetMax, FillLerp);
-    }
 
 
 }

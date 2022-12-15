@@ -33,8 +33,9 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     public event SkillRequestedEvent SkillRequestSuccessEvent;
     protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit,unit._controller.GetEmpties.SkillsEmpty);
 
-    private Camera _faceCam;
-    public void ToggleCamera(bool value) { _faceCam.enabled = value; }
+    protected Camera _faceCam;
+    protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
+    public Camera GetFaceCam { get => _faceCam; }
 
     protected bool bindsComplete = false;
 
@@ -125,7 +126,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         switch (GameManager.GetInstance.Mode)
         {
             case GameMode.Menus:
-                _animator.SetLayerWeight(3, 100); // 3 is idle layer for equip menus
+                _animator.SetLayerWeight(_animator.GetLayerIndex("IDLE"),100f); 
                 break;
             case GameMode.Paused:
                 break;
@@ -155,8 +156,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     {
         _animator.SetTrigger("Death");
         BaseUnitDiedEvent?.Invoke(this);
-        UnitBinds(false);
-        StartCoroutine(ItemDisappearsCoroutine(Constants.Combat.c_RemainsDisappearTimer, gameObject));        
+        UnitBinds(false); 
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)
     {
@@ -247,21 +247,6 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
 
 
-
-
-    #region misc
-    public static IEnumerator ItemDisappearsCoroutine(float time, GameObject item)
-    {
-        float passed = 0f;
-        while (passed < time)
-        {
-            passed += Time.deltaTime;
-            yield return null;
-        }
-        Destroy(item);
-        yield return null;
-    }
-    #endregion
 
 
 

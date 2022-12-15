@@ -49,6 +49,8 @@ public class UnitsManager : MonoBehaviour
         }
 
     }
+
+
     private void UnitSubs (BaseUnit u)
     {
         u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
@@ -78,12 +80,12 @@ public class UnitsManager : MonoBehaviour
         unit.AiToggle(isProcessing);
     }
 
-    public void MenuOpened(bool isOpen = true)
-    {
-        if (isOpen) { Time.timeScale = 0f;  }
-        else { Time.timeScale = 1f; }
-    }
-    // called in enable
+    //public void MenuOpened(bool isOpen = true)
+    //{
+    //    if (isOpen) { Time.timeScale = 0f;  }
+    //    else { Time.timeScale = 1f; }
+    //}
+    //// called in enable
 
 
     private void HandleUnitDeath(BaseUnit unit)
@@ -94,7 +96,7 @@ public class UnitsManager : MonoBehaviour
         }
         else
         {
-            EditorApplication.isPaused = true;
+            LevelsLoaderManager.GetInstance.OnPlayerDeadLoadMainMenu();
             Debug.LogWarning("You died");
         }
     }

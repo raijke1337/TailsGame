@@ -2,6 +2,7 @@ using RotaryHeart.Lib.SerializableDictionary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,9 +22,18 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
         if (!(item is IWeapon)) return;
         else
         {
-            var weap = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
-            var w = weap as BaseWeapon;
-            CurrentWeapons[item.GetContents.ItemType] = w;
+            BaseWeapon w = null;
+            try
+            {
+                var weap = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
+                w = weap as BaseWeapon;
+                CurrentWeapons[item.GetContents.ItemType] = w;
+            }
+            catch (NullReferenceException e)
+            {
+                Debug.LogWarning($"{Owner} has a {e.Message} in {this} caused by {item}");
+                return;
+            }
 
             BaseWeaponConfig config = Extensions.GetConfigByID<BaseWeaponConfig>(w.GetID);
 

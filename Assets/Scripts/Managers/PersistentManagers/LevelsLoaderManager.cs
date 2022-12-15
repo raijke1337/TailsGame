@@ -71,4 +71,10 @@ public class LevelsLoaderManager : SingletonManagerBase
         SceneManager.LoadScene(_reqLevel);        
     }
 
+
+    public void OnPlayerDeadLoadMainMenu()
+    {
+        RequestLevelLoad(0);
+    }
+
 }

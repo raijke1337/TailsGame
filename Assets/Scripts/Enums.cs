@@ -79,20 +79,6 @@ public enum UnitType : byte
     Player = 255
 }
 
-public enum TextType
-{
-    Tutorial,
-    Story,
-    Description
-}
-
-
-public enum InteractiveItemType : byte
-{
-    Enemy = 0,
-    Pickup = 10,
-
-}
 
 public enum GameMode
 {
@@ -105,5 +91,6 @@ public enum LevelEventType
 {
     TextDisplay,
     LevelComplete,
-    Cutscene
+    Cutscene,
+    ItemPickup
 }

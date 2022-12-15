@@ -127,7 +127,7 @@ public class StateMachine : IStatsComponentForHandler
             if (newtxt != sphereDebugTxt)
             {
                 sphereDebugTxt = newtxt;
-                Debug.Log(sphereDebugTxt);
+                //Debug.Log(sphereDebugTxt);
             }
         }
 #endif

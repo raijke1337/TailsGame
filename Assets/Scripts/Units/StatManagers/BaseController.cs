@@ -38,7 +38,7 @@ public abstract class BaseController : IStatsComponentForHandler
     {
         IsReady = _isReady;
     }
-    // used by inputrs to properly register some components
+    // used by inputs to properly register some components
 
 
     public virtual void HandleEffects(float deltaTime)

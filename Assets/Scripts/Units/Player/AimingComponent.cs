@@ -18,8 +18,6 @@ public class AimingComponent : MonoBehaviour
 
     [Tooltip("Vertical offset for crosshair"), SerializeField] private float _vertOffset = 0.1f;
     public Vector3 GetLookPoint { get; private set; }
-    public IInteractiveItem GetItem { get;private set; }
-
     public bool IsRunning { get; private set; } = false;
 
     private Vector3 _prevPos = Vector3.zero;
@@ -28,7 +26,6 @@ public class AimingComponent : MonoBehaviour
     {
         if (!IsRunning) return;
         GetLookPoint = GetCursorPosition();
-        GetItem = GetItemUnderCursor();
     }
 
     private void Start()
@@ -51,19 +48,7 @@ public class AimingComponent : MonoBehaviour
 
         else return _prevPos;
     }
-    private IInteractiveItem GetItemUnderCursor()
-    {
-        RaycastHit hit;
-        Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out hit))
-        {
-            var coll = hit.collider;
-            if (coll.GetComponent<NPCUnit>() != null) return coll.GetComponent<NPCUnit>();
-            else if (coll.GetComponent<LevelItemTrigger>() != null) return coll.GetComponent<LevelItemTrigger>();
-            else return null;   
-        }
-        else return null;
-    }
+
 
 }
 

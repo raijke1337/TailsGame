@@ -42,7 +42,7 @@ public static class Constants
     }
     public static class Texts
     {
-        public const string c_TextsPath = "/Texts/";
+        public const string c_TextsPath = "/Resources/Texts/";
     }
     public static class StateMachineData
     {
@@ -246,7 +246,24 @@ public class LevelData
     public int SceneLoaderIndex;
     public string LevelNameShort;
     public string TextContainerID;
+}
 
+public class BasicSelectableItemData
+{
+    public string TextString;
+    public Camera ItemView;
+    public BasicSelectableItemData (string s, Camera c)
+    {
+        TextString = s; ItemView = c;
+    }
+}
+public class SelectableUnitData : BasicSelectableItemData
+{
+    public BaseUnit Unit;
+    public SelectableUnitData (BaseUnit u, string txt, Camera cam) : base (txt,cam)
+    {
+        Unit = u; 
+    }
 }
 
 
@@ -290,8 +307,16 @@ public class LevelData
 [Serializable] public struct TextContainer
 {
     public string ID;
-    public TextType Type;
     public string[] Texts;
+    public override string ToString()
+    {
+        string result = String.Empty ;
+        foreach (string s in Texts)
+        {
+            result += s + "\n";
+        }
+        return result;
+    }
 }
 [Serializable] public struct ItemEmpties
 {
@@ -374,18 +399,10 @@ public interface IGivesSkills : IUsesItems
 public interface INeedsEmpties
 { ItemEmpties Empties { get; } }
 
-
-
-#region todo
-
-
-public interface IInteractiveItem
+public interface ISelectableItem : IPointerEnterHandler, IPointerExitHandler
 {
-    public InteractiveItemType IIType {get; }
+    public event SimpleEventsHandler<BasicSelectableItemData, bool> MouseOverEvent;
 }
-
-#endregion
-
 
 
 #endregion

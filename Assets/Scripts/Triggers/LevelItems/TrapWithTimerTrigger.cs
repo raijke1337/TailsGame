@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(ParticleSystem))]
-public class TrapWithTimerTrigger : LevelItemTrigger
+public class TrapWithTimerTrigger : StatsChangingTrigger
 {
     public float Timer = 2f;
     private bool isEnabled = true;

@@ -61,6 +61,18 @@ public class GameManager : SingletonManagerBase
         return data;
     }
 
+    public void OnLevelComplete()
+    {
+        _loadedSave.LastLevelIndex += 1;
+        UpdateSaveData();
+        LevelsLoaderManager.GetInstance.RequestLevelLoad(_loadedSave.LastLevelIndex);
+    }
+
+    public void OnItemPickup(string itemID)
+    {
+        _loadedSave.PlayerItems.InventoryIDs.Add(itemID);
+    }
+
     #region itemshandler
     private static ItemsEquipmentsHandler _itemshandler;
     public static ItemsEquipmentsHandler GetItemsHandler
