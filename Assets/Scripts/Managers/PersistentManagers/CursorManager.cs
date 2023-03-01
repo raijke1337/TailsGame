@@ -4,10 +4,35 @@ using UnityEngine;
 [Serializable]
 public class CursorManager : MonoBehaviour
 {
+    #region SingletonLogic
+
+    public static CursorManager Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else Destroy(gameObject);
+    }
+    #endregion
+
+    
     [SerializeField] Texture2D currentShape;
     [SerializeField] string CursorsSetName = "default";
 
     private Dictionary<CursorType, Texture2D> _shapes;
+
+    private void Start()
+    {
+        var dict = DataManager.Instance.GetConfigByID<CursorsDictionary>(CursorsSetName);
+        _shapes = new Dictionary<CursorType, Texture2D>();
+        foreach (var key in dict.GetCursors.Keys)
+        {
+            _shapes[key] = dict.GetCursors[key];
+        }
+        ResetCursor();
+    }
     public void SetCursor(CursorType type)
     {
         if (_shapes == null) return;
@@ -20,16 +45,6 @@ public class CursorManager : MonoBehaviour
     {
         SetCursor(CursorType.Menu);
         Cursor.visible = true;
-    }
-    private void Awake()
-    {
-        var dict = Extensions.GetConfigByID<CursorsDictionary>(CursorsSetName);
-        _shapes = new Dictionary<CursorType, Texture2D>();
-        foreach (var key in dict.GetCursors.Keys)
-        {
-            _shapes[key] = dict.GetCursors[key];
-        }
-        ResetCursor();
     }
 
 

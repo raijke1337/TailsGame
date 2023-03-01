@@ -50,10 +50,10 @@ public class ProjectileTrigger : WeaponTriggerComponent, IProjectile
         // fix vertical rotation
     }
 
-    public void OnUpdate()
+    public void OnUpdate(float delta)
     {
-        transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
-        ProjData.TimeToLive -= Time.deltaTime;
+        transform.position += ProjData.Speed * delta * transform.forward;
+        ProjData.TimeToLive -= delta;
         if (ProjData.TimeToLive <= 0) HasExpiredEvent?.Invoke(this);
     }
 }

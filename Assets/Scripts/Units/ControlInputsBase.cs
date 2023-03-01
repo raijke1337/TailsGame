@@ -10,11 +10,7 @@ using static UnityEngine.InputSystem.InputAction;
 public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 {
     protected BaseUnit Unit; 
-    protected StatsUpdatesHandler _handler;
 
-
-    public void SetUnit(BaseUnit u) => Unit = u;
-    public void SetHandler(StatsUpdatesHandler h) => _handler = h;
     public abstract UnitType GetUnitType();
 
     [SerializeField] public bool IsControlsBusy; // todo ?
@@ -38,14 +34,6 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public SkillsController GetSkillsController => _skillCtrl;
     public WeaponController GetWeaponController => _weaponCtrl;
 
-    #region skills
-
-    public void AddSkillString(string name,bool isAdd = true)
-    {
-        _skillCtrl.UpdateSkills(name, isAdd);
-    }
-
-    #endregion
 
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler StaggerHappened;
@@ -55,6 +43,10 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
 
 
     protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
+
+    public void SetUnit(BaseUnit u) => Unit = u;
+
+    protected float lastDelta;
 
     public virtual void InitControllers(string statsID)
     {
@@ -85,19 +77,21 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
             if (ctrl.IsReady) ctrl.Ping();
         }
     }
+    public virtual void BindControllers(bool isEnable)
+    {
+        //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
+        IsControlsBusy = false;
+        _weaponCtrl.Owner = Unit;
+        _stunsCtrl.StunHappenedEvent += StunEventCallback;
+    }
+
 
     protected void RegisterController(bool isEnable, IStatsComponentForHandler cont)
     {        
-        _handler.RegisterUnitForStatUpdates(cont, isEnable);
+        GameManager.Instance.GetGameControllers.StatsUpdatesHandler.RegisterUnitForStatUpdates(cont, isEnable);
     }
-
-    public virtual void BindControllers(bool isEnable)
-    {
-                //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
-        IsControlsBusy = false;
-        _weaponCtrl.Owner = Unit;
-        _stunsCtrl.StunHappenedEvent += StunEventCallback;    
-    }
+    public void AddSkillString(string name, bool isAdd = true) => _skillCtrl.UpdateSkills(name, isAdd);
+    public virtual void RunUpdate(float delta) { lastDelta = delta; }
 
     private void OnDisable()
     {
@@ -149,12 +143,12 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;
 
-    protected void LerpRotateToTarget(Vector3 looktarget)
+    protected void LerpRotateToTarget(Vector3 looktarget,float delta)
     {
         Vector3 relativePosition = looktarget - transform.position;
         Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
-            Time.deltaTime * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
+            delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
     }
 
     public void PerformDodging()

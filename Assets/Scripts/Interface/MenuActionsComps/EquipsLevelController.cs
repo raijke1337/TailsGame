@@ -19,7 +19,7 @@ public class EquipsLevelController : MonoBehaviour
     [SerializeField] private bool _showingTooltip = false;
 
     private PlayerUnit _player;
-    private ItemsEquipmentsHandler _items;
+
     
 
     private void OnEnable ()
@@ -35,8 +35,8 @@ public class EquipsLevelController : MonoBehaviour
             Debug.LogError("Set panels for "+this.gameObject.name);
             return;
         }
-        saveData = GameManager.GetInstance.GetSaveData;
-        _items = GameManager.GetItemsHandler;
+        saveData = DataManager.Instance.GetSaveData;
+
         FillTiles(saveData);
         Items.ShowtooltipToggle += HandleTooltipShow;
         Equipments.ShowtooltipToggle += HandleTooltipShow;
@@ -54,11 +54,11 @@ public class EquipsLevelController : MonoBehaviour
 
         foreach (var equip in equips)
         {
-            Equipments.AddTileContent(_items.GetItemCOntentByID(equip));
+            Equipments.AddTileContent(ItemsManager.Instance.GetItemContentByID(equip));
         }
         foreach (var item in inventory)
         {
-            Items.AddTileContent(_items.GetItemCOntentByID(item));
+            Items.AddTileContent(ItemsManager.Instance.GetItemContentByID(item));
         }
 
     }
@@ -117,20 +117,9 @@ public class EquipsLevelController : MonoBehaviour
             saveData.PlayerItems.EquipmentIDs.Remove(cont.ID);
             saveData.PlayerItems.InventoryIDs.Add(cont.ID);
         }
-        GameManager.GetInstance.UpdateSaveData();
-        _player.InitInventory(_items);
+        DataManager.Instance.UpdateSaveData();
+        //_player.InitInventory(_items);
     }
-
-    public void OnBackButton()
-    {
-        LevelsLoaderManager.GetInstance.RequestLevelLoad(0);
-    }
-    public void OnStartButton()
-    {
-        LevelsLoaderManager.GetInstance.RequestLevelLoad();
-    }
-
-
 
 
 }

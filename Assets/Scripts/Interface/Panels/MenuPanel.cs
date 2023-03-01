@@ -11,21 +11,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class MenuPanel : MonoBehaviour, IHasID
+public class MenuPanel : MonoBehaviour
 {
 
-    [SerializeField] protected string _id;
-    public string GetID => _id;
-
     public bool IsOpen { get; protected set; } = false;
-    public bool StartClosed = false;
-    public event SimpleEventsHandler<string,MenuPanel> SwitchToWindow;
 
-
-    protected virtual void Awake()
-    {
-        gameObject.name = _id;
-    }
 
     public virtual void OnToggle(bool isShow)
     {
@@ -37,16 +27,7 @@ public class MenuPanel : MonoBehaviour, IHasID
     protected virtual void OnStateChange(bool isShow)
     {      }
 
-    protected virtual void Start()
-    {
-        gameObject.SetActive(!StartClosed);
-    }
-       
 
-    #region unity
-    public void OtherMenuButtonClicked(string menu) => SwitchToWindow?.Invoke(menu,this);
-
-    #endregion
 
 }
 

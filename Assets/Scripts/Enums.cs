@@ -80,12 +80,12 @@ public enum UnitType : byte
 }
 
 
-public enum GameMode
-{
-    Menus,
-    Paused,
-    Gameplay
-}
+//public enum GameMode
+//{
+//    Menus,
+//    Paused,
+//    Gameplay
+//}
 
 public enum LevelEventType
 {
@@ -93,4 +93,10 @@ public enum LevelEventType
     LevelComplete,
     Cutscene,
     ItemPickup
+}
+public enum LevelType
+{
+    Menu,
+    Scene,
+    Game
 }

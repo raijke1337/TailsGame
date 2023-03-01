@@ -18,24 +18,19 @@ using TMPro.EditorUtilities;
 public abstract class NPCUnit : BaseUnit, ISelectableItem
 {
     private InputsNPC _npcController;
-
-
-    [SerializeField] protected ItemsEquipmentsHandler.DroppableItem[] Drops;
     [SerializeField] protected EquipmentBase[] NPCEquipments;
 
 
-
+    public StateMachine GetStateMachine { get => _npcController.GetFSM; }
     public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
 
 
     public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
     public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
 
-
-
-    protected override void OnEnable()
+    public override void InitiateUnit()
     {
-        base.OnEnable();
+        base.InitiateUnit();
         if (!CompareTag("Enemy"))
             Debug.LogWarning($"Set enemy tag for{name}");
 
@@ -46,10 +41,6 @@ public abstract class NPCUnit : BaseUnit, ISelectableItem
 
         if (_selDat == null)
             _selDat = new SelectableUnitData(this, GetFullName, _faceCam);
-
-    }
-    public override void InitInventory(ItemsEquipmentsHandler handler)
-    {
         foreach (var item in NPCEquipments)
         {
             HandleStartingEquipment(item);

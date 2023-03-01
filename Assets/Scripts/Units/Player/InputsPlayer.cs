@@ -41,8 +41,7 @@ public class InputsPlayer : ControlInputsBase
 
     private void PlayerBind(bool enable = true)
     {
-        if (GameManager.GetInstance.Mode == GameMode.Menus) return; // simple but efficient
-        //Debug.Log($"Doing playerbinds in {this} with bool {enable}");
+
         if (enable)
         {
             if (bindsComplete) return;
@@ -150,9 +149,10 @@ public class InputsPlayer : ControlInputsBase
     }
     #endregion
 
-    private void LateUpdate()
+
+    public override void RunUpdate(float delta)
     {
-        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
+        base.RunUpdate(delta);
         if (IsControlsBusy) return;
         if (_adj == null) _adj = new IsoCamAdjust();
         CalculateMovement();
@@ -172,7 +172,7 @@ public class InputsPlayer : ControlInputsBase
     private void Aiming()
     {
         if (_aim == null) return;
-        LerpRotateToTarget(_aim.GetLookPoint);
+        LerpRotateToTarget(_aim.GetLookPoint,lastDelta);
     }
 
     private void OnDrawGizmos()
@@ -189,7 +189,5 @@ public class InputsPlayer : ControlInputsBase
     {
         return UnitType.Player;
     }
-
-    
 
 }

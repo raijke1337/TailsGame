@@ -9,116 +9,6 @@ using System.Xml.Serialization;
 
 public static class Extensions
 {
-    #region IT WORKS
-    /// <summary>
-    /// get configs of T type
-    /// </summary>
-    /// <typeparam name="T">any class</typeparam>
-    /// <param name="path">refer to Constants</param>
-    /// <param name="includeSubDirs">look in subfolders </param>
-    /// <returns>list of assets in specified folder</returns>
-    public static T GetConfigByID<T>(string ID="default") where T : ScriptableObjectID
-    {
-        //Debug.Log($"Loading config {typeof(T)} with ID {ID}");
-        if (ID == "")
-        {
-            Debug.Log($"ID was empty");
-            return null;
-        }
-        if (ID == "default")
-        {
-            Debug.Log($"Loading default config of type {typeof(T)}");
-        }
-        string path = Constants.Configs.c_AllConfigsPath;
-
-        string appPath = Application.dataPath;
-
-        List<T> all = new List<T>();
-
-        List<string> files = new List<string>();
-
-        Stack<string> workPaths = new Stack<string>(new string[1] { path });
-        while (workPaths.Count > 0)
-        {
-            string currFolder = workPaths.Pop();
-            string[] foundSubfolders = Directory.GetDirectories(appPath + currFolder);
-            string[] foundFiles = Directory.GetFiles(appPath + currFolder);
-            files.AddRange(foundFiles);
-
-            foreach (string foundpath in foundSubfolders)
-            {
-                int index = foundpath.IndexOf(path);
-                var foldername = foundpath.Substring(index);
-                workPaths.Push(foldername + "/");
-            }
-        }
-
-        foreach (string found in files)
-        {
-            var foundRelativ = found.Replace(appPath.ToString(), "Assets");
-
-            var file = AssetDatabase.LoadAssetAtPath(foundRelativ, typeof(T));
-            if (file is T)
-            {
-                all.Add(file as T);
-            }
-        }
-        try
-        { 
-            return all.First(t => t.ID == ID);
-        }
-        catch (InvalidOperationException e)
-        {
-            Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// get assets of T type
-    /// </summary>
-    /// <typeparam name="T">any class</typeparam>
-    /// <param name="path">refer to Constants</param>
-    /// <param name="includeSubDirs">look in subfolders </param>
-    /// <returns>list of assets in specified folder</returns>
-    public static T[] GetAssetsOfType<T>(string path) where T : class
-    {
-        string appPath = Application.dataPath;
-
-        List<T> all = new List<T>();
-
-        List<string> files = new List<string>();
-
-        Stack<string> workPaths = new Stack<string>(new string[1] { path });
-        while (workPaths.Count > 0)
-        {
-            string currFolder = workPaths.Pop();
-            string[] foundSubfolders = Directory.GetDirectories(appPath + currFolder);
-            string[] foundFiles = Directory.GetFiles(appPath + currFolder);
-            files.AddRange(foundFiles);
-
-            foreach (string foundpath in foundSubfolders)
-            {
-                int index = foundpath.IndexOf(path);
-                var foldername = foundpath.Substring(index);                
-                workPaths.Push(foldername + "/");
-            }
-        }
-
-        foreach (string found in files)
-        {
-            var foundRelativ = found.Replace(appPath.ToString(), "Assets");
-
-            var file = AssetDatabase.LoadAssetAtPath(foundRelativ, typeof(T));
-            if (file is T)
-            {
-                all.Add(file as T);
-            }
-        }
-        return all.ToArray();
-    }
-    #endregion
-
     #region XML
 
     public static class SaveLoad
@@ -134,12 +24,11 @@ public static class Extensions
         }
         public static SaveData LoadSaveDataFromXML(string savepath)
         {
-            SaveData data = new SaveData();
             try
             {
                 XmlSerializer ser = new XmlSerializer(typeof(SaveData));
                 FileStream fs = new FileStream(savepath, FileMode.Open);
-                data = (SaveData)ser.Deserialize(fs);
+                SaveData data = (SaveData)ser.Deserialize(fs);
                 fs.Close();
 
                 AssetDatabase.Refresh();

@@ -49,30 +49,30 @@ public class VisualsController : MonoBehaviour
     {
         _mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
         UpdateMaterial();
-        GameManager.GetInstance.OnGameModeChanged += RemoveEffects;
+       // GameManager.Instance.OnGameModeChanged += RemoveEffects;
     }
 
-    private void OnDisable()
-    {
-        GameManager.GetInstance.OnGameModeChanged -= RemoveEffects;
-    }
+    //private void OnDisable()
+    //{
+    //    GameManager.GetInstance.OnGameModeChanged -= RemoveEffects;
+    //}
 
-    private void RemoveEffects(GameMode mode)
-    {
-        SetMaterialStage(0);
-        if (_items.Count == 0) return;
-        foreach (var i in _items.ToList())
-        {
-            Destroy(i.gameObject);
-            _items.Remove(i);
-        }
-    }
+    //private void RemoveEffects(GameMode mode)
+    //{
+    //    SetMaterialStage(0);
+    //    if (_items.Count == 0) return;
+    //    foreach (var i in _items.ToList())
+    //    {
+    //        Destroy(i.gameObject);
+    //        _items.Remove(i);
+    //    }
+    //}
 
     #region equip items
     public void AddItem(string itemID)
     {
         if (_items == null) _items = new List<EquipmentBase>();
-        var item = GameManager.GetItemsHandler.GetItemByID<EquipmentBase>(itemID);
+        var item = ItemsManager.Instance.GetItemByID<EquipmentBase>(itemID);
 
 
         switch (item.GetContents.ItemType)

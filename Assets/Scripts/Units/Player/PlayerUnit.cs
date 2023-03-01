@@ -10,63 +10,41 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using static Cinemachine.CinemachineTriggerAction.ActionSettings;
 
 public class PlayerUnit : BaseUnit
 {
-    private GameManager gm;
-
     private InputsPlayer _playerController;
     private VisualsController _visualController;
     private float[] _visualStagesHP;
     private int _currentVisualStageIndex;
     public AimingComponent GetPlayerAim => _playerController.GetAimingComponent;
 
-    private SaveData _currentSave;
-
     #region items
-    public override void InitInventory(ItemsEquipmentsHandler handler)
+    public override void InitiateUnit()
     {
-        gm = GameManager.GetInstance;
-        _currentSave = gm.GetSaveData;
-
+        base.InitiateUnit();
         UpdateComponents();
 
-        switch (GameManager.GetInstance.Mode)
+        switch (GameManager.Instance.GetCurrentLevelData.Type)
         {
-            case GameMode.Menus:
-
+            case LevelType.Menu:
                 if (_visualController == null) _visualController = GetComponent<VisualsController>();
                 _visualController.Empties = _controller.GetEmpties;
                 _visualController.ClearVisualItems();
-                _visualController.AddItem(GameManager.GetInstance.GetSaveData.PlayerItems.EquipmentIDs.ToArray());
-
+                _visualController.AddItem(DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs.ToArray());
                 break;
-            case GameMode.Paused:
+            case LevelType.Scene:
                 break;
-            case GameMode.Gameplay:
-                foreach (var eq in _currentSave.PlayerItems.EquipmentIDs)
+            case LevelType.Game:
+                foreach (var eq in DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs)
                 {
-                    var item = GameManager.GetItemsHandler.GetItemByID<IEquippable>(eq);
+                    var item = ItemsManager.Instance.GetItemByID<IEquippable>(eq);
                     HandleStartingEquipment(item);
                 }
                 break;
         }
-    }
 
-    #endregion
-
-
-    protected override void UpdateComponents()
-    {
-        base.UpdateComponents();
-        if (_visualController == null) _visualController = GetComponent<VisualsController>();
-        _visualController.Empties = _controller.GetEmpties;
-    }
-
-
-    protected override void OnEnable()
-    {
-        base.OnEnable();
         ToggleCamera(true);
 
         var stats = _controller.GetStatsController;
@@ -84,6 +62,17 @@ public class PlayerUnit : BaseUnit
         }
         _currentVisualStageIndex = 0;
     }
+
+    #endregion
+
+
+    protected override void UpdateComponents()
+    {
+        base.UpdateComponents();
+        if (_visualController == null) _visualController = GetComponent<VisualsController>();
+        _visualController.Empties = _controller.GetEmpties;
+    }
+
 
 
     protected override void UnitBinds(bool isEnable)
@@ -103,9 +92,9 @@ public class PlayerUnit : BaseUnit
 
     #region works
 
-    protected override void FixedUpdate()
+    public override void RunUpdate(float delta)
     {        
-        base.FixedUpdate();
+        base.RunUpdate(delta);
         if (bindsComplete) PlayerMovement(_playerController.MoveDirection); // weird ass null here sometimes
     }
 

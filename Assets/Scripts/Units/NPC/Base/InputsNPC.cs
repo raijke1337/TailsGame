@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using System.Reflection;
 using System;
 using System.Text;
+using TMPro;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public abstract class InputsNPC : ControlInputsBase
@@ -26,6 +27,9 @@ public abstract class InputsNPC : ControlInputsBase
     protected EnemyStats _enemyStats;
     protected NavMeshAgent _navMeshAg;
     [Space,SerializeField] protected StateMachine _stateMachine;
+    public StateMachine GetFSM => _stateMachine;
+
+
     public override UnitType GetUnitType() => _enemyStats.EnemyType;
 
     #endregion
@@ -34,7 +38,6 @@ public abstract class InputsNPC : ControlInputsBase
     public override void InitControllers(string stats)
     {
         base.InitControllers(stats);
-        //_weaponCtrl = new EnemyWeaponCtrl(Empties); // todo? bandaid
     }
 
     public override void BindControllers(bool isEnable)
@@ -46,7 +49,7 @@ public abstract class InputsNPC : ControlInputsBase
             patrolPoints.Add(transform);
         }
 
-        _enemyStats = new EnemyStats(Extensions.GetConfigByID<EnemyStatsConfig>(Unit.GetID));
+        _enemyStats = new EnemyStats(DataManager.Instance.GetConfigByID<EnemyStatsConfig>(Unit.GetID));
 
 
         _navMeshAg = GetComponent<NavMeshAgent>();
@@ -67,7 +70,6 @@ public abstract class InputsNPC : ControlInputsBase
 
         if (isStart)
         {
-            _handler.RegisterUnitForStatUpdates(_stateMachine);
             _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
             _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
@@ -77,7 +79,6 @@ public abstract class InputsNPC : ControlInputsBase
         }
         else
         {
-            _handler.RegisterUnitForStatUpdates(_stateMachine, false);
             _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
             _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
             _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
@@ -88,9 +89,9 @@ public abstract class InputsNPC : ControlInputsBase
     }
 
     #endregion
-    protected virtual void LateUpdate()
+    public override void RunUpdate(float delta)
     {
-        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
+        base.RunUpdate(delta);
         // todo too many bandaids
         if (_stateMachine == null || IsControlsBusy) return;
         CurrentState = _stateMachine.CurrentState;
@@ -102,7 +103,7 @@ public abstract class InputsNPC : ControlInputsBase
             if (UnitRoom == null) Debug.LogError($"{this} has no room assigned");
             _stateMachine.Debugging = DebugEnabled;
         }
-        #endif
+#endif
     }
 
 
@@ -235,7 +236,7 @@ public abstract class InputsNPC : ControlInputsBase
 
     protected virtual void RotateToSelectedUnit()
     {      
-        LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position);
+        LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position, lastDelta);
     }
     protected virtual void Fsm_GetFocusUnitSM(UnitType type)
     {

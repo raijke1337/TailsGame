@@ -12,7 +12,6 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 {
     [SerializeField] protected string StatsID;
 
-    protected StatsUpdatesHandler _handler;
     public string GetID => StatsID;
 
     protected Animator _animator;
@@ -39,12 +38,41 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     protected bool bindsComplete = false;
 
+
     // run in enaable
     // npcs override to load a list of item ids
     // player overrides to load a json with stored items
     // todo 
-    public abstract void InitInventory(ItemsEquipmentsHandler handler); // this is run by unit manager
+    public virtual void InitiateUnit() // this is run by unit manager
+    {
+        UpdateComponents();
+        GetCollider = GetComponent<Collider>();
+        _faceCam.enabled = false;
 
+        _controller.SetUnit(this);
+        _controller.InitControllers(StatsID);
+        _controller.BindControllers(true);
+
+        switch (GameManager.Instance.GetCurrentLevelData.Type)
+        {
+            case LevelType.Scene:
+                _animator.SetLayerWeight(_animator.GetLayerIndex("IDLE"), 100f);
+                break;
+            case LevelType.Menu:
+                break;
+            case LevelType.Game:
+                _animator.SetLayerWeight(3, 0);
+                UnitBinds(true);
+                break;
+        }
+        Debug.Log($"Initiated {GetFullName}");
+    }
+
+    public virtual void DisableUnit()
+    {
+        if (bindsComplete) UnitBinds(false);
+        _controller.BindControllers(false);
+    }
 
     protected  virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
@@ -76,31 +104,12 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         }
     }
 
-
     protected virtual void UpdateComponents()
     {
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
         if (_controller == null) _controller = GetComponent<ControlInputsBase>();
-        if (_handler == null) _handler = FindObjectOfType<StatsUpdatesHandler>(); // placeholder TODO
         if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-    }
-
-    protected virtual void Awake()
-    {
-        UpdateComponents();
-
-        GetCollider = GetComponent<Collider>();
-
-        _faceCam.enabled = false;
-    }
-
-    protected virtual void OnEnable()
-    {
-        _controller.SetUnit(this);
-        _controller.SetHandler(_handler);
-        _controller.InitControllers(StatsID);
-        _controller.BindControllers(true);
     }
 
 
@@ -121,35 +130,13 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         bindsComplete = isEnable;
     }
 
-    protected virtual void Start()
+
+
+    public virtual void RunUpdate(float delta)
     {
-        switch (GameManager.GetInstance.Mode)
-        {
-            case GameMode.Menus:
-                _animator.SetLayerWeight(_animator.GetLayerIndex("IDLE"),100f); 
-                break;
-            case GameMode.Paused:
-                break;
-            case GameMode.Gameplay:
-                _animator.SetLayerWeight(3, 0);
-                UnitBinds(true);
-                break;
-        }
-    }
-
-    protected virtual void OnDisable()
-    {
-        if (bindsComplete) UnitBinds(false);
-        _controller.BindControllers(false);
-    }
-
-
-
-
-    protected virtual void FixedUpdate()
-    {
-        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
+        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
         AnimateMovement();
+        _controller.RunUpdate(delta);
     }
     #region stats
     protected virtual void OnDeath()
@@ -200,7 +187,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     #region combat
     protected virtual void AnimateCombatActivity(CombatActionType type)
     {
-        if (GameManager.GetInstance.Mode != GameMode.Gameplay) return;
+        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
         switch (type)
         {
             case CombatActionType.Melee:

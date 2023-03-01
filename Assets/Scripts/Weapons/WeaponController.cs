@@ -35,7 +35,7 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
                 return;
             }
 
-            BaseWeaponConfig config = Extensions.GetConfigByID<BaseWeaponConfig>(w.GetID);
+            BaseWeaponConfig config = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(w.GetID);
 
             if (config == null)
             {

@@ -1,110 +1,136 @@
 //using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
-using UnityEngine;
 using System.Linq;
-using Newtonsoft.Json;
-using System.Xml.Serialization;
-using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using Zenject.Asteroids;
 
-public class GameManager : SingletonManagerBase
-{
-    private SaveData _loadedSave;
-    public SaveData GetSaveData { get => _loadedSave; } 
-    private string _savepath;
+public class GameManager : MonoBehaviour
+{   
+    //public GameMode GameMode { get; private set; }
+
+    [SerializeField]
+    private LoadedManagers GameControllersPrefab;
+    private LoadedManagers _gameControllers;
+    public LoadedManagers GetGameControllers => _gameControllers;
 
 
-    private GameMode _mode;
-    public GameMode Mode
+    #region levels
+
+    public LevelData GetLevelData(string ID) => _levels.FirstOrDefault(t=>t.LevelID == ID);
+    private LevelData[] _levels;
+    private LevelData _currentLevel;
+    private int _continueIndex;
+
+    public LevelData GetCurrentLevelData { get => _currentLevel; }
+
+    private void Start()
     {
-        get
+        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+        var levelCards = DataManager.Instance.GetAssetsOfType<LevelCardSO>(Constants.Configs.c_LevelsPath);
+        _levels = new LevelData[levelCards.Length];
+        for (int i = 0; i < levelCards.Length; i++)
         {
-            return _mode;   
+            _levels[i] = new LevelData(levelCards[i]);
         }
-
-        set
-        {
-            _mode = value;
-            Debug.Log($"Game mode set to:{value}");
-            OnGameModeChanged?.Invoke(value);
-        }    
     }
-    public SimpleEventsHandler<GameMode> OnGameModeChanged;
 
-    public override void SetupManager()
+    private void Update()
     {
-
-        _savepath = Application.dataPath + Constants.Configs.c_SavesPath;
-
-        var data = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
-        if (data == null)
+        if (_currentLevel != null &&  _currentLevel.Type == LevelType.Game && _gameControllers != null)
         {
-            data = CreateDefaultSave();
-            UpdateSaveData();
+            _gameControllers.UpdateManagers(Time.deltaTime);
         }
-        _loadedSave = (data);
-
     }
 
-    public void UpdateSaveData()
+    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
-        Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
-    }
-
-    private SaveData CreateDefaultSave()
-    {
-        SaveData data = new SaveData(2, new UnitInventoryItems("player")); // 2 is first playable level
-        return data;
+        switch (_currentLevel.Type)
+        {
+            case LevelType.Menu:
+                //GameMode = GameMode.Menus;
+                break;
+            case LevelType.Game:
+                //GameMode = GameMode.Gameplay;
+                _gameControllers = Instantiate(GameControllersPrefab);
+                _gameControllers.Initiate(_currentLevel);
+                break;
+            case LevelType.Scene:
+                _gameControllers = Instantiate(GameControllersPrefab);
+                _gameControllers.Initiate(_currentLevel);
+                break;
+        }
     }
 
     public void OnLevelComplete()
     {
-        _loadedSave.LastLevelIndex += 1;
-        UpdateSaveData();
-        LevelsLoaderManager.GetInstance.RequestLevelLoad(_loadedSave.LastLevelIndex);
+        DataManager.Instance.GetSaveData.OpenedLevels.Add(_currentLevel.LevelID);
+        DataManager.Instance.UpdateSaveData();
+        RequestLevelLoad(_currentLevel.NextLevelID);
+    }
+    private void RequestLevelLoad(string ID)
+    {
+        LevelData lv = _levels.First(t => t.LevelID == ID);
+        _currentLevel = lv;
+        if (lv.Type == LevelType.Menu && _gameControllers != null) { _gameControllers.Stop(); Destroy(_gameControllers); }
+
+        SceneManager.LoadScene(lv.SceneLoaderIndex);
+    }
+    private void RequestLevelLoad(int index)
+    {
+        LevelData lv = _levels.First(t => t.SceneLoaderIndex == index);
+        //case : this is called from level select menu (continue game) and we need the equips menu first
+        switch (lv.Type)
+        {
+            case LevelType.Menu:
+                _currentLevel = lv;
+                SceneManager.LoadScene(lv.SceneLoaderIndex);
+                break;
+            case LevelType.Scene:
+                break;
+            case LevelType.Game:
+                break;
+        }
+
+        
+        if (lv.Type == LevelType.Menu && _gameControllers != null) { _gameControllers.Stop(); Destroy(_gameControllers); }
+
+        
     }
 
+
+    public void OnNewGame()
+    {
+        DataManager.Instance.CreateDefaultSave();
+        OnContinueGame(1); // 3 is debug level 1 is equips
+    }
+    public void OnContinueGame(string id)
+    {
+        RequestLevelLoad(id);
+    }  
+    public void OnContinueGame(int index)
+    {
+        RequestLevelLoad(index);
+    }
+
+    public void OnPlayerDead()
+    {
+        Debug.LogWarning("You died");
+        // RequestLevelLoad(0);
+    }
     public void OnItemPickup(string itemID)
     {
-        _loadedSave.PlayerItems.InventoryIDs.Add(itemID);
+        DataManager.Instance.GetSaveData.PlayerItems.InventoryIDs.Add(itemID);
     }
 
-    #region itemshandler
-    private static ItemsEquipmentsHandler _itemshandler;
-    public static ItemsEquipmentsHandler GetItemsHandler
-    {
-        get
-        {
-            if (_itemshandler == null)
-            {
-                _itemshandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.PrefabsPaths.c_ItemPrefabsPath)));
-            }
-            return _itemshandler;
-        }
-    }
     #endregion
 
     #region SingletonLogic
 
-    protected static GameManager _instance = null;
-    public override void InitSingleton()
+    public static GameManager Instance;
+    private void Awake()
     {
-        if (_instance == null)
-            _instance = this;
-        else if (_instance == this) Destroy(gameObject); // remove copies just in case
-        SetupManager();
-        Mode = GameMode.Menus;
-    }
-    public static GameManager GetInstance
-    {
-        get
-        {
-            return _instance;
-        }
+        if (Instance == null)
+            Instance = this;
+        else Destroy(gameObject);
     }
     #endregion
 }

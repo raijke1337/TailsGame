@@ -23,7 +23,7 @@ public class ComboController : BaseController, IStatsComponentForHandler, ITakes
 
     public ComboController(string ID)
     {
-        var cfg = Extensions.GetConfigByID<ComboStatsConfig>(ID);
+        var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>(ID);
         if (cfg == null) return;
         IsReady = true;
 

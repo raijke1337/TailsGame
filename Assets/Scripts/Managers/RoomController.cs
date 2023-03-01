@@ -1,42 +1,39 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 [RequireComponent(typeof(Collider))]
-public class RoomController : MonoBehaviour
+public class RoomController : LoadedManagerBase
 {
-    [SerializeField] private List<NPCUnit> list;
     private Collider _detectionArea;
     private PlayerUnit _player;
-    public void SetPlayer(PlayerUnit p) => _player = p;
-    private Puzzle.PuzzleManager _puzMan;
+    private List<NPCUnit> _npcUnits;
 
-    private bool isGameStarted = false;
+    private StateMachineUpdater _FSMupdater;
+    public SimpleEventsHandler<NPCUnit> UnitFound;
 
-
-    private void Start() 
+    public override void Initiate()
     {
-        UpdateUnits();
-        _puzMan = FindObjectOfType<Puzzle.PuzzleManager>();
-        if (_puzMan != null)
+        _detectionArea = GetComponent<Collider>();
+        if (_detectionArea != null) _detectionArea.isTrigger = true;
+
+        _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
+        _FSMupdater = new StateMachineUpdater();
+    }
+
+    public override void RunUpdate(float delta)
+    {
+        _FSMupdater.OnUpdate(delta);
+    }
+
+    public override void Stop()
+    {
+        foreach (var unit in _npcUnits)
         {
-            _puzMan.GameCompletedEvent += _puzMan_GameCompletedEvent;
+            _FSMupdater.RemoveUnit(unit);
         }
-        isGameStarted = true;
     }
 
-    private void _puzMan_GameCompletedEvent(Puzzle.GameResult arg)
-    {
-        Debug.Log($"Puzzle solved {arg.isWin}");
-    }
+
 
     private void LateUpdate() 
     {
@@ -45,25 +42,17 @@ public class RoomController : MonoBehaviour
 
     #region units
 
-
-    public void UpdateUnits()
-    {
-        list = new List<NPCUnit>();
-        _detectionArea = GetComponent<Collider>();
-        if (_detectionArea != null) _detectionArea.isTrigger = true;
-    }
     private void OnTriggerEnter(Collider other)
     {
-        if (!isGameStarted) return;
         if (other.CompareTag("Enemy"))
         {
             var unit = other.GetComponent<NPCUnit>();
-            list.Add(unit);
+            UnitFound?.Invoke(unit);
             unit.SetUnitRoom(this);
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
-            unit.OnUnitSpottedPlayerEvent += Unit_OnUnitSpottedPlayerEvent;
             unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
-            Debug.Log($"Set up unit:{unit.GetFullName}");
+            _FSMupdater.AddUnit(unit);
+            _npcUnits.Add(unit);
         }
        
     }
@@ -72,20 +61,16 @@ public class RoomController : MonoBehaviour
     private void Unit_OnUnitAttackedEvent(NPCUnit arg)
     {
         arg.ReactToDamage(_player);
-        //Debug.Log($"{this}: {arg} was attacked");
     }
 
-    private void Unit_OnUnitSpottedPlayerEvent(NPCUnit arg)
-    {
-        //Debug.Log($"{this}: {arg} saw player");
-    }
 
     private void Unit_BaseUnitDiedEvent(BaseUnit unit)
     {
-        list.Remove(unit as NPCUnit);
-        if(unit is NPCUnit n)
+        _FSMupdater.RemoveUnit(unit as NPCUnit);
+
+        if (unit is NPCUnit n)
         {
-            n.OnUnitSpottedPlayerEvent -= Unit_OnUnitSpottedPlayerEvent;
+            _npcUnits.Remove(n);
             n.OnUnitAttackedEvent -= Unit_OnUnitAttackedEvent;
         }
     }
@@ -101,13 +86,13 @@ public class RoomController : MonoBehaviour
         switch (type)
         {
             case UnitType.Small:
-                res = list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Big:
-                res= list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res= _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Boss:
-                res= list.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res= _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Self:
                 Debug.LogWarning(type+" was somehow requested, this should not happen");
@@ -124,12 +109,6 @@ public class RoomController : MonoBehaviour
 
     #endregion
 
-    #region puzzles
-
-
-
-
-    #endregion
 
 }
 

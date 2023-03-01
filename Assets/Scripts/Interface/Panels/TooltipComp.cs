@@ -26,7 +26,7 @@ public class TooltipComp : MonoBehaviour
         TextContainer descC;
         try
         {
-            descC = (TextsManager.GetInstance as TextsManager).GetContainerByID(content.ID);
+            descC = (TextsManager.Instance as TextsManager).GetContainerByID(content.ID);
         }
         catch
         {

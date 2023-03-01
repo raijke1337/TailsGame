@@ -22,7 +22,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
     {
         if (!IsReady) return;
         _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-        var cfg = Extensions.GetConfigByID<DodgeStatsConfig>(EquippedDodgeItem.GetContents.ID);
+        var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(EquippedDodgeItem.GetContents.ID);
 
         if (cfg == null)
         {

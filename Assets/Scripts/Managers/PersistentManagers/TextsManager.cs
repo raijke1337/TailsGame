@@ -1,42 +1,37 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class TextsManager : SingletonManagerBase
+public class TextsManager : MonoBehaviour
 {
-    private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
+    #region SingletonLogic
 
-    public TextContainer GetContainerByID(string ID) => textContainers[ID];
-
-    public override void SetupManager()
+    public static TextsManager Instance;
+    private void Awake()
     {
-        var texts = Extensions.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else Destroy(gameObject);
+    }
+    #endregion
 
+    private void Start()
+    {
+        var texts = DataManager.Instance.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
         foreach (var text in texts)
         {
             textContainers[text.container.ID] = text.container;
         }
         Debug.Log($"Found total {textContainers.Count} texts");
-
     }
 
+    private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
 
-    #region SingletonLogic
+    public TextContainer GetContainerByID(string ID) => textContainers[ID];
 
-    protected static TextsManager _instance = null;
-    public override void InitSingleton()
-    {
-        if (_instance == null)
-            _instance = this;
-        else if (_instance == this) Destroy(gameObject); // remove copies just in case
-        SetupManager();
-    }
-    public static TextsManager GetInstance
-    {
-        get
-        {
-            return _instance;
-        }
-    }
-    #endregion
+
+
 }
 

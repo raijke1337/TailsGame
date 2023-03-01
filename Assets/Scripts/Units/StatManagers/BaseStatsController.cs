@@ -36,7 +36,7 @@ public class BaseStatsController : BaseController, IStatsComponentForHandler, IT
     public BaseStatsController (string ID)
     {
         GetBaseStats = new SerializableDictionaryBase<BaseStatType, StatValueContainer>();
-        var cfg = Extensions.GetConfigByID<BaseStatsConfig>(ID);
+        var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(ID);
 
         if (cfg == null) return;
 

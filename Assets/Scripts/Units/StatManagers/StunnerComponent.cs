@@ -22,7 +22,7 @@ namespace Assets.Scripts.Units
 
         public StunsController(string ID = "default")
         {
-            var cfg = Extensions.GetConfigByID<StunsControllerConfig>(ID);
+            var cfg = DataManager.Instance.GetConfigByID<StunsControllerConfig>(ID);
             if (cfg == null) return;
             IsReady = true;
             CurrentValue = new StatValueContainer(cfg.StunResistance);

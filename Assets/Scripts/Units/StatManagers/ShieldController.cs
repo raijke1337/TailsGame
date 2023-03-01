@@ -39,7 +39,7 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
     {
         if (!IsReady) return;
 
-        var cfg = Extensions.GetConfigByID<ShieldSettings>(EquippedShieldItem.GetContents.ID);
+        var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(EquippedShieldItem.GetContents.ID);
 
         if (cfg == null) return;
 

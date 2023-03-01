@@ -23,7 +23,10 @@ public static class Constants
     public static class Configs
     {
         public const string c_AllConfigsPath = "/Resources/Configurations/";
+        //public const string c_AllConfigsPath = "Configurations";
         public const string c_SavesPath = "/Saves/Save.xml";
+        public const string c_LevelsPath = "/Resources/Configurations/LevelCards";
+        public const string c_FirstLevelID = "debug";
     }
     public static class Objects
     {
@@ -210,9 +213,8 @@ public class UnitInventoryItems
     public List<string> EquipmentIDs;
     public List<string> InventoryIDs;
     public List<string> DropsIDs; 
-    public UnitInventoryItems (string preset)
+    public UnitInventoryItems (UnitItemsSO cfg)
     {
-       var cfg =  Extensions.GetConfigByID<UnitItemsSO>(preset);
         EquipmentIDs = new List<string>(cfg.Items.EquipmentIDs);
         InventoryIDs = new List<string>(cfg.Items.InventoryIDs);
         DropsIDs = new List<string> (cfg.Items.DropsIDs);
@@ -222,37 +224,11 @@ public class UnitInventoryItems
     }
 }
 
-
-[XmlRoot("GameSave"), Serializable]
-public class SaveData
-{
-    public int LastLevelIndex;
-    public UnitInventoryItems PlayerItems;
-
-    public SaveData(int lastLevelIndex, UnitInventoryItems items)
-    {
-        LastLevelIndex = lastLevelIndex;
-        PlayerItems = items;
-    }
-    public SaveData(SaveData data)
-    {
-        LastLevelIndex = data.LastLevelIndex; PlayerItems = data.PlayerItems;
-    }
-    public SaveData() { LastLevelIndex = 2;  } // level build index, 2 is the first game level
-}
-[Serializable]
-public class LevelData 
-{
-    public int SceneLoaderIndex;
-    public string LevelNameShort;
-    public string TextContainerID;
-}
-
 public class BasicSelectableItemData
 {
     public string TextString;
     public Camera ItemView;
-    public BasicSelectableItemData (string s, Camera c)
+    public BasicSelectableItemData(string s, Camera c)
     {
         TextString = s; ItemView = c;
     }
@@ -260,149 +236,174 @@ public class BasicSelectableItemData
 public class SelectableUnitData : BasicSelectableItemData
 {
     public BaseUnit Unit;
-    public SelectableUnitData (BaseUnit u, string txt, Camera cam) : base (txt,cam)
+    public SelectableUnitData(BaseUnit u, string txt, Camera cam) : base(txt, cam)
     {
-        Unit = u; 
+        Unit = u;
     }
 }
 
+
+[Serializable]
+public class LevelData
+{
+    public string LevelID;
+    public int SceneLoaderIndex;
+    public string NextLevelID;
+    [Space]
+    public string LevelNameShort;
+    public string DescriptionContainer;
+    public LevelType Type;
+    public LevelData(LevelCardSO data)
+    {
+        LevelID = data.ID;
+        SceneLoaderIndex = data.SceneLoaderIndex;
+        LevelNameShort = data.LevelNameShort;
+        DescriptionContainer = data.TextContainerID;
+        Type = data.LevelType;
+        NextLevelID = data.nextID;
+    }
+}
 
 #region structs 
 
-[Serializable] public struct SkillData
-{
-    public Sprite Icon;
-    public float Recharge;
-    public float FinalArea;
-    public float StartArea;
-    public float PersistTime;
-    public float SkillCost;
-    public string[] TriggerIDs;
-
-    //public TriggerTargetType TargetType;
-
-    public SkillData(SkillData refs)
+[Serializable]
+    public struct SkillData
     {
-        Icon = refs.Icon; Recharge = refs.Recharge;FinalArea = refs.FinalArea;StartArea = refs.StartArea;PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; //TargetType = refs.TargetType;
-        TriggerIDs = refs.TriggerIDs;
-    }
-}
-[Serializable] public struct EnemyStats
-{
-    public float AttackRange;
+        public Sprite Icon;
+        public float Recharge;
+        public float FinalArea;
+        public float StartArea;
+        public float PersistTime;
+        public float SkillCost;
+        public string[] TriggerIDs;
 
-    public float LookSpereCastRadius;
-    public float LookSpereCastRange;
+        //public TriggerTargetType TargetType;
 
-    public UnitType EnemyType;
-    public EnemyStats(EnemyStatsConfig cfg)
-    {
-        LookSpereCastRadius = cfg.lookSphereRad;
-        LookSpereCastRange = cfg.lookRange;
-        AttackRange = cfg.atkRange;
-        EnemyType = cfg.Type;
-    }
-}
-
-[Serializable] public struct TextContainer
-{
-    public string ID;
-    public string[] Texts;
-    public override string ToString()
-    {
-        string result = String.Empty ;
-        foreach (string s in Texts)
+        public SkillData(SkillData refs)
         {
-            result += s + "\n";
+            Icon = refs.Icon; Recharge = refs.Recharge; FinalArea = refs.FinalArea; StartArea = refs.StartArea; PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; //TargetType = refs.TargetType;
+            TriggerIDs = refs.TriggerIDs;
         }
-        return result;
     }
-}
-[Serializable] public struct ItemEmpties
-{
-    public Transform MeleeWeaponEmpty;
-    public Transform RangedWeaponEmpty;
-    public Transform SheathedWeaponEmpty;
-    public Transform SkillsEmpty;
-    public Transform OthersEmpty;
-}
+    [Serializable]
+    public struct EnemyStats
+    {
+        public float AttackRange;
 
-#endregion
+        public float LookSpereCastRadius;
+        public float LookSpereCastRange;
+
+        public UnitType EnemyType;
+        public EnemyStats(EnemyStatsConfig cfg)
+        {
+            LookSpereCastRadius = cfg.lookSphereRad;
+            LookSpereCastRange = cfg.lookRange;
+            AttackRange = cfg.atkRange;
+            EnemyType = cfg.Type;
+        }
+    }
+
+    [Serializable]
+    public struct TextContainer
+    {
+        public string ID;
+        public string[] Texts;
+        public override string ToString()
+        {
+            string result = String.Empty;
+            foreach (string s in Texts)
+            {
+                result += s + "\n";
+            }
+            return result;
+        }
+    }
+    [Serializable]
+    public struct ItemEmpties
+    {
+        public Transform MeleeWeaponEmpty;
+        public Transform RangedWeaponEmpty;
+        public Transform SheathedWeaponEmpty;
+        public Transform SkillsEmpty;
+        public Transform OthersEmpty;
+    }
+
+    #endregion
 
 
 
 
-#region interfaces
+    #region interfaces
 
-public interface ITakesTriggers
-{
-    void AddTriggeredEffect(TriggeredEffect effect);
-}
+    public interface ITakesTriggers
+    {
+        void AddTriggeredEffect(TriggeredEffect effect);
+    }
 
-public interface IStatsComponentForHandler
-{
-    bool IsReady { get; }
-    event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent;
-    void UpdateInDelta(float deltaTime);
-    void SetupStatsComponent();
-    void Ping();
-}
+    public interface IStatsComponentForHandler
+    {
+        bool IsReady { get; }
+        event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
+        void UpdateInDelta(float deltaTime);
+        void SetupStatsComponent();
+        void Ping();
+    }
 
-public interface IHasID
-{ string GetID { get; } }
-public interface IHasGameObject
-{ public GameObject GetObject(); }
-public interface IHasOwner
-{ BaseUnit Owner { get; set; } }
+    public interface IHasID
+    { string GetID { get; } }
+    public interface IHasGameObject
+    { public GameObject GetObject(); }
+    public interface IHasOwner
+    { BaseUnit Owner { get; set; } }
 
-public interface IAppliesTriggers : IHasGameObject
-{
-    event TriggerEventApplication TriggerApplicationRequestEvent;
-}
-public interface IInventoryItem : IHasID
-{
-    public ItemContent GetContents { get; }
-}
-public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
-{
-    public EquipmentBase GetEquipmentBase();
-}
-public interface IWeapon : IEquippable
-{
-    bool UseWeapon(out string reason);
-    int GetAmmo { get; }
-    event SimpleEventsHandler<float> TargetHit;
-    void UpdateInDelta(float deltaTime);
-    void SetUpWeapon(BaseWeaponConfig cfg);
-}
+    public interface IAppliesTriggers : IHasGameObject
+    {
+        event TriggerEventApplication TriggerApplicationRequestEvent;
+    }
+    public interface IInventoryItem : IHasID
+    {
+        public ItemContent GetContents { get; }
+    }
+    public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
+    {
+        public EquipmentBase GetEquipmentBase();
+    }
+    public interface IWeapon : IEquippable
+    {
+        bool UseWeapon(out string reason);
+        int GetAmmo { get; }
+        event SimpleEventsHandler<float> TargetHit;
+        void UpdateInDelta(float deltaTime);
+        void SetUpWeapon(BaseWeaponConfig cfg);
+    }
 
-public interface IExpires : IHasGameObject
-{
-    event SimpleEventsHandler<IExpires> HasExpiredEvent;
-}
-public interface ISkill : IHasID, IAppliesTriggers, IHasOwner , IExpires, IHasGameObject
-{
-    void OnUse();
-    void OnUpdate();
-}
-public interface IProjectile : ISkill
-{
-    void SetProjectileData(ProjectileDataConfig cfg);
-}
-public interface IUsesItems : INeedsEmpties
-{
-    void LoadItem(IEquippable item);
-}
-public interface IGivesSkills : IUsesItems
-{ IEnumerable<string> GetSkillStrings();  }
+    public interface IExpires : IHasGameObject
+    {
+        event SimpleEventsHandler<IExpires> HasExpiredEvent;
+    }
+    public interface ISkill : IHasID, IAppliesTriggers, IHasOwner, IExpires, IHasGameObject
+    {
+        void OnUse();
+        void OnUpdate(float delta);
+    }
+    public interface IProjectile : ISkill
+    {
+        void SetProjectileData(ProjectileDataConfig cfg);
+    }
+    public interface IUsesItems : INeedsEmpties
+    {
+        void LoadItem(IEquippable item);
+    }
+    public interface IGivesSkills : IUsesItems
+    { IEnumerable<string> GetSkillStrings(); }
 
-public interface INeedsEmpties
-{ ItemEmpties Empties { get; } }
+    public interface INeedsEmpties
+    { ItemEmpties Empties { get; } }
 
-public interface ISelectableItem : IPointerEnterHandler, IPointerExitHandler
-{
-    public event SimpleEventsHandler<BasicSelectableItemData, bool> MouseOverEvent;
-}
+    public interface ISelectableItem : IPointerEnterHandler, IPointerExitHandler
+    {
+        public event SimpleEventsHandler<BasicSelectableItemData, bool> MouseOverEvent;
+    }
 
 
 #endregion

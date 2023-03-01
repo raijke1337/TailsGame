@@ -28,11 +28,11 @@ public class ProjectileSkill : BaseSkill, IProjectile
         _penetr = ProjData.Penetration;
     }
 
-    public void OnUpdate()
+    public void OnUpdate(float delta)
     {
         if (transform == null) return; // case: gameobject was destroyed by manager
-        transform.position += ProjData.Speed * Time.deltaTime * transform.forward;
-        _exp -= Time.deltaTime;
+        transform.position += ProjData.Speed * delta * transform.forward;
+        _exp -= delta;
         if (_exp <= 0f) CallExpiry();
     }
 

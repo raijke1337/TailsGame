@@ -17,7 +17,7 @@ public class SkillsController : BaseController, INeedsEmpties
 
     public void UpdateSkills (string skillID ,bool isAdd)
     {
-        var cfg = Extensions.GetConfigByID<SkillControllerDataConfig>(skillID);
+        var cfg = DataManager.Instance.GetConfigByID<SkillControllerDataConfig>(skillID);
         if (cfg == null) { return; }
         if (_skills == null) _skills = new Dictionary<CombatActionType, SkillControllerData>();
         else
