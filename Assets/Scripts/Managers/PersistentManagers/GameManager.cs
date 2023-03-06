@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
 
     private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
+
         switch (_currentLevel.Type)
         {
             case LevelType.Menu:
@@ -75,6 +76,8 @@ public class GameManager : MonoBehaviour
     private string gameLevelID;
     private void LoadLevel(string ID, bool gameOverride = false)
     {
+        if (ID=="") { LoadLevel("main"); } // it happens in debug
+
         try
         {
             _currentLevel = _levels[ID];
@@ -103,26 +106,33 @@ public class GameManager : MonoBehaviour
         DataManager.Instance.CreateDefaultSave();
         RequestLevelLoad("intro");
     }
+    public void OnReturnToMain()
+    {
+        LoadLevel("main");
+    }
 
 
     #region game events
 
     public void OnLevelComplete()
     {
+        if (_gameControllers != null)
+        {
+            _gameControllers.Stop();
+        }
         if (!DataManager.Instance.GetSaveData.OpenedLevels.Contains(_currentLevel.LevelID))
         {
             DataManager.Instance.GetSaveData.OpenedLevels.Add(_currentLevel.LevelID);
         }
         DataManager.Instance.UpdateSaveData();
-        Debug.Log("Level complete");
-
+        var next = _currentLevel.NextLevelID;
+        LoadLevel(next);
     }
 
 
     public void OnPlayerDead()
     {
-        Debug.LogWarning("You died");
-        // RequestLevelLoad(0);
+        _gameControllers.GameInterfaceManager.GameOver();
     }
     public void OnItemPickup(string itemID)
     {

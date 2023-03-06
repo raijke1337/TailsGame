@@ -11,7 +11,7 @@ public class UnitsManager : LoadedManagerBase
     public List<NPCUnit> GetNPCs() => _npcs;
     public SkillRequestedEvent RequestToPlaceSkills;
 
-    private List<BaseUnit> _allUnits = new List<BaseUnit>();
+    [SerializeField] private List<BaseUnit> _allUnits = new List<BaseUnit>();
 
 
 

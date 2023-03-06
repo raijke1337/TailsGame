@@ -47,8 +47,6 @@ public class PlayerUnitPanel : SelectedItemPanel
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
         _combo = _player.GetInputs<InputsPlayer>().GetComboController;
 
-        Debug.Log($"dodge {_dodge.IsReady} weapons {_weapons.IsReady} shield {_shield.IsReady} combo {_combo.IsReady}");
-
         HPc = _player.GetStats()[BaseStatType.Health];
         HPc.ValueChangedEvent += ResetTicker;
 

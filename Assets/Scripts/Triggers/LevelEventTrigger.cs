@@ -10,12 +10,9 @@ public class LevelEventTrigger : BaseTrigger
     {
         base.Start();
         _coll.isTrigger = true; // wtf
-        GameManager.Instance.GetGameControllers.EventTriggersManager.RegisterEventTrigger(this,true);
+        GameManager.Instance.GetGameControllers.EventTriggersManager.RegisterEventTrigger(this);
     }
-    private void OnDisable()
-    {
-        GameManager.Instance.GetGameControllers.EventTriggersManager.RegisterEventTrigger(this, false);
-    }
+
     protected override void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;

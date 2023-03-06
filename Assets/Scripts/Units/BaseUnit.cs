@@ -149,8 +149,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     //sets animator values 
     protected virtual void AnimateMovement()
     {
-        ref var movement = ref _controller.MoveDirection;
-        Debug.Log(movement);
+        Vector3 movement = _controller.GetMoveDirection;
         if (movement.x == 0f && movement.z == 0f)
         {
             _animator.SetBool("Moving", false);

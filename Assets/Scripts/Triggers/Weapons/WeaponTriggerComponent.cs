@@ -9,6 +9,7 @@ public class WeaponTriggerComponent : BaseTrigger
 
     public void ToggleCollider (bool isEnable)
     {
+        if (_coll == null) _coll = GetComponent<Collider>();
         _coll.enabled = isEnable;
     }
     public void SetTriggerIDS(IEnumerable<string> ids)

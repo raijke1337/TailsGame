@@ -32,7 +32,7 @@ public abstract class BaseController : IStatsComponentForHandler
     // used by inputs to properly register some components
     public virtual void StopStatsComponent()
     {
-        Debug.Log($"{this} was requested to stop and nothing happened");
+
     }
 
     public virtual void HandleEffects(float deltaTime)
@@ -81,7 +81,7 @@ public abstract class BaseController : IStatsComponentForHandler
     }
     public virtual void SetupStatsComponent()
     {
-        Debug.Log(this + " was setup");
+        //Debug.Log(this + " was setup");
     }
 
 }

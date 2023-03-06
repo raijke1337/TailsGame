@@ -63,7 +63,7 @@ public abstract class InputsNPC : ControlInputsBase
         base.UpdateController(delta);
         if (_stateMachine == null || IsControlsBusy) return;
         CurrentState = _stateMachine.CurrentState;
-        velocityVector = _stateMachine.CurrentVelocity;
+        MoveDirectionFromInputs = _stateMachine.CurrentVelocity;
 
 #if UNITY_EDITOR
         if (DebugEnabled)

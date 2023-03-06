@@ -54,7 +54,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
     public override void StartController()
     {
         _statsCtrl = new BaseStatsController(Unit.GetID);
-
+        MoveDirectionFromInputs = InputDirectionOverride;
         if (InputDirectionOverride != Vector3.zero) return; // Scene
 
         _comboCtrl = new ComboController(Unit.GetID);
@@ -142,8 +142,8 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 
 
 
-    public ref Vector3 MoveDirection => ref velocityVector;
-    protected Vector3 velocityVector;
+    public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
+    protected Vector3 MoveDirectionFromInputs;
 
     protected virtual void LerpRotateToTarget(Vector3 looktarget, float delta)
     {
@@ -176,7 +176,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
         IsControlsBusy = true;
 
         Vector3 start = transform.position;
-        Vector3 end = start + MoveDirection * stats[DodgeStatType.Range].GetCurrent;
+        Vector3 end = start + GetMoveDirection * stats[DodgeStatType.Range].GetCurrent;
 
         float p = 0f;
         while (p <= 1f)

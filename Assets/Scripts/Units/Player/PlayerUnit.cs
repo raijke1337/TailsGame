@@ -90,7 +90,7 @@ public class PlayerUnit : BaseUnit
         }
         else
         {
-            PlayerMovement(_playerController.MoveDirection, delta); // weird ass null here sometimes
+            PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
         }
 
     }

@@ -63,7 +63,7 @@ public class LevelSelectMenuComp : MenuPanel
     }
     public void OnBack()
     {
-        GameManager.Instance.RequestLevelLoad("main");
+        GameManager.Instance.OnReturnToMain();
     }
 
 

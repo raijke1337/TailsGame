@@ -130,7 +130,7 @@ public class InputsPlayer : ControlInputsBase
     private void Dash_performed(CallbackContext obj)
     {
         if (IsControlsBusy) return;
-        if (velocityVector == Vector3.zero) return; //can't dash from standing
+        if (MoveDirectionFromInputs == Vector3.zero) return; //can't dash from standing
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
             CombatActionSuccessCallback(CombatActionType.Dodge);
@@ -155,7 +155,7 @@ public class InputsPlayer : ControlInputsBase
         }
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
-        velocityVector = AD + WS;
+        MoveDirectionFromInputs = AD + WS;
     }
     private void Aiming()
     {
@@ -173,7 +173,7 @@ public class InputsPlayer : ControlInputsBase
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + MoveDirection);
+        Gizmos.DrawLine(transform.position, transform.position + GetMoveDirection);
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);

@@ -14,7 +14,8 @@ public class RoomController : LoadedManagerBase
     public override void Initiate()
     {
         _detectionArea = GetComponent<Collider>();
-        if (_detectionArea != null) _detectionArea.isTrigger = true;
+        _detectionArea.enabled = true;
+        _detectionArea.isTrigger = true;
 
         _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
         _FSMupdater = new StateMachineUpdater();

@@ -23,7 +23,7 @@ public class EquipsLevelController : MonoBehaviour
     }
     public void OnMain()
     {
-        GameManager.Instance.RequestLevelLoad("main");
+        GameManager.Instance.OnReturnToMain();
     }
 
 

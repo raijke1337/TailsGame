@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EventTriggersManager : LoadedManagerBase
@@ -19,22 +20,14 @@ public class EventTriggersManager : LoadedManagerBase
 
     public override void Stop()
     {
-        foreach (var t in triggers) { t.EnterEvent -= OnEventActivated; }
+        foreach (var t in triggers.ToList()) { t.EnterEvent -= OnEventActivated;}
     }
     #endregion
 
-    public void RegisterEventTrigger(LevelEventTrigger tr, bool isReg)
+    public void RegisterEventTrigger(LevelEventTrigger tr)
     {
-        if (isReg)
-        {
-            triggers.Add(tr);
-            tr.EnterEvent += OnEventActivated;
-        }
-        else
-        {
-            triggers.Remove(tr);
-            tr.EnterEvent -= OnEventActivated;
-        }
+        triggers.Add(tr);
+        tr.EnterEvent += OnEventActivated;
     }
 
 

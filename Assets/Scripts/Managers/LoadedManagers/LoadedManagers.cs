@@ -18,6 +18,9 @@ public class LoadedManagers : MonoBehaviour
     public void Initiate(LevelData lv)
     {
         _lvl = lv;
+
+        //Debug.Log($"Starting level manangers with leveldata: " + lv.LevelID);
+
         // if leveltype is scene only limited initiation for display
         if (_lvl.Type == LevelType.Game)
         {
@@ -48,7 +51,9 @@ public class LoadedManagers : MonoBehaviour
         {
 
             if (m != null)
+            {
                 m.Initiate();
+            }
             else
             {
                 Debug.Log($"Null manager at index {_managers.IndexOf(m)}");
