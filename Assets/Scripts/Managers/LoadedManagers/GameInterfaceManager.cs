@@ -1,41 +1,55 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using TMPro;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using Zenject;
-using System.Threading.Tasks;
 
 public class GameInterfaceManager : LoadedManagerBase
 {
     [SerializeField] private SelectedItemPanel _tgt;
     [SerializeField] private PlayerUnitPanel _player;
+    [SerializeField] private GameTextComp _text;
     private List<NPCUnit> _npcs;
 
     public override void Initiate()
     {
-        if (_player == null) return;
-        var p = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
+        if (GameManager.Instance.GetCurrentLevelData.Type == LevelType.Game)
+        {
+            if (_player == null) return;
+            var p = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
 
-        _player.AssignItem(new SelectableUnitData(p, p.GetFullName, p.GetFaceCam), true);
+            _player.AssignItem(new SelectableUnitData(p, p.GetFullName, p.GetFaceCam), true);
 
-        // TODO Maybe make a manager to handle all types of interactive items
-        _npcs = new List<NPCUnit>(GameManager.Instance.GetGameControllers.UnitsManager.GetNPCs());
+            // TODO Maybe make a manager to handle all types of interactive items
+            _npcs = new List<NPCUnit>(GameManager.Instance.GetGameControllers.UnitsManager.GetNPCs());
 
-        BindAiming(true);
+            BindAiming(true);
+            _tgt.IsNeeded = false;
+            _text.IsShown = false;
+        }
+        else
+        {
+            _player.IsNeeded = false;
+            _tgt.IsNeeded = false;
+            _text.IsShown = false;
+        }
 
-        _tgt.IsNeeded = false;
+    }
+
+    public void UpdateGameText(string ID, bool isShown)
+    {
+        if (isShown)
+        {
+            _text.IsShown = true;
+            _text.SetText(TextsManager.Instance.GetContainerByID(ID));
+        }
+        else
+        {
+            _text.IsShown = false;
+        }
     }
 
     public override void RunUpdate(float delta)
     {
-
+        // TODO update bars etc here
     }
 
     public override void Stop()

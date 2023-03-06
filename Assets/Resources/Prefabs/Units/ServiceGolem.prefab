@@ -1236,7 +1236,20 @@ MonoBehaviour:
     SheathedWeaponEmpty: {fileID: 1682865259246156782}
     SkillsEmpty: {fileID: 1682865259246156782}
     OthersEmpty: {fileID: 1682865259246156782}
+  _statsCtrl:
+    _isReady: 0
+  _weaponCtrl:
+    _isReady: 0
+  _dodgeCtrl:
+    _isReady: 0
+  _shieldCtrl:
+    _isReady: 0
+  _skillCtrl:
+    _isReady: 0
+  _comboCtrl:
+    _isReady: 0
   _stunsCtrl:
+    _isReady: 0
     isGracePeriod: 0
     _currValue: 0
   DebugEnabled: 0
@@ -1263,7 +1276,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StatsID: golem_bot
   Side: 1
-  Drops: []
   NPCEquipments:
   - {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824, type: 3}
   - {fileID: 4268415002012711854, guid: 12b44337bbfa2bf40a8b2c93386ea47c, type: 3}
@@ -1295,7 +1307,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!1 &6282183787786567646
 GameObject:

@@ -1,27 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace KevinIglesias {
+namespace KevinIglesias
+{
 
-    public class ThrowHealing : StateMachineBehaviour {
+    public class ThrowHealing : StateMachineBehaviour
+    {
 
         CastSpells cS;
 
         public CastHand castHand;
-        
+
         public float spawnDelay;
-        
-        override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-            
-            if(cS == null)
+
+        override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+
+            if (cS == null)
             {
                 cS = animator.GetComponent<CastSpells>();
             }
-            
-            if(cS != null)
+
+            if (cS != null)
             {
-               cS.ThrowHealing(castHand, spawnDelay);
+                cS.ThrowHealing(castHand, spawnDelay);
             }
         }
     }

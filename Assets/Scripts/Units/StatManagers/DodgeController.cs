@@ -1,4 +1,3 @@
-using RotaryHeart.Lib.SerializableDictionary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +9,10 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
     public IEquippable EquippedDodgeItem { get; private set; }
 
     Dictionary<DodgeStatType, StatValueContainer> _stats;
-    public IReadOnlyDictionary<DodgeStatType,StatValueContainer> GetDodgeStats { get { return _stats; } }
+    public IReadOnlyDictionary<DodgeStatType, StatValueContainer> GetDodgeStats { get { return _stats; } }
     public ItemEmpties Empties { get; }
     public DodgeController(ItemEmpties ie) => Empties = ie;
-    public int GetDodgeCharges() =>  _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0; 
+    public int GetDodgeCharges() => _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0;
 
     private Queue<Timer> _timerQueue = new Queue<Timer>();
     private EquipmentBase instantiatedItem;
@@ -35,7 +34,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
             _stats[c.Key] = new StatValueContainer(c.Value);
         }
         foreach (var st in _stats.Values)
-        { st.Setup(); }        
+        { st.Setup(); }
     }
 
 
@@ -73,7 +72,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
             EquippedDodgeItem = item;
             instantiatedItem = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
             IsReady = true;
-        }         
+        }
     }
 
     protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)

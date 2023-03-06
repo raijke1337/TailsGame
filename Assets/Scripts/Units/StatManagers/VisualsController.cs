@@ -1,18 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Zenject.ReflectionBaking.Mono.Cecil;
-using static UnityEditor.Progress;
-using ModestTree;
 
 public class VisualsController : MonoBehaviour
 {
@@ -49,7 +37,7 @@ public class VisualsController : MonoBehaviour
     {
         _mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
         UpdateMaterial();
-       // GameManager.Instance.OnGameModeChanged += RemoveEffects;
+        // GameManager.Instance.OnGameModeChanged += RemoveEffects;
     }
 
     //private void OnDisable()
@@ -101,7 +89,7 @@ public class VisualsController : MonoBehaviour
     }
     public void ClearVisualItems()
     {
-        if (_items == null) return; 
+        if (_items == null) return;
         foreach (var i in _items.ToList())
         {
             Destroy(i.gameObject);

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,7 +18,7 @@ namespace Puzzle
 
         public event PuzzleManager.MiniGameEvents<TileComponent> OnFlipEvent;
 
-        public void SetImages(bool isOpen, Sprite image) => ImageDict[isOpen] = image;        
+        public void SetImages(bool isOpen, Sprite image) => ImageDict[isOpen] = image;
 
         public void Flip()
         {

@@ -1,24 +1,28 @@
 //using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
-{   
+{
     //public GameMode GameMode { get; private set; }
 
-    [SerializeField]
-    private LoadedManagers GameControllersPrefab;
+    [SerializeField] private LoadedManagers GameControllersPrefab;
+    [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
     private LoadedManagers _gameControllers;
+
     public LoadedManagers GetGameControllers => _gameControllers;
+    public GameInterfaceManager GetGameInterfacePrefab => gameInterfaceManagerPrefab;
 
 
-    #region levels
 
-    public LevelData GetLevelData(string ID) => _levels.FirstOrDefault(t=>t.LevelID == ID);
-    private LevelData[] _levels;
+    public LevelData GetLevelData(string ID) => _levels[ID];
+    private Dictionary<string, LevelData> _levels;
+
     private LevelData _currentLevel;
-    private int _continueIndex;
+
 
     public LevelData GetCurrentLevelData { get => _currentLevel; }
 
@@ -26,16 +30,16 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         var levelCards = DataManager.Instance.GetAssetsOfType<LevelCardSO>(Constants.Configs.c_LevelsPath);
-        _levels = new LevelData[levelCards.Length];
-        for (int i = 0; i < levelCards.Length; i++)
+        _levels = new Dictionary<string, LevelData>();
+        foreach (var level in levelCards)
         {
-            _levels[i] = new LevelData(levelCards[i]);
+            _levels[level.ID] = new LevelData(level);
         }
     }
 
     private void Update()
     {
-        if (_currentLevel != null &&  _currentLevel.Type == LevelType.Game && _gameControllers != null)
+        if (_currentLevel != null && _currentLevel.Type == LevelType.Game && _gameControllers != null)
         {
             _gameControllers.UpdateManagers(Time.deltaTime);
         }
@@ -46,10 +50,8 @@ public class GameManager : MonoBehaviour
         switch (_currentLevel.Type)
         {
             case LevelType.Menu:
-                //GameMode = GameMode.Menus;
                 break;
             case LevelType.Game:
-                //GameMode = GameMode.Gameplay;
                 _gameControllers = Instantiate(GameControllersPrefab);
                 _gameControllers.Initiate(_currentLevel);
                 break;
@@ -59,57 +61,63 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
+    public void RequestLevelLoad(string ID)
+    {
+        LoadLevel(ID);
+    }
+
+    public void OnFinishedEquips()
+    {
+        LoadLevel(gameLevelID,true);
+    }
+
+    private string gameLevelID;
+    private void LoadLevel(string ID, bool gameOverride = false)
+    {
+        try
+        {
+            _currentLevel = _levels[ID];
+            if (_currentLevel.Type != LevelType.Game)
+            {
+                SceneManager.LoadScene(_currentLevel.SceneLoaderIndex);
+            }
+            if (_currentLevel.Type == LevelType.Game && gameOverride)
+            {
+                SceneManager.LoadScene(_levels[ID].SceneLoaderIndex);
+            }
+            if (_currentLevel.Type == LevelType.Game && !gameOverride)
+            {
+                gameLevelID = ID;
+                LoadLevel("equips");
+            }
+        }
+        catch
+        {
+            Debug.Log($"No {ID} in level cards");
+        }
+    }
+
+    public void OnStartNewGame()
+    {
+        DataManager.Instance.CreateDefaultSave();
+        RequestLevelLoad("intro");
+    }
+
+
+    #region game events
 
     public void OnLevelComplete()
     {
-        DataManager.Instance.GetSaveData.OpenedLevels.Add(_currentLevel.LevelID);
-        DataManager.Instance.UpdateSaveData();
-        RequestLevelLoad(_currentLevel.NextLevelID);
-    }
-    private void RequestLevelLoad(string ID)
-    {
-        LevelData lv = _levels.First(t => t.LevelID == ID);
-        _currentLevel = lv;
-        if (lv.Type == LevelType.Menu && _gameControllers != null) { _gameControllers.Stop(); Destroy(_gameControllers); }
-
-        SceneManager.LoadScene(lv.SceneLoaderIndex);
-    }
-    private void RequestLevelLoad(int index)
-    {
-        LevelData lv = _levels.First(t => t.SceneLoaderIndex == index);
-        //case : this is called from level select menu (continue game) and we need the equips menu first
-        switch (lv.Type)
+        if (!DataManager.Instance.GetSaveData.OpenedLevels.Contains(_currentLevel.LevelID))
         {
-            case LevelType.Menu:
-                _currentLevel = lv;
-                SceneManager.LoadScene(lv.SceneLoaderIndex);
-                break;
-            case LevelType.Scene:
-                break;
-            case LevelType.Game:
-                break;
+            DataManager.Instance.GetSaveData.OpenedLevels.Add(_currentLevel.LevelID);
         }
+        DataManager.Instance.UpdateSaveData();
+        Debug.Log("Level complete");
 
-        
-        if (lv.Type == LevelType.Menu && _gameControllers != null) { _gameControllers.Stop(); Destroy(_gameControllers); }
-
-        
     }
 
-
-    public void OnNewGame()
-    {
-        DataManager.Instance.CreateDefaultSave();
-        OnContinueGame(1); // 3 is debug level 1 is equips
-    }
-    public void OnContinueGame(string id)
-    {
-        RequestLevelLoad(id);
-    }  
-    public void OnContinueGame(int index)
-    {
-        RequestLevelLoad(index);
-    }
 
     public void OnPlayerDead()
     {
@@ -119,6 +127,14 @@ public class GameManager : MonoBehaviour
     public void OnItemPickup(string itemID)
     {
         DataManager.Instance.GetSaveData.PlayerItems.InventoryIDs.Add(itemID);
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+
+#endif
     }
 
     #endregion

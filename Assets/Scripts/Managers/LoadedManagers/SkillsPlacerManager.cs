@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SkillsPlacerManager : LoadedManagerBase
 {
-    SerializableDictionaryBase<string,BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
+    SerializableDictionaryBase<string, BaseSkill> _skillsDict = new SerializableDictionaryBase<string, BaseSkill>();
     public event SimpleEventsHandler<IProjectile> ProjectileSkillCreatedEvent;
     public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
 
@@ -18,7 +18,7 @@ public class SkillsPlacerManager : LoadedManagerBase
 
     public override void RunUpdate(float delta)
     {
-        
+
     }
 
     public override void Stop()
@@ -29,7 +29,7 @@ public class SkillsPlacerManager : LoadedManagerBase
     #endregion
 
 
-    private void PlaceSkill(string ID, BaseUnit source,Transform empty)
+    private void PlaceSkill(string ID, BaseUnit source, Transform empty)
     {
         var skill = Instantiate(_skillsDict[ID]);
         skill.Owner = source;
@@ -49,7 +49,7 @@ public class SkillsPlacerManager : LoadedManagerBase
 
     private void LoadBaseSkills()
     {
-        var skills = DataManager.Instance.GetAssetsOfType<BaseSkill>(Constants.PrefabsPaths.c_SkillPrefabs); 
+        var skills = DataManager.Instance.GetAssetsOfType<BaseSkill>(Constants.PrefabsPaths.c_SkillPrefabs);
         foreach (var skill in skills)
         {
             _skillsDict[skill.SkillID] = skill;

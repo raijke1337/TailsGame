@@ -850,7 +850,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &6886923313894245071
 MonoBehaviour:
@@ -866,7 +866,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StatsID: spider_bot
   Side: 1
-  Drops: []
   NPCEquipments:
   - {fileID: -681159650048992341, guid: 942432e4fca2c804b9969def343ce95d, type: 3}
 --- !u!114 &4680322785318675946
@@ -881,13 +880,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432d323bf0b9ab045b4c6b0294e2fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsControlsBusy: 0
   Empties:
     MeleeWeaponEmpty: {fileID: 5255978924687065452}
     RangedWeaponEmpty: {fileID: 5255978924687065452}
     SheathedWeaponEmpty: {fileID: 5255978924687065452}
     SkillsEmpty: {fileID: 3983754378033790471}
     OthersEmpty: {fileID: 5255978924687065452}
+  _statsCtrl:
+    _isReady: 0
+  _weaponCtrl:
+    _isReady: 0
+  _dodgeCtrl:
+    _isReady: 0
+  _shieldCtrl:
+    _isReady: 0
+  _skillCtrl:
+    _isReady: 0
+  _comboCtrl:
+    _isReady: 0
   _stunsCtrl:
+    _isReady: 0
     isGracePeriod: 0
     _currValue: 0
   DebugEnabled: 0

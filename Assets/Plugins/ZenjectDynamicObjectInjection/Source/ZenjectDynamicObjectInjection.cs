@@ -1,9 +1,9 @@
 ﻿#if !NOT_UNITY3D
 
+using ModestTree;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ModestTree;
 using UnityEngine;
 // ReSharper disable InconsistentNaming
 // ReSharper disable CheckNamespace
@@ -77,65 +77,65 @@ namespace Zenject
                 switch (bindType)
                 {
                     case ZenjectBinding.BindTypes.Self:
-                    {
-                        if (identifier != null)
                         {
-                            container.UnbindId(componentType, identifier);
+                            if (identifier != null)
+                            {
+                                container.UnbindId(componentType, identifier);
+                            }
+                            else
+                            {
+                                container.Unbind(componentType);
+                            }
+                            break;
                         }
-                        else
-                        {
-                            container.Unbind(componentType);
-                        }
-                        break;
-                    }
                     case ZenjectBinding.BindTypes.BaseType:
-                    {
-                        if (identifier != null)
                         {
-                            container.UnbindId(componentType.BaseType(), identifier);
+                            if (identifier != null)
+                            {
+                                container.UnbindId(componentType.BaseType(), identifier);
+                            }
+                            else
+                            {
+                                container.Unbind(componentType.BaseType());
+                            }
+                            break;
                         }
-                        else
-                        {
-                            container.Unbind(componentType.BaseType());
-                        }
-                        break;
-                    }
                     case ZenjectBinding.BindTypes.AllInterfaces:
-                    {
-                        if (identifier != null)
                         {
-                            foreach (var interfaceType in componentType.Interfaces())
+                            if (identifier != null)
                             {
-                                container.UnbindId(interfaceType, identifier);
+                                foreach (var interfaceType in componentType.Interfaces())
+                                {
+                                    container.UnbindId(interfaceType, identifier);
+                                }
                             }
-                        }
-                        else
-                        {
-                            foreach (var interfaceType in componentType.Interfaces())
+                            else
                             {
-                                container.Unbind(interfaceType);
+                                foreach (var interfaceType in componentType.Interfaces())
+                                {
+                                    container.Unbind(interfaceType);
+                                }
                             }
+                            break;
                         }
-                        break;
-                    }
                     case ZenjectBinding.BindTypes.AllInterfacesAndSelf:
-                    {
-                        if (identifier != null)
                         {
-                            foreach (var interfaceType in componentType.Interfaces().Append(componentType))
+                            if (identifier != null)
                             {
-                                container.UnbindId(interfaceType, identifier);
+                                foreach (var interfaceType in componentType.Interfaces().Append(componentType))
+                                {
+                                    container.UnbindId(interfaceType, identifier);
+                                }
                             }
-                        }
-                        else
-                        {
-                            foreach (var interfaceType in componentType.Interfaces().Append(componentType))
+                            else
                             {
-                                container.Unbind(interfaceType);
+                                foreach (var interfaceType in componentType.Interfaces().Append(componentType))
+                                {
+                                    container.Unbind(interfaceType);
+                                }
                             }
+                            break;
                         }
-                        break;
-                    }
                 }
             }
         }

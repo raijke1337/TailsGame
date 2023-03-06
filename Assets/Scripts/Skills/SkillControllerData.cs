@@ -1,15 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
 [Serializable]
 public class SkillControllerData
@@ -38,7 +27,7 @@ public class SkillControllerData
         return _recTimer.TimerTick(time);
     }
 
-    public SkillControllerData (SkillControllerDataConfig cfg)
+    public SkillControllerData(SkillControllerDataConfig cfg)
     {
         ID = cfg.ID;
         SkillType = cfg.SkillType;

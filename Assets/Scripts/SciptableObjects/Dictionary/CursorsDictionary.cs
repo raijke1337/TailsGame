@@ -7,7 +7,9 @@ using UnityEngine;
 public class CursorsDictionary : ScriptableObjectID
 {
     [SerializeField] SerializableDictionaryBase<CursorType, Texture2D> _dict;
-    public Dictionary<CursorType, Texture2D> GetCursors { get
+    public Dictionary<CursorType, Texture2D> GetCursors
+    {
+        get
         {
             var d = new Dictionary<CursorType, Texture2D>();
             foreach (var key in _dict.Keys)

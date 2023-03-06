@@ -6,7 +6,7 @@ public class RoomController : LoadedManagerBase
 {
     private Collider _detectionArea;
     private PlayerUnit _player;
-    private List<NPCUnit> _npcUnits;
+    private List<NPCUnit> _npcUnits = new List<NPCUnit>();
 
     private StateMachineUpdater _FSMupdater;
     public SimpleEventsHandler<NPCUnit> UnitFound;
@@ -35,7 +35,7 @@ public class RoomController : LoadedManagerBase
 
 
 
-    private void LateUpdate() 
+    private void LateUpdate()
     {
         if (_detectionArea.enabled) _detectionArea.enabled = false;
     }
@@ -47,6 +47,7 @@ public class RoomController : LoadedManagerBase
         if (other.CompareTag("Enemy"))
         {
             var unit = other.GetComponent<NPCUnit>();
+                        Debug.Log($"Added unit {unit} by {this}");
             UnitFound?.Invoke(unit);
             unit.SetUnitRoom(this);
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
@@ -54,7 +55,7 @@ public class RoomController : LoadedManagerBase
             _FSMupdater.AddUnit(unit);
             _npcUnits.Add(unit);
         }
-       
+
     }
     #region unit events
 
@@ -89,13 +90,13 @@ public class RoomController : LoadedManagerBase
                 res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Big:
-                res= _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Boss:
-                res= _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
                 break;
             case UnitType.Self:
-                Debug.LogWarning(type+" was somehow requested, this should not happen");
+                Debug.LogWarning(type + " was somehow requested, this should not happen");
                 break;
             case UnitType.Any:
                 Debug.LogWarning(type + " NYI");

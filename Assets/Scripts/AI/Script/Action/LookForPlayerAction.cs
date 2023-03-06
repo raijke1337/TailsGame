@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.AI.Script
 {
@@ -8,7 +7,7 @@ namespace Assets.Scripts.AI.Script
     {
         public override void Act(StateMachine controller)
         {
-           controller.OnLookSphereCast();
+            controller.OnLookSphereCast();
         }
     }
 }

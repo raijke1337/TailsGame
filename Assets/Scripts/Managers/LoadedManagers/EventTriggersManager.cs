@@ -1,21 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EventTriggersManager : LoadedManagerBase
 {
     [SerializeField] private List<LevelEventTrigger> triggers = new List<LevelEventTrigger>();
-    private GameTextComp _text;
 
-
+    #region managed
     public override void Initiate()
     {
-        triggers.AddRange(FindObjectsOfType<LevelEventTrigger>());
-        foreach (var trigger in triggers)
-        { trigger.EnterEvent += OnEventActivated; }
-        _text = FindObjectOfType<GameTextComp>();
-        if (_text == null) return;
-        _text.IsShown = false;
+        if (triggers != null) triggers.Clear();
+        triggers = new List<LevelEventTrigger>();
     }
 
     public override void RunUpdate(float delta)
@@ -27,24 +21,32 @@ public class EventTriggersManager : LoadedManagerBase
     {
         foreach (var t in triggers) { t.EnterEvent -= OnEventActivated; }
     }
+    #endregion
+
+    public void RegisterEventTrigger(LevelEventTrigger tr, bool isReg)
+    {
+        if (isReg)
+        {
+            triggers.Add(tr);
+            tr.EnterEvent += OnEventActivated;
+        }
+        else
+        {
+            triggers.Remove(tr);
+            tr.EnterEvent -= OnEventActivated;
+        }
+    }
+
 
     private void OnEventActivated(LevelEventTrigger tr, bool isEnter)
     {
-
         switch (tr.EventType)
         {
             case LevelEventType.TextDisplay:
-                if (isEnter)
-                {
-                    _text.IsShown  = true;
-                    _text.SetText(TextsManager.Instance.GetContainerByID(tr.ContentIDString));
-                }
-                else
-                {
-                    _text.IsShown = false;
-                }
+                GameManager.Instance.GetGameControllers.GameInterfaceManager.UpdateGameText(tr.ContentIDString, isEnter);
                 break;
             case LevelEventType.LevelComplete:
+                if (isEnter)  // to prevent double completes
                 GameManager.Instance.OnLevelComplete();
                 break;
             case LevelEventType.Cutscene:

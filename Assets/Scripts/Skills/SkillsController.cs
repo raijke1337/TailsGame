@@ -1,21 +1,19 @@
 using ModestTree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 
 [Serializable]
 public class SkillsController : BaseController, INeedsEmpties
 {
     // this is used in game for skill requests
-    private Dictionary <CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>(); 
-    
+    private Dictionary<CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>();
+
     public WeaponSwitchEventHandler SwitchAnimationLayersEvent;
     public ItemEmpties Empties { get; }
     public SkillsController(ItemEmpties ie) => Empties = ie;
 
 
-    public void UpdateSkills (string skillID ,bool isAdd)
+    public void UpdateSkills(string skillID, bool isAdd)
     {
         var cfg = DataManager.Instance.GetConfigByID<SkillControllerDataConfig>(skillID);
         if (cfg == null) { return; }
@@ -29,7 +27,7 @@ public class SkillsController : BaseController, INeedsEmpties
     }
 
 
-    public bool RequestSkill (CombatActionType type, out float cost)
+    public bool RequestSkill(CombatActionType type, out float cost)
     {
         cost = 0f;
         if (!_skills.ContainsKey(type)) return false;
@@ -52,7 +50,7 @@ public class SkillsController : BaseController, INeedsEmpties
     }
 
     public override void SetupStatsComponent()
-    {  }
+    { }
 
     public override void UpdateInDelta(float deltaTime)
     {

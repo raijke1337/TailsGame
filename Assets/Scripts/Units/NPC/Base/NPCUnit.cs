@@ -1,18 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using RotaryHeart.Lib.SerializableDictionary;
-using TMPro.EditorUtilities;
 
 [RequireComponent(typeof(InputsNPC))]
 public abstract class NPCUnit : BaseUnit, ISelectableItem

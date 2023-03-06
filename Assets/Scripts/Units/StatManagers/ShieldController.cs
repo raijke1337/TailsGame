@@ -1,16 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using RotaryHeart.Lib.SerializableDictionary;
 [Serializable]
 public class ShieldController : BaseController, IStatsComponentForHandler, IGivesSkills, ITakesTriggers
 {
@@ -60,7 +50,7 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
     public override void UpdateInDelta(float deltaTime)
     {
         base.UpdateInDelta(deltaTime);
-        GetShieldStats[ShieldStatType.Shield].ChangeCurrent(GetShieldStats[ShieldStatType.ShieldRegen].GetCurrent * deltaTime * GetShieldStats[ShieldStatType.ShieldRegenMultiplier].GetCurrent); 
+        GetShieldStats[ShieldStatType.Shield].ChangeCurrent(GetShieldStats[ShieldStatType.ShieldRegen].GetCurrent * deltaTime * GetShieldStats[ShieldStatType.ShieldRegenMultiplier].GetCurrent);
     }
 
     public TriggeredEffect ProcessHealthChange(TriggeredEffect effect)
@@ -76,7 +66,7 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
             var AdjRep = effect.RepeatedValue * GetShieldStats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
             effect.RepeatedValue -= AdjRep;
 
-            TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg,AdjRep,effect.RepeatApplicationDelay,effect.TotalDuration,effect.Icon);
+            TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
             _activeEffects.Add(_shieldAbsord);
 
             return effect;

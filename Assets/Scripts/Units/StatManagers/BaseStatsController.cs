@@ -1,21 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 using RotaryHeart.Lib.SerializableDictionary;
+using System;
+using System.Linq;
 
 [Serializable]
 public class BaseStatsController : BaseController, IStatsComponentForHandler, ITakesTriggers
 {
-    public SerializableDictionaryBase<BaseStatType, StatValueContainer> GetBaseStats { get;private set; }
+    public SerializableDictionaryBase<BaseStatType, StatValueContainer> GetBaseStats { get; private set; }
     public event SimpleEventsHandler UnitDiedEvent;
     public string GetDisplayName { get; }
 
@@ -33,7 +23,7 @@ public class BaseStatsController : BaseController, IStatsComponentForHandler, IT
     #endregion
 
 
-    public BaseStatsController (string ID)
+    public BaseStatsController(string ID)
     {
         GetBaseStats = new SerializableDictionaryBase<BaseStatType, StatValueContainer>();
         var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(ID);

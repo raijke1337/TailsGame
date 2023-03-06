@@ -292,7 +292,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &2655914433986873063
 MonoBehaviour:
@@ -306,13 +306,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff61813eaea6f5f4cbf0e395dfc09acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsControlsBusy: 0
   Empties:
     MeleeWeaponEmpty: {fileID: 2945348626853354528}
     RangedWeaponEmpty: {fileID: 2945348626853354528}
     SheathedWeaponEmpty: {fileID: 2945348626853354528}
     SkillsEmpty: {fileID: 2945348626853354528}
     OthersEmpty: {fileID: 2945348626853354528}
+  _statsCtrl:
+    _isReady: 0
+  _weaponCtrl:
+    _isReady: 0
+  _dodgeCtrl:
+    _isReady: 0
+  _shieldCtrl:
+    _isReady: 0
+  _skillCtrl:
+    _isReady: 0
+  _comboCtrl:
+    _isReady: 0
   _stunsCtrl:
+    _isReady: 0
     isGracePeriod: 0
     _currValue: 0
   DebugEnabled: 0
@@ -339,6 +353,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StatsID: service_drone
   Side: 1
-  Drops: []
   NPCEquipments:
   - {fileID: -7946025007460106006, guid: 01d2e87053873ed41ae11672754225e2, type: 3}

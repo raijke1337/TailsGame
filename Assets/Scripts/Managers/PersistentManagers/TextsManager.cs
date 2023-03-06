@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class TextsManager : MonoBehaviour
@@ -24,7 +23,7 @@ public class TextsManager : MonoBehaviour
         {
             textContainers[text.container.ID] = text.container;
         }
-        Debug.Log($"Found total {textContainers.Count} texts");
+       // Debug.Log($"Found total {textContainers.Count} texts");
     }
 
     private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();

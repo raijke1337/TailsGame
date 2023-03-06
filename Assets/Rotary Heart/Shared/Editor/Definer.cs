@@ -44,5 +44,5 @@ namespace RotaryHeart.Lib
             PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, define);
         }
     }
-    
+
 }

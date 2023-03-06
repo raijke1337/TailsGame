@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemRotates : MonoBehaviour
@@ -10,6 +8,6 @@ public class ItemRotates : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.localEulerAngles += new Vector3(0,1f,0) * SpeedMult * Time.deltaTime;
+        transform.localEulerAngles += new Vector3(0, 1f, 0) * SpeedMult * Time.deltaTime;
     }
 }

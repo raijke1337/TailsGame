@@ -1,16 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Zenject;
 
 public class WeaponTriggerComponent : BaseTrigger
 {
@@ -18,7 +7,10 @@ public class WeaponTriggerComponent : BaseTrigger
     protected List<string> TriggerEffectIDs;
     public SimpleEventsHandler HitSuccessEvent;
 
-
+    public void ToggleCollider (bool isEnable)
+    {
+        _coll.enabled = isEnable;
+    }
     public void SetTriggerIDS(IEnumerable<string> ids)
     {
         TriggerEffectIDs = new List<string>();

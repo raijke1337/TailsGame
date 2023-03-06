@@ -56,9 +56,9 @@ public class DataManager : MonoBehaviour
 
     public void CreateDefaultSave()
     {
-        Extensions.SaveLoad.SaveDataXML(new SaveData(new List<string> { Constants.Configs.c_FirstLevelID }, 
-            new UnitInventoryItems(GetConfigByID<UnitItemsSO>("player"))),_savepath);
-        _loadedSave = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath); 
+        Extensions.SaveLoad.SaveDataXML(new SaveData(new List<string> { Constants.Configs.c_FirstLevelID },
+            new UnitInventoryItems(GetConfigByID<UnitItemsSO>("player"))), _savepath);
+        _loadedSave = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
     }
 
 
@@ -66,7 +66,7 @@ public class DataManager : MonoBehaviour
     #endregion
 
     #region configs
-    [SerializeField] private List <ScriptableObjectID> _dictSO;
+    [SerializeField] private List<ScriptableObjectID> _dictSO;
     private void FindAllConfigs()
     {
         _dictSO = new List<ScriptableObjectID>();
@@ -101,7 +101,7 @@ public class DataManager : MonoBehaviour
                 _dictSO.Add(file);
             }
         }
-        Debug.Log($"{this} loaded total {_dictSO.Count} config objects");
+        //Debug.Log($"{this} loaded total {_dictSO.Count} config objects");
 
     }
 
@@ -109,13 +109,12 @@ public class DataManager : MonoBehaviour
     /// <summary>
     /// get configs of T type
     /// </summary>
-    /// <typeparam name="T">any class</typeparam>
+    /// <typeparam name="T">config SO</typeparam>
     /// <param name="path">refer to Constants</param>
     /// <param name="includeSubDirs">look in subfolders </param>
     /// <returns>list of assets in specified folder</returns>
     public T GetConfigByID<T>(string ID = "default") where T : ScriptableObjectID
     {
-        //Debug.Log($"Loading config {typeof(T)} with ID {ID}");
         if (ID == "")
         {
             Debug.Log($"ID was empty");
@@ -123,12 +122,19 @@ public class DataManager : MonoBehaviour
         }
         if (ID == "default")
         {
-            Debug.Log($"Loading default config of type {typeof(T)}");
+            //Debug.Log($"Loading default config of type {typeof(T)}");
         }
         try
         {
-            var oftype = _dictSO.FindAll(t=>t.GetType() == typeof(T));
-            return (T)oftype.FirstOrDefault(t=>t.ID == ID);
+            List<T> list = new List<T>();
+            foreach (var config in _dictSO)
+            {
+                if (config is T t)
+                {
+                    list.Add(t);
+                }
+            }
+            return list.First(t => t.ID == ID);
         }
         catch (InvalidOperationException e)
         {
@@ -185,7 +191,11 @@ public class SaveData
 
     public SaveData(List<string> levels, UnitInventoryItems items)
     {
-        OpenedLevels = levels;
+        OpenedLevels = new List<string>();
+        foreach (var l in levels)
+        {
+            if (!OpenedLevels.Contains(l)) OpenedLevels.Add(l);
+        }
         PlayerItems = items;
     }
     public SaveData()

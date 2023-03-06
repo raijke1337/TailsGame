@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 
@@ -17,8 +14,6 @@ public class GameTextComp : MonoBehaviour
 
         _text.text = textc.ToString();
     }
-    
-
 
     public bool IsShown
     {

@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 
@@ -36,7 +31,7 @@ public class TooltipComp : MonoBehaviour
             content.ItemType.ToString(), "\n",
             content.SkillString, "\n"
             );
-        
+
         _desc.text = result;
 
     }

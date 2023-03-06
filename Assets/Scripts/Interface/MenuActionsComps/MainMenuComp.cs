@@ -1,8 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MainMenuComp : MenuPanel
 {
+    public void OnGallery()
+    {
+        GameManager.Instance.RequestLevelLoad("gallery");
+    }
+
+    public void OnStartNewGame()
+    {
+        GameManager.Instance.OnStartNewGame();
+    }
+
 
 }

@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+using TMPro;
 
 public class StateMachineUpdater
 {
@@ -16,10 +14,12 @@ public class StateMachineUpdater
 
     public void AddUnit(NPCUnit u)
     {
+        u.GetStateMachine.SetupStatsComponent();
         _states.Add(u.GetStateMachine);
     }
     public void RemoveUnit(NPCUnit u)
     {
+        u.GetStateMachine.StopStatsComponent();
         _states.Remove(u.GetStateMachine);
     }
 

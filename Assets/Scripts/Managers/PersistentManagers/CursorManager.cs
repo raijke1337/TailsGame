@@ -17,7 +17,7 @@ public class CursorManager : MonoBehaviour
     }
     #endregion
 
-    
+
     [SerializeField] Texture2D currentShape;
     [SerializeField] string CursorsSetName = "default";
 

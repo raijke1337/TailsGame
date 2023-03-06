@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class LevelSelectMenuComp : MenuPanel
@@ -48,9 +47,8 @@ public class LevelSelectMenuComp : MenuPanel
         {
             var b = Instantiate(_buttonPrefab);
             var rect = b.GetComponent<RectTransform>();
-            rect.SetParent(_content,false);
-            rect.localPosition = Vector3.zero;
-            //rect.position += new Vector3(0, -vertOffs*i, 0);
+            rect.SetParent(_content, false);
+            rect.position += new Vector3(0, -vertOffs * i, 0);
 
             b.LevelData = _lvls[i];
             b.OnButtonClick += OnLevelSelected;
@@ -61,7 +59,11 @@ public class LevelSelectMenuComp : MenuPanel
 
     private void OnLevelSelected(LevelButtonComp data)
     {
-        GameManager.Instance.OnContinueGame(data.LevelData.LevelID);
+        GameManager.Instance.RequestLevelLoad(data.LevelData.LevelID);
+    }
+    public void OnBack()
+    {
+        GameManager.Instance.RequestLevelLoad("main");
     }
 
 

@@ -1,9 +1,9 @@
 ﻿#if !NOT_UNITY3D
 
+using ModestTree;
 using System;
 using System.Linq;
 using System.Reflection;
-using ModestTree;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 // ReSharper disable InconsistentNaming
@@ -257,7 +257,7 @@ namespace Zenject
                 return Zenject.ProjectContext.Instance;
             }
 
-            var contextType = (type == typeof (Context)) ? typeof (SceneContext) : type;
+            var contextType = (type == typeof(Context)) ? typeof(SceneContext) : type;
             var contextComponent = GameObject
                 .FindObjectsOfType(contextType)
                 .Cast<Component>()
@@ -265,19 +265,19 @@ namespace Zenject
 
             if (create && contextComponent == null)
             {
-                if (contextType == typeof (SceneContext))
+                if (contextType == typeof(SceneContext))
                 {
                     contextComponent = SceneContext.Create();
                 }
                 else if (contextType.DerivesFromOrEqual<SceneContext>())
                 {
                     _sceneContextStaticAutoRunBindingField.SetValue(null, false);
-                    contextComponent = new GameObject(typeof (SceneContext).Name).AddComponent(contextType);
+                    contextComponent = new GameObject(typeof(SceneContext).Name).AddComponent(contextType);
                     Assert.That((bool)_sceneContextStaticAutoRunBindingField.GetValue(null)); // Should be reset
                 }
                 else
                 {
-                    var contextParentContainer = GetContainer(scene, typeof (SceneContext), true);
+                    var contextParentContainer = GetContainer(scene, typeof(SceneContext), true);
                     var contextGameObject = new GameObject(contextType.Name);
                     contextComponent = contextParentContainer.InstantiateComponent(contextType, contextGameObject, new object[0]);
                 }
@@ -326,15 +326,15 @@ namespace Zenject
 
             if (create && contextComponent == null)
             {
-                if (contextType == typeof (Context))
+                if (contextType == typeof(Context))
                 {
-                    contextComponent = GetContext(gameObject.scene, typeof (SceneContext), true);
+                    contextComponent = GetContext(gameObject.scene, typeof(SceneContext), true);
                 }
                 else
                 {
                     var contextParentContainer =
-                        GetContainer(gameObject, typeof (Context), false) ??
-                        GetContainer(gameObject.scene, typeof (SceneContext), true);
+                        GetContainer(gameObject, typeof(Context), false) ??
+                        GetContainer(gameObject.scene, typeof(SceneContext), true);
                     var contextGameObject = gameObject;
                     contextComponent = contextParentContainer.InstantiateComponent(contextType, contextGameObject, new object[0]);
                 }

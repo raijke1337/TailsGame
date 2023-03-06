@@ -1,24 +1,16 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 namespace Puzzle
 {
     public class PuzzleManager : MonoBehaviour
     {
-        public delegate void MiniGameEvents<T> (T arg);
+        public delegate void MiniGameEvents<T>(T arg);
         public event SimpleEventsHandler<GameResult> GameCompletedEvent;
 
         [SerializeField] private RectTransform _field;
-        [SerializeField,Space] private Text _results;
+        [SerializeField, Space] private Text _results;
 
         [SerializeField] private TileComponent _tilePrefab;
         [SerializeField] private Sprite _closed;
@@ -26,11 +18,11 @@ namespace Puzzle
         [SerializeField, Tooltip("Time the opened tiles are shown")] private float _graceTimer = 1f;
         [SerializeField, Tooltip("Total pairs to show")] private int _pairsTotal = 7;
 
-        [SerializeField,Space] private Vector2 _tileOffsets;
-        [SerializeField,Space] private Vector2 _desiredTileSize;
+        [SerializeField, Space] private Vector2 _tileOffsets;
+        [SerializeField, Space] private Vector2 _desiredTileSize;
 
         private List<TileComponent> _tiles = new List<TileComponent>();
-        private TileComponent[] _selected = new TileComponent[2]; 
+        private TileComponent[] _selected = new TileComponent[2];
         private int _flipped = 0;
 
         private bool isBusy;
@@ -48,28 +40,28 @@ namespace Puzzle
         private void PlaceTiles()
         {
             var points = Extensions.GetTilePositions(_field, _tileOffsets, _desiredTileSize);
-            for (int i = 0; i < _pairsTotal*2; i++)  
+            for (int i = 0; i < _pairsTotal * 2; i++)
             {
 
-                    var coord = points[i];
-                    
-                    var item = Instantiate(_tilePrefab); _tiles.Add(item);
-                    item.SetImages(false, _closed);
+                var coord = points[i];
 
-                    var rect = item.GetComponent<RectTransform>();
-                    item.transform.SetParent(_field, false);
+                var item = Instantiate(_tilePrefab); _tiles.Add(item);
+                item.SetImages(false, _closed);
 
-                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _desiredTileSize.x);
-                    rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _desiredTileSize.y);
-                    rect.anchoredPosition += coord;
+                var rect = item.GetComponent<RectTransform>();
+                item.transform.SetParent(_field, false);
 
-                    item.OnFlipEvent += Item_OnFlipEvent;
-                    item.name = $"Tile {i}";
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _desiredTileSize.x);
+                rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _desiredTileSize.y);
+                rect.anchoredPosition += coord;
+
+                item.OnFlipEvent += Item_OnFlipEvent;
+                item.name = $"Tile {i}";
 
             }
         }
         private void AssignPairs()
-        {            
+        {
             int halfCount = _tiles.Count / 2;
             for (int i = 0; i < halfCount; i++)
             {
@@ -117,7 +109,7 @@ namespace Puzzle
             StopCoroutine(_timer);
             foreach (var tile in _tiles) { tile.OnFlipEvent -= Item_OnFlipEvent; }
             _results.text = $"Game completed, time elapsed: {result.timeElapsed}";
-            GameCompletedEvent?.Invoke(result); 
+            GameCompletedEvent?.Invoke(result);
         }
 
         private IEnumerator ElapsedCor()
@@ -144,7 +136,7 @@ namespace Puzzle
         }
     }
 
-    
+
 
     public struct GameResult
     {

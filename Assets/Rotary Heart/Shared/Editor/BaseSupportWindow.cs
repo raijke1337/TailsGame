@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace RotaryHeart.Lib
 {
@@ -36,7 +36,7 @@ namespace RotaryHeart.Lib
             get { return null; }
         }
 
-        protected static void ShowWindow <T> () where T : BaseSupportWindow
+        protected static void ShowWindow<T>() where T : BaseSupportWindow
         {
             T myWindow = CreateInstance<T>();
             myWindow.ShowUtility();
@@ -113,7 +113,7 @@ namespace RotaryHeart.Lib
                     EditorGUILayout.Space();
 
                     EditorGUILayout.LabelField("Detailed code documentation.", m_greyText);
-                    
+
                     if (GUILayout.Button("Wiki"))
                         Application.OpenURL("https://www.rotaryheart.com/Wiki.html");
 
@@ -121,7 +121,7 @@ namespace RotaryHeart.Lib
 
                 case 1:
                     EditorGUILayout.LabelField("Get in touch.", m_greyText);
-                    
+
                     if (GUILayout.Button("Email"))
                         Application.OpenURL("mailto:ma.rotaryheart@gmail.com?");
 
@@ -134,11 +134,11 @@ namespace RotaryHeart.Lib
             }
 
             GUILayout.FlexibleSpace();
-            
+
             EditorGUILayout.LabelField(new GUIContent("Version " + Version), m_versionLabel);
-            
+
             EditorGUILayout.Space();
-            
+
             if (GUILayout.Button(m_review, m_reviewBanner, GUILayout.Height(30)))
                 Application.OpenURL(StoreLink);
         }

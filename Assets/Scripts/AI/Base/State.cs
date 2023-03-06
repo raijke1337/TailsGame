@@ -1,24 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 
-[CreateAssetMenu(menuName = "AIConfig/State"),Serializable]
+[CreateAssetMenu(menuName = "AIConfig/State"), Serializable]
 public class State : ScriptableObject
 {
     // what can be done in the state
     public List<Action> actions;
     // possible evaluations
     public List<Transition> transitions;
-    public float StateExpiryTime = 2f; 
+    public float StateExpiryTime = 2f;
     //time in seconds for various purposes
 
     // for gizmos drawing

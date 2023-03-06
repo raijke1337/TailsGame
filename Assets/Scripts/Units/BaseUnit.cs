@@ -1,10 +1,6 @@
-
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
-using Zenject;
 
 [RequireComponent(typeof(ControlInputsBase))]
 
@@ -30,51 +26,46 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event SkillRequestedEvent SkillRequestSuccessEvent;
-    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit,unit._controller.GetEmpties.SkillsEmpty);
+    protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
 
     protected Camera _faceCam;
     protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
     public Camera GetFaceCam { get => _faceCam; }
 
-    protected bool bindsComplete = false;
+    //protected bool bindsComplete = false;
 
-
-    // run in enaable
-    // npcs override to load a list of item ids
-    // player overrides to load a json with stored items
-    // todo 
     public virtual void InitiateUnit() // this is run by unit manager
     {
         UpdateComponents();
-        GetCollider = GetComponent<Collider>();
-        _faceCam.enabled = false;
 
-        _controller.SetUnit(this);
-        _controller.InitControllers(StatsID);
-        _controller.BindControllers(true);
+        _faceCam.enabled = false;
 
         switch (GameManager.Instance.GetCurrentLevelData.Type)
         {
             case LevelType.Scene:
-                _animator.SetLayerWeight(_animator.GetLayerIndex("IDLE"), 100f);
+                _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
+                _controller.SetUnit(this);
+                _controller.StartController();
                 break;
             case LevelType.Menu:
                 break;
             case LevelType.Game:
+                _controller.SetUnit(this);
+                _controller.StartController();
                 _animator.SetLayerWeight(3, 0);
-                UnitBinds(true);
+                ControllerEventsBinds(true);
                 break;
         }
-        Debug.Log($"Initiated {GetFullName}");
+        //Debug.Log($"Initiated {GetFullName}");
     }
 
     public virtual void DisableUnit()
     {
-        if (bindsComplete) UnitBinds(false);
-        _controller.BindControllers(false);
+        ControllerEventsBinds(false);
+        _controller.StopController();
     }
 
-    protected  virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
+    protected virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
         UpdateComponents();
 
@@ -106,6 +97,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     protected virtual void UpdateComponents()
     {
+        if (GetCollider == null) GetCollider = GetComponent<Collider>();
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
         if (_controller == null) _controller = GetComponent<ControlInputsBase>();
@@ -113,13 +105,13 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     }
 
 
-    protected virtual void UnitBinds(bool isEnable)
+    protected virtual void ControllerEventsBinds(bool isEnable)
     {
         if (isEnable)
         {
             _controller.GetStatsController.UnitDiedEvent += OnDeath;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
-            _controller.StaggerHappened += AnimateStagger; 
+            _controller.StaggerHappened += AnimateStagger;
         }
         else
         {
@@ -127,23 +119,26 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened -= AnimateStagger;
         }
-        bindsComplete = isEnable;
     }
 
 
 
     public virtual void RunUpdate(float delta)
     {
-        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+        if (_controller == null)
+        {
+            Debug.LogWarning($"Unit {this} was not initialized!");
+            return;
+        }
         AnimateMovement();
-        _controller.RunUpdate(delta);
+        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+        _controller.UpdateController(delta);
     }
     #region stats
     protected virtual void OnDeath()
     {
         _animator.SetTrigger("Death");
         BaseUnitDiedEvent?.Invoke(this);
-        UnitBinds(false); 
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)
     {
@@ -155,6 +150,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     protected virtual void AnimateMovement()
     {
         ref var movement = ref _controller.MoveDirection;
+        Debug.Log(movement);
         if (movement.x == 0f && movement.z == 0f)
         {
             _animator.SetBool("Moving", false);
@@ -217,12 +213,14 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     public virtual void TriggerTogglingEvent_UE(float value)
     {    // 1 on start 0 on end
+        if (_controller == null) return; //in case we have a scene
+
         bool result = value > 0;
         _controller.GetWeaponController.ToggleTriggersOnMelee(result);
     }
 
     protected virtual void AnimateStagger()
-    {  
+    {
         _animator.SetTrigger("TakeDamage");
         Debug.Log($"{_controller.GetStatsController.GetDisplayName} got stunned!");
     }
@@ -240,4 +238,3 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
 
 }
- 

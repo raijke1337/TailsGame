@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 public class MenuPanelTiled : MenuPanel
@@ -13,15 +10,15 @@ public class MenuPanelTiled : MenuPanel
 
     public event SimpleEventsHandler<ItemContent, bool> ShowtooltipToggle;
     public event SimpleEventsHandler<ItemContent> TileClickToggle;
-    protected void TooltipCallback(ItemContent cont, bool isShow) 
-    { 
+    protected void TooltipCallback(ItemContent cont, bool isShow)
+    {
         //Debug.Log($"Tooltip callback for {this}, item ID {cont.ID}, showing: {isShow}");
         if (cont == null) return; ShowtooltipToggle?.Invoke(cont, isShow);
     }
-    protected void TileClickCallback(ItemContent cont) 
+    protected void TileClickCallback(ItemContent cont)
     {
         //Debug.Log($"Tile click callback for {this}, item ID {cont.ID}");
-        if (cont == null) return; TileClickToggle?.Invoke(cont); 
+        if (cont == null) return; TileClickToggle?.Invoke(cont);
     }
 
 
@@ -57,7 +54,7 @@ public class MenuPanelTiled : MenuPanel
             _tiles[i] = Instantiate(TilePrefab);
             _tiles[i].GetRekt.SetParent(transform);
             _tiles[i].GetRekt.anchoredPosition = _elementsLoc[i];
-            SubscribeToTileEvents(_tiles[i],true);
+            SubscribeToTileEvents(_tiles[i], true);
         }
 
     }
@@ -71,7 +68,7 @@ public class MenuPanelTiled : MenuPanel
     }
 
 
-    public virtual void AddTileContent (ItemContent content)
+    public virtual void AddTileContent(ItemContent content)
     {
         if (content == null) return;
         try
@@ -104,7 +101,7 @@ public class MenuPanelTiled : MenuPanel
         foreach (var tile in _tiles)
         {
             if (tile == null) return;
-            SubscribeToTileEvents(tile,false);
+            SubscribeToTileEvents(tile, false);
         }
     }
 

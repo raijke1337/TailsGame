@@ -1,11 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Reflection;
-using System;
-using System.Text;
-using TMPro;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
 public abstract class InputsNPC : ControlInputsBase
@@ -18,32 +16,26 @@ public abstract class InputsNPC : ControlInputsBase
 
     public RoomController UnitRoom { get; set; }
     [SerializeField] protected List<Transform> patrolPoints;
-    
+
     public void SwitchState(bool setting) => _stateMachine.SetAI(setting);
-    [Space,SerializeField] protected State InitialState;
+    [Space, SerializeField] protected State InitialState;
     [SerializeField] protected State DummyState;
     [SerializeField] protected State CurrentState;
 
     protected EnemyStats _enemyStats;
     protected NavMeshAgent _navMeshAg;
-    [Space,SerializeField] protected StateMachine _stateMachine;
+    [Space, SerializeField] protected StateMachine _stateMachine;
     public StateMachine GetFSM => _stateMachine;
 
 
     public override UnitType GetUnitType() => _enemyStats.EnemyType;
 
     #endregion
-    #region init
+    #region managed
 
-    public override void InitControllers(string stats)
+    public override void StartController()
     {
-        base.InitControllers(stats);
-    }
-
-    public override void BindControllers(bool isEnable)
-    {
-        base.BindControllers(isEnable);
-
+        base.StartController();
         if (patrolPoints.Count == 0)
         {
             patrolPoints.Add(transform);
@@ -58,41 +50,17 @@ public abstract class InputsNPC : ControlInputsBase
         _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
         _stateMachine = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState, Unit);
 
-        Bind(isEnable);
-      _stateMachine.SetPatrolPoints(patrolPoints);
+        StateMachineBinds(true);
+        _stateMachine.SetPatrolPoints(patrolPoints);
     }
-
-    protected virtual void Bind(bool isStart)
+    public override void StopController()
     {
-#if UNITY_EDITOR
-       //if (DebugEnabled && isStart) ReflexionBinds(isStart);
-#endif
-
-        if (isStart)
-        {
-            _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
-            _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
-            _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
-            _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
-            _stateMachine.RotationRequestedSM += Fsm_RotationRequestedSM;
-            _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
-        }
-        else
-        {
-            _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
-            _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
-            _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
-            _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
-            _stateMachine.RotationRequestedSM -= Fsm_RotationRequestedSM;
-            _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
-        }
+        base.StopController();
+        StateMachineBinds(false);
     }
-
-    #endregion
-    public override void RunUpdate(float delta)
+    public override void UpdateController(float delta)
     {
-        base.RunUpdate(delta);
-        // todo too many bandaids
+        base.UpdateController(delta);
         if (_stateMachine == null || IsControlsBusy) return;
         CurrentState = _stateMachine.CurrentState;
         velocityVector = _stateMachine.CurrentVelocity;
@@ -105,6 +73,12 @@ public abstract class InputsNPC : ControlInputsBase
         }
 #endif
     }
+
+
+
+
+    #endregion
+
 
 
     #region reflection excercise
@@ -134,7 +108,7 @@ public abstract class InputsNPC : ControlInputsBase
         // get event data from state machine 
         Type _fsm = typeof(StateMachine);
         var events = _fsm.GetEvents();
-        
+
         // extablish desired methods and delegates and record into tuples
         foreach (var @event in events)
         {
@@ -150,7 +124,7 @@ public abstract class InputsNPC : ControlInputsBase
                 var delType = @event.EventHandlerType;
                 var argument = found.GetParameters();
 
-                Delegate del = Delegate.CreateDelegate(delType,argument.First(),found);
+                Delegate del = Delegate.CreateDelegate(delType, argument.First(), found);
 
                 values.Add((@event, found, del));
             }
@@ -179,7 +153,31 @@ public abstract class InputsNPC : ControlInputsBase
     #endregion
 
     #region state machine
+    protected virtual void StateMachineBinds(bool isStart)
+    {
+#if UNITY_EDITOR
+        //if (DebugEnabled && isStart) ReflexionBinds(isStart);
+#endif
 
+        if (isStart)
+        {
+            _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
+            _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
+            _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
+            _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
+            _stateMachine.RotationRequestedSM += Fsm_RotationRequestedSM;
+            _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
+        }
+        else
+        {
+            _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
+            _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
+            _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
+            _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
+            _stateMachine.RotationRequestedSM -= Fsm_RotationRequestedSM;
+            _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
+        }
+    }
     protected virtual void Fsm_RotationRequestedSM()
     {
         RotateToSelectedUnit();
@@ -235,7 +233,7 @@ public abstract class InputsNPC : ControlInputsBase
     }
 
     protected virtual void RotateToSelectedUnit()
-    {      
+    {
         LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position, lastDelta);
     }
     protected virtual void Fsm_GetFocusUnitSM(UnitType type)
@@ -259,18 +257,6 @@ public abstract class InputsNPC : ControlInputsBase
     #endregion
 
 
-    protected virtual void OnDisable()
-    {
-        Bind(false);
-    }
-
-
-
-
-
-
-
-
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -278,10 +264,10 @@ public abstract class InputsNPC : ControlInputsBase
         // state gizmos
         Gizmos.color = CurrentState.StateGizmoColor;
         Gizmos.DrawSphere(_stateMachine.EyesEmpty.position, 0.1f);
-        Gizmos.DrawLine(_stateMachine.EyesEmpty.position,_stateMachine.EyesEmpty.position+_stateMachine.EyesEmpty.forward*_enemyStats.LookSpereCastRange);
+        Gizmos.DrawLine(_stateMachine.EyesEmpty.position, _stateMachine.EyesEmpty.position + _stateMachine.EyesEmpty.forward * _enemyStats.LookSpereCastRange);
         //navmesh gizmos
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(_stateMachine.NMAgent.transform.position, _stateMachine.NMAgent.transform.position+_stateMachine.NMAgent.transform.forward);
+        Gizmos.DrawLine(_stateMachine.NMAgent.transform.position, _stateMachine.NMAgent.transform.position + _stateMachine.NMAgent.transform.forward);
     }
 #endif
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System;
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
@@ -10,6 +11,7 @@ public class InputsPlayer : ControlInputsBase
     private IsoCamAdjust _adj;
     private AimingComponent _aim;
 
+
     public ComboController GetComboController => _comboCtrl;
     public AimingComponent GetAimingComponent => _aim;
 
@@ -17,71 +19,58 @@ public class InputsPlayer : ControlInputsBase
     // only one gain per swing, changed by unit
     public bool ComboGained { get; set; } = false;
 
-    //public SimpleEventsHandler<GameMenuType> MenuToggleRequest;
+    #region managedctrl
 
-    private bool bindsComplete = false;
-
-    private void OnDisable()
+    public override void StartController()
     {
-        PlayerBind(false);
-        bindsComplete = false;
-    }
+        base.StartController();
 
-    public override void BindControllers(bool isEnable)
-    {
+        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+
         _controls = new PlayerControls();
-        base.BindControllers(isEnable);
-        PlayerBind();
-    }
+        _controls.Game.Enable();
+        _aim = GetComponent<AimingComponent>();
 
-    private void Start()
-    {
+        _controls.Game.Dash.performed += Dash_performed;
+        _controls.Game.SkillE.performed += SkillE_performed;
+        _controls.Game.SkillQ.performed += SkillQ_performed;
+        _controls.Game.SkillR.performed += SkillR_performed;
+        _controls.Game.MainAttack.performed += MeleeAttack_performed;
+        _controls.Game.SpecialAttack.performed += RangedAttack_performed;
+
+        _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+        _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+        _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
         transform.LookAt(transform.forward);
     }
-
-    private void PlayerBind(bool enable = true)
+    public override void UpdateController(float delta)
     {
-
-        if (enable)
-        {
-            if (bindsComplete) return;
-            _controls.Game.Enable();
-
-
-            _aim = GetComponent<AimingComponent>();
-
-            _controls.Game.Dash.performed += Dash_performed;
-            _controls.Game.SkillE.performed += SkillE_performed;
-            _controls.Game.SkillQ.performed += SkillQ_performed;
-            _controls.Game.SkillR.performed += SkillR_performed;
-            _controls.Game.MainAttack.performed += MeleeAttack_performed;
-            _controls.Game.SpecialAttack.performed += RangedAttack_performed;
-
-
-
-            _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
-
-            _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
-            _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
-        }
-        else
-        {
-            _controls.Game.Disable();
-
-            _controls.Game.Dash.performed -= Dash_performed;
-            _controls.Game.SkillE.performed -= SkillE_performed;
-            _controls.Game.SkillQ.performed -= SkillQ_performed;
-            _controls.Game.SkillR.performed -= SkillR_performed;
-            _controls.Game.MainAttack.performed -= MeleeAttack_performed;
-            _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
-
-
-            _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
-            _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
-            _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
-        }
-        bindsComplete = enable;
+        base.UpdateController(delta);
+        if (IsControlsBusy) return; // set during dodges and attack motions
+        _adj ??= new IsoCamAdjust();
+        CalculateMovement();
+        Aiming();
     }
+
+    public override void StopController()
+    {
+        base.StopController();
+        _controls.Game.Disable();
+
+        _controls.Game.Dash.performed -= Dash_performed;
+        _controls.Game.SkillE.performed -= SkillE_performed;
+        _controls.Game.SkillQ.performed -= SkillQ_performed;
+        _controls.Game.SkillR.performed -= SkillR_performed;
+        _controls.Game.MainAttack.performed -= MeleeAttack_performed;
+        _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
+
+
+        _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
+        _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
+        _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
+    }
+
+    #endregion
 
 
     private void SwitchAnimatorLayer(EquipItemType type)
@@ -150,29 +139,35 @@ public class InputsPlayer : ControlInputsBase
     #endregion
 
 
-    public override void RunUpdate(float delta)
-    {
-        base.RunUpdate(delta);
-        if (IsControlsBusy) return;
-        if (_adj == null) _adj = new IsoCamAdjust();
-        CalculateMovement();
-        Aiming();
-    }
-
     private void CalculateMovement()
     {
 
         if (IsControlsBusy) return;
-        if (_controls == null) return;
-        var input = _controls.Game.WASD.ReadValue<Vector2>();
+        Vector2 input;
+        if (InputDirectionOverride != Vector3.zero)
+        {
+            input = InputDirectionOverride;
+        }
+        else
+        {
+            if (_controls == null) return; //shouldn happen
+            input = _controls.Game.WASD.ReadValue<Vector2>();
+        }
         Vector3 AD = _adj.Isoright * input.x;
         Vector3 WS = _adj.Isoforward * input.y;
         velocityVector = AD + WS;
     }
     private void Aiming()
     {
-        if (_aim == null) return;
-        LerpRotateToTarget(_aim.GetLookPoint,lastDelta);
+        if (_aim == null || InputDirectionOverride != Vector3.zero) return;
+        LerpRotateToTarget(_aim.GetLookPoint, lastDelta);
+    }
+
+
+    protected override void LerpRotateToTarget(Vector3 looktarget, float delta) // here we also apply turning animations
+    {
+        base.LerpRotateToTarget(looktarget, delta);
+        // TODO Detect rotation
     }
 
     private void OnDrawGizmos()
@@ -184,6 +179,7 @@ public class InputsPlayer : ControlInputsBase
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);
 
     }
+
 
     public override UnitType GetUnitType()
     {

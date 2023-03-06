@@ -1,9 +1,6 @@
-using RotaryHeart.Lib.SerializableDictionary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor;
 using UnityEngine;
 
 [Serializable]
@@ -82,7 +79,7 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
                 break;
         }
         CurrentWeaponType = type;
-        
+
     }
 
     protected void Sheathe(EquipItemType type)
@@ -117,7 +114,7 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
         else return CurrentWeapons[type].GetAmmo;
     }
 
-    public virtual bool UseWeaponCheck(EquipItemType type,out string result)
+    public virtual bool UseWeaponCheck(EquipItemType type, out string result)
     {
         if (!CurrentWeapons.ContainsKey(type))
         {
@@ -136,7 +133,7 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
     public void ToggleTriggersOnMelee(bool isEnable)
     {
         if (CurrentWeapons.ContainsKey(EquipItemType.MeleeWeap))
-        (CurrentWeapons[EquipItemType.MeleeWeap] as MeleeWeapon).ToggleColliders(isEnable);
+            (CurrentWeapons[EquipItemType.MeleeWeap] as MeleeWeapon).ToggleColliders(isEnable);
     }
 
 

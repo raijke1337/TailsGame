@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TriggersProjectilesManager : LoadedManagerBase
 {
@@ -11,26 +9,23 @@ public class TriggersProjectilesManager : LoadedManagerBase
     private Dictionary<string, BaseStatTriggerConfig> _triggersD = new Dictionary<string, BaseStatTriggerConfig>();
     private Dictionary<string, ProjectileDataConfig> _projectilesD = new Dictionary<string, ProjectileDataConfig>();
 
-   // private SkillsPlacerManager _skillsMan;
+    // private SkillsPlacerManager _skillsMan;
 
-    
-    private List<BaseStatTriggerConfig> _list;
+    private List<BaseTrigger> _allTriggers = new List<BaseTrigger>();
+
+    private List<BaseStatTriggerConfig> _list = new List<BaseStatTriggerConfig>();
 
 
     #region LoadedManager
     public override void Initiate()
     {
         UpdateDatas();
-        var rangedWeapons = FindObjectsOfType<RangedWeapon>();
-        var baseTriggers = FindObjectsOfType<BaseTrigger>();
+        var baseTriggers = FindObjectsOfType<BaseTrigger>(); // find triggers on level
 
-        foreach (var w in rangedWeapons)
+        foreach (var t in baseTriggers)
         {
-            w.PlacedProjectileEvent += NewProjectile;
-        }
-        foreach (var triggerplacer in baseTriggers)
-        {
-            triggerplacer.TriggerApplicationRequestEvent += ApplyTriggerEffect;
+            // weapons are registered separately by controller but there is a check to prevent repeat addition
+            RegisterTrigger(t);
         }
         var _skillsMan = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
         _skillsMan.ProjectileSkillCreatedEvent += NewProjectile;
@@ -47,7 +42,14 @@ public class TriggersProjectilesManager : LoadedManagerBase
 
     public override void Stop()
     {
+        foreach (var t in _allTriggers)
+        {
+            t.TriggerApplicationRequestEvent -= ApplyTriggerEffect;
+        }
 
+        var _skillsMan = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
+        _skillsMan.ProjectileSkillCreatedEvent -= NewProjectile;
+        _skillsMan.SkillAreaPlacedEvent -= RegisterTrigger;
     }
     #endregion
 
@@ -149,7 +151,19 @@ public class TriggersProjectilesManager : LoadedManagerBase
     {
         item.TriggerApplicationRequestEvent += ApplyTriggerEffect;
     }
-    private void NewProjectile (IProjectile proj)
+
+    public void RegisterRangedWeapon (RangedWeapon weap)
+    {
+        weap.PlacedProjectileEvent += NewProjectile;
+    }
+    public void RegisterTrigger(BaseTrigger t)
+    {
+        if (_allTriggers.Contains(t)) return;
+        t.TriggerApplicationRequestEvent += ApplyTriggerEffect;
+        _allTriggers.Add(t);
+    }
+
+    private void NewProjectile(IProjectile proj)
     {
         _projectiles.Add(proj);
         proj.SetProjectileData(_projectilesD[proj.GetID]);
@@ -181,7 +195,7 @@ public class TriggersProjectilesManager : LoadedManagerBase
             _projectilesD[cfg.ID] = cfg;
         }
 
-        
+
     }
 
 }

@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.Progress;
 
 public class EquipsLevelController : MonoBehaviour
 {
@@ -20,9 +16,18 @@ public class EquipsLevelController : MonoBehaviour
 
     private PlayerUnit _player;
 
-    
 
-    private void OnEnable ()
+    public void OnDone()
+    {
+        GameManager.Instance.OnFinishedEquips();
+    }
+    public void OnMain()
+    {
+        GameManager.Instance.RequestLevelLoad("main");
+    }
+
+
+    private void OnEnable()
     {
         _player = FindObjectOfType<PlayerUnit>();
         if (_player == null)
@@ -32,19 +37,19 @@ public class EquipsLevelController : MonoBehaviour
 
         if (Items == null | Equipments == null)
         {
-            Debug.LogError("Set panels for "+this.gameObject.name);
+            Debug.LogError("Set panels for " + gameObject.name);
             return;
         }
         saveData = DataManager.Instance.GetSaveData;
 
-        FillTiles(saveData);
+        FillTiles();
         Items.ShowtooltipToggle += HandleTooltipShow;
         Equipments.ShowtooltipToggle += HandleTooltipShow;
         Items.TileClickToggle += Items_EquipItemToggle;
         Equipments.TileClickToggle += Equipments_EquipItemToggle;
     }
 
-    private void FillTiles(SaveData save)
+    private void FillTiles()
     {
         Items.CreateTilesAndSub(99); // lol, todo
         Equipments.CreateTilesAndSub(99);
@@ -93,7 +98,7 @@ public class EquipsLevelController : MonoBehaviour
             rect.SetParent(_tooltips.transform);
         }
         instantiatedTT.gameObject.SetActive(_showingTooltip);
-        if (_showingTooltip)      
+        if (_showingTooltip)
         {
             instantiatedTT.GetRect.anchoredPosition = Mouse.current.position.ReadValue();
         }
@@ -120,6 +125,7 @@ public class EquipsLevelController : MonoBehaviour
         DataManager.Instance.UpdateSaveData();
         //_player.InitInventory(_items);
     }
+
 
 
 }

@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class ToolTip : MonoBehaviour
- {
-	 public RectTransform toolTip;
+{
+    public RectTransform toolTip;
 
-	 void Update(){
-		 toolTip.anchoredPosition = Input.mousePosition;
-	 }
- }
+    void Update()
+    {
+        toolTip.anchoredPosition = Input.mousePosition;
+    }
+}

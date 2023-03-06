@@ -1,16 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using static Cinemachine.CinemachineTriggerAction.ActionSettings;
 
 public class PlayerUnit : BaseUnit
 {
@@ -35,7 +24,7 @@ public class PlayerUnit : BaseUnit
                 _visualController.AddItem(DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs.ToArray());
                 break;
             case LevelType.Scene:
-                break;
+                return;
             case LevelType.Game:
                 foreach (var eq in DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs)
                 {
@@ -75,9 +64,9 @@ public class PlayerUnit : BaseUnit
 
 
 
-    protected override void UnitBinds(bool isEnable)
+    protected override void ControllerEventsBinds(bool isEnable)
     {
-        base.UnitBinds(isEnable);
+        base.ControllerEventsBinds(isEnable);
 
         if (isEnable)
         {
@@ -93,9 +82,17 @@ public class PlayerUnit : BaseUnit
     #region works
 
     public override void RunUpdate(float delta)
-    {        
+    {
         base.RunUpdate(delta);
-        if (bindsComplete) PlayerMovement(_playerController.MoveDirection); // weird ass null here sometimes
+        if (_controller.InputDirectionOverride != Vector3.zero) // for Scenes
+        {
+            PlayerMovement(_controller.InputDirectionOverride, delta);
+        }
+        else
+        {
+            PlayerMovement(_playerController.MoveDirection, delta); // weird ass null here sometimes
+        }
+
     }
 
 
@@ -103,7 +100,7 @@ public class PlayerUnit : BaseUnit
     //[SerializeField,Tooltip("How quickly the inertia of movement fades")] private float massDamp = 3f;
 
 
-    private void PlayerMovement(Vector3 desiredDir)
+    private void PlayerMovement(Vector3 desiredDir, float delta)
     {
         if (_controller.IsControlsBusy) return;
         // DO NOT FIX WHAT ISNT BROKEN //
@@ -118,12 +115,12 @@ public class PlayerUnit : BaseUnit
         // too slide-y
 
         // also good enough
-        transform.position += Time.deltaTime * desiredDir
+        transform.position += delta * desiredDir
             * GetStats()[BaseStatType.MoveSpeed].GetCurrent;
     }
 
     private void ChangeAnimatorLayer(EquipItemType type)
-    {     
+    {
         // 1  2 is ranged 3  is melee
         switch (type)
         {
@@ -142,7 +139,7 @@ public class PlayerUnit : BaseUnit
 
     public void ComboWindowStart()
     {
-        _animator.SetBool("AdvancingCombo",true);
+        _animator.SetBool("AdvancingCombo", true);
     }
     public void ComboWindowEnd()
     {
@@ -150,7 +147,7 @@ public class PlayerUnit : BaseUnit
         _playerController.ComboGained = false;
     }
 
-    private void ChangeVisualStage(float value,float prevvalue)
+    private void ChangeVisualStage(float value, float prevvalue)
     {
         int newIndex = _currentVisualStageIndex + 1;
         if (newIndex >= _visualStagesHP.Count()) return;

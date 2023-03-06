@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class RangedWeapon : BaseWeapon
 {
-    [SerializeField,Range(0,5), Tooltip("time to reload")]protected float _reload = 2f;
+    [SerializeField, Range(0, 5), Tooltip("time to reload")] protected float _reload = 2f;
     [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
-    
-    
+
+
     [SerializeField] private ProjectileTrigger _projectilePrefab;
 
 
     protected int shotsToDo = 1;
 
-    public event SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
+    private TriggersProjectilesManager _manager;
+    public SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
 
     protected virtual void Start()
     {
@@ -54,7 +55,12 @@ public class RangedWeapon : BaseWeapon
         WeaponUses.ChangeCurrent(WeaponUses.GetMax);
         IsBusy = false;
     }
-
+    public override void SetUpWeapon(BaseWeaponConfig config)
+    {
+        base.SetUpWeapon(config);
+        _manager = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
+        _manager.RegisterRangedWeapon(this);
+    }
     protected virtual void CreateProjectile()
     {
 
@@ -65,10 +71,9 @@ public class RangedWeapon : BaseWeapon
 
         pr.transform.position = transform.position;
         pr.transform.forward = Owner.transform.forward;
-
+        PlacedProjectileEvent?.Invoke(pr);
 
         pr.SetTriggerIDS(_effectsIDs);
-        PlacedProjectileEvent?.Invoke(pr);
     }
     protected virtual void CheckReload()
     {

@@ -1,11 +1,9 @@
 
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
-using UnityEditor;
-using System;
-using System.Linq;
 using System.Xml.Serialization;
+using UnityEditor;
+using UnityEngine;
 
 public static class Extensions
 {
@@ -39,9 +37,9 @@ public static class Extensions
                 Debug.Log("Save file not found, creating new");
                 return null;
             }
-            
+
         }
-    
+
     }
 
 
@@ -72,7 +70,7 @@ public static class Extensions
         int totalVertical = ((int)(fieldHeight / _tileTotalH));
 
         Vector2 adjustedOffset = new Vector2(tileOffsets.x, -tileOffsets.y); // move to right and down
-        Vector2[] points = new Vector2[totalHorizontal*totalVertical];
+        Vector2[] points = new Vector2[totalHorizontal * totalVertical];
 
         int currentIndex = 0;
 
@@ -80,12 +78,12 @@ public static class Extensions
         {
             while (j < totalHorizontal)
             {
-                Vector2 point = new Vector2(adjustedOffset.x + (adjustedOffset.x * j) + (_tileWidth * j), adjustedOffset.y+(adjustedOffset.y * i) + (-_tileHeight * i));
+                Vector2 point = new Vector2(adjustedOffset.x + (adjustedOffset.x * j) + (_tileWidth * j), adjustedOffset.y + (adjustedOffset.y * i) + (-_tileHeight * i));
                 points[currentIndex] = point;
                 j++;
                 currentIndex++;
             }
-            j = 0;            
+            j = 0;
         }
 
         currentIndex = 0;
@@ -102,7 +100,7 @@ public static class Extensions
     /// <typeparam name="T">anything</typeparam>
     /// <param name="input">List<></param>
     /// <returns>same list but mixed</returns>
-    public static List<T> ShuffledList<T> (List<T> input)
+    public static List<T> ShuffledList<T>(List<T> input)
     {
         for (int i = input.Count - 1; i >= 1; i--)
         {

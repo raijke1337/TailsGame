@@ -9,28 +9,27 @@
 // hierarchy of your character and a child called 'ShieldRetargeter'. 
 // More information at Documentation PDF file.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace KevinIglesias {
-	public class MeleeWarriorShieldRotator : MonoBehaviour
-	{
+namespace KevinIglesias
+{
+    public class MeleeWarriorShieldRotator : MonoBehaviour
+    {
         public Transform retargeter;
-		public Transform shield;
-		public Transform newShieldRotation;
-		
-		private Quaternion initRotation;
+        public Transform shield;
+        public Transform newShieldRotation;
 
-		void Start()
-		{
-			initRotation = shield.localRotation;
-		}
+        private Quaternion initRotation;
 
-		void Update()
-		{
-			shield.localRotation = Quaternion.Lerp(initRotation, newShieldRotation.localRotation, retargeter.localPosition.y);
-		}
-		
-	}
+        void Start()
+        {
+            initRotation = shield.localRotation;
+        }
+
+        void Update()
+        {
+            shield.localRotation = Quaternion.Lerp(initRotation, newShieldRotation.localRotation, retargeter.localPosition.y);
+        }
+
+    }
 }

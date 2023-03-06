@@ -1,19 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
-using Zenject;
-using System.Threading.Tasks;
-using RotaryHeart.Lib.SerializableDictionary;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUnitPanel : SelectedItemPanel
 {
@@ -73,19 +62,19 @@ public class PlayerUnitPanel : SelectedItemPanel
             _shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent;
             SHc = _shield.GetShieldStats[ShieldStatType.Shield];
         }
-        
+
     }
 
     private void Combo_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
     {
         if (arg1)
-        HEc = _combo.ComboContainer;
+            HEc = _combo.ComboContainer;
     }
 
     private void Shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
     {
         if (arg1)
-            SHc = _shield.GetShieldStats[ShieldStatType.Shield]; 
+            SHc = _shield.GetShieldStats[ShieldStatType.Shield];
     }
 
     protected void ResetTicker(float arg1, float arg2)

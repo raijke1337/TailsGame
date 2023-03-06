@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,7 +17,8 @@ public class LevelButtonComp : Button
             return _rect.sizeDelta;
         }
     }
-    public LevelData LevelData { 
+    public LevelData LevelData
+    {
         get
         {
             return _data;

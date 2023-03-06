@@ -2,20 +2,22 @@ using Assets.Scripts.Units;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using Zenject;
-using static UnityEngine.InputSystem.InputAction;
 
 [RequireComponent(typeof(BaseUnit))]
-public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
+public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 {
-    protected BaseUnit Unit; 
+    protected BaseUnit Unit;
 
     public abstract UnitType GetUnitType();
 
     [SerializeField] public bool IsControlsBusy; // todo ?
 
 
+    protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
+
+    public void SetUnit(BaseUnit u) => Unit = u;
+
+    protected float lastDelta;
 
     [SerializeField] protected ItemEmpties Empties;
     public ItemEmpties GetEmpties => Empties;
@@ -26,7 +28,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     [SerializeField] protected ShieldController _shieldCtrl;
     [SerializeField] protected SkillsController _skillCtrl;
     [SerializeField] protected ComboController _comboCtrl;
-    [SerializeField]protected StunsController _stunsCtrl;
+    [SerializeField] protected StunsController _stunsCtrl;
 
     public DodgeController GetDodgeController => _dodgeCtrl;
     public ShieldController GetShieldController => _shieldCtrl;
@@ -39,26 +41,26 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public event SimpleEventsHandler StaggerHappened;
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
     protected void StunEventCallback() => StaggerHappened?.Invoke();
+    #region scenes
 
+    public Vector3 InputDirectionOverride = Vector3.zero;
+    #endregion
 
-
-    protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
-
-    public void SetUnit(BaseUnit u) => Unit = u;
-
-    protected float lastDelta;
-
-    public virtual void InitControllers(string statsID)
+    #region ManagedController
+    public override void UpdateController(float delta)
     {
-        // these three need a ping to properly register for updates       
-        
-        _statsCtrl = new BaseStatsController(statsID);
+        lastDelta = delta;
+    }
+    public override void StartController()
+    {
+        _statsCtrl = new BaseStatsController(Unit.GetID);
+
+        if (InputDirectionOverride != Vector3.zero) return; // Scene
+
         _comboCtrl = new ComboController(Unit.GetID);
-        _stunsCtrl = new StunsController(); // using default "default" for now 
-
-
+        _stunsCtrl = new StunsController();
         _shieldCtrl = new ShieldController(Empties);
-        _dodgeCtrl = new DodgeController(Empties); 
+        _dodgeCtrl = new DodgeController(Empties);
         _weaponCtrl = new WeaponController(Empties);
         _skillCtrl = new SkillsController(Empties);
 
@@ -76,32 +78,32 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
             ctrl.ComponentChangedStateToEvent += RegisterController;
             if (ctrl.IsReady) ctrl.Ping();
         }
-    }
-    public virtual void BindControllers(bool isEnable)
-    {
-        //Debug.Log("Bind controllers " + Unit.GetID + " " + isEnable);
+
         IsControlsBusy = false;
         _weaponCtrl.Owner = Unit;
         _stunsCtrl.StunHappenedEvent += StunEventCallback;
     }
+    public override void StopController()
+    {
+        foreach (var ctrl in _controllers)
+        {
+            ctrl.ComponentChangedStateToEvent -= RegisterController;
+        }
+        _stunsCtrl.StunHappenedEvent -= StunEventCallback;
+    }
+    #endregion
 
 
     protected void RegisterController(bool isEnable, IStatsComponentForHandler cont)
-    {        
+    {
         GameManager.Instance.GetGameControllers.StatsUpdatesHandler.RegisterUnitForStatUpdates(cont, isEnable);
     }
     public void AddSkillString(string name, bool isAdd = true) => _skillCtrl.UpdateSkills(name, isAdd);
-    public virtual void RunUpdate(float delta) { lastDelta = delta; }
-
-    private void OnDisable()
-    {
-        BindControllers(false);
-    }
 
     public void ToggleBusyControls_AnimationEvent(int state)
     {
         IsControlsBusy = state != 0;
-    }   
+    }
 
 
     public void AddTriggeredEffect(TriggeredEffect eff)
@@ -143,7 +145,7 @@ public abstract class ControlInputsBase : MonoBehaviour, ITakesTriggers
     public ref Vector3 MoveDirection => ref velocityVector;
     protected Vector3 velocityVector;
 
-    protected void LerpRotateToTarget(Vector3 looktarget,float delta)
+    protected virtual void LerpRotateToTarget(Vector3 looktarget, float delta)
     {
         Vector3 relativePosition = looktarget - transform.position;
         Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);

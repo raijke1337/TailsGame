@@ -24,7 +24,7 @@ public class LevelChecker : MonoBehaviour
         var stuffs = GetComponentsInChildren<Transform>();
         foreach (var t in stuffs)
         {
-            if (t!=transform) { list.Add(t); }
+            if (t != transform) { list.Add(t); }
         }
 
 
@@ -53,10 +53,10 @@ public class LevelChecker : MonoBehaviour
         foreach (var item in list.Where(t => t.GetComponent<LevelEventTrigger>() != null))
         {
             if (item.GetComponent<LevelEventTrigger>().EventType == LevelEventType.TextDisplay)
-            _textsFix.Add(item);
+                _textsFix.Add(item);
         }
 
-        if (_floorFix.Count == 0 && _staticsFix.Count == 0 && _collidersFix.Count == 0 && _rigidsFix.Count == 0 )
+        if (_floorFix.Count == 0 && _staticsFix.Count == 0 && _collidersFix.Count == 0 && _rigidsFix.Count == 0)
             return;
         Debug.Log($"{_floorFix.Count} level floor items missing the FLOOR tag");
         Debug.Log($"{_staticsFix.Count} level items missing the STATICITEM");
@@ -101,7 +101,7 @@ public class LevelChecker : MonoBehaviour
         {
             item.gameObject.AddComponent<Rigidbody>().isKinematic = true;
             rig++;
-        }     
+        }
         foreach (var item in _textsFix)
         {
             item.tag = "TextTrigger";

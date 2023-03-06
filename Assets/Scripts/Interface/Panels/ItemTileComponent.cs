@@ -1,15 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
@@ -17,14 +8,14 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
     public event SimpleEventsHandler<ItemContent, bool> ItemTooltipEvent;
 
     private Image _imageComp;
-    
+
 
     [SerializeField] private Sprite DefaultImg;
     [SerializeField] private ItemContent _content;
 
 
     public ItemContent Content
-    { 
+    {
         get
         { return _content; }
         set
@@ -54,17 +45,17 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ItemTooltipEvent?.Invoke(Content,true);
+        ItemTooltipEvent?.Invoke(Content, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        ItemTooltipEvent?.Invoke(Content,false);   
+        ItemTooltipEvent?.Invoke(Content, false);
     }
     private void OnItemSet(ItemContent content)
     {
         if (content == null) _imageComp.sprite = DefaultImg;
-        else  _imageComp.sprite = content.ItemIcon;
+        else _imageComp.sprite = content.ItemIcon;
     }
 }
 

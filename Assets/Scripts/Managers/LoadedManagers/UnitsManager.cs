@@ -45,6 +45,7 @@ public class UnitsManager : LoadedManagerBase
         _allUnits.Add(n);
         InitializeUnit(n);
         SetAIStateUnit(true, n);
+
     }
 
 
@@ -75,7 +76,7 @@ public class UnitsManager : LoadedManagerBase
     }
 
 
-    private void InitializeUnit (BaseUnit u)
+    private void InitializeUnit(BaseUnit u)
     {
         u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
         u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
@@ -90,13 +91,15 @@ public class UnitsManager : LoadedManagerBase
 
     private void HandleUnitDeath(BaseUnit unit)
     {
+        unit.DisableUnit();
         if (unit is NPCUnit)
         {
             SetAIStateUnit(false, unit as NPCUnit);
+
         }
         else
         {
-            GameManager.Instance.OnPlayerDead();            
+            GameManager.Instance.OnPlayerDead();
         }
     }
 

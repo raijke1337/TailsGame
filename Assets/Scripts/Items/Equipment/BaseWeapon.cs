@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
+
+[Serializable]
 public abstract class BaseWeapon : EquipmentBase, IWeapon
 {
 
@@ -45,7 +47,7 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
         _effectsIDs.Add(effectID);
     }
 
-    public void SetUpWeapon(BaseWeaponConfig config)
+    public virtual void SetUpWeapon(BaseWeaponConfig config)
     {
         foreach (string triggerID in config.TriggerIDs)
         {

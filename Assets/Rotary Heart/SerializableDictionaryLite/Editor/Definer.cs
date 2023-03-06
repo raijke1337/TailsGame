@@ -12,7 +12,7 @@ namespace RotaryHeart.Lib.SerializableDictionary
             {
                 "RH_SerializedDictionary"
             };
-            
+
             RotaryHeart.Lib.Definer.ApplyDefines(defines);
         }
     }

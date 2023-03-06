@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using ModestTree;
 using UnityEngine;
 
 public class LoadedManagers : MonoBehaviour
@@ -11,6 +10,7 @@ public class LoadedManagers : MonoBehaviour
     public UnitsManager UnitsManager;
     public GameInterfaceManager GameInterfaceManager;
 
+
     private LoadedManagerBase[] _managers;
 
     private LevelData _lvl;
@@ -18,6 +18,7 @@ public class LoadedManagers : MonoBehaviour
     public void Initiate(LevelData lv)
     {
         _lvl = lv;
+        // if leveltype is scene only limited initiation for display
         if (_lvl.Type == LevelType.Game)
         {
             SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
@@ -25,8 +26,8 @@ public class LoadedManagers : MonoBehaviour
             EventTriggersManager = GetComponent<EventTriggersManager>();
             StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
             UnitsManager = GetComponent<UnitsManager>();
-            GameInterfaceManager = FindObjectOfType<GameInterfaceManager>();
-            // if leveltype is scene only limited initiation for display
+            GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+
 
             _managers = new LoadedManagerBase[6];
 
@@ -36,21 +37,22 @@ public class LoadedManagers : MonoBehaviour
             _managers[3] = UnitsManager;
             _managers[4] = SkillsPlacerManager;
             _managers[5] = GameInterfaceManager;
-
-
-            foreach (var m in _managers)
-            {
-                if (m != null)
-                    m.Initiate();
-                else
-                {
-                    Debug.Log($"Null manager");
-                }
-            }
         }
-        else
+        if (_lvl.Type == LevelType.Scene)
         {
-            Debug.Log($"Attempted to initiate Gameplay managers for level {_lvl.LevelID} type {_lvl.Type} and nothing happened");
+            EventTriggersManager = GetComponent<EventTriggersManager>();
+            GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+            _managers = new LoadedManagerBase[2] { EventTriggersManager,GameInterfaceManager };
+        }
+        foreach (var m in _managers)
+        {
+
+            if (m != null)
+                m.Initiate();
+            else
+            {
+                Debug.Log($"Null manager at index {_managers.IndexOf(m)}");
+            }
         }
 
     }
@@ -69,7 +71,7 @@ public class LoadedManagers : MonoBehaviour
     }
     public void Stop()
     {
-        if (_lvl.Type == LevelType.Game)
+        if (_lvl.Type == LevelType.Game || _lvl.Type == LevelType.Scene)
         {
             foreach (var m in _managers)
             { if (m != null) m.Stop(); }

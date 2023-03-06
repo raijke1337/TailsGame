@@ -1,15 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 [Serializable]
 public abstract class BaseController : IStatsComponentForHandler
 {
@@ -17,16 +8,16 @@ public abstract class BaseController : IStatsComponentForHandler
 
     [SerializeField] private bool _isReady = false;
 
-    public event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent;
-    
+    public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
+
     protected void StateChangeCallback(bool val, IStatsComponentForHandler comp)
     {
         ComponentChangedStateToEvent?.Invoke(val, comp);
         //Debug.Log($"{this} called state change with value {val}");
     }
-    public virtual bool IsReady 
-    { 
-        get => _isReady; 
+    public virtual bool IsReady
+    {
+        get => _isReady;
         protected set
         {
             _isReady = value;
@@ -39,7 +30,10 @@ public abstract class BaseController : IStatsComponentForHandler
         IsReady = _isReady;
     }
     // used by inputs to properly register some components
-
+    public virtual void StopStatsComponent()
+    {
+        Debug.Log($"{this} was requested to stop and nothing happened");
+    }
 
     public virtual void HandleEffects(float deltaTime)
     {

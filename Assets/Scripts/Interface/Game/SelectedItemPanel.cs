@@ -1,16 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEngine;
-using Unity.Collections;
-using Unity.Jobs;
-using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectedItemPanel : MonoBehaviour
 {
@@ -46,7 +37,7 @@ public class SelectedItemPanel : MonoBehaviour
     public virtual void AssignItem(BasicSelectableItemData data, bool isSelect)
     {
         _data = data;
-        if (_desctxt != null)_desctxt.text = _data.TextString;
+        if (_desctxt != null) _desctxt.text = _data.TextString;
         IsNeeded = isSelect;
 
 
@@ -73,7 +64,7 @@ public class SelectedItemPanel : MonoBehaviour
         }
     }
 
-    protected virtual void ColorTexts(TextMeshProUGUI text, float max, float current, Color minC, Color maxC )
+    protected virtual void ColorTexts(TextMeshProUGUI text, float max, float current, Color minC, Color maxC)
     {
         text.color = Color.Lerp(minC, maxC, current / max);
     }

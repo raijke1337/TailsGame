@@ -25,6 +25,11 @@ public class StateMachine : IStatsComponentForHandler
     }
     public bool IsReady { get => true; }
 
+    public void StopStatsComponent()
+    {
+
+    }
+
     #endregion
 
 
@@ -61,7 +66,7 @@ public class StateMachine : IStatsComponentForHandler
     public event StateMachineEvent AggroRequestedSM;
     public event StateMachineEvent RotationRequestedSM;
 
-    public event SimpleEventsHandler<bool,IStatsComponentForHandler> ComponentChangedStateToEvent; // unused
+    public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent; // unused
 
     public NavMeshAgent NMAgent { get; }
     [HideInInspector] public Transform[] PatrolPoints;
@@ -81,7 +86,7 @@ public class StateMachine : IStatsComponentForHandler
     public void SetAI(bool setting)
     {
         aiActive = setting;
-        ComponentChangedStateToEvent?.Invoke(setting,this);
+        ComponentChangedStateToEvent?.Invoke(setting, this);
 
         if (NMAgent == null) return;
         NMAgent.isStopped = !setting;
@@ -158,7 +163,7 @@ public class StateMachine : IStatsComponentForHandler
     public void OnSwapRanges(CombatActionType type) => ChangeRangeActionRequestSM?.Invoke(type);
 
     public void Ping()
-    {    }
+    { }
 
 
 
