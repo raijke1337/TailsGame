@@ -10,7 +10,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 
     public abstract UnitType GetUnitType();
 
-    [SerializeField] public bool IsControlsBusy; // todo ?
+    [SerializeField] public bool IsInputsLocked; // todo ?
 
 
     protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
@@ -79,9 +79,10 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
             if (ctrl.IsReady) ctrl.Ping();
         }
 
-        IsControlsBusy = false;
+        IsInputsLocked = false;
         _weaponCtrl.Owner = Unit;
         _stunsCtrl.StunHappenedEvent += StunEventCallback;
+
     }
     public override void StopController()
     {
@@ -102,7 +103,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 
     public void ToggleBusyControls_AnimationEvent(int state)
     {
-        IsControlsBusy = state != 0;
+        IsInputsLocked = state != 0;
     }
 
 
@@ -147,6 +148,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 
     protected virtual void LerpRotateToTarget(Vector3 looktarget, float delta)
     {
+
         Vector3 relativePosition = looktarget - transform.position;
         Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
@@ -165,7 +167,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
     {
         if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
         {
-            IsControlsBusy = false;
+            IsInputsLocked = false;
             StopCoroutine(_dodgeCor);
         }
     }
@@ -173,7 +175,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
     private IEnumerator DodgingMovement()
     {
         var stats = _dodgeCtrl.GetDodgeStats;
-        IsControlsBusy = true;
+        IsInputsLocked = true;
 
         Vector3 start = transform.position;
         Vector3 end = start + GetMoveDirection * stats[DodgeStatType.Range].GetCurrent;
@@ -185,7 +187,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
             transform.position = Vector3.Lerp(start, end, p);
             yield return null;
         }
-        IsControlsBusy = false;
+        IsInputsLocked = false;
         yield return null;
     }
 

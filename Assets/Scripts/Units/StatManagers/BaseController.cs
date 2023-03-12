@@ -81,7 +81,7 @@ public abstract class BaseController : IStatsComponentForHandler
     }
     public virtual void SetupStatsComponent()
     {
-        //Debug.Log(this + " was setup");
+
     }
 
 }

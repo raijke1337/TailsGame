@@ -11,9 +11,8 @@ public class InputsPlayer : ControlInputsBase
     private IsoCamAdjust _adj;
     private AimingComponent _aim;
 
-
+    private GameInterfaceManager _gameInterfaceManager;
     public ComboController GetComboController => _comboCtrl;
-    public AimingComponent GetAimingComponent => _aim;
 
     public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
     // only one gain per swing, changed by unit
@@ -26,11 +25,13 @@ public class InputsPlayer : ControlInputsBase
         base.StartController();
 
         if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+        _adj ??= new IsoCamAdjust();
 
         _controls = new PlayerControls();
         _controls.Game.Enable();
         _aim = GetComponent<AimingComponent>();
-
+        _aim.StartController();
+        _aim.SelectionUpdatedEvent += OnSelectedUpdate;
         _controls.Game.Dash.performed += Dash_performed;
         _controls.Game.SkillE.performed += SkillE_performed;
         _controls.Game.SkillQ.performed += SkillQ_performed;
@@ -42,28 +43,30 @@ public class InputsPlayer : ControlInputsBase
         _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
         _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
         transform.LookAt(transform.forward);
+
+        _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
     }
     public override void UpdateController(float delta)
     {
         base.UpdateController(delta);
-        if (IsControlsBusy) return; // set during dodges and attack motions
-        _adj ??= new IsoCamAdjust();
+        if (IsInputsLocked) return; // set during dodges and attack motions
+        _aim.UpdateController(delta);
         CalculateMovement();
-        Aiming();
+        RotateToAim();
     }
 
     public override void StopController()
     {
         base.StopController();
         _controls.Game.Disable();
-
+        _aim.StopController();
         _controls.Game.Dash.performed -= Dash_performed;
         _controls.Game.SkillE.performed -= SkillE_performed;
         _controls.Game.SkillQ.performed -= SkillQ_performed;
         _controls.Game.SkillR.performed -= SkillR_performed;
         _controls.Game.MainAttack.performed -= MeleeAttack_performed;
         _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
-
+        _aim.SelectionUpdatedEvent -= OnSelectedUpdate;
 
         _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
         _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
@@ -75,7 +78,7 @@ public class InputsPlayer : ControlInputsBase
 
     private void SwitchAnimatorLayer(EquipItemType type)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_weaponCtrl.CurrentWeaponType != type)
         {
             ChangeLayerEvent?.Invoke(type);
@@ -87,7 +90,7 @@ public class InputsPlayer : ControlInputsBase
 
     protected void RangedAttack_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_weaponCtrl.UseWeaponCheck(EquipItemType.RangedWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Ranged);
         else Debug.Log(text);
@@ -95,14 +98,14 @@ public class InputsPlayer : ControlInputsBase
     }
     protected void MeleeAttack_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_weaponCtrl.UseWeaponCheck(EquipItemType.MeleeWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Melee);
         else Debug.Log(text);
     }
     protected void SkillR_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR, out var c))
         {
             if (_comboCtrl.UseCombo(c))
@@ -111,7 +114,7 @@ public class InputsPlayer : ControlInputsBase
     }
     protected void SkillQ_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ, out var c))
         {
             if (_comboCtrl.UseCombo(c))
@@ -120,7 +123,7 @@ public class InputsPlayer : ControlInputsBase
     }
     protected void SkillE_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE, out var c))
         {
             if (_comboCtrl.UseCombo(c))
@@ -129,7 +132,7 @@ public class InputsPlayer : ControlInputsBase
     }
     private void Dash_performed(CallbackContext obj)
     {
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         if (MoveDirectionFromInputs == Vector3.zero) return; //can't dash from standing
         if (_dodgeCtrl.IsDodgePossibleCheck())
         {
@@ -142,7 +145,7 @@ public class InputsPlayer : ControlInputsBase
     private void CalculateMovement()
     {
 
-        if (IsControlsBusy) return;
+        if (IsInputsLocked) return;
         Vector2 input;
         if (InputDirectionOverride != Vector3.zero)
         {
@@ -157,10 +160,11 @@ public class InputsPlayer : ControlInputsBase
         Vector3 WS = _adj.Isoforward * input.y;
         MoveDirectionFromInputs = AD + WS;
     }
-    private void Aiming()
+    private void RotateToAim()
     {
         if (_aim == null || InputDirectionOverride != Vector3.zero) return;
         LerpRotateToTarget(_aim.GetLookPoint, lastDelta);
+
     }
 
 
@@ -178,6 +182,11 @@ public class InputsPlayer : ControlInputsBase
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.forward + transform.position);
 
+    }
+
+    private void OnSelectedUpdate(bool isSelect)
+    {
+        _gameInterfaceManager.UpdateSelected(_aim.GetSelectableItem, isSelect);
     }
 
 

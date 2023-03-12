@@ -756,6 +756,7 @@ GameObject:
   - component: {fileID: 5255978924601524907}
   - component: {fileID: 6886923313894245071}
   - component: {fileID: 4680322785318675946}
+  - component: {fileID: 2348408428541994941}
   m_Layer: 0
   m_Name: CrawlerMech
   m_TagString: Enemy
@@ -777,7 +778,6 @@ Transform:
   - {fileID: 5808956795270088696}
   - {fileID: 5255978926060124880}
   - {fileID: 5255978924687065452}
-  - {fileID: 5255978924721579989}
   - {fileID: 3983754378033790471}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -880,7 +880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432d323bf0b9ab045b4c6b0294e2fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsControlsBusy: 0
+  IsInputsLocked: 0
   Empties:
     MeleeWeaponEmpty: {fileID: 5255978924687065452}
     RangedWeaponEmpty: {fileID: 5255978924687065452}
@@ -903,6 +903,7 @@ MonoBehaviour:
     _isReady: 0
     isGracePeriod: 0
     _currValue: 0
+  InputDirectionOverride: {x: 0, y: 0, z: 0}
   DebugEnabled: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: b0eb904fb2c8562449235464840592fb, type: 2}
@@ -913,6 +914,19 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+--- !u!114 &2348408428541994941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255978924601524911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b997dfdd294e0a3479ec30fd2e197bdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 2
 --- !u!1 &5255978924687065453
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,80 +957,6 @@ Transform:
   m_Father: {fileID: 5255978925863820056}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5255978924721579990
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5255978924721579989}
-  - component: {fileID: 5255978924721579988}
-  m_Layer: 0
-  m_Name: FaceCamEnemy
-  m_TagString: FaceCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5255978924721579989
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5255978924721579990}
-  m_LocalRotation: {x: 0, y: 0.9659258, z: -0.2588191, w: 0}
-  m_LocalPosition: {x: 0, y: 3, z: 3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5255978925863820056}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 30, y: 180, z: 0}
---- !u!20 &5255978924721579988
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5255978924721579990}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.83921576, g: 0.6862745, b: 0.35686275, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 100
-  field of view: 60
-  orthographic: 1
-  orthographic size: 0.8
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: 1
-  m_TargetTexture: {fileID: 8400000, guid: 078a6564ccec2c342a31d89e00e4da43, type: 2}
-  m_TargetDisplay: 2
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
 --- !u!1 &5255978926060124881
 GameObject:
   m_ObjectHideFlags: 0
@@ -1690,7 +1630,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5255978925863820056}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8717360912662490490
 GameObject:

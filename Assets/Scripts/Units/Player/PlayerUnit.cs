@@ -7,7 +7,9 @@ public class PlayerUnit : BaseUnit
     private VisualsController _visualController;
     private float[] _visualStagesHP;
     private int _currentVisualStageIndex;
-    public AimingComponent GetPlayerAim => _playerController.GetAimingComponent;
+    protected Camera _faceCam;
+    protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
+
 
     #region items
     public override void InitiateUnit()
@@ -58,6 +60,7 @@ public class PlayerUnit : BaseUnit
     protected override void UpdateComponents()
     {
         base.UpdateComponents();
+        if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         if (_visualController == null) _visualController = GetComponent<VisualsController>();
         _visualController.Empties = _controller.GetEmpties;
     }
@@ -102,7 +105,7 @@ public class PlayerUnit : BaseUnit
 
     private void PlayerMovement(Vector3 desiredDir, float delta)
     {
-        if (_controller.IsControlsBusy) return;
+        if (_controller.IsInputsLocked) return;
         // DO NOT FIX WHAT ISNT BROKEN //
 
         //if (desiredDir == Vector3.zero)

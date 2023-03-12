@@ -8,10 +8,12 @@ public delegate void SimpleEventsHandler();
 public delegate void SimpleEventsHandler<T>(T arg);
 public delegate void SimpleEventsHandler<T1, T2>(T1 arg1, T2 arg2);
 
-public delegate void WeaponSwitchEventHandler(EquipItemType type);
 public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
 public delegate void SkillRequestedEvent(string ID, BaseUnit source, Transform where);
 
+public delegate void WeaponEvents<T> (T arg);
+public delegate void DodgeEvents<T> (T arg);
+public delegate void SkillEvents<T> (T arg);
 
 public delegate void StateMachineEvent();
 public delegate void StateMachineEvent<T>(T arg);
@@ -22,7 +24,6 @@ public static class Constants
     public static class Configs
     {
         public const string c_AllConfigsPath = "/Resources/Configurations/";
-        //public const string c_AllConfigsPath = "Configurations";
         public const string c_SavesPath = "/Saves/Save.xml";
         public const string c_LevelsPath = "/Resources/Configurations/LevelCards";
         public const string c_FirstLevelID = "debug";
@@ -225,23 +226,23 @@ public class UnitInventoryItems
     }
 }
 
-public class BasicSelectableItemData
-{
-    public string TextString;
-    public Camera ItemView;
-    public BasicSelectableItemData(string s, Camera c)
-    {
-        TextString = s; ItemView = c;
-    }
-}
-public class SelectableUnitData : BasicSelectableItemData
-{
-    public BaseUnit Unit;
-    public SelectableUnitData(BaseUnit u, string txt, Camera cam) : base(txt, cam)
-    {
-        Unit = u;
-    }
-}
+//public class BasicSelectableItemData
+//{
+//    public string TextString;
+//    public Camera ItemView;
+//    public BasicSelectableItemData(string s, Camera c)
+//    {
+//        TextString = s; ItemView = c;
+//    }
+//}
+//public class SelectableUnitData : BasicSelectableItemData
+//{
+//    public BaseUnit Unit;
+//    public SelectableUnitData(BaseUnit u, string txt, Camera cam) : base(txt, cam)
+//    {
+//        Unit = u;
+//    }
+//}
 
 
 [Serializable]
@@ -373,7 +374,7 @@ public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
 public interface IWeapon : IEquippable
 {
     bool UseWeapon(out string reason);
-    int GetAmmo { get; }
+    float GetRemainingUses { get; }
     event SimpleEventsHandler<float> TargetHit;
     void UpdateInDelta(float deltaTime);
     void SetUpWeapon(BaseWeaponConfig cfg);
@@ -402,10 +403,7 @@ public interface IGivesSkills : IUsesItems
 public interface INeedsEmpties
 { ItemEmpties Empties { get; } }
 
-public interface ISelectableItem : IPointerEnterHandler, IPointerExitHandler
-{
-    public event SimpleEventsHandler<BasicSelectableItemData, bool> MouseOverEvent;
-}
+
 
 
 #endregion

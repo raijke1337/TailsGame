@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class RoomController : LoadedManagerBase
         _detectionArea = GetComponent<Collider>();
         _detectionArea.enabled = true;
         _detectionArea.isTrigger = true;
+        StartCoroutine(DelayDetection());
 
         _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
         _FSMupdater = new StateMachineUpdater();
@@ -35,10 +37,11 @@ public class RoomController : LoadedManagerBase
     }
 
 
-
-    private void LateUpdate()
+    private IEnumerator DelayDetection()
     {
+        yield return new WaitForSeconds(0.1f);
         if (_detectionArea.enabled) _detectionArea.enabled = false;
+        yield return null;
     }
 
     #region units
@@ -48,7 +51,7 @@ public class RoomController : LoadedManagerBase
         if (other.CompareTag("Enemy"))
         {
             var unit = other.GetComponent<NPCUnit>();
-                        Debug.Log($"Added unit {unit} by {this}");
+                        //Debug.Log($"Added unit {unit} by {this}");
             UnitFound?.Invoke(unit);
             unit.SetUnitRoom(this);
             unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;

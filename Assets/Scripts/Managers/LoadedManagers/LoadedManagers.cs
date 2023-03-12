@@ -1,4 +1,4 @@
-using ModestTree;
+
 using UnityEngine;
 
 public class LoadedManagers : MonoBehaviour
@@ -56,7 +56,7 @@ public class LoadedManagers : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Null manager at index {_managers.IndexOf(m)}");
+                Debug.Log($"Null manager {m.GetType()}");
             }
         }
 

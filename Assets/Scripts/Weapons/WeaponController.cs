@@ -51,13 +51,10 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
 
     #endregion
 
-    public WeaponSwitchEventHandler SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+    public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
     public BaseUnit Owner { get; set; }
 
     public EquipItemType CurrentWeaponType { get; private set; } = EquipItemType.None;
-
-    //public bool IsReady { get; private set; } = false;
-
     public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
     protected virtual void SwitchWeapon(EquipItemType type)
     {
@@ -79,7 +76,6 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
                 break;
         }
         CurrentWeaponType = type;
-
     }
 
     protected void Sheathe(EquipItemType type)
@@ -108,10 +104,10 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
     }
 
 
-    public int GetAmmoByType(EquipItemType type)
+    public float GetUsesByType(EquipItemType type)
     {
         if (!CurrentWeapons.ContainsKey(type)) return 0;
-        else return CurrentWeapons[type].GetAmmo;
+        else return CurrentWeapons[type].GetRemainingUses;
     }
 
     public virtual bool UseWeaponCheck(EquipItemType type, out string result)

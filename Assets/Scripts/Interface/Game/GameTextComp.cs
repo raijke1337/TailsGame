@@ -14,13 +14,15 @@ public class GameTextComp : MonoBehaviour
 
         _text.text = textc.ToString();
     }
-
-    public bool IsShown
+    protected bool _act;
+    public bool IsNeeded
     {
-        get => gameObject.activeSelf;
+        get => _act;
         set
         {
+            _act = value;
             gameObject.SetActive(value);
         }
     }
+
 }

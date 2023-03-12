@@ -12,7 +12,7 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
     protected float InternalCooldown;
     protected float _currentCooldown;
 
-    public int GetAmmo { get { return (int)WeaponUses.GetCurrent; } }
+    public float GetRemainingUses { get { return WeaponUses.GetCurrent; } }
 
 
     protected bool IsBusy = false;

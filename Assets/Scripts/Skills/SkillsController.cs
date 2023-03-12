@@ -1,4 +1,3 @@
-using ModestTree;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +7,7 @@ public class SkillsController : BaseController, INeedsEmpties
     // this is used in game for skill requests
     private Dictionary<CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>();
 
-    public WeaponSwitchEventHandler SwitchAnimationLayersEvent;
+    public SkillEvents<EquipItemType> SwitchAnimationLayersEvent;
     public ItemEmpties Empties { get; }
     public SkillsController(ItemEmpties ie) => Empties = ie;
 
@@ -23,7 +22,7 @@ public class SkillsController : BaseController, INeedsEmpties
             var type = cfg.SkillType;
             _skills[type] = new SkillControllerData(cfg);
         }
-        IsReady = _skills.HasAtLeast(1);
+        IsReady = _skills.Count > 0;
     }
 
 

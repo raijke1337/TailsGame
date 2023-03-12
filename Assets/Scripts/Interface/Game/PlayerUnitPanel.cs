@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerUnitPanel : SelectedItemPanel
+public class PlayerUnitPanel : ManagedControllerBase
 {
 
     private PlayerUnit _player;
@@ -17,52 +17,25 @@ public class PlayerUnitPanel : SelectedItemPanel
 
     private StatValueContainer SHc;
     private StatValueContainer HEc;
-
+    private StatValueContainer HPc;
 
     protected List<StatValueContainer> _cont = new List<StatValueContainer>();
 
 
     [SerializeField] private Image _shBar;
     [SerializeField] private Image _heBar;
-
-
-    [SerializeField] private TextMeshProUGUI _spText;
+    [SerializeField] protected Image _hpBar;
+    [SerializeField,Space] private TextMeshProUGUI _spText;
     [SerializeField] private TextMeshProUGUI _heText;
+    [SerializeField] private TextMeshProUGUI _hpText;
     [SerializeField] private TextMeshProUGUI _dodgeText;
     [SerializeField] private TextMeshProUGUI _ammoText;
 
+    [SerializeField,Space] protected float _barFillRateMult = 1f;
+    private float FillLerp = 0f;
 
-    public override void AssignItem(BasicSelectableItemData data, bool isSelect)
-    {
-        _player = (data as SelectableUnitData).Unit as PlayerUnit;
-        RunSetup();
-        base.AssignItem(data, isSelect);
-
-    }
-    protected void RunSetup()
-    {
-
-        _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
-        _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
-        _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
-        _combo = _player.GetInputs<InputsPlayer>().GetComboController;
-
-        HPc = _player.GetStats()[BaseStatType.Health];
-        HPc.ValueChangedEvent += ResetTicker;
-
-        if (_combo.IsReady)
-        {
-            HEc = _combo.ComboContainer;
-            _combo.ComponentChangedStateToEvent += Combo_ComponentChangedStateToEvent;
-        }
-        if (_shield.IsReady)
-        {
-            _shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent;
-            SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-        }
-
-    }
-
+    protected readonly Color minColorDefault = Color.red;
+    protected readonly Color maxColorDefault = Color.black;
     private void Combo_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
     {
         if (arg1)
@@ -80,18 +53,46 @@ public class PlayerUnitPanel : SelectedItemPanel
         FillLerp = 0f;
     }
 
-
-
-    protected override void UpdateBars()
+    public override void StartController()
     {
-        if (FillLerp < 1f) FillLerp += Mathf.Clamp01(Time.deltaTime * _barFillRateMult);
+        _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
+        _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
+        _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
+        _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
+        _combo = _player.GetInputs<InputsPlayer>().GetComboController;
+
+        HPc = _player.GetStats()[BaseStatType.Health];
+        HPc.ValueChangedEvent += ResetTicker;       
+
+        if (_combo.IsReady)
+        {
+            HEc = _combo.ComboContainer;
+            _combo.ComponentChangedStateToEvent += Combo_ComponentChangedStateToEvent;
+        }
+        if (_shield.IsReady)
+        {
+            _shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent;
+            SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+        }
+
+    }
+
+    public override void UpdateController(float delta)
+    {
+        if (FillLerp < 1f) FillLerp += Mathf.Clamp01(delta * _barFillRateMult);
 
         if (_weapons.IsReady)
         {
-            _ammoText.text = _weapons.GetAmmoByType(EquipItemType.RangedWeap).ToString();
+            _ammoText.text = _weapons.GetUsesByType(EquipItemType.RangedWeap).ToString();
         }
         else _ammoText.text = "0";
 
+        if (HPc != null)
+        {
+            _hpText.text = string.Concat(Math.Round(HPc.GetCurrent, 0), " / ", HPc.GetMax);
+            ColorTexts(_hpText, HPc.GetMax, HPc.GetCurrent, minColorDefault, maxColorDefault);
+            PrettyLerp(_hpBar, HPc);
+        }
         if (HEc != null)
         {
             _heText.text = string.Concat(Math.Round(HEc.GetCurrent, 0), " / ", HEc.GetMax);
@@ -112,11 +113,47 @@ public class PlayerUnitPanel : SelectedItemPanel
             _dodgeText.text = _dodge.GetDodgeCharges().ToString();
         }
         else _dodgeText.text = "None";
+    }
 
-        base.UpdateBars();
+    public override void StopController()
+    {
+        if (HPc != null)
+        {
+            HPc.ValueChangedEvent -= ResetTicker;
+        }
+        if (_combo!= null && _combo.IsReady)
+        {
+            _combo.ComponentChangedStateToEvent -= Combo_ComponentChangedStateToEvent;
+        }
+        if (_shield!= null && _shield.IsReady)
+        {
+            _shield.ComponentChangedStateToEvent -= Shield_ComponentChangedStateToEvent;
+        }
     }
 
 
+    protected bool _act;
+    public bool IsNeeded
+    {
+        get => _act;
+        set
+        {
+            _act = value;
+            gameObject.SetActive(value);
+        }
+    }
+
+
+
+
+    protected virtual void ColorTexts(TextMeshProUGUI text, float max, float current, Color minC, Color maxC)
+    {
+        text.color = Color.Lerp(minC, maxC, current / max);
+    }
+    protected void PrettyLerp(Image bar, StatValueContainer cont)
+    {
+        bar.fillAmount = Mathf.Lerp(cont.GetLast / cont.GetMax, cont.GetCurrent / cont.GetMax, FillLerp);
+    }
 
 }
 

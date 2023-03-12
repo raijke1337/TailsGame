@@ -100,3 +100,10 @@ public enum LevelType
     Scene,
     Game
 }
+
+public enum SelectableItemType
+{
+    None,
+    Item,
+    Unit
+}

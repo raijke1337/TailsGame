@@ -28,18 +28,12 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     public event SkillRequestedEvent SkillRequestSuccessEvent;
     protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
 
-    protected Camera _faceCam;
-    protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
-    public Camera GetFaceCam { get => _faceCam; }
 
     //protected bool bindsComplete = false;
 
     public virtual void InitiateUnit() // this is run by unit manager
     {
         UpdateComponents();
-
-        _faceCam.enabled = false;
-
         switch (GameManager.Instance.GetCurrentLevelData.Type)
         {
             case LevelType.Scene:
@@ -101,7 +95,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
         if (_controller == null) _controller = GetComponent<ControlInputsBase>();
-        if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
+        //if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
     }
 
 
@@ -138,6 +132,7 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
     protected virtual void OnDeath()
     {
         _animator.SetTrigger("Death");
+        _controller.IsInputsLocked = true;
         BaseUnitDiedEvent?.Invoke(this);
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)

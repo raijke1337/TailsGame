@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(InputsNPC))]
-public abstract class NPCUnit : BaseUnit, ISelectableItem
+public abstract class NPCUnit : BaseUnit
 {
     private InputsNPC _npcController;
     [SerializeField] protected EquipmentBase[] NPCEquipments;
@@ -26,9 +26,6 @@ public abstract class NPCUnit : BaseUnit, ISelectableItem
 
         if (NPCEquipments.Count() == 0 || NPCEquipments == null)
             Debug.LogWarning($"{this} has no equipments");
-
-        if (_selDat == null)
-            _selDat = new SelectableUnitData(this, GetFullName, _faceCam);
         foreach (var item in NPCEquipments)
         {
             HandleStartingEquipment(item);
@@ -53,25 +50,6 @@ public abstract class NPCUnit : BaseUnit, ISelectableItem
     private void SetNPCInputs() => _npcController = _controller as InputsNPC;
     public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this);
 
-
-    #region SelectableItem
-
-    private SelectableUnitData _selDat;
-    public event SimpleEventsHandler<BasicSelectableItemData, bool> MouseOverEvent;
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        MouseOverEvent?.Invoke(_selDat, true);
-        ToggleCamera(true);
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        MouseOverEvent?.Invoke(_selDat, false);
-        ToggleCamera(false);
-    }
-
-    #endregion
 
 }
 

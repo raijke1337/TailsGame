@@ -61,7 +61,7 @@ public abstract class InputsNPC : ControlInputsBase
     public override void UpdateController(float delta)
     {
         base.UpdateController(delta);
-        if (_stateMachine == null || IsControlsBusy) return;
+        if (_stateMachine == null || IsInputsLocked) return;
         CurrentState = _stateMachine.CurrentState;
         MoveDirectionFromInputs = _stateMachine.CurrentVelocity;
 

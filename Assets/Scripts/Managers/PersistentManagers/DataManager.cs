@@ -138,7 +138,7 @@ public class DataManager : MonoBehaviour
         }
         catch (InvalidOperationException e)
         {
-            Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
+            //Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
             return null;
         }
     }

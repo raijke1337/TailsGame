@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    //public GameMode GameMode { get; private set; }
 
+    //public GameMode GameMode { get; private set; }
     [SerializeField] private LoadedManagers GameControllersPrefab;
     [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
     private LoadedManagers _gameControllers;
