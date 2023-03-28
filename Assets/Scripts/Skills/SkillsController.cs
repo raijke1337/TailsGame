@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class SkillsController : BaseController, INeedsEmpties
@@ -43,6 +44,14 @@ public class SkillsController : BaseController, INeedsEmpties
                 case CombatActionType.RangedSpecialE:
                     SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
                     break;
+            }
+            try
+            {
+                SoundPlayCallback(_skills[type].GetSkillData.AudioData.SoundsDict[SoundType.OnUse]);
+            }
+            catch
+            {
+                Debug.Log($"No sound OnUse for {_skills[type].ID}");
             }
         }
         return result;

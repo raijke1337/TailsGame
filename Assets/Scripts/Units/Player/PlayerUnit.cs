@@ -119,7 +119,7 @@ public class PlayerUnit : BaseUnit
 
         // also good enough
         transform.position += delta * desiredDir
-            * GetStats()[BaseStatType.MoveSpeed].GetCurrent;
+            * GetStats[BaseStatType.MoveSpeed].GetCurrent;
     }
 
     private void ChangeAnimatorLayer(EquipItemType type)
@@ -143,11 +143,12 @@ public class PlayerUnit : BaseUnit
     public void ComboWindowStart()
     {
         _animator.SetBool("AdvancingCombo", true);
+        _playerController.IsInMeleeCombo = true;
     }
     public void ComboWindowEnd()
     {
         _animator.SetBool("AdvancingCombo", false);
-        _playerController.ComboGained = false;
+        _playerController.IsInMeleeCombo = false;
     }
 
     private void ChangeVisualStage(float value, float prevvalue)

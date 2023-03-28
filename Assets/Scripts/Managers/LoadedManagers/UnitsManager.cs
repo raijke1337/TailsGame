@@ -13,7 +13,7 @@ public class UnitsManager : LoadedManagerBase
 
     [SerializeField] private List<BaseUnit> _allUnits = new List<BaseUnit>();
 
-
+    private AudioManager _audioManager;
 
     public override void Initiate()
     {
@@ -24,7 +24,7 @@ public class UnitsManager : LoadedManagerBase
             return;
         }
         _allUnits.Add(_player);
-        InitializeUnit(_player);
+        FinalUnitInit(_player,true);
 
         _rooms.AddRange(FindObjectsOfType<RoomController>());
         if (_rooms.Count == 0)
@@ -37,15 +37,16 @@ public class UnitsManager : LoadedManagerBase
             room.UnitFound += AddNPCToList;
             room.Initiate();
         }
+
+        _audioManager = AudioManager.Instance;
     }
 
     private void AddNPCToList(NPCUnit n)
     {
         _npcs.Add(n);
         _allUnits.Add(n);
-        InitializeUnit(n);
+        FinalUnitInit(n,true);
         SetAIStateUnit(true, n);
-
     }
 
 
@@ -71,16 +72,32 @@ public class UnitsManager : LoadedManagerBase
         }
         foreach (var u in _allUnits)
         {
-            u.DisableUnit();
+            FinalUnitInit(u, false);            
         }
     }
 
 
-    private void InitializeUnit(BaseUnit u)
+    private void FinalUnitInit(BaseUnit u, bool isEnable)
     {
-        u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-        u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
-        u.InitiateUnit();
+        if (isEnable)
+        {
+            u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+            u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
+            u.SoundPlayEvent += U_SoundPlayEvent;
+            u.InitiateUnit();
+        }
+        else
+        {
+            u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
+            u.SkillRequestSuccessEvent -= (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
+            u.SoundPlayEvent -= U_SoundPlayEvent;
+            u.DisableUnit();
+        }
+    }
+
+    private void U_SoundPlayEvent(AudioClip c, Vector3 where)
+    {
+        _audioManager.PlaySound(c, where);
     }
 
     private void SetAIStateUnit(bool isProcessing, NPCUnit unit)
@@ -95,10 +112,13 @@ public class UnitsManager : LoadedManagerBase
         if (unit is NPCUnit)
         {
             SetAIStateUnit(false, unit as NPCUnit);
-
         }
         else
         {
+            foreach(var n in _npcs)
+            {
+                SetAIStateUnit(false, n); // to prevent activities (attacking the air etc)
+            }
             GameManager.Instance.OnPlayerDead();
         }
     }

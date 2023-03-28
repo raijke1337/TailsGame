@@ -14,16 +14,8 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
 
     public float GetRemainingUses { get { return WeaponUses.GetCurrent; } }
 
-
     protected bool IsBusy = false;
     protected List<string> _effectsIDs;
-    public event SimpleEventsHandler<float> TargetHit; // only for combo
-    protected void TargetHitCallback(float val) => TargetHit?.Invoke(val);
-
-    protected virtual void OnEnable()
-    {
-        _effectsIDs = new List<string>();
-    }
 
     public virtual bool UseWeapon(out string reason)
     {
@@ -44,11 +36,13 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
     // loaded by weaponcontroller
     public virtual void AddTriggerData(string effectID)
     {
+        if (_effectsIDs == null) _effectsIDs = new List<string>(); 
         _effectsIDs.Add(effectID);
     }
 
     public virtual void SetUpWeapon(BaseWeaponConfig config)
     {
+
         foreach (string triggerID in config.TriggerIDs)
         {
             AddTriggerData(triggerID);
@@ -61,7 +55,5 @@ public abstract class BaseWeapon : EquipmentBase, IWeapon
     {
         _currentCooldown += deltaTime;
     }
-
-
 }
 

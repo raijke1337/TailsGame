@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 [Serializable]
-public abstract class BaseController : IStatsComponentForHandler
+public abstract class BaseController : IStatsComponentForHandler, IProducesSounds
 {
     protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
 
     [SerializeField] private bool _isReady = false;
 
     public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
+
 
     protected void StateChangeCallback(bool val, IStatsComponentForHandler comp)
     {
@@ -72,7 +73,7 @@ public abstract class BaseController : IStatsComponentForHandler
 
     protected virtual StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
     {
-        Debug.Log($"{this} was requested to select a StatValueContainer by effect {effect}, and nothing happened");
+        Debug.LogWarning($"{this} was requested to select a StatValueContainer by effect {effect}, and nothing happened");
         return null;
     }
     public virtual void UpdateInDelta(float deltaTime)
@@ -83,6 +84,13 @@ public abstract class BaseController : IStatsComponentForHandler
     {
 
     }
+
+    #region sounds
+
+    public event AudioEvents SoundPlayEvent;
+    protected virtual void SoundPlayCallback(AudioClip c) => SoundPlayEvent?.Invoke(c,Vector3.zero);
+
+    #endregion
 
 }
 

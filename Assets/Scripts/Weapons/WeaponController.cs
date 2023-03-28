@@ -9,9 +9,15 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
 
     #region inventoryManager
 
-    public Dictionary<EquipItemType, IWeapon> CurrentWeapons = new Dictionary<EquipItemType, IWeapon>();
+    public Dictionary<EquipItemType, BaseWeapon> CurrentWeapons = new Dictionary<EquipItemType, BaseWeapon>();
     public ItemEmpties Empties { get; }
     public WeaponController(ItemEmpties ie) => Empties = ie;
+
+    public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+    public BaseUnit Owner { get; set; }
+
+    public EquipItemType CurrentWeaponType { get; private set; } = EquipItemType.None;
+    public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
 
 
     public void LoadItem(IEquippable item)
@@ -19,11 +25,12 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
         if (!(item is IWeapon)) return;
         else
         {
-            BaseWeapon w = null;
+            BaseWeapon w;
             try
             {
-                var weap = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
+                var weap = GameObject.Instantiate(item.GetEquipmentBase, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
                 w = weap as BaseWeapon;
+                w.Owner = Owner;
                 CurrentWeapons[item.GetContents.ItemType] = w;
             }
             catch (NullReferenceException e)
@@ -41,9 +48,6 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
             }
 
             w.SetUpWeapon(config);
-            w.Owner = Owner;
-
-
             IsReady = true;
             // here we replace the actual prefab that is stored in the ItemContent with our cloned one
         }
@@ -51,11 +55,6 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
 
     #endregion
 
-    public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
-    public BaseUnit Owner { get; set; }
-
-    public EquipItemType CurrentWeaponType { get; private set; } = EquipItemType.None;
-    public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
     protected virtual void SwitchWeapon(EquipItemType type)
     {
         GameObject weaponOfType = CurrentWeapons[type].GetObject();
@@ -121,7 +120,11 @@ public class WeaponController : BaseController, IGivesSkills, IHasOwner
         if (CurrentWeaponType != type) { SwitchWeapon(type); }
         bool isOk = CurrentWeapons[type].UseWeapon(out var s);
 
-        if (isOk) result = ($"{Owner.GetFullName} used {CurrentWeapons[type]}");
+        if (isOk)
+        {
+            result = ($"{Owner.GetFullName} used {CurrentWeapons[type]}");
+            SoundPlayCallback(CurrentWeapons[CurrentWeaponType].Sounds.SoundsDict[SoundType.OnUse]);
+        }
         else result = ($"{Owner.GetFullName} used {CurrentWeapons[type]} but failed: {s}");
         return isOk;
 

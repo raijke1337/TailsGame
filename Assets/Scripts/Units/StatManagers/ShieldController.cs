@@ -69,6 +69,8 @@ public class ShieldController : BaseController, IStatsComponentForHandler, IGive
             TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
             _activeEffects.Add(_shieldAbsord);
 
+            SoundPlayCallback(EquippedShieldItem.GetEquipmentBase.Sounds.SoundsDict[SoundType.OnUse]); //SOUND
+
             return effect;
         }
     }

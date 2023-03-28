@@ -20,5 +20,6 @@ public abstract class BaseTrigger : MonoBehaviour, IAppliesTriggers
 
     public GameObject GetObject() => gameObject;
 
+
 }
 

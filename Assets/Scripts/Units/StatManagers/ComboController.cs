@@ -1,10 +1,11 @@
 using System;
+using UnityEngine;
+
 [Serializable]
 public class ComboController : BaseController, IStatsComponentForHandler, ITakesTriggers
 {
 
     public StatValueContainer ComboContainer { get; }
-
 
     protected float Degen;
     protected float Timeout;

@@ -45,7 +45,7 @@ public class LoadedManagers : MonoBehaviour
         {
             EventTriggersManager = GetComponent<EventTriggersManager>();
             GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
-            _managers = new LoadedManagerBase[2] { EventTriggersManager,GameInterfaceManager };
+            _managers = new LoadedManagerBase[2] { EventTriggersManager,GameInterfaceManager};
         }
         foreach (var m in _managers)
         {

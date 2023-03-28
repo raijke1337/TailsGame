@@ -15,8 +15,7 @@ public class InputsPlayer : ControlInputsBase
     public ComboController GetComboController => _comboCtrl;
 
     public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
-    // only one gain per swing, changed by unit
-    public bool ComboGained { get; set; } = false;
+    public bool IsInMeleeCombo = false;
 
     #region managedctrl
 
@@ -49,7 +48,7 @@ public class InputsPlayer : ControlInputsBase
     public override void UpdateController(float delta)
     {
         base.UpdateController(delta);
-        if (IsInputsLocked) return; // set during dodges and attack motions
+        if (IsInputsLocked || _aim == null) return; // set during dodges and attack motions
         _aim.UpdateController(delta);
         CalculateMovement();
         RotateToAim();
@@ -98,7 +97,7 @@ public class InputsPlayer : ControlInputsBase
     }
     protected void MeleeAttack_performed(CallbackContext obj)
     {
-        if (IsInputsLocked) return;
+        if (IsInputsLocked && !IsInMeleeCombo) return;
         if (_weaponCtrl.UseWeaponCheck(EquipItemType.MeleeWeap, out string text))
             CombatActionSuccessCallback(CombatActionType.Melee);
         else Debug.Log(text);

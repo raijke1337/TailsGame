@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 8102464925495723800}
   - component: {fileID: 8102464925495723801}
   - component: {fileID: 8102464925495723806}
+  - component: {fileID: 3960432742461820630}
   - component: {fileID: 8102464925495723807}
+  - component: {fileID: 4576216533406728223}
   - component: {fileID: 8102464925495723776}
-  - component: {fileID: 8102464925495723777}
   m_Layer: 0
   m_Name: PersistentManagers
   m_TagString: Untagged
@@ -35,6 +36,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -80,8 +82,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018,
@@ -106,6 +110,7 @@ MonoBehaviour:
     type: 3}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
 --- !u!114 &8102464925495723800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +151,22 @@ MonoBehaviour:
     type: 3}
   gameInterfaceManagerPrefab: {fileID: 5692779625598192606, guid: 9502839f06e805a42a53fdf2facc1312,
     type: 3}
+--- !u!114 &3960432742461820630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8102464926349693799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d2c817abec01df42a02918a742a2749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioPrefab: {fileID: 4184976033158668723, guid: a606c6bdfaa79c0458f0fb1a76634478,
+    type: 3}
+  _musicPrefab: {fileID: 4184976033158668723, guid: 3cf3edcb8e8fa8e498b5afe6285ce1e9,
+    type: 3}
 --- !u!114 &8102464925495723807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +180,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dictSO: []
+--- !u!114 &4576216533406728223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8102464926349693799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1318a4edb693bcb47bce289a86a9929f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mixer: {fileID: 24100000, guid: 925e4551c014b634ab183825acd53920, type: 2}
 --- !u!114 &8102464925495723776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,15 +206,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SaveObject: 1
---- !u!114 &8102464925495723777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8102464926349693799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d2c817abec01df42a02918a742a2749, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

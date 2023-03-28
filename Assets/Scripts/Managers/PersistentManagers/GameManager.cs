@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -22,10 +23,10 @@ public class GameManager : MonoBehaviour
     private Dictionary<string, LevelData> _levels;
 
     private LevelData _currentLevel;
-
-
+    private string gameLevelID;
     public LevelData GetCurrentLevelData { get => _currentLevel; }
 
+    #region default
     private void Start()
     {
         SceneManager.sceneLoaded += SceneManager_sceneLoaded;
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
         {
             _levels[level.ID] = new LevelData(level);
         }
+        _currentLevel = _levels["main"]; // TODO? Hardcode
     }
 
     private void Update()
@@ -44,10 +46,54 @@ public class GameManager : MonoBehaviour
             _gameControllers.UpdateManagers(Time.deltaTime);
         }
     }
+    #endregion
+    public void RequestLevelLoad(string ID)
+    {
+        LoadLevel(ID);
+    }
+
+    public void OnFinishedEquips()
+    {
+        LoadLevel(gameLevelID,true);
+    }
+
+    private void LoadLevel(string ID, bool forceLoad = false)
+    {
+        AudioManager.Instance.CleanUpOnSceneChange();
+        if (ID=="") { LoadLevel("main",true); } // it happens in debug on level complete - the card has no "next level" ID
+        if (forceLoad) // used in equips level 
+        {
+            _currentLevel = _levels[ID];
+            SceneManager.LoadScene(_currentLevel.SceneLoaderIndex);
+        }
+        else
+        {
+            try
+            {
+                var typeLoad = _levels[ID].Type;
+                switch (typeLoad)
+                {
+                    case LevelType.Menu:
+                        LoadLevel("equips", true);
+                        break;
+                    case LevelType.Scene:
+                        LoadLevel(ID, true);
+                        break;
+                    case LevelType.Game:
+                        gameLevelID = ID;
+                        LoadLevel("equips", true);
+                        break;
+                }
+            }
+            catch
+            {
+                Debug.Log($"Something went wrong when switching to level {ID} from {_currentLevel.LevelID}");
+            }
+        }
+    }
 
     private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
-
         switch (_currentLevel.Type)
         {
             case LevelType.Menu:
@@ -63,44 +109,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RequestLevelLoad(string ID)
-    {
-        LoadLevel(ID);
-    }
-
-    public void OnFinishedEquips()
-    {
-        LoadLevel(gameLevelID,true);
-    }
-
-    private string gameLevelID;
-    private void LoadLevel(string ID, bool gameOverride = false)
-    {
-        if (ID=="") { LoadLevel("main"); } // it happens in debug
-
-        try
-        {
-            _currentLevel = _levels[ID];
-            if (_currentLevel.Type != LevelType.Game)
-            {
-                SceneManager.LoadScene(_currentLevel.SceneLoaderIndex);
-            }
-            if (_currentLevel.Type == LevelType.Game && gameOverride)
-            {
-                SceneManager.LoadScene(_levels[ID].SceneLoaderIndex);
-            }
-            if (_currentLevel.Type == LevelType.Game && !gameOverride)
-            {
-                gameLevelID = ID;
-                LoadLevel("equips");
-            }
-        }
-        catch
-        {
-            Debug.Log($"No {ID} in level cards");
-        }
-    }
-
     public void OnStartNewGame()
     {
         DataManager.Instance.CreateDefaultSave();
@@ -108,7 +116,7 @@ public class GameManager : MonoBehaviour
     }
     public void OnReturnToMain()
     {
-        LoadLevel("main");
+        LoadLevel("main",true);
     }
 
 

@@ -34,6 +34,7 @@ public class SkillsPlacerManager : LoadedManagerBase
         var skill = Instantiate(_skillsDict[ID]);
         skill.Owner = source;
         skill.transform.SetPositionAndRotation(empty.position, empty.rotation);
+
         if (skill is IProjectile)
         {
             var sk = skill as IProjectile;
@@ -68,6 +69,7 @@ public class SkillsPlacerManager : LoadedManagerBase
     private void HandleSkillExpiry(IExpires item)
     {
         item.HasExpiredEvent -= HandleSkillExpiry;
+        //AudioManager.Instance.UnRegisterSound(this as IHasSounds);
         Destroy(item.GetObject());
     }
 

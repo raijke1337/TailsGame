@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(ControlInputsBase))]
 
-public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
+public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers, IProducesSounds
 {
     [SerializeField] protected string StatsID;
 
@@ -17,8 +17,8 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     public Side Side;
 
-    public UnitType GetUnitType() => _controller.GetUnitType();
-    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats() => _controller.GetStatsController.GetBaseStats;
+    public UnitType GetUnitType => _controller.GetUnitType();
+    public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats => _controller.GetStatsController.GetBaseStats;
 
     public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
 
@@ -26,11 +26,13 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
     public event SkillRequestedEvent SkillRequestSuccessEvent;
+
+
     protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
 
 
     //protected bool bindsComplete = false;
-
+    #region managed
     public virtual void InitiateUnit() // this is run by unit manager
     {
         UpdateComponents();
@@ -59,13 +61,28 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
         _controller.StopController();
     }
 
+
+    public virtual void RunUpdate(float delta)
+    {
+        if (_controller == null)
+        {
+            Debug.LogWarning($"Unit {this} was not initialized!");
+            return;
+        }
+        AnimateMovement();
+        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+        _controller.UpdateController(delta);
+    }
+
+    #endregion
+
+    #region unit
     protected virtual void HandleStartingEquipment(IEquippable item) // equipment can't be changed mid-level so it's no problem here that this is run once
     {
         UpdateComponents();
 
         string skill = item.GetContents.SkillString;
         if (skill.Length != 0) _controller.AddSkillString(skill);
-
         switch (item.GetContents.ItemType)
         {
             case EquipItemType.None:
@@ -106,33 +123,25 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
             _controller.GetStatsController.UnitDiedEvent += OnDeath;
             _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened += AnimateStagger;
+            _controller.SoundPlay += UnitPlaysSound;
         }
         else
         {
             _controller.GetStatsController.UnitDiedEvent -= OnDeath;
             _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
             _controller.StaggerHappened -= AnimateStagger;
+            _controller.SoundPlay -= UnitPlaysSound;
         }
     }
 
+    #endregion
 
-
-    public virtual void RunUpdate(float delta)
-    {
-        if (_controller == null)
-        {
-            Debug.LogWarning($"Unit {this} was not initialized!");
-            return;
-        }
-        AnimateMovement();
-        if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
-        _controller.UpdateController(delta);
-    }
     #region stats
     protected virtual void OnDeath()
     {
         _animator.SetTrigger("Death");
         _controller.IsInputsLocked = true;
+        UnitPlaysSound(UnitSounds.SoundsDict[SoundType.OnExpiry],Vector3.zero);
         BaseUnitDiedEvent?.Invoke(this);
     }
     public virtual void AddTriggeredEffect(TriggeredEffect eff)
@@ -222,7 +231,14 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     #endregion
 
+    #region sounds
+    public event AudioEvents SoundPlayEvent;
+    public AudioComponentBase UnitSounds;
 
+    private void UnitPlaysSound(AudioClip c,Vector3 z) => SoundPlayEvent?.Invoke(c,transform.position);
+
+
+    #endregion
 
 
 

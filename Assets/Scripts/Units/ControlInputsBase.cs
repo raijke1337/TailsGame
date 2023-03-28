@@ -13,7 +13,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
     [SerializeField] public bool IsInputsLocked; // todo ?
 
 
-    protected List<IStatsComponentForHandler> _controllers = new List<IStatsComponentForHandler>();
+    protected List<BaseController> _controllers = new List<BaseController>();
 
     public void SetUnit(BaseUnit u) => Unit = u;
 
@@ -39,6 +39,8 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 
     public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
     public event SimpleEventsHandler StaggerHappened;
+
+
     protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
     protected void StunEventCallback() => StaggerHappened?.Invoke();
     #region scenes
@@ -77,6 +79,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
         {
             ctrl.ComponentChangedStateToEvent += RegisterController;
             if (ctrl.IsReady) ctrl.Ping();
+            ctrl.SoundPlayEvent += Ctrl_SoundPlay;
         }
 
         IsInputsLocked = false;
@@ -84,17 +87,27 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
         _stunsCtrl.StunHappenedEvent += StunEventCallback;
 
     }
+
+
     public override void StopController()
     {
         foreach (var ctrl in _controllers)
         {
             ctrl.ComponentChangedStateToEvent -= RegisterController;
+            ctrl.SoundPlayEvent -= Ctrl_SoundPlay;
         }
         _stunsCtrl.StunHappenedEvent -= StunEventCallback;
     }
     #endregion
 
+    #region sounds 
+    public event AudioEvents SoundPlay;
+    private void Ctrl_SoundPlay(AudioClip c, Vector3 z) => SoundPlay?.Invoke(c,z);
+    #endregion
 
+
+
+    #region input
     protected void RegisterController(bool isEnable, IStatsComponentForHandler cont)
     {
         GameManager.Instance.GetGameControllers.StatsUpdatesHandler.RegisterUnitForStatUpdates(cont, isEnable);
@@ -138,6 +151,7 @@ public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
                 break;
         }
     }
+    #endregion
 
     #region movement
 

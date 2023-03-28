@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
@@ -27,7 +28,6 @@ public class DataManager : MonoBehaviour
         FindAllConfigs();
         SetupSaves();
     }
-
     #region save
 
     private SaveData _loadedSave;
@@ -64,7 +64,6 @@ public class DataManager : MonoBehaviour
 
 
     #endregion
-
     #region configs
     [SerializeField] private List<ScriptableObjectID> _dictSO;
     private void FindAllConfigs()
@@ -138,7 +137,7 @@ public class DataManager : MonoBehaviour
         }
         catch (InvalidOperationException e)
         {
-            //Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
+            Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
             return null;
         }
     }
@@ -181,27 +180,24 @@ public class DataManager : MonoBehaviour
     }
     #endregion
 
-}
 
-[XmlRoot("GameSave"), Serializable]
-public class SaveData
-{
-    public List<string> OpenedLevels;
-    public UnitInventoryItems PlayerItems;
-
-    public SaveData(List<string> levels, UnitInventoryItems items)
-    {
-        OpenedLevels = new List<string>();
-        foreach (var l in levels)
+    public void SetPlayerPref(string pref, object value)
+    { 
+        if (value is float)
         {
-            if (!OpenedLevels.Contains(l)) OpenedLevels.Add(l);
+            PlayerPrefs.SetFloat(pref, (float)value);
         }
-        PlayerItems = items;
-    }
-    public SaveData()
-    {
-        OpenedLevels = new List<string>();
+        if (value is int)
+        {
+            PlayerPrefs.SetInt(pref, (int)value);
+        }
+        if (value is string)
+        {
+            PlayerPrefs.SetString(pref, (string)value); 
+        }
     }
 
+
 }
+
 

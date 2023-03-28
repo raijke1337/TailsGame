@@ -12,6 +12,7 @@ public class RoomController : LoadedManagerBase
     private StateMachineUpdater _FSMupdater;
     public SimpleEventsHandler<NPCUnit> UnitFound;
 
+    #region managed
     public override void Initiate()
     {
         _detectionArea = GetComponent<Collider>();
@@ -35,7 +36,7 @@ public class RoomController : LoadedManagerBase
             _FSMupdater.RemoveUnit(unit);
         }
     }
-
+    #endregion
 
     private IEnumerator DelayDetection()
     {
@@ -65,9 +66,22 @@ public class RoomController : LoadedManagerBase
 
     private void Unit_OnUnitAttackedEvent(NPCUnit arg)
     {
-        arg.ReactToDamage(_player);
-    }
+        var otherUnits = new List<NPCUnit>();
+        otherUnits.AddRange(_npcUnits);
+        otherUnits.Remove(arg);
+        var range = arg.GetStateMachine.GetEnemyStats.LookSpereCastRange;
+        foreach (var u in otherUnits)
+        {
+            var dist = Vector3.Distance(arg.transform.position,u.transform.position);
+            if (dist < range)
+            {
+                u.ForceCombat();
+                Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attacked, range {dist}");
+            }
+        }
 
+    }
+    
 
     private void Unit_BaseUnitDiedEvent(BaseUnit unit)
     {
@@ -83,7 +97,6 @@ public class RoomController : LoadedManagerBase
     #endregion
 
 
-
     // used by inputs
     public BaseUnit GetUnitForAI(UnitType type)
     {
@@ -91,13 +104,13 @@ public class RoomController : LoadedManagerBase
         switch (type)
         {
             case UnitType.Small:
-                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType == type);
                 break;
             case UnitType.Big:
-                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType == type);
                 break;
             case UnitType.Boss:
-                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType() == type);
+                res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType== type);
                 break;
             case UnitType.Self:
                 Debug.LogWarning(type + " was somehow requested, this should not happen");

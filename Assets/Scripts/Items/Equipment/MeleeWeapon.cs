@@ -8,6 +8,7 @@ public class MeleeWeapon : BaseWeapon
     public override void SetUpWeapon(BaseWeaponConfig config)
     {
         base.SetUpWeapon(config);
+
         _trigger = GetComponent<WeaponTriggerComponent>();
         _trigger.SetTriggerIDS(_effectsIDs);
         _trigger.ToggleCollider(false);

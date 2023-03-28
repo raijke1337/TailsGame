@@ -61,7 +61,7 @@ public class PlayerUnitPanel : ManagedControllerBase
         _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
         _combo = _player.GetInputs<InputsPlayer>().GetComboController;
 
-        HPc = _player.GetStats()[BaseStatType.Health];
+        HPc = _player.GetStats[BaseStatType.Health];
         HPc.ValueChangedEvent += ResetTicker;       
 
         if (_combo.IsReady)
@@ -106,7 +106,11 @@ public class PlayerUnitPanel : ManagedControllerBase
             ColorTexts(_spText, SHc.GetMax, SHc.GetCurrent, minColorDefault, maxColorDefault);
             PrettyLerp(_shBar, SHc);
         }
-        else _spText.text = "Shield not equipped";
+        else
+        {
+            _spText.text = "Shield not equipped";
+            _shBar.fillAmount = 0;
+        }
 
         if (_dodge.IsReady)
         {

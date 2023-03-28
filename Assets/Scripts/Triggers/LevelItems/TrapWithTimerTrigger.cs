@@ -9,7 +9,7 @@ public class TrapWithTimerTrigger : StatsChangingTrigger
     private Coroutine TogglingCor;
     ParticleSystem _trapEffect;
 
-    private void Start()
+    protected override void Start()
     {
         _trapEffect = GetComponent<ParticleSystem>();
         StartCor();

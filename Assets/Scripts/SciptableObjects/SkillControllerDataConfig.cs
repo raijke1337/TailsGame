@@ -4,7 +4,6 @@ using UnityEngine;
 public class SkillControllerDataConfig : ScriptableObjectID
 {
     public CombatActionType SkillType;
-
     public SkillData Data;
 }
 

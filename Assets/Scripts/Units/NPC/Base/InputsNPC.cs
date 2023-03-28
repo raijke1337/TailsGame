@@ -252,7 +252,10 @@ public abstract class InputsNPC : ControlInputsBase
 
     #region room manager
 
-    public void ForceCombat(PlayerUnit player) => _stateMachine.SelectedUnit = player;
+    public void ForceCombat()
+    {
+        _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+    }
 
     #endregion
 
@@ -268,6 +271,9 @@ public abstract class InputsNPC : ControlInputsBase
         //navmesh gizmos
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(_stateMachine.NMAgent.transform.position, _stateMachine.NMAgent.transform.position + _stateMachine.NMAgent.transform.forward);
+        // aggro range gizmo
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookSpereCastRange); // look sphere range is used to call nearby allies into combat
     }
 #endif
 

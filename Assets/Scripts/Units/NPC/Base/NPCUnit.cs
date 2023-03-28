@@ -12,9 +12,9 @@ public abstract class NPCUnit : BaseUnit
     public StateMachine GetStateMachine { get => _npcController.GetFSM; }
     public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
 
-
+    //used by room ctrl
     public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
-    public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
+    //public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
 
     public override void InitiateUnit()
     {
@@ -31,10 +31,18 @@ public abstract class NPCUnit : BaseUnit
             HandleStartingEquipment(item);
         }
     }
-
+    // used by room controller
+    public void ForceCombat()
+    {
+        _npcController.ForceCombat();
+    }
     private void OnOuch(float curr, float prev)
     {
-        if (curr < prev) OnUnitAttackedEvent?.Invoke(this);
+        if (curr < prev)
+        {
+            ForceCombat();
+            OnUnitAttackedEvent?.Invoke(this);
+        }
     }
     public void AiToggle(bool isProcessing)
     {
@@ -42,13 +50,13 @@ public abstract class NPCUnit : BaseUnit
         _npcController.SwitchState(isProcessing);
         // todo thi is a bandaid
     }
-    public virtual void ReactToDamage(PlayerUnit player)
-    {
-        _npcController.ForceCombat(player);
-    }
 
     private void SetNPCInputs() => _npcController = _controller as InputsNPC;
-    public void OnUnitSpottedPlayer() => OnUnitSpottedPlayerEvent?.Invoke(this);
+    public virtual void OnUnitSpottedPlayer()
+    {
+        // nothing here
+        Debug.Log($"{GetFullName} saw player");
+    }
 
 
 }

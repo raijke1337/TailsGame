@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GameInterfaceManager : LoadedManagerBase
 {
-    [SerializeField] private SelectableItemPanel _tgt;
+    [SerializeField] private EnemyUnitPanel _tgt;
     [SerializeField] private SelectableItemPanel _item;
     [SerializeField] private PlayerUnitPanel _player;
     [SerializeField] private GameTextComp _text;
@@ -40,6 +40,7 @@ public class GameInterfaceManager : LoadedManagerBase
     public override void RunUpdate(float delta)
     {
         _player.UpdateController(delta);
+        if (_tgt.IsNeeded) _tgt.UpdateBars(delta);
     }
 
     public override void Stop()
@@ -71,7 +72,7 @@ public class GameInterfaceManager : LoadedManagerBase
     {
         if (show)
         {
-            StopCoroutine(_cor);
+            if (_cor == null) StopCoroutine(_cor);
             switch (item.Type)
             {
                 case SelectableItemType.None:
@@ -102,7 +103,7 @@ public class GameInterfaceManager : LoadedManagerBase
         }
     }
 
-    #region munues
+    #region menus
     public void GameOver()
     {
         _ded.OnToggle(true);

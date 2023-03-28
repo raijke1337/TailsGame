@@ -5,7 +5,6 @@ public class WeaponTriggerComponent : BaseTrigger
 {
     public BaseUnit Owner { get; set; }
     protected List<string> TriggerEffectIDs;
-    public SimpleEventsHandler HitSuccessEvent;
 
     public void ToggleCollider (bool isEnable)
     {
@@ -22,11 +21,16 @@ public class WeaponTriggerComponent : BaseTrigger
     {
         var comp = other.GetComponent<BaseUnit>();
         if (comp == null) return;
-        HitSuccessEvent?.Invoke();
         foreach (var id in TriggerEffectIDs)
         {
             TriggerCallback(id, comp, Owner);
         }
     }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
 }
 

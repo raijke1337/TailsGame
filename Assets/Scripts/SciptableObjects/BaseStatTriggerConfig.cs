@@ -1,3 +1,4 @@
+using CartoonFX;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New BaseStatTriggerConfiguration", menuName = "Configurations/BaseStatTrigger", order = 1)]
@@ -11,5 +12,7 @@ public class BaseStatTriggerConfig : ScriptableObjectID
     public Sprite Icon;
 
     public TriggerTargetType TargetType;
+    public AudioClip HitSound;
+    public CFXR_Effect HitEffect;
 }
 

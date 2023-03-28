@@ -9,8 +9,6 @@ public class TriggersProjectilesManager : LoadedManagerBase
     private Dictionary<string, BaseStatTriggerConfig> _triggersD = new Dictionary<string, BaseStatTriggerConfig>();
     private Dictionary<string, ProjectileDataConfig> _projectilesD = new Dictionary<string, ProjectileDataConfig>();
 
-    // private SkillsPlacerManager _skillsMan;
-
     private List<BaseTrigger> _allTriggers = new List<BaseTrigger>();
 
     private List<BaseStatTriggerConfig> _list = new List<BaseStatTriggerConfig>();
@@ -137,11 +135,27 @@ public class TriggersProjectilesManager : LoadedManagerBase
                         finaltgt = target;
                     }
                     break;
+                default:
+                    Debug.LogError($"Trigger {ID} from {source.GetID} to {target.GetID} did not apply!");
+                    break;
             }
+        }
+        else
+        {
+            Debug.LogError($"Trigger {ID} from {source.GetID} to {target.GetID} did not apply!");
         }
         if (finaltgt == null)
         {
             return;
+        }
+        try
+        {
+            var p = Instantiate(config.HitEffect, finaltgt.transform.position,Quaternion.identity);
+            
+        }
+        catch
+        {
+            Debug.Log($"{ID} has no hit effect assigned");
         }
 
         finaltgt.AddTriggeredEffect(effect);

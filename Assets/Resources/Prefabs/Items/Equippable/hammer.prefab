@@ -31,6 +31,7 @@ Transform:
   m_LocalRotation: {x: 0.017943894, y: -0.12008543, z: -0.2078477, w: 0.9705962}
   m_LocalPosition: {x: 0.4373296, y: 0.9932543, z: -0.12304101}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -54,6 +55,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -92,9 +94,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322378502437355212}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 0.5, y: 0.5, z: 0.32}
   m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &5188941293757656330
@@ -110,6 +120,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemContent: {fileID: 11400000, guid: dad5f358bc560794c86cae0db39f5b4a, type: 2}
+  Sounds:
+    SoundsDict:
+      reorderableList:
+        canAdd: 1
+        canRemove: 1
+        draggable: 1
+        expandable: 1
+        multipleSelection: 1
+        isExpanded: 1
+        label:
+          m_Text: Keys
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        headerHeight: 18
+        footerHeight: 13
+        slideEasing: 0.15
+        verticalSpacing: 2
+        showDefaultBackground: 1
+        elementDisplayType: 0
+        elementNameProperty: 
+        elementNameOverride: 
+        elementIcon: {fileID: 0}
+      reqReferences: {fileID: 0}
+      isExpanded: 1
+      _keyValues: 0200000004000000
+      _keys: 0200000004000000
+      _values:
+      - {fileID: 8300000, guid: 303d44c8d6ec943a38df8ec10b19d9c7, type: 3}
+      - {fileID: 8300000, guid: 662368c20c74f1347bfe72d20c30a417, type: 3}
 --- !u!114 &9131835006296536996
 MonoBehaviour:
   m_ObjectHideFlags: 0

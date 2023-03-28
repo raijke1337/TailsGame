@@ -1,15 +1,19 @@
 using UnityEngine;
 [RequireComponent(typeof(Collider))]
-public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires
+public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires //IHasSounds
 {
     public string SkillID;
     public BaseUnit Owner { get; set; }
+    private AudioManager _audio;
+
+
     [HideInInspector] public SkillData SkillData;
     public SkillAreaComp EffectPrefab;
 
     public event TriggerEventApplication TriggerApplicationRequestEvent;
 
     public event SimpleEventsHandler<IExpires> HasExpiredEvent;
+
 
     private Collider _coll;
     // creates new objects when conditions are met
@@ -28,9 +32,11 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IE
 
     private void Awake()
     {
-        if (EffectPrefab == null || EffectPrefab.GetComponent<SkillAreaComp>() == null) Debug.LogError($"Set prefab for {this}");
+        if (EffectPrefab == null ) Debug.LogError($"Set prefab for {this}");
         _coll = GetComponent<Collider>();
         _coll.isTrigger = true;
+        _audio = AudioManager.Instance;
+        
     }
 
     // use this to apply all trigger effects set in SKillData
@@ -47,7 +53,15 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IE
 
     protected SkillAreaComp PlaceAndSubEffect(Vector3 tr)
     {
-        var item = Instantiate(EffectPrefab).GetComponent<SkillAreaComp>();
+        try
+        {
+            _audio.PlaySound(SkillData.AudioData.SoundsDict[SoundType.OnExpiry], transform.position);
+        }
+        catch
+        {
+            Debug.Log($"No sound of type OnExpiry for skill {SkillID}");
+        }
+        var item = Instantiate(EffectPrefab);
         item.Data = SkillData;
         item.transform.parent = null;
         item.transform.position = tr;
@@ -56,8 +70,6 @@ public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IE
     }
 
     public GameObject GetObject() => gameObject;
-
-
 
 }
 

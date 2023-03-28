@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: trap_small
   m_EditorClassIdentifier: 
   ID: trap_small
-  StatID: 0
+  ChangedValueType: 0
   InitialValue: -25
   RepeatedValue: 0
   RepeatApplicationDelay: 0
   TotalDuration: 0
   Icon: {fileID: 21300000, guid: 062eeb9d5e8ba8f45a9ddfea52518f82, type: 3}
-  SourceType: 1
+  TargetType: 0
+  HitSound: {fileID: 8300000, guid: 673e0c563e49943e983f44f0fb941436, type: 3}
+  HitEffect: {fileID: 114873338690784808, guid: 87ee7299dd44ed747af24dbb91bcd33b,
+    type: 3}

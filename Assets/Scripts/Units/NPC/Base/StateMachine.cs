@@ -157,7 +157,7 @@ public class StateMachine : IStatsComponentForHandler
     public bool OnAllyNeedsHelp()
     {
         if (FocusUnit == null) return false;
-        return FocusUnit.GetStats()[BaseStatType.Health].GetCurrent / FocusUnit.GetStats()[BaseStatType.Health].GetMax <= 0.5f;  // HUGE todo
+        return FocusUnit.GetStats[BaseStatType.Health].GetCurrent / FocusUnit.GetStats[BaseStatType.Health].GetMax <= 0.5f;  // HUGE todo
     }
     public void OnRotateRequest() => RotationRequestedSM?.Invoke();
     public void OnSwapRanges(CombatActionType type) => ChangeRangeActionRequestSM?.Invoke(type);

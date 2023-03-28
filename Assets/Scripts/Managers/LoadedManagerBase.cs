@@ -6,4 +6,6 @@ public abstract class LoadedManagerBase : MonoBehaviour
     public abstract void RunUpdate(float delta);
     public abstract void Stop();
 
+    protected virtual void SoundPlayCallback(AudioClip clip, Vector3 pos) => AudioManager.Instance.PlaySound(clip, pos);
+
 }

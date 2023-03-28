@@ -8,6 +8,6 @@ public class LevelCardSO : ScriptableObjectID
     public string nextID;
     public string TextContainerID;
     public LevelType LevelType;
-
+    public AudioClip Music;
 
 }

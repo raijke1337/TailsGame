@@ -48,6 +48,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
             var t = new Timer(_stats[DodgeStatType.Cooldown].GetCurrent);
             _timerQueue.Enqueue(t);
             t.TimeUp += T_TimeUp;
+            SoundPlayCallback(EquippedDodgeItem.GetEquipmentBase.Sounds.SoundsDict[SoundType.OnUse]);
             return true;
         }
     }
@@ -70,7 +71,7 @@ public class DodgeController : BaseController, IStatsComponentForHandler, IUsesI
         else
         {
             EquippedDodgeItem = item;
-            instantiatedItem = GameObject.Instantiate(item.GetEquipmentBase(), Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
+            instantiatedItem = GameObject.Instantiate(item.GetEquipmentBase, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
             IsReady = true;
         }
     }

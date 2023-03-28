@@ -107,3 +107,12 @@ public enum SelectableItemType
     Item,
     Unit
 }
+
+public enum SoundType
+{
+    None,
+    Idle,
+    OnUse,
+    OnExpiry,
+    OnStunned
+}
