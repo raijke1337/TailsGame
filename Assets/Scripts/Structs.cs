@@ -12,6 +12,8 @@ public delegate void WeaponSwitchEventHandler(EquipItemType type);
 public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
 public delegate void SkillRequestedEvent(string ID, BaseUnit source, Transform where);
 
+public delegate void InterfaceTilesEvent(ItemTileComponent tile, PointerEventData data);
+
 
 public delegate void StateMachineEvent();
 public delegate void StateMachineEvent<T>(T arg);
@@ -272,7 +274,10 @@ public interface IStatsComponentForHandler
 }
 
 public interface IHasID
-{ string GetID { get; } }
+{ string GetID { get; }
+    string ToString();
+
+}
 public interface IHasGameObject
 { public GameObject GetObject(); }
 public interface IHasOwner

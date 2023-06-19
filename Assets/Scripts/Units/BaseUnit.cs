@@ -13,6 +13,10 @@ public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers
 
     [Inject] protected StatsUpdatesHandler _handler;
     public string GetID => StatsID;
+    public override string ToString()
+    {
+        return StatsID;
+    }
 
     protected Animator _animator;
     protected Rigidbody _rigidbody;

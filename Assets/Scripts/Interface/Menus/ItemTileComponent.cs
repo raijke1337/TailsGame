@@ -13,15 +13,15 @@ using UnityEngine.SceneManagement;
 
 public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
-    public event SimpleEventsHandler<ItemContent> ItemClickedEvent;
-
     private Image _imageComp;
 
     [SerializeField] private Sprite DefaultImg;
     [SerializeField] private ItemContent _content;
 
-    [SerializeField] private RectTransform _textPanel;
-    private RectTransform _instantiatedTooltip;
+    public InterfaceTilesEvent ClickEvent;
+    public InterfaceTilesEvent HoverEvent;
+    public InterfaceTilesEvent UnhoverEvent;
+
 
     public ItemContent Content
     { 
@@ -44,21 +44,17 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ItemClickedEvent?.Invoke(Content);
+        ClickEvent?.Invoke(this,eventData);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_content == null) return;
-        var pos = eventData.position;
-        _instantiatedTooltip = Instantiate(_textPanel, pos, Quaternion.identity);
-        var txt = _instantiatedTooltip.GetComponentInChildren<Text>();
-        txt.text = _content.DisplayName;
+        HoverEvent?.Invoke(this,eventData);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_instantiatedTooltip != null) Destroy(_instantiatedTooltip.gameObject);
+        UnhoverEvent?.Invoke(this, eventData);   
     }
     private void OnItemSet(ItemContent content)
     {

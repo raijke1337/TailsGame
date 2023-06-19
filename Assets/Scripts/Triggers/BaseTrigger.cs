@@ -15,7 +15,6 @@ using Zenject;
 [RequireComponent(typeof(Collider))]
 public abstract class BaseTrigger : MonoBehaviour,IAppliesTriggers
 {
-
     protected Collider _coll;
     public event TriggerEventApplication TriggerApplicationRequestEvent;
 

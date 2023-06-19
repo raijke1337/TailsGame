@@ -18,7 +18,7 @@ public class ItemsEquipmentsHandler
 
     private Dictionary <string,IInventoryItem> AllItems;
 
-    public ItemsEquipmentsHandler(List<IInventoryItem> items)
+    public ItemsEquipmentsHandler(ItemBase[] items)
     {
         AllItems = new Dictionary<string, IInventoryItem>();
         foreach (var i in items)
@@ -29,8 +29,26 @@ public class ItemsEquipmentsHandler
 
     public IInventoryItem GetItemByID(string id) => AllItems[id];
 
+    public T GetItemByID<T>(string id) where T : ItemBase
+    {
+        if (AllItems.ContainsKey(id)) // todo test
+        return AllItems[id] as T;
+        else return null;
+    }
+    public ItemContent[] GetContentsByID(IEnumerable <string> ids)
+    {
+        var _ids = ids.ToArray();
+        ItemContent[] result = new ItemContent[_ids.Length];
 
-    [Serializable]
+        for (int i = 0;i < _ids.Length;i++)
+        {
+            result[i] = AllItems[_ids[i]].GetContents;
+        }
+
+        return result;
+    }
+
+
     public class DroppableItem
     {
         public ItemBase Item;

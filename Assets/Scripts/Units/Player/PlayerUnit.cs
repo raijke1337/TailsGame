@@ -13,6 +13,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerUnit : BaseUnit
 {
+
     private InputsPlayer _playerController;
     private VisualsController _visualController;
     private float[] _visualStagesHP;
@@ -23,11 +24,15 @@ public class PlayerUnit : BaseUnit
     #region items
     public override void InitInventory(ItemsEquipmentsHandler handler)
     {
+
         _currentSave = GameManager.GetGameManager().GetSaveData();
-        if (_currentSave.Equipments == null) return; // wtf? todo
-        foreach (var eq in _currentSave.Equipments)
+        if (_currentSave.InventoryIDs.Length==0) return;  // nothing equipped
+
+        foreach (string eq in _currentSave.InventoryIDs)
         {
-            HandleStartingEquipment(eq);
+            var result = handler.GetItemByID<EquipmentBase>(eq);
+            if (result != null)
+            HandleStartingEquipment(result);
         }
     }       
 
@@ -152,8 +157,15 @@ public class PlayerUnit : BaseUnit
     }
 
     #endregion
+        public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
 
 
-    public void SetInfoPanel(TargetUnitPanel panel) => _playerController.TargetPanel = panel;
+    // used by gamemanager through unit manager for scenes where model must stay still and receive no iputs
+    public void LockControls(bool isLock)
+    {
+        _controller.IsControlsBusy = isLock;
+    }
+
+
 
 }

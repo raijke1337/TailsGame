@@ -10,11 +10,16 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class MenuPanel : MonoBehaviour, IHasID
 {
     [SerializeField] protected string _id;
     public string GetID => _id;
+    public override string ToString()
+    {
+        return _id;
+    }
 
     public bool IsOpen { get; protected set; } = false;
     public bool StartClosed = false;
@@ -50,9 +55,41 @@ public class MenuPanel : MonoBehaviour, IHasID
         gameObject.SetActive(!StartClosed);
     }
 
+    protected void SubscribeToTiles(bool isStart)
+    {
+        foreach (var t in _tiles)
+        {
+            if (t == null) break;
+            if (isStart)
+            {
+                t.ClickEvent += OnTileClicked;
+                t.HoverEvent += OnTileHovered;
+                t.UnhoverEvent += OnTileUnhovered;
+            }
+            else
+            {
+                t.ClickEvent -= OnTileClicked;
+                t.HoverEvent -= OnTileHovered;
+                t.UnhoverEvent -= OnTileUnhovered;
+            }
+        }
+    }
 
-    #region unity
-    public void OtherMenuButtonClicked(string menu) => SwitchToWindow?.Invoke(menu,this);
+    private void OnDisable()
+    {
+        SubscribeToTiles(false);
+    }
+
+    #region interactions
+    public void OtherMenuButtonClicked(string menu) => SwitchToWindow?.Invoke(menu, this);
+    protected virtual void OnTileClicked(ItemTileComponent tile, PointerEventData data) 
+    {Debug.Log($"{tile} was clicked in {GetID}, item: {tile.Content}, place {data.pressPosition}");}
+    protected virtual void OnTileHovered(ItemTileComponent tile, PointerEventData data)
+    { Debug.Log($"{tile} is hovered in {GetID}, item: {tile.Content}"); }
+
+    protected virtual void OnTileUnhovered(ItemTileComponent tile, PointerEventData data)
+    { Debug.Log($"{tile} is no longer hovered in {GetID}, item: {tile.Content}"); }
+
 
     #endregion
 

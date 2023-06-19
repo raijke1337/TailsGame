@@ -9,9 +9,13 @@ using Newtonsoft.Json;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private int[] sceneIndexes; // if scene != gameplay player.disablecontrols  TODO
+    [SerializeField] private bool NoPlayerControls = true;
+
     private SaveData _saveData;
     private static ItemsEquipmentsHandler _itemshandler;
     private static GameManager instance;
+    private static UnitsManager _units;
 
     [SerializeField] private InventorySO _defaultInventory;
 
@@ -21,7 +25,7 @@ public class GameManager : MonoBehaviour
     {
         if (_itemshandler == null )
         {
-            _itemshandler = new ItemsEquipmentsHandler(new List<IInventoryItem>(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath)));
+            _itemshandler = new ItemsEquipmentsHandler(Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath));
         }
         return _itemshandler;
     }
@@ -29,12 +33,18 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        _units = GetComponent<UnitsManager>();
+        if (_units == null) Debug.LogError($"{this.gameObject} is missing the {typeof(UnitsManager)} component");
         LoadDataFromJSON();
     }
 
     private void OnDisable()
     {
         SaveDataToJSON();
+    }
+    private void Start()
+    {
+        _units.GetPlayerUnit.LockControls(NoPlayerControls);
     }
 
     public SaveData GetSaveData()
@@ -68,7 +78,6 @@ public class GameManager : MonoBehaviour
             }
         }
         _saveData = (SaveData)JsonUtility.FromJson(json,typeof(SaveData));
-        AssetDatabase.Refresh();
     }
 
     private void SaveDataToJSON()
@@ -85,14 +94,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            var all = Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath);
-            var backp = from item in all
-                        where _defaultInventory.itemIDs.Contains(item.GetID)
-                        select item;
-            var b  = backp.ToList();
+            //var all = Extensions.GetAssetsOfType<ItemBase>(Constants.Combat.c_ItemPrefabsPath);
+            //var backp = from item in all
+            //            where _defaultInventory.itemIDs.Contains(item.GetID)
+            //            select item;
+            //var b  = backp.ToList();
 
 
-            data = JsonUtility.ToJson(new SaveData(b)); // case : no save
+            data = JsonUtility.ToJson(new SaveData(_defaultInventory.itemIDs)); // case : no save
             Debug.Log($"Saving new file; {data}");
         }
 
@@ -111,18 +120,36 @@ public class GameManager : MonoBehaviour
 public class SaveData
 {
     public int LastLevelIndex;
-    public List<ItemBase> BackPack;
-    public List<IEquippable> Equipments;
+    //public List<ItemBase> BackPack;
+    //public List<IEquippable> Equipments; // cant be properly serialized afaik
+    public string[] BackPackIDs;
+    public string[] InventoryIDs;
+
+
     public SaveData(int lastLevelIndex, List<ItemBase> backPack, List<IEquippable> equipments)
     {
         LastLevelIndex = lastLevelIndex;
-        BackPack = backPack;
-        Equipments = equipments;
+
+        var eqip = equipments.ToArray();
+        string[] eqID = new string[eqip.Count()];
+        for (int i = 0; i < eqip.Length; i++)
+        {
+            eqID[i] = eqip[i].GetContents.ID; // dont like this
+        }
+        var bckp = backPack.ToArray();
+        string[] bkID = new string[bckp.Count()];
+        for (int i = 0; i < bckp.Length; i++)
+        {
+            bkID[i] = bckp[i].GetContents.ID;
+        }
+        BackPackIDs = bkID;
+        InventoryIDs = eqID;
     }
-    public SaveData(List<ItemBase> backPack)
+
+
+    public SaveData(IEnumerable<string> backPack)
     {
-        BackPack = backPack;
-        Equipments = new List<IEquippable>();
+        BackPackIDs = backPack.ToArray();
     }
 }
 

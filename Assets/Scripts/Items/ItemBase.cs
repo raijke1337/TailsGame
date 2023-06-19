@@ -21,5 +21,6 @@ public abstract class ItemBase : MonoBehaviour, IInventoryItem
     public string GetID => _itemContent.ID;
     public ItemContent GetContents => _itemContent;
 
+
 }
 

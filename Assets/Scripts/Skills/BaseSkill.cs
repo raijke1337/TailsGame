@@ -11,12 +11,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 [RequireComponent(typeof(Collider))]
-public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires
+public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires, IHasID
 {
     public string SkillID;
     public BaseUnit Owner { get; set; }
+
+    public string GetID => SkillID;
+
     [HideInInspector]public SkillData SkillData;
     public SkillAreaComp EffectPrefab;
+    public override string ToString()
+    {
+        return SkillID;
+    }
 
     public event TriggerEventApplication TriggerApplicationRequestEvent;
 

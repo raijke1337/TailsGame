@@ -3,7 +3,10 @@ using UnityEngine;
 using Zenject;
 public abstract class BaseWeapon : EquipmentBase, IWeapon
 {
-
+    public override string ToString()
+    {
+        return _itemContent.ID;
+    }
     public bool IsSetup { get; private set; } = false;
     protected StatValueContainer WeaponUses;
 
