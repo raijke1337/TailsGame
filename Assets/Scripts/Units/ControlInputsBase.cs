@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BaseUnit))]
 public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
 {
     protected BaseUnit Unit;

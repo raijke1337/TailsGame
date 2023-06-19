@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-public class IsoCameraController : MonoBehaviour
+public class IsoCameraController : LoadedManagerBase
 {
 
     private Transform _target;
@@ -9,17 +9,25 @@ public class IsoCameraController : MonoBehaviour
     private Vector3 _offset;
     private Vector3 _desiredPos;
 
-    private void Start()
+    public Vector3 Offset { get => _offset; set { _offset = value; } }  
+    // todo - can use this for scenes etc
+
+    public override void Initiate()
     {
-        _offset = transform.position;
-        if (_target == null) _target = FindObjectsOfType<Transform>().First(t => t.name == Constants.Objects.c_isoCameraTargetObjectName);
+        _offset = transform.position; // todo? maybe create a separate setting for this
+
+        if (_target == null) _target = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.transform;
     }
 
-    private void LateUpdate()
+    public override void RunUpdate(float delta)
     {
         _desiredPos = _target.transform.forward + _target.transform.position;
         transform.position = Vector3.Slerp(transform.position, _desiredPos + _offset, Time.deltaTime);
     }
 
+    public override void Stop()
+    {
+
+    }
 }
 

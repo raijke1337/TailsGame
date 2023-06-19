@@ -12,10 +12,12 @@ public class GameManager : MonoBehaviour
     //public GameMode GameMode { get; private set; }
     [SerializeField] private LoadedManagers GameControllersPrefab;
     [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
+    [SerializeField] private IsoCameraController gameCameraPrefab;
     private LoadedManagers _gameControllers;
 
     public LoadedManagers GetGameControllers => _gameControllers;
     public GameInterfaceManager GetGameInterfacePrefab => gameInterfaceManagerPrefab;
+    public IsoCameraController GetGameCameraPrefab => gameCameraPrefab;
 
 
 
