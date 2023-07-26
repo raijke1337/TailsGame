@@ -63,6 +63,7 @@ public class PlayerUnit : BaseUnit
         if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         if (_visualController == null) _visualController = GetComponent<VisualsController>();
         _visualController.Empties = _controller.GetEmpties;
+
     }
 
 
@@ -153,13 +154,16 @@ public class PlayerUnit : BaseUnit
 
     private void ChangeVisualStage(float value, float prevvalue)
     {
-        int newIndex = _currentVisualStageIndex + 1;
-        if (newIndex >= _visualStagesHP.Count()) return;
-        if (value <= _visualStagesHP[newIndex])
-        {
-            _currentVisualStageIndex++;
-            _visualController.AdvanceMaterialStage();
-        }
+
+        Debug.Log($"Visual stage {prevvalue} -> {value}");
+
+        //int newIndex = _currentVisualStageIndex + 1;
+        //if (newIndex >= _visualStagesHP.Count()) return;
+        //if (value <= _visualStagesHP[newIndex])
+        //{
+        //    _currentVisualStageIndex++;
+        //    _visualController.AdvanceMaterialStage();
+        //}
     }
 
     #endregion

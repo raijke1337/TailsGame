@@ -113,7 +113,7 @@ public class TriggersProjectilesManager : LoadedManagerBase
                     break;
             }
         }
-        else if (!(source is PlayerUnit) && !(source is NPCUnit)) // traps , could keep null maybe? dont like it
+        if (!(source is PlayerUnit) && !(source is NPCUnit)) // traps , could keep null maybe? dont like it
         {
             switch (config.TargetType)
             {
@@ -139,10 +139,6 @@ public class TriggersProjectilesManager : LoadedManagerBase
                     Debug.LogError($"Trigger {ID} from {source.GetID} to {target.GetID} did not apply!");
                     break;
             }
-        }
-        else
-        {
-            Debug.LogError($"Trigger {ID} from {source.GetID} to {target.GetID} did not apply!");
         }
         if (finaltgt == null)
         {

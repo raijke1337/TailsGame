@@ -29,13 +29,13 @@ public class VisualsController : MonoBehaviour
 
     private void UpdateMaterial()
     {
-        _mesh.material = _materials[_matIndex];
+        //_mesh.material = _materials[_matIndex];
     }
 
     #endregion
     private void Start()
     {
-        _mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
+        //_mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
         UpdateMaterial();
         // GameManager.Instance.OnGameModeChanged += RemoveEffects;
     }

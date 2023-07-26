@@ -9,7 +9,7 @@ public class LoadedManagers : MonoBehaviour
     public StatsUpdatesHandler StatsUpdatesHandler;
     public UnitsManager UnitsManager;
     public GameInterfaceManager GameInterfaceManager;
-
+    public IsoCameraController CameraController;
 
     private LoadedManagerBase[] _managers;
 
@@ -30,7 +30,7 @@ public class LoadedManagers : MonoBehaviour
             StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
             UnitsManager = GetComponent<UnitsManager>();
             GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
-
+            CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
 
             _managers = new LoadedManagerBase[6];
 
