@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         {
             _levels[level.ID] = new LevelData(level);
         }
-        _currentLevel = _levels["main"]; // TODO? Hardcode
+        _currentLevel = _levels["main"]; // TODO: Hardcode
     }
 
     private void Update()

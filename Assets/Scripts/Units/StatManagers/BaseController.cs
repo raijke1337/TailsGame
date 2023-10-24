@@ -11,9 +11,9 @@ public abstract class BaseController : IStatsComponentForHandler, IProducesSound
     public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
 
 
-    protected void StateChangeCallback(bool val, IStatsComponentForHandler comp)
+    protected void StateChangeCallback(bool ready, IStatsComponentForHandler comp)
     {
-        ComponentChangedStateToEvent?.Invoke(val, comp);
+        ComponentChangedStateToEvent?.Invoke(ready, comp);
         //Debug.Log($"{this} called state change with value {val}");
     }
     public virtual bool IsReady
