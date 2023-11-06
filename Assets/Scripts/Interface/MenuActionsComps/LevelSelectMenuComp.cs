@@ -27,6 +27,7 @@ namespace Arcatech.UI
             {
                 foreach (var b in _buttons)
                 {
+                    if (b != null)
                     Destroy(b.gameObject);
                 }
             }

@@ -17,6 +17,10 @@ namespace Arcatech.Units.Inputs
             _inputs.InputDirectionOverride = Vector3.forward;        // just walk forward for now
             _unit.InitiateUnit();
             _coroutine = StartCoroutine(UpdatingCoroutine());
+            foreach (var id in DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs)
+            {
+                _unit.DrawItem(id);
+            }
         }
 
         protected IEnumerator UpdatingCoroutine()

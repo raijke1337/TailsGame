@@ -53,6 +53,7 @@ namespace Arcatech.UI
 
         public override void StopController()
         {
+            if (_bars != null || _bars.Count == 0) ;
             foreach (var cont in _bars.Keys)
             {
                 cont.ValueChangedEvent -= (cur, prev) => _bars[cont].NewValue(cur);

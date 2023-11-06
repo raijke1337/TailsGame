@@ -69,6 +69,8 @@ public class DataManager : MonoBehaviour
     private void FindAllConfigs()
     {
         _dictSO = new List<ScriptableObjectID>();
+        //Resources.FindObjectsOfTypeAll<ScriptableObjectID>());
+
 
         string path = Constants.Configs.c_AllConfigsPath;
         string appPath = Application.dataPath;
@@ -114,30 +116,26 @@ public class DataManager : MonoBehaviour
     /// <returns>list of assets in specified folder</returns>
     public T GetConfigByID<T>(string ID = "default") where T : ScriptableObjectID
     {
-        if (ID == "")
+       // Debug.Log($"T is {typeof(T)}");
+        List<T> list = new List<T>();
+        foreach (var item in _dictSO)
         {
-            Debug.Log($"ID was empty");
-            return null;
+            if (item is T)
+            {
+                list.Add(item as T);
+            }
+
         }
-        if (ID == "default")
-        {
-            //Debug.Log($"Loading default config of type {typeof(T)}");
-        }
+        //Debug.Log($"Found total {list.Count} items of type {typeof(T)}");
         try
         {
-            List<T> list = new List<T>();
-            foreach (var config in _dictSO)
-            {
-                if (config is T t)
-                {
-                    list.Add(t);
-                }
-            }
-            return list.First(t => t.ID == ID);
+            var result = list.First(t => t.ID == ID);
+            //Debug.Log($"Found config {result}");
+            return result;
         }
-        catch (InvalidOperationException e)
+        catch
         {
-            Debug.Log($"No config of type {typeof(T)} found by ID {ID} ; {e.Message}");
+            Debug.LogWarning($"Couldnt find {typeof (T)} with ID {ID}");
             return null;
         }
     }

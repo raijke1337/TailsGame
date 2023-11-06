@@ -34,8 +34,8 @@ namespace Arcatech.Units
                 case LevelType.Game:
                     foreach (var eq in DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs)
                     {
-                        var item = ItemsManager.Instance.GetNewItemByID<InventoryItem>(eq);
-                        if (item is EquipmentItem i) HandleStartingEquipment(i);
+                        var cfg = DataManager.Instance.GetConfigByID<Equip>(eq);
+                        CreateStartingEquipments(new EquipmentItem(cfg));
                     }
                     break;
             }
@@ -67,7 +67,6 @@ namespace Arcatech.Units
             if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
             if (_visualController == null) _visualController = GetComponent<VisualsController>();
             _visualController.Empties = _controller.GetEmpties;
-
         }
 
 
@@ -172,7 +171,19 @@ namespace Arcatech.Units
 
         #endregion
 
+        #region visuals
 
+        public void DrawItem(string ID)
+        {
+            _visualController.CreateVisualItem(ID);
+        }
+        public void HideAllItems()
+        {
+            _visualController.ClearVisualItems();
+        }
+        public void HideItem(string ID) => _visualController.RemoveVisualItem(ID);
+
+        #endregion
 
     }
 }

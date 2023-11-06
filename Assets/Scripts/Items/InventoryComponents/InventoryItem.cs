@@ -18,5 +18,7 @@ namespace Arcatech.Items
             ID = config.ID; ItemIcon = config.ItemIcon; ItemType = config.ItemType;
             DisplayName = config.DisplayName; Description = TextsManager.Instance.GetContainerByID(ID);
         }
+        
+
     }
 }

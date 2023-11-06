@@ -87,7 +87,7 @@ namespace Arcatech.Units
         #endregion
 
         #region unit
-        protected virtual void HandleStartingEquipment(EquipmentItem item) // equipment can't be changed mid-level so it's no problem here that this is run once
+        protected virtual void CreateStartingEquipments(EquipmentItem item) // equipment can't be changed mid-level so it's no problem here that this is run once
         {
             UpdateComponents();
 

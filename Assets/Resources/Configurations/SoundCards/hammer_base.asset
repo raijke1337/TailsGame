@@ -9,16 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26539a42cd194d142b66788a215e6300, type: 3}
-  m_Name: hammer
+  m_Script: {fileID: 11500000, guid: 782e8f06046059749976534edd54c21b, type: 3}
+  m_Name: hammer_base
   m_EditorClassIdentifier: 
-  ID: hammer
-  Charges:
-    _start: 0
-    _max: 0
-    _min: 0
-  TriggerIDs:
-  - hammer_hit
-  - combo15
-  ComboValue: 15
-  InternalCooldown: 0.1
+  ID: hammer_base
+  SoundsDict:
+    _serializedList:
+    - Key: 2
+      Value: {fileID: 8300000, guid: d3b11b80263d8a145ad7641f5e978ff4, type: 3}

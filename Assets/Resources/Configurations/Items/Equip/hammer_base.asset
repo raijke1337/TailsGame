@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26c590f6a2866414f978b2752421e60f, type: 3}
-  m_Name: hammerI
+  m_Script: {fileID: 11500000, guid: 1b607bbfc1a5dd647ab4ac0c73784711, type: 3}
+  m_Name: hammer_base
   m_EditorClassIdentifier: 
-  ID: hammer
-  ItemIcon: {fileID: 21300000, guid: 3a34746bdeb74874183899dda21424bf, type: 3}
+  ID: hammer_base
+  ItemIcon: {fileID: 0}
   DisplayName: Disassembler
+  DescriptionContainerID: hammer_base
   ItemType: 1
   SkillString: hammer_spin
+  Item: {fileID: 5188941293757656330, guid: 51161367717f82f488065e8932e4c042, type: 3}

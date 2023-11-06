@@ -12,15 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c78145a7351df442bd256b2019f9ebe, type: 3}
   m_Name: crossbow
   m_EditorClassIdentifier: 
-  ID: crossbow
-  WType: 2
+  ID: crossbow_base
   Charges:
     _start: 6
     _max: 0
     _min: 0
   TriggerIDs:
   - bolt_hit
-  SkillID: crossbow_explosive
-  ComboValue: 0
   InternalCooldown: 0.2
   ProjectileID: crossbow_bolt

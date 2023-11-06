@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26c590f6a2866414f978b2752421e60f, type: 3}
-  m_Name: basicBoosterI
+  m_Script: {fileID: 11500000, guid: 1b607bbfc1a5dd647ab4ac0c73784711, type: 3}
+  m_Name: basicBooster
   m_EditorClassIdentifier: 
   ID: booster_base
   ItemIcon: {fileID: 21300000, guid: b5be2c7793b350f40bce79134dcf0ef7, type: 3}
-  DisplayName: Basic Booster
+  DisplayName: Basic Jet Booster
+  DescriptionContainerID: booster_base
   ItemType: 4
-  SkillString: 
+  SkillString: boost_1
+  Item: {fileID: 4493219220942967490, guid: f1aa1a5e7e757844d9f774dc883ddbdc, type: 3}

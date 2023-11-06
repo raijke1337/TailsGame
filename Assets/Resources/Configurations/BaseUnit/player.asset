@@ -15,37 +15,19 @@ MonoBehaviour:
   ID: player
   displayName: Tal'Jiss
   Stats:
-    reorderableList:
-      canAdd: 1
-      canRemove: 1
-      draggable: 1
-      expandable: 1
-      multipleSelection: 1
-      isExpanded: 1
-      label:
-        m_Text: Keys
-        m_Image: {fileID: 0}
-        m_Tooltip: 
-      headerHeight: 18
-      footerHeight: 13
-      slideEasing: 0.15
-      verticalSpacing: 2
-      showDefaultBackground: 1
-      elementDisplayType: 0
-      elementNameProperty: 
-      elementNameOverride: 
-      elementIcon: {fileID: 0}
-    reqReferences: {fileID: 0}
-    isExpanded: 1
-    _keyValues: 010002
-    _keys: 010002
-    _values:
-    - _start: 3
-      _max: 10
-      _min: 0
-    - _start: 100
-      _max: 0
-      _min: 0
-    - _start: 5
-      _max: 0
-      _min: 0
+    _serializedList:
+    - Key: 0
+      Value:
+        _start: 100
+        _max: 0
+        _min: 0
+    - Key: 1
+      Value:
+        _start: 5
+        _max: 0
+        _min: 0
+    - Key: 2
+      Value:
+        _start: 3
+        _max: 0
+        _min: 0

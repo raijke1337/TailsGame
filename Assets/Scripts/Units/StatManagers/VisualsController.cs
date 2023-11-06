@@ -64,33 +64,17 @@ namespace Arcatech.Units
 
         public ItemEmpties Empties { get => _empties; set => _empties = value; }
         private ItemEmpties _empties;
-        private List<InventoryItem> _list = new List<InventoryItem>();
+        private List<EquipmentItem> _list = new List<EquipmentItem>();
 
         public void CreateVisualItem(string itemID)
         {
-            var item = ItemsManager.Instance.GetNewItemByID<InventoryItem>(itemID);
-            _list.Add(item);
+            var item = DataManager.Instance.GetConfigByID<Equip>(itemID);
+            _list.Add(new EquipmentItem(item));
+
             switch (item.ItemType)
             {
-                case EquipItemType.None:
-                    Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}");
-                    break;
-                case EquipItemType.MeleeWeap:
-                    break;
-                case EquipItemType.RangedWeap:
-                    break;
-                case EquipItemType.Shield:
-                    break;
-                case EquipItemType.Booster:
-                    break;
-                case EquipItemType.Costume:
-                    break;
-                case EquipItemType.Modifier:
-                    break;
-                case EquipItemType.Other:
-                    break;
-                    default:
-                    Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}");
+                default:
+                    Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}: NYI");
                     break;
             }
         }
@@ -101,6 +85,24 @@ namespace Arcatech.Units
         public void ClearVisualItems()
         {
             Debug.Log($"Clearing all visuals in {name} : NYI");
+        }
+
+        public void RemoveVisualItem(string itemID)
+        {
+            EquipmentItem item = _list.FirstOrDefault(t => t.ID == itemID);
+            if (item != null)
+            {
+                switch (item.ItemType)
+                {
+                    default:
+                        Debug.Log($"Unequipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}: NYI");
+                        break;
+
+                }
+
+
+                _list.Remove(item);
+            }
         }
         #endregion
     }
