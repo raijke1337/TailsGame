@@ -1,41 +1,43 @@
 using UnityEngine;
-
-public class ProjectileSkill : BaseSkill, IProjectile
+namespace Arcatech.Triggers
 {
-    public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
-    private ProjectileData ProjData;
-
-    private float _exp;
-    private int _penetr;
-    public string GetID { get => SkillID; }
-
-
-    public void OnUse()
+    public class ProjectileSkill : BaseSkill, IProjectile
     {
-        transform.position += transform.forward;
-        _exp = ProjData.TimeToLive;
-        _penetr = ProjData.Penetration;
-    }
+        public void SetProjectileData(ProjectileDataConfig data) => ProjData = new ProjectileData(data);
+        private ProjectileData ProjData;
 
-    public void OnUpdate(float delta)
-    {
-        if (transform == null) return; // case: gameobject was destroyed by manager
-        transform.position += ProjData.Speed * delta * transform.forward;
-        _exp -= delta;
-        if (_exp <= 0f) CallExpiry();
-    }
+        private float _exp;
+        private int _penetr;
+        public string GetID { get => SkillID; }
 
-    protected override void OnTriggerEnter(Collider other)
-    {
-        if (other == Owner.GetCollider) return;
-        base.OnTriggerEnter(other);
-        if (_penetr > 0)
+
+        public void OnUse()
         {
-            _penetr--;
+            transform.position += transform.forward;
+            _exp = ProjData.TimeToLive;
+            _penetr = ProjData.Penetration;
         }
-        if (_penetr == 0) CallExpiry();
-    }
 
+        public void OnUpdate(float delta)
+        {
+            if (transform == null) return; // case: gameobject was destroyed by manager
+            transform.position += ProjData.Speed * delta * transform.forward;
+            _exp -= delta;
+            if (_exp <= 0f) CallExpiry();
+        }
+
+        protected override void OnTriggerEnter(Collider other)
+        {
+            if (other == Owner.GetCollider) return;
+            base.OnTriggerEnter(other);
+            if (_penetr > 0)
+            {
+                _penetr--;
+            }
+            if (_penetr == 0) CallExpiry();
+        }
+
+
+    }
 
 }
-

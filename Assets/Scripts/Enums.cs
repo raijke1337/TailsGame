@@ -25,6 +25,8 @@ public enum EquipItemType
     RangedWeap,
     Shield,
     Booster,
+    Costume,
+    Modifier,
     Other = 255
 }
 public enum DodgeStatType

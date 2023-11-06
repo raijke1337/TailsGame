@@ -1,9 +1,12 @@
-using RotaryHeart.Lib.SerializableDictionary;
-using System.Collections;
-using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
-[CreateAssetMenu(fileName = "New sounds card", menuName = "Configurations/Sounds Card")]
-public class AudioCardSO : ScriptableObjectID
+
+
+namespace Arcatech.Audio
 {
-    public SerializableDictionaryBase<SoundType, AudioClip> SoundsDict;
+    [CreateAssetMenu(fileName = "New sounds card", menuName = "Configurations/Sounds Card")]
+    public class AudioCardSO : ScriptableObjectID
+    {
+        public SerializedDictionary<SoundType, AudioClip> SoundsDict;
+    }
 }

@@ -1,87 +1,89 @@
 
 using UnityEngine;
-
-public class LoadedManagers : MonoBehaviour
+namespace Arcatech.Managers
 {
-    public SkillsPlacerManager SkillsPlacerManager;
-    public TriggersProjectilesManager TriggersProjectilesManager;
-    public EventTriggersManager EventTriggersManager;
-    public StatsUpdatesHandler StatsUpdatesHandler;
-    public UnitsManager UnitsManager;
-    public GameInterfaceManager GameInterfaceManager;
-    public IsoCameraController CameraController;
-
-    private LoadedManagerBase[] _managers;
-
-    private LevelData _lvl;
-
-    public void Initiate(LevelData lv)
+    public class LoadedManagers : MonoBehaviour
     {
-        _lvl = lv;
+        public SkillsPlacerManager SkillsPlacerManager;
+        public TriggersProjectilesManager TriggersProjectilesManager;
+        public EventTriggersManager EventTriggersManager;
+        public StatsUpdatesHandler StatsUpdatesHandler;
+        public UnitsManager UnitsManager;
+        public GameInterfaceManager GameInterfaceManager;
+        public IsoCameraController CameraController;
 
-        //Debug.Log($"Starting level manangers with leveldata: " + lv.LevelID);
+        private LoadedManagerBase[] _managers;
 
-        // if leveltype is scene only limited initiation for display
-        if (_lvl.Type == LevelType.Game)
+        private LevelData _lvl;
+
+        public void Initiate(LevelData lv)
         {
-            SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
-            TriggersProjectilesManager = GetComponent<TriggersProjectilesManager>();
-            EventTriggersManager = GetComponent<EventTriggersManager>();
-            StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
-            UnitsManager = GetComponent<UnitsManager>();
-            GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
-            CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
+            _lvl = lv;
 
-            _managers = new LoadedManagerBase[6];
+            //Debug.Log($"Starting level manangers with leveldata: " + lv.LevelID);
 
-            _managers[0] = TriggersProjectilesManager;
-            _managers[1] = EventTriggersManager;
-            _managers[2] = StatsUpdatesHandler;
-            _managers[3] = UnitsManager;
-            _managers[4] = SkillsPlacerManager;
-            _managers[5] = GameInterfaceManager;
-        }
-        if (_lvl.Type == LevelType.Scene)
-        {
-            EventTriggersManager = GetComponent<EventTriggersManager>();
-            GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
-            _managers = new LoadedManagerBase[2] { EventTriggersManager,GameInterfaceManager};
-        }
-        foreach (var m in _managers)
-        {
-
-            if (m != null)
+            // if leveltype is scene only limited initiation for display
+            if (_lvl.Type == LevelType.Game)
             {
-                m.Initiate();
+                SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
+                TriggersProjectilesManager = GetComponent<TriggersProjectilesManager>();
+                EventTriggersManager = GetComponent<EventTriggersManager>();
+                StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
+                UnitsManager = GetComponent<UnitsManager>();
+                GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+                CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
+
+                _managers = new LoadedManagerBase[6];
+
+                _managers[0] = TriggersProjectilesManager;
+                _managers[1] = EventTriggersManager;
+                _managers[2] = StatsUpdatesHandler;
+                _managers[3] = UnitsManager;
+                _managers[4] = SkillsPlacerManager;
+                _managers[5] = GameInterfaceManager;
             }
-            else
+            if (_lvl.Type == LevelType.Scene)
             {
-                Debug.Log($"Null manager {m.GetType()}");
+                EventTriggersManager = GetComponent<EventTriggersManager>();
+                GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+                _managers = new LoadedManagerBase[2] { EventTriggersManager, GameInterfaceManager };
             }
-        }
-
-    }
-
-    public void UpdateManagers(float delta)
-    {
-        if (_lvl.Type == LevelType.Game)
-        {
             foreach (var m in _managers)
             {
+
                 if (m != null)
-                    m.RunUpdate(delta);
+                {
+                    m.Initiate();
+                }
+                else
+                {
+                    Debug.Log($"Null manager {m.GetType()}");
+                }
+            }
+
+        }
+
+        public void UpdateManagers(float delta)
+        {
+            if (_lvl.Type == LevelType.Game)
+            {
+                foreach (var m in _managers)
+                {
+                    if (m != null)
+                        m.RunUpdate(delta);
+                }
+            }
+
+        }
+        public void Stop()
+        {
+            if (_lvl.Type == LevelType.Game || _lvl.Type == LevelType.Scene)
+            {
+                foreach (var m in _managers)
+                { if (m != null) m.Stop(); }
             }
         }
 
-    }
-    public void Stop()
-    {
-        if (_lvl.Type == LevelType.Game || _lvl.Type == LevelType.Scene)
-        {
-            foreach (var m in _managers)
-            { if (m != null) m.Stop(); }
-        }
-    }
 
-
+    }
 }

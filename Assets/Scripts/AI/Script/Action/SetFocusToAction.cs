@@ -1,3 +1,4 @@
+using Arcatech.Units.Inputs;
 using UnityEngine;
 [CreateAssetMenu(menuName = "AIConfig/Action/SetFocus")]
 public class SetFocusToAction : Action

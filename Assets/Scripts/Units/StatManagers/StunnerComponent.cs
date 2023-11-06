@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Units
+namespace Arcatech.Units
 {
     [Serializable]
     public class StunsController : BaseController, IStatsComponentForHandler, ITakesTriggers

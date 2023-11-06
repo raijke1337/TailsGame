@@ -2,33 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-public class SceneInputsPlayer : MonoBehaviour
+namespace Arcatech.Units.Inputs
 {
-    InputsPlayer _inputs;
-    PlayerUnit _unit;
-    private Coroutine _coroutine;
-
-    public void StartSceneAnimation()
+    public class SceneInputsPlayer : MonoBehaviour
     {
-        _inputs = GetComponent<InputsPlayer>();
-        _unit = GetComponent<PlayerUnit>();
-        _inputs.InputDirectionOverride = Vector3.forward;        // just walk forward for now
-        _unit.InitiateUnit();
-        _coroutine = StartCoroutine(UpdatingCoroutine());
-    }
+        InputsPlayer _inputs;
+        PlayerUnit _unit;
+        private Coroutine _coroutine;
 
-    protected IEnumerator UpdatingCoroutine()
-    {
-        while (true)
+        public void StartSceneAnimation()
         {
-            _unit.RunUpdate(Time.deltaTime);
-            yield return null;
+            _inputs = GetComponent<InputsPlayer>();
+            _unit = GetComponent<PlayerUnit>();
+            _inputs.InputDirectionOverride = Vector3.forward;        // just walk forward for now
+            _unit.InitiateUnit();
+            _coroutine = StartCoroutine(UpdatingCoroutine());
         }
 
-    }
-    private void OnDisable()
-    {
-        if (_coroutine != null)  StopCoroutine(_coroutine);
+        protected IEnumerator UpdatingCoroutine()
+        {
+            while (true)
+            {
+                _unit.RunUpdate(Time.deltaTime);
+                yield return null;
+            }
+
+        }
+        private void OnDisable()
+        {
+            if (_coroutine != null) StopCoroutine(_coroutine);
+        }
     }
 }

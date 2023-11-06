@@ -1,5 +1,5 @@
+using Arcatech.Units;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void SimpleEventsHandler();
@@ -16,7 +16,7 @@ public delegate void SkillEvents<T> (T arg);
 public delegate void StateMachineEvent();
 public delegate void StateMachineEvent<T>(T arg);
 
-public delegate void EquipmentChangeEvent<ItemContent>(bool isEquip);
+//public delegate void EquipmentChangeEvent<ItemContent>(bool isEquip);
 
 
 
@@ -121,21 +121,6 @@ public interface IAppliesTriggers : IHasGameObject
 {
     event TriggerEventApplication TriggerApplicationRequestEvent;
 }
-public interface IInventoryItem : IHasID
-{
-    public ItemContent GetContents { get; }
-}
-public interface IEquippable : IInventoryItem, IHasGameObject, IHasOwner
-{
-    public EquipmentBase GetEquipmentBase { get; }
-}
-public interface IWeapon : IEquippable
-{
-    bool UseWeapon(out string reason);
-    float GetRemainingUses { get; }
-    void UpdateInDelta(float deltaTime);
-    void SetUpWeapon(BaseWeaponConfig cfg);
-}
 
 #region sound
 
@@ -159,19 +144,8 @@ public interface ISkill : IHasID, IAppliesTriggers, IHasOwner, IExpires, IHasGam
 public interface IProjectile : ISkill
 {
     void SetProjectileData(ProjectileDataConfig cfg);
-}
-public interface IUsesItems : INeedsEmpties
-{
-    void LoadItem(IEquippable item);
-}
-public interface IGivesSkills : IUsesItems
-{ IEnumerable<string> GetSkillStrings(); }
-
-public interface INeedsEmpties
+}public interface INeedsEmpties
 { ItemEmpties Empties { get; } }
-
-
-
 
 #endregion
 

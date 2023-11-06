@@ -1,16 +1,18 @@
-using RotaryHeart.Lib.SerializableDictionary;
+
+using Arcatech.Items;
+using AYellowpaper.SerializedCollections;
 using System;
 using UnityEngine;
 
 public class EquipsPanel : MenuPanelTiled
 {
-    [SerializeField] protected SerializableDictionaryBase<EquipItemType, ItemTileComponent> EquipsTiles;
-    public override void AddTileContent(ItemContent content)
+    [SerializeField] protected SerializedDictionary<EquipItemType, ItemTileComponent> EquipsTiles;
+    public override void AddTileContent(InventoryItem content)
     {
         if (content == null) return;
         try
         {
-            EquipsTiles[content.ItemType].Content = content;
+            EquipsTiles[content.ItemType].Item = content;
         }
         catch (Exception e)
         {
@@ -18,7 +20,7 @@ public class EquipsPanel : MenuPanelTiled
         }
     }
 
-    public override void RemoveTileContent(ItemContent content)
+    public override void RemoveTileContent(InventoryItem content)
     {
         if (content == null) return;
         try

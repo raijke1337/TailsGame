@@ -1,3 +1,5 @@
+using Arcatech.Units.Inputs;
+
 public class ServiceGolemInputs : InputsNPC
 {
 

@@ -1,25 +1,28 @@
+using Arcatech.Units;
 using UnityEngine;
-
-[RequireComponent(typeof(Collider))]
-public abstract class BaseTrigger : MonoBehaviour, IAppliesTriggers
+namespace Arcatech.Triggers
 {
-
-    protected Collider _coll;
-    public event TriggerEventApplication TriggerApplicationRequestEvent;
-
-    protected void TriggerCallback(string ID, BaseUnit unit, BaseUnit source) => TriggerApplicationRequestEvent?.Invoke(ID, unit, source);
-    // triggers must be registered with triggers manager in child classes
-
-    protected virtual void Start()
+    [RequireComponent(typeof(Collider))]
+    public abstract class BaseTrigger : MonoBehaviour, IAppliesTriggers
     {
-        _coll = GetComponent<Collider>();
-        _coll.isTrigger = true;
+
+        protected Collider _coll;
+        public event TriggerEventApplication TriggerApplicationRequestEvent;
+
+        protected void TriggerCallback(string ID, BaseUnit unit, BaseUnit source) => TriggerApplicationRequestEvent?.Invoke(ID, unit, source);
+        // triggers must be registered with triggers manager in child classes
+
+        protected virtual void Start()
+        {
+            _coll = GetComponent<Collider>();
+            _coll.isTrigger = true;
+        }
+
+        protected abstract void OnTriggerEnter(Collider other);
+
+        public GameObject GetObject() => gameObject;
+
+
     }
 
-    protected abstract void OnTriggerEnter(Collider other);
-
-    public GameObject GetObject() => gameObject;
-
-
 }
-

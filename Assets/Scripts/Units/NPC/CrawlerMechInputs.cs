@@ -1,3 +1,5 @@
+using Arcatech.Units.Inputs;
+
 public class CrawlerMechInputs : InputsNPC
 {
     // find ally and run to them, then fight

@@ -1,163 +1,176 @@
+using Arcatech.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[Serializable]
-public class WeaponController : BaseController, IGivesSkills, IHasOwner
+namespace Arcatech.Units
 {
-
-    #region inventoryManager
-
-    public Dictionary<EquipItemType, BaseWeapon> CurrentWeapons = new Dictionary<EquipItemType, BaseWeapon>();
-    public ItemEmpties Empties { get; }
-    public WeaponController(ItemEmpties ie) => Empties = ie;
-
-    public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
-    public BaseUnit Owner { get; set; }
-
-    public EquipItemType CurrentWeaponType { get; private set; } = EquipItemType.None;
-    public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
-
-
-    public void LoadItem(IEquippable item)
+    [Serializable]
+    public class WeaponController : BaseControllerConditional
     {
-        if (!(item is IWeapon)) return;
-        else
+
+        public WeaponController(ItemEmpties ie) => Empties = ie;
+
+
+        private Dictionary<EquipItemType, EquipmentItem> _availableWeap = new Dictionary<EquipItemType, EquipmentItem>();
+        private Dictionary<EquipmentItem, BaseWeaponConfig> _cachedConfigs = new Dictionary<EquipmentItem, BaseWeaponConfig>();
+
+        public ItemEmpties Empties { get; }
+
+
+        public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+
+        public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
+        public EquipmentItem[] GetAvailableWeapons => _availableWeap.Values.ToArray();
+
+
+        #region item object operations
+        public override void LoadItem(EquipmentItem item, out string s)
         {
-            BaseWeapon w;
-            try
+            base.LoadItem(item, out s ); // sets owner
+            if (!(item.ItemType == EquipItemType.MeleeWeap || item.ItemType == EquipItemType.RangedWeap)) return;
+            else
             {
-                var weap = GameObject.Instantiate(item.GetEquipmentBase, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
-                w = weap as BaseWeapon;
-                w.Owner = Owner;
-                CurrentWeapons[item.GetContents.ItemType] = w;
+                _availableWeap[item.ItemType] = item;
+                var i = _availableWeap[item.ItemType];
+
+                var config = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(i.ID);
+                if (config == null)
+                {
+                    IsReady = false;
+                    throw new Exception($"Failed to config weapon {item.ID} on {Owner}");
+                }
+                else
+                {
+                    _cachedConfigs[i] = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(item.ID);
+                    var w = i.GetInstantiatedPrefab as BaseWeapon;
+                    w.Owner = Owner;    
+                    w.SetUpWeapon(_cachedConfigs[i]);
+
+
+                    switch (item.ItemType)
+                    {
+                        case EquipItemType.MeleeWeap:
+                            w.transform.parent = Empties.MeleeWeaponEmpty;
+                            w.transform.SetPositionAndRotation(Empties.MeleeWeaponEmpty.position, Empties.MeleeWeaponEmpty.rotation);
+                            Sheathe(item.ItemType);
+                            break;
+                        case EquipItemType.RangedWeap:
+                            w.transform.parent = Empties.RangedWeaponEmpty;
+                            w.transform.SetPositionAndRotation(Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation);
+                            Sheathe(item.ItemType);
+                            break;
+                        default:
+                            break;
+                    }
+                    //i.IsInstantiated = false; 
+                    // keep visible for sheathing
+                } 
             }
-            catch (NullReferenceException e)
+        }
+
+        protected bool Equip(EquipItemType type)
+        {
+            if (!_availableWeap.ContainsKey(type) || (_availableWeap[type] == null)) return false;
+            else
             {
-                Debug.LogWarning($"{Owner} has a {e.Message} in {this} caused by {item}");
-                return;
+                var weap = _availableWeap[type];
+                weap.IsInstantiated = true; // just in case
+                var w = weap.GetInstantiatedPrefab;
+                
+                switch (type)
+                {
+                    case EquipItemType.MeleeWeap:
+                        w.transform.parent = Empties.MeleeWeaponEmpty;
+                        w.transform.SetPositionAndRotation(Empties.MeleeWeaponEmpty.position, Empties.MeleeWeaponEmpty.rotation);
+                        break;
+                    case EquipItemType.RangedWeap:
+                        w.transform.parent = Empties.RangedWeaponEmpty;
+                        w.transform.SetPositionAndRotation(Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation);
+                        break;
+                    default:
+                        return false;             
+                }
+
+                return true;
             }
+        }
 
-            BaseWeaponConfig config = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(w.GetID);
+        protected virtual void SwitchWeapon(EquipItemType type)
+        {
+            SwitchAnimationLayersEvent?.Invoke(type);
 
-            if (config == null)
+            foreach (var w in _availableWeap.Keys)
             {
-                IsReady = false;
-                throw new Exception($"Failed to config weapon {w.GetContents.ID} on {Owner}");
+                if (w == type)
+                {
+                    Equip(type);
+                }
+                else
+                {
+                    Sheathe(type);
+                }
             }
-
-            w.SetUpWeapon(config);
-            IsReady = true;
-            // here we replace the actual prefab that is stored in the ItemContent with our cloned one
+            
         }
-    }
 
-    #endregion
 
-    protected virtual void SwitchWeapon(EquipItemType type)
-    {
-        GameObject weaponOfType = CurrentWeapons[type].GetObject();
-        SwitchAnimationLayersEvent?.Invoke(type);
-        foreach (var other in CurrentWeapons.Keys.Where(t => t != type))
+        protected void Sheathe(EquipItemType type)
         {
-            Sheathe(other);
+            var item = _availableWeap[type].GetInstantiatedPrefab;
+            item.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
+            item.transform.parent = Empties.SheathedWeaponEmpty;
         }
-        switch (type)
+
+
+        #endregion
+
+        #region ctrl functins
+
+        public virtual bool OnWeaponUseSuccessCheck(EquipItemType type, out string result)
         {
-            case EquipItemType.None:
-                break;
-            case EquipItemType.MeleeWeap:
-                Equip(type);
-                break;
-            case EquipItemType.RangedWeap:
-                Equip(type);
-                break;
+            if (!_availableWeap.ContainsKey(type))
+            {
+                result = ($"{Owner.GetFullName} used {type} but has no weapon of this type available;");
+                return false;
+            }
+            else
+            {
+                return (_availableWeap[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
+            }
         }
-        CurrentWeaponType = type;
-    }
-
-    protected void Sheathe(EquipItemType type)
-    {
-        var item = CurrentWeapons[type].GetObject();
-        item.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
-        item.transform.parent = Empties.SheathedWeaponEmpty;
-    }
-    protected bool Equip(EquipItemType type)
-    {
-        if (!CurrentWeapons.ContainsKey(type)) return false;
-
-        var item = CurrentWeapons[type].GetObject();
-        if (item == null) return false;
-        if (type == EquipItemType.MeleeWeap)
+        public void ToggleTriggersOnMelee(bool isEnable)
         {
-            item.transform.SetPositionAndRotation(Empties.MeleeWeaponEmpty.position, Empties.MeleeWeaponEmpty.rotation);
-            item.transform.parent = Empties.MeleeWeaponEmpty;
+            // todo might get nullref here
+                (_availableWeap[EquipItemType.MeleeWeap].GetInstantiatedPrefab as MeleeWeapon).ToggleColliders(isEnable);
         }
-        if (type == EquipItemType.RangedWeap)
+
+        #endregion
+
+        #region managed 
+        public override void SetupStatsComponent()
         {
-            item.transform.SetPositionAndRotation(Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation);
-            item.transform.parent = Empties.RangedWeaponEmpty;
+            base.SetupStatsComponent();
         }
-        return true;
-    }
 
 
-    public float GetUsesByType(EquipItemType type)
-    {
-        if (!CurrentWeapons.ContainsKey(type)) return 0;
-        else return CurrentWeapons[type].GetRemainingUses;
-    }
-
-    public virtual bool UseWeaponCheck(EquipItemType type, out string result)
-    {
-        if (!CurrentWeapons.ContainsKey(type))
+        public override void UpdateInDelta(float deltaTime)
         {
-            result = ($"{Owner.GetFullName} used {type} but has no weapon of this type available;");
-            return false;
+            foreach (var w in _availableWeap.Values)
+            {
+                w.UpdateInDelta(deltaTime);
+            }
         }
 
-        if (CurrentWeaponType != type) { SwitchWeapon(type); }
-        bool isOk = CurrentWeapons[type].UseWeapon(out var s);
-
-        if (isOk)
+        public override void StopStatsComponent()
         {
-            result = ($"{Owner.GetFullName} used {CurrentWeapons[type]}");
-            SoundPlayCallback(CurrentWeapons[CurrentWeaponType].Sounds.SoundsDict[SoundType.OnUse]);
+            base.StopStatsComponent();
         }
-        else result = ($"{Owner.GetFullName} used {CurrentWeapons[type]} but failed: {s}");
-        return isOk;
 
-    }
-    public void ToggleTriggersOnMelee(bool isEnable)
-    {
-        if (CurrentWeapons.ContainsKey(EquipItemType.MeleeWeap))
-            (CurrentWeapons[EquipItemType.MeleeWeap] as MeleeWeapon).ToggleColliders(isEnable);
-    }
+        #endregion
 
-
-    public override void SetupStatsComponent()
-    {
 
     }
 
-
-    public override void UpdateInDelta(float deltaTime)
-    {
-        foreach (var w in CurrentWeapons.Values)
-        {
-            w.UpdateInDelta(deltaTime);
-        }
-    }
-
-    public IEnumerable<string> GetSkillStrings()
-    {
-        var list = new List<string>();
-        foreach (IWeapon w in CurrentWeapons.Values)
-        {
-            list.Add(w.GetContents.SkillString);
-        }
-        return list;
-    }
 }
-

@@ -1,3 +1,4 @@
+using Arcatech.Items;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -8,14 +9,14 @@ public class MenuPanelTiled : MenuPanel
     [SerializeField, Tooltip("offset between internal elements")] private Vector2 _offsets;
     [SerializeField, Tooltip("internal element size")] private Vector2 _tileSize;
 
-    public event SimpleEventsHandler<ItemContent, bool> ShowtooltipToggle;
-    public event SimpleEventsHandler<ItemContent> TileClickToggle;
-    protected void TooltipCallback(ItemContent cont, bool isShow)
+    public event SimpleEventsHandler<InventoryItem, bool> ShowtooltipToggle;
+    public event SimpleEventsHandler<InventoryItem> TileClickToggle;
+    protected void TooltipCallback(InventoryItem cont, bool isShow)
     {
         //Debug.Log($"Tooltip callback for {this}, item ID {cont.ID}, showing: {isShow}");
         if (cont == null) return; ShowtooltipToggle?.Invoke(cont, isShow);
     }
-    protected void TileClickCallback(ItemContent cont)
+    protected void TileClickCallback(InventoryItem cont)
     {
         //Debug.Log($"Tile click callback for {this}, item ID {cont.ID}");
         if (cont == null) return; TileClickToggle?.Invoke(cont);
@@ -68,25 +69,25 @@ public class MenuPanelTiled : MenuPanel
     }
 
 
-    public virtual void AddTileContent(ItemContent content)
+    public virtual void AddTileContent(InventoryItem content)
     {
         if (content == null) return;
         try
         {
-            var tile = _tiles.First(t => t.Content == null);
-            tile.Content = content;
+            var tile = _tiles.First(t => t.Item == null);
+            tile.Item = content;
         }
         catch (Exception e)
         {
             Debug.LogWarning($"No free space for item in {this} {e}");
         }
     }
-    public virtual void RemoveTileContent(ItemContent content)
+    public virtual void RemoveTileContent(InventoryItem content)
     {
         if (content == null) return;
         try
         {
-            var tile = _tiles.First(t => t.Content == content);
+            var tile = _tiles.First(t => t.Item == content);
             tile.Clear();
         }
         catch (Exception e)

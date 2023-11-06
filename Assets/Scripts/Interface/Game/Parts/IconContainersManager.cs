@@ -1,19 +1,20 @@
+using Arcatech.Items;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace ArcaTech.UI
+namespace Arcatech.UI
 {
     public class IconContainersManager : ManagedControllerBase
     {
         private List<IconContainerUIScript> _icons;
         [SerializeField] private IconContainerUIScript _iconPrefab;
 
-        public void TrackItemIcon(ItemBase item) // TODO: Proper tracking once items are refactored
+        public void TrackItemIcon(EquipmentItem item) // TODO: Proper tracking once items are refactored
         {
             var icon = Instantiate(_iconPrefab, transform);
 
-            icon.Image.sprite = item.GetContents.ItemIcon;
+            icon.Image.sprite = item.ItemIcon;
             icon.Text.text = "NYI";
             _icons.Add(icon);
         }

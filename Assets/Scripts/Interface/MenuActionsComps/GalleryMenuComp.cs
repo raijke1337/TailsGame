@@ -1,9 +1,13 @@
-public class GalleryMenuComp : MenuPanelTiled
+using Arcatech.Managers;
+namespace Arcatech.UI
 {
-    public void OnBack()
+    public class GalleryMenuComp : MenuPanelTiled
     {
-        GameManager.Instance.OnReturnToMain();
+        public void OnBack()
+        {
+            GameManager.Instance.OnReturnToMain();
+        }
+
     }
 
 }
-

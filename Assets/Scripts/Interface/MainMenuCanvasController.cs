@@ -1,40 +1,43 @@
+using Arcatech.Managers;
 using UnityEditor;
 using UnityEngine;
-
-public class MainMenuCanvasController : MonoBehaviour
+namespace Arcatech.UI
 {
-
-    [SerializeField] MenuPanel Main;
-    [SerializeField] MenuPanel Continue;
-    [SerializeField] MenuPanel Options;
-
-    private void Start()
+    public class MainMenuCanvasController : MonoBehaviour
     {
-        Main.OnToggle(true);
-    }
-    public void OnSettings()
-    {
-        Main.OnToggle(false);
-        Continue.OnToggle(false);
-        Options.OnToggle(true);
-    }
 
-    public void OnContinue()
-    {
-        Main.OnToggle(false);
-        Continue.OnToggle(true);
-        Options.OnToggle(false);
-    }
-    public void OnMain()
-    {
-        Main.OnToggle(true);
-        Continue.OnToggle(false);
-        Options.OnToggle(false);
-    }
+        [SerializeField] MenuPanel Main;
+        [SerializeField] MenuPanel Continue;
+        [SerializeField] MenuPanel Options;
 
-    public void OnQuit()
-    {
-        GameManager.Instance.QuitGame();
-    }
+        private void Start()
+        {
+            Main.OnToggle(true);
+        }
+        public void OnSettings()
+        {
+            Main.OnToggle(false);
+            Continue.OnToggle(false);
+            Options.OnToggle(true);
+        }
 
+        public void OnContinue()
+        {
+            Main.OnToggle(false);
+            Continue.OnToggle(true);
+            Options.OnToggle(false);
+        }
+        public void OnMain()
+        {
+            Main.OnToggle(true);
+            Continue.OnToggle(false);
+            Options.OnToggle(false);
+        }
+
+        public void OnQuit()
+        {
+            GameManager.Instance.QuitGame();
+        }
+
+    }
 }

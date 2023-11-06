@@ -1,3 +1,4 @@
+using Arcatech.Units.Inputs;
 using System;
 [Serializable]
 public sealed class Transition

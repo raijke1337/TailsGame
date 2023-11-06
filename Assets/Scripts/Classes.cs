@@ -1,6 +1,5 @@
-using RotaryHeart.Lib.SerializableDictionary;
+using AYellowpaper.SerializedCollections;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
@@ -10,7 +9,7 @@ using UnityEngine;
 [Serializable]
 public class AudioComponentBase
 {
-    [SerializeField] public SerializableDictionaryBase<SoundType, AudioClip> SoundsDict;
+    [SerializeField] public SerializedDictionary<SoundType, AudioClip> SoundsDict;
 }
 
 
@@ -105,11 +104,6 @@ public class Timer
     {
         _expired = false;
         GetRemaining = GetInitial;
-    }
-    public void ResetTimer(float t)
-    {
-        _expired = false;
-        GetRemaining = t;
     }
 }
 [Serializable]

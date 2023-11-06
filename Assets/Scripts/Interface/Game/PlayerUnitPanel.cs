@@ -1,10 +1,10 @@
-using System;
+using Arcatech.Managers;
+using Arcatech.Units;
+using Arcatech.Units.Inputs;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace ArcaTech.UI
+namespace Arcatech.UI
 {
     public class PlayerUnitPanel : ManagedControllerBase
     {
@@ -64,14 +64,14 @@ namespace ArcaTech.UI
             if (_shield.IsReady)
             {                
                 SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-                _icons.TrackItemIcon(_shield.EquippedShieldItem.GetEquipmentBase);
+                _icons.TrackItemIcon(_shield.CurrentlyEquippedItem);
                 _bars.ProcessContainer(SHc, true);
             }
             if (_dodge.IsReady)
             {
-                _icons.TrackItemIcon(_dodge.EquippedDodgeItem.GetEquipmentBase); // TODO: Placeholder , no cooldown
+                _icons.TrackItemIcon(_dodge.CurrentlyEquippedItem); // TODO: Placeholder , no cooldown
             }
-            foreach (var weapon in _weapons.CurrentWeapons.Values)
+            foreach (var weapon in _weapons.GetAvailableWeapons)
             {
                 _icons.TrackItemIcon(weapon);
             }

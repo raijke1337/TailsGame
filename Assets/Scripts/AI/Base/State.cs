@@ -1,8 +1,8 @@
-using System;
+using Arcatech.Units.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "AIConfig/State"), Serializable]
+[CreateAssetMenu(menuName = "AIConfig/State"), System.Serializable]
 public class State : ScriptableObject
 {
     // what can be done in the state

@@ -1,9 +1,11 @@
 using UnityEngine;
-
-public abstract class Action : ScriptableObject
+namespace Arcatech.Units.Inputs
 {
-    // actions are done based on decisions
-    public abstract void Act(StateMachine controller);
+    public abstract class Action : ScriptableObject
+    {
+        // actions are done based on decisions
+        public abstract void Act(StateMachine controller);
+
+    }
 
 }
-

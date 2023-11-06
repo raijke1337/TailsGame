@@ -1,12 +1,14 @@
 using UnityEngine;
-
-public class SelfSkill : BaseSkill
+namespace Arcatech.Triggers
 {
-    protected override void OnTriggerEnter(Collider other)
+    public class SelfSkill : BaseSkill
     {
-        if (Owner == null) return; // test
+        protected override void OnTriggerEnter(Collider other)
+        {
+            if (Owner == null) return; // test
 
-        if (other.CompareTag(Owner.tag)) base.OnTriggerEnter(other);
+            if (other.CompareTag(Owner.tag)) base.OnTriggerEnter(other);
+        }
     }
-}
 
+}

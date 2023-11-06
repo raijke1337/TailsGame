@@ -1,3 +1,4 @@
+using Arcatech.Items;
 using TMPro;
 using UnityEngine;
 
@@ -9,31 +10,25 @@ public class TooltipComp : MonoBehaviour
 
     public RectTransform GetRect { get => _rect; }
 
-    public void SetTexts(ItemContent content)
+    public void SetTexts(InventoryItem item)
     {
         if (_name == null | _desc == null)
         {
             Debug.LogWarning("Set fields for " + this);
             return;
         }
-        if (content == null) return;
-        _name.text = content.DisplayName;
+        if (item == null) return;
+        _name.text = item.DisplayName;
         TextContainer descC;
         try
         {
-            descC = (TextsManager.Instance as TextsManager).GetContainerByID(content.ID);
+            descC = TextsManager.Instance.GetContainerByID(item.ID);
         }
         catch
         {
-            Debug.LogWarning($"No text description for {content.ID}");
+            Debug.LogWarning($"No text description for {item.ID}");
         }
-        var result = string.Join(
-            content.ItemType.ToString(), "\n",
-            content.SkillString, "\n"
-            );
-
-        _desc.text = result;
-
+        _desc.text = item.Description.ToString();
     }
     private void Awake()
     {

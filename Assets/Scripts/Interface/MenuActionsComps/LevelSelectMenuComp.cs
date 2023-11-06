@@ -1,71 +1,75 @@
+using Arcatech.Managers;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelSelectMenuComp : MenuPanel
+namespace Arcatech.UI
 {
-    [SerializeField] RectTransform _content;
-
-    [SerializeField] private LevelButtonComp _buttonPrefab;
-
-    private LevelButtonComp[] _buttons;
-
-    private void OnEnable()
+    public class LevelSelectMenuComp : MenuPanel
     {
-        if (_buttonPrefab == null) Debug.LogError("Set button prefab in " + this);
-    }
+        [SerializeField] RectTransform _content;
 
-    protected override void OnStateChange(bool isShow)
-    {
-        if (isShow)
+        [SerializeField] private LevelButtonComp _buttonPrefab;
+
+        private LevelButtonComp[] _buttons;
+
+        private void OnEnable()
         {
-            CreateButtons();
+            if (_buttonPrefab == null) Debug.LogError("Set button prefab in " + this);
         }
-        if (_buttons != null && !isShow)
+
+        protected override void OnStateChange(bool isShow)
         {
-            foreach (var b in _buttons)
+            if (isShow)
             {
-                Destroy(b.gameObject);
+                CreateButtons();
+            }
+            if (_buttons != null && !isShow)
+            {
+                foreach (var b in _buttons)
+                {
+                    Destroy(b.gameObject);
+                }
             }
         }
-    }
-    public void CreateButtons()
-    {
-        var save = DataManager.Instance.GetSaveData;
-        List<LevelData> _lvls = new List<LevelData>();
-        foreach (var l in save.OpenedLevels)
+        public void CreateButtons()
         {
-            var lv = GameManager.Instance.GetLevelData(l);
-            if (lv != null && lv.Type == LevelType.Game)
+            var save = DataManager.Instance.GetSaveData;
+            List<LevelData> _lvls = new List<LevelData>();
+            foreach (var l in save.OpenedLevels)
             {
-                _lvls.Add(lv);
+                var lv = GameManager.Instance.GetLevelData(l);
+                if (lv != null && lv.Type == LevelType.Game)
+                {
+                    _lvls.Add(lv);
+                }
+            }
+            float vertOffs = _buttonPrefab.GetSize.y;
+
+            _buttons = new LevelButtonComp[_lvls.Count];
+            for (int i = 0; i < _lvls.Count; i++)
+            {
+                var b = Instantiate(_buttonPrefab);
+                var rect = b.GetComponent<RectTransform>();
+                rect.SetParent(_content, false);
+                rect.position += new Vector3(0, -vertOffs * i, 0);
+
+                b.LevelData = _lvls[i];
+                b.OnButtonClick += OnLevelSelected;
+
+                _buttons[i] = b;
             }
         }
-        float vertOffs = _buttonPrefab.GetSize.y;
 
-        _buttons = new LevelButtonComp[_lvls.Count];
-        for (int i = 0; i < _lvls.Count; i++)
+        private void OnLevelSelected(LevelButtonComp data)
         {
-            var b = Instantiate(_buttonPrefab);
-            var rect = b.GetComponent<RectTransform>();
-            rect.SetParent(_content, false);
-            rect.position += new Vector3(0, -vertOffs * i, 0);
-
-            b.LevelData = _lvls[i];
-            b.OnButtonClick += OnLevelSelected;
-
-            _buttons[i] = b;
+            GameManager.Instance.RequestLevelLoad(data.LevelData.LevelID);
         }
-    }
+        public void OnBack()
+        {
+            GameManager.Instance.OnReturnToMain();
+        }
 
-    private void OnLevelSelected(LevelButtonComp data)
-    {
-        GameManager.Instance.RequestLevelLoad(data.LevelData.LevelID);
-    }
-    public void OnBack()
-    {
-        GameManager.Instance.OnReturnToMain();
-    }
 
+    }
 
 }
-

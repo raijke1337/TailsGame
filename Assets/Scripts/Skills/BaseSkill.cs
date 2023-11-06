@@ -1,79 +1,84 @@
+using Arcatech.Units;
 using UnityEngine;
-[RequireComponent(typeof(Collider))]
-public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires //IHasSounds
+
+namespace Arcatech.Triggers
 {
-    public string SkillID;
-    public BaseUnit Owner { get; set; }
-    private AudioManager _audio;
-
-
-    [HideInInspector] public SkillData SkillData;
-    public SkillAreaComp EffectPrefab;
-
-    public event TriggerEventApplication TriggerApplicationRequestEvent;
-
-    public event SimpleEventsHandler<IExpires> HasExpiredEvent;
-
-
-    private Collider _coll;
-    // creates new objects when conditions are met
-    // ie explosive bolt explodes into shrapnel
-
-    private SkillAreaComp _placedEffect;
-
-
-    protected virtual void OnTriggerEnter(Collider other)
+    [RequireComponent(typeof(Collider))]
+    public abstract class BaseSkill : MonoBehaviour, IAppliesTriggers, IHasOwner, IExpires //IHasSounds
     {
-        _placedEffect = PlaceAndSubEffect(transform.position);
-        _coll.enabled = false;
-        _placedEffect.SkillAreaDoneEvent += CallExpiry; // todo?
-    }
+        public string SkillID;
+        public BaseUnit Owner { get; set; }
+        private AudioManager _audio;
 
 
-    private void Awake()
-    {
-        if (EffectPrefab == null ) Debug.LogError($"Set prefab for {this}");
-        _coll = GetComponent<Collider>();
-        _coll.isTrigger = true;
-        _audio = AudioManager.Instance;
-        
-    }
+        [HideInInspector] public SkillData SkillData;
+        public SkillAreaComp EffectPrefab;
 
-    // use this to apply all trigger effects set in SKillData
-    protected virtual void CallTriggerHit(BaseUnit target)
-    {
-        if (SkillData.TriggerIDs == null) return;
-        foreach (var id in SkillData.TriggerIDs)
+        public event TriggerEventApplication TriggerApplicationRequestEvent;
+
+        public event SimpleEventsHandler<IExpires> HasExpiredEvent;
+
+
+        private Collider _coll;
+        // creates new objects when conditions are met
+        // ie explosive bolt explodes into shrapnel
+
+        private SkillAreaComp _placedEffect;
+
+
+        protected virtual void OnTriggerEnter(Collider other)
         {
-            TriggerApplicationRequestEvent?.Invoke(id, target, Owner);
+            _placedEffect = PlaceAndSubEffect(transform.position);
+            _coll.enabled = false;
+            _placedEffect.SkillAreaDoneEvent += CallExpiry; // todo?
         }
-    }
-    protected virtual void CallExpiry() { HasExpiredEvent?.Invoke(this); }
 
 
-    protected SkillAreaComp PlaceAndSubEffect(Vector3 tr)
-    {
-        try
+        private void Awake()
         {
-            _audio.PlaySound(SkillData.AudioData.SoundsDict[SoundType.OnExpiry], transform.position);
+            if (EffectPrefab == null) Debug.LogError($"Set prefab for {this}");
+            _coll = GetComponent<Collider>();
+            _coll.isTrigger = true;
+            _audio = AudioManager.Instance;
+
         }
-        catch
+
+        // use this to apply all trigger effects set in SKillData
+        protected virtual void CallTriggerHit(BaseUnit target)
         {
-            Debug.Log($"No sound of type OnExpiry for skill {SkillID}");
+            if (SkillData.TriggerIDs == null) return;
+            foreach (var id in SkillData.TriggerIDs)
+            {
+                TriggerApplicationRequestEvent?.Invoke(id, target, Owner);
+            }
         }
-        var item = Instantiate(EffectPrefab);
-        item.Data = SkillData;
-        item.transform.parent = null;
-        item.transform.position = tr;
-        item.TargetHitEvent += (t) => CallTriggerHit(t);
-        return item;
+        protected virtual void CallExpiry() { HasExpiredEvent?.Invoke(this); }
+
+
+        protected SkillAreaComp PlaceAndSubEffect(Vector3 tr)
+        {
+            try
+            {
+                _audio.PlaySound(SkillData.AudioData.SoundsDict[SoundType.OnExpiry], transform.position);
+            }
+            catch
+            {
+                Debug.Log($"No sound of type OnExpiry for skill {SkillID}");
+            }
+            var item = Instantiate(EffectPrefab);
+            item.Data = SkillData;
+            item.transform.parent = null;
+            item.transform.position = tr;
+            item.TargetHitEvent += (t) => CallTriggerHit(t);
+            return item;
+        }
+
+        public GameObject GetObject() => gameObject;
+
     }
 
-    public GameObject GetObject() => gameObject;
+
+
+
 
 }
-
-
-
-
-

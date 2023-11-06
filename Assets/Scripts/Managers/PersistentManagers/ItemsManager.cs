@@ -1,52 +1,54 @@
+using Arcatech.Items;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class ItemsManager : MonoBehaviour
+namespace Arcatech.Managers
 {
-    #region SingletonLogic
 
-    public static ItemsManager Instance;
-    private void Awake()
+    public class ItemsManager : MonoBehaviour
     {
-        if (Instance == null)
+        #region SingletonLogic
+
+        public static ItemsManager Instance;
+        private void Awake()
         {
-            Instance = this;
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else Destroy(gameObject);
         }
-        else Destroy(gameObject);
-    }
-    #endregion
+        #endregion
 
-    private Dictionary<string, IInventoryItem> AllItems;
+        private DataManager _configs;
+        private Dictionary<string, Item> _cachedItems;
 
-
-    private void Start()
-    {
-        AllItems = new Dictionary<string, IInventoryItem>();
-        var items = new List<IInventoryItem>(DataManager.Instance.GetAssetsOfType<ItemBase>(Constants.PrefabsPaths.c_ItemPrefabsPath));
-        foreach (var i in items)
+        private void Start()
         {
-            AllItems[i.GetID] = i;
+            _configs = DataManager.Instance;
+            if (_cachedItems == null)
+            {
+                _cachedItems = new Dictionary<string, Item>();
+            }
+        }
+
+
+        public T GetNewItemByID<T>(string id) where T : InventoryItem
+        {
+            if (_cachedItems == null)
+            {
+                _cachedItems = new Dictionary<string, Item>();
+            }
+
+            if (!_cachedItems.ContainsKey(id))
+            {
+                var cfg = _configs.GetConfigByID<Item>(id);
+                _cachedItems[id] = cfg;
+            }
+
+            var item = new InventoryItem(_cachedItems[id]);
+            return item as T;
+
         }
     }
-
-    public T GetItemByID<T>(string id) where T : IInventoryItem
-    {
-        return (T)AllItems[id];
-    }
-    public ItemContent GetItemContentByID(string ID)
-    {
-        return AllItems[ID].GetContents;
-    }
-
-
-    [Serializable]
-    public class DroppableItem
-    {
-        public ItemBase Item;
-        [Range(0, 100)] public float Chance;
-    }
-
-
-
 }

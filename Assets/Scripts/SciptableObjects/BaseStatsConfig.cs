@@ -1,10 +1,14 @@
-using RotaryHeart.Lib.SerializableDictionary;
+
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats", order = 1)]
-public class BaseStatsConfig : ScriptableObjectID
+namespace Arcatech.Units.Stats
 {
-    public string displayName;
-    public SerializableDictionaryBase<BaseStatType, StatValueContainer> Stats;
-}
+    [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats", order = 1)]
+    public class BaseStatsConfig : ScriptableObjectID
+    {
+        public string displayName;
+        public SerializedDictionary<BaseStatType, StatValueContainer> Stats;
+    }
 
+}

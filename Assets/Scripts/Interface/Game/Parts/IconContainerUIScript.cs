@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ArcaTech.UI
+namespace Arcatech.UI
 {
     public class IconContainerUIScript : MonoBehaviour
     {

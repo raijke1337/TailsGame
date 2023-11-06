@@ -1,14 +1,19 @@
-public class MainMenuComp : MenuPanel
+using Arcatech.Managers;
+
+namespace Arcatech.UI
 {
-    public void OnGallery()
+    public class MainMenuComp : MenuPanel
     {
-        GameManager.Instance.RequestLevelLoad("gallery");
+        public void OnGallery()
+        {
+            GameManager.Instance.RequestLevelLoad("gallery");
+        }
+
+        public void OnStartNewGame()
+        {
+            GameManager.Instance.OnStartNewGame();
+        }
+
+
     }
-
-    public void OnStartNewGame()
-    {
-        GameManager.Instance.OnStartNewGame();
-    }
-
-
 }

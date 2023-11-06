@@ -1,103 +1,108 @@
+using Arcatech.Items;
+using Arcatech.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class VisualsController : MonoBehaviour
+namespace Arcatech.Units
 {
-    [SerializeField] private List<Material> _materials;
-    public int StagesTotal => _materials.Count;
-    private SkinnedMeshRenderer _mesh;
-    private int _matIndex = 0;
-    public ItemEmpties Empties { get => _empties; set => _empties = value; }
-    private ItemEmpties _empties;
-    private List<EquipmentBase> _items;
-    #region materials
-    public bool SetMaterialStage(int ind)
+    public class VisualsController : MonoBehaviour
     {
-        if (ind >= _materials.Count) return false;
-        _matIndex = ind;
-        UpdateMaterial();
-        return true;
-    }
-    public bool AdvanceMaterialStage()
-    {
-        if (_matIndex == _materials.Count - 1) return false;
-        _matIndex++;
-        UpdateMaterial();
-        return true;
-    }
+        #region materials change
 
-    private void UpdateMaterial()
-    {
-        //_mesh.material = _materials[_matIndex];
-    }
+        [SerializeField] private List<Material> _materials;
 
-    #endregion
-    private void Start()
-    {
-        //_mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
-        UpdateMaterial();
-        // GameManager.Instance.OnGameModeChanged += RemoveEffects;
-    }
-
-    //private void OnDisable()
-    //{
-    //    GameManager.GetInstance.OnGameModeChanged -= RemoveEffects;
-    //}
-
-    //private void RemoveEffects(GameMode mode)
-    //{
-    //    SetMaterialStage(0);
-    //    if (_items.Count == 0) return;
-    //    foreach (var i in _items.ToList())
-    //    {
-    //        Destroy(i.gameObject);
-    //        _items.Remove(i);
-    //    }
-    //}
-
-    #region equip items
-    public void AddItem(string itemID)
-    {
-        if (_items == null) _items = new List<EquipmentBase>();
-        var item = ItemsManager.Instance.GetItemByID<EquipmentBase>(itemID);
-
-
-        switch (item.GetContents.ItemType)
+        public int StagesTotal => _materials.Count;
+        private SkinnedMeshRenderer _mesh;
+        private int _matIndex = 0;
+        public bool SetMaterialStage(int ind)
         {
-            case EquipItemType.None:
-                break;
-            case EquipItemType.MeleeWeap:
-                var inst = Instantiate(item, Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation, Empties.SheathedWeaponEmpty);
-                _items.Add(inst);
-                break;
-            case EquipItemType.RangedWeap:
-                inst = Instantiate(item, Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation, Empties.RangedWeaponEmpty);
-                _items.Add(inst);
-                break;
-            case EquipItemType.Shield:
-                break;
-            case EquipItemType.Booster:
-                break;
-            case EquipItemType.Other:
-                break;
+            if (ind >= _materials.Count) return false;
+            _matIndex = ind;
+            UpdateMaterial();
+            return true;
         }
-    }
-    public void AddItem(string[] itemIDs)
-    {
-        foreach (var i in itemIDs) AddItem(i);
-    }
-    public void ClearVisualItems()
-    {
-        if (_items == null) return;
-        foreach (var i in _items.ToList())
+        public bool AdvanceMaterialStage()
         {
-            Destroy(i.gameObject);
-            _items.Remove(i);
+            if (_matIndex == _materials.Count - 1) return false;
+            _matIndex++;
+            UpdateMaterial();
+            return true;
         }
-    }
 
-    #endregion
+        private void UpdateMaterial()
+        {
+            //_mesh.material = _materials[_matIndex];
+        }
+
+        #endregion
+        private void Start()
+        {
+            //_mesh = GetComponentsInChildren<SkinnedMeshRenderer>().First(t => t.name == "Model");
+            UpdateMaterial();
+            // GameManager.Instance.OnGameModeChanged += RemoveEffects;
+        }
+
+        //private void OnDisable()
+        //{
+        //    GameManager.GetInstance.OnGameModeChanged -= RemoveEffects;
+        //}
+
+        //private void RemoveEffects(GameMode mode)
+        //{
+        //    SetMaterialStage(0);
+        //    if (_items.Count == 0) return;
+        //    foreach (var i in _items.ToList())
+        //    {
+        //        Destroy(i.gameObject);
+        //        _items.Remove(i);
+        //    }
+        //}
+
+        #region equip items
+
+
+        public ItemEmpties Empties { get => _empties; set => _empties = value; }
+        private ItemEmpties _empties;
+        private List<InventoryItem> _list = new List<InventoryItem>();
+
+        public void CreateVisualItem(string itemID)
+        {
+            var item = ItemsManager.Instance.GetNewItemByID<InventoryItem>(itemID);
+            _list.Add(item);
+            switch (item.ItemType)
+            {
+                case EquipItemType.None:
+                    Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}");
+                    break;
+                case EquipItemType.MeleeWeap:
+                    break;
+                case EquipItemType.RangedWeap:
+                    break;
+                case EquipItemType.Shield:
+                    break;
+                case EquipItemType.Booster:
+                    break;
+                case EquipItemType.Costume:
+                    break;
+                case EquipItemType.Modifier:
+                    break;
+                case EquipItemType.Other:
+                    break;
+                    default:
+                    Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}");
+                    break;
+            }
+        }
+        public void CreateVisualItem(string[] itemIDs)
+        {
+            foreach (var i in itemIDs) CreateVisualItem(i);
+        }
+        public void ClearVisualItems()
+        {
+            Debug.Log($"Clearing all visuals in {name} : NYI");
+        }
+        #endregion
+    }
 
 }
-

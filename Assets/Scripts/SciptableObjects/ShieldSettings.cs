@@ -1,11 +1,12 @@
-using RotaryHeart.Lib.SerializableDictionary;
+
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Configurations/Shield")]
 public class ShieldSettings : ScriptableObjectID
 {
 
-    public SerializableDictionaryBase<ShieldStatType, StatValueContainer> Stats;
+    public SerializedDictionary<ShieldStatType, StatValueContainer> Stats;
 
 }
 

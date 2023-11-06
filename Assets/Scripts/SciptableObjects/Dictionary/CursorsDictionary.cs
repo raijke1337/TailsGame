@@ -1,4 +1,4 @@
-using RotaryHeart.Lib.SerializableDictionary;
+using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Cursors Dict", menuName = "Dictionary/Cursors", order = 1)]
 public class CursorsDictionary : ScriptableObjectID
 {
-    [SerializeField] SerializableDictionaryBase<CursorType, Texture2D> _dict;
+    [SerializeField] SerializedDictionary<CursorType, Texture2D> _dict;
     public Dictionary<CursorType, Texture2D> GetCursors
     {
         get

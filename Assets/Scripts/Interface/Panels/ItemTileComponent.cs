@@ -1,32 +1,33 @@
+using Arcatech.Items;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
-    public event SimpleEventsHandler<ItemContent> ItemClickedEvent;
-    public event SimpleEventsHandler<ItemContent, bool> ItemTooltipEvent;
+    public event SimpleEventsHandler<InventoryItem> ItemClickedEvent;
+    public event SimpleEventsHandler<InventoryItem, bool> ItemTooltipEvent;
 
     private Image _imageComp;
 
 
     [SerializeField] private Sprite DefaultImg;
-    [SerializeField] private ItemContent _content;
+    [SerializeField] private InventoryItem _item;
 
 
-    public ItemContent Content
+    public InventoryItem Item
     {
         get
-        { return _content; }
+        { return _item; }
         set
         {
-            _content = value;
-            OnItemSet(_content);
+            _item = value;
+            OnItemSet(_item);
         }
     }
     public void Clear()
     {
-        Content = null;
+        Item = null;
         OnItemSet(null);
     }
 
@@ -40,19 +41,19 @@ public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerCl
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ItemClickedEvent?.Invoke(Content);
+        ItemClickedEvent?.Invoke(Item);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ItemTooltipEvent?.Invoke(Content, true);
+        ItemTooltipEvent?.Invoke(Item, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        ItemTooltipEvent?.Invoke(Content, false);
+        ItemTooltipEvent?.Invoke(Item, false);
     }
-    private void OnItemSet(ItemContent content)
+    private void OnItemSet(InventoryItem content)
     {
         if (content == null) _imageComp.sprite = DefaultImg;
         else _imageComp.sprite = content.ItemIcon;

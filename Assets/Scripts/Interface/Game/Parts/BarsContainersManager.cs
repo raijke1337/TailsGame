@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ArcaTech.UI
+namespace Arcatech.UI
 {
     public class BarsContainersManager : ManagedControllerBase
     {

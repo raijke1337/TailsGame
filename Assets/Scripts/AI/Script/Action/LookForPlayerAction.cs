@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Arcatech.Units.Inputs;
+using UnityEngine;
 
 namespace Assets.Scripts.AI.Script
 {

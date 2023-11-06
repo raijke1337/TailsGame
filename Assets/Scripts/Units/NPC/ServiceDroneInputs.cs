@@ -1,23 +1,27 @@
-public class ServiceDroneInputs : InputsNPC
+namespace Arcatech.Units.Inputs
 {
-    protected override void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
+
+    public class ServiceDroneInputs : InputsNPC
     {
-        switch (arg)
+        protected override void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
         {
-            case CombatActionType.Melee:
-                break;
-            case CombatActionType.Ranged:
-                _stateMachine.NMAgent.stoppingDistance = _enemyStats.AttackRange;
-                break;
-            case CombatActionType.Dodge:
-                break;
-            case CombatActionType.MeleeSpecialQ:
-                break;
-            case CombatActionType.RangedSpecialE:
-                _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea / 2;
-                break;
-            case CombatActionType.ShieldSpecialR:
-                break;
+            switch (arg)
+            {
+                case CombatActionType.Melee:
+                    break;
+                case CombatActionType.Ranged:
+                    _stateMachine.NMAgent.stoppingDistance = _enemyStats.AttackRange;
+                    break;
+                case CombatActionType.Dodge:
+                    break;
+                case CombatActionType.MeleeSpecialQ:
+                    break;
+                case CombatActionType.RangedSpecialE:
+                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea / 2;
+                    break;
+                case CombatActionType.ShieldSpecialR:
+                    break;
+            }
         }
     }
 }

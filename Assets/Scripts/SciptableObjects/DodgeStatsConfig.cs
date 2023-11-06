@@ -1,9 +1,9 @@
-using RotaryHeart.Lib.SerializableDictionary;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New DodgeStatsConfig", menuName = "Configurations/DodgeController")]
 public class DodgeStatsConfig : ScriptableObjectID
 {
-    public SerializableDictionaryBase<DodgeStatType, StatValueContainer> Stats;
+    public SerializedDictionary<DodgeStatType, StatValueContainer> Stats;
 }
 

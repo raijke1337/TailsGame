@@ -1,3 +1,4 @@
+using Arcatech.Units;
 using UnityEngine;
 
 public class DoorOpensWhenEnemyDIes : MonoBehaviour

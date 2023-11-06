@@ -1,10 +1,12 @@
+using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 [Serializable]
-public abstract class BaseController : IStatsComponentForHandler, IProducesSounds
+public abstract class BaseController : IStatsComponentForHandler, IProducesSounds, IHasOwner
 {
     protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
+    public BaseUnit Owner { get; set; }
 
     [SerializeField] private bool _isReady = false;
 
@@ -33,7 +35,7 @@ public abstract class BaseController : IStatsComponentForHandler, IProducesSound
     // used by inputs to properly register some components
     public virtual void StopStatsComponent()
     {
-
+        Debug.Log($"{this} was stopped");
     }
 
     public virtual void HandleEffects(float deltaTime)

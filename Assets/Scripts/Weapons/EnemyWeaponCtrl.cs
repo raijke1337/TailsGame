@@ -1,17 +1,20 @@
 using System;
 
-[Serializable]
-public class EnemyWeaponCtrl : WeaponController
+namespace Arcatech.Units
 {
-    public EnemyWeaponCtrl(ItemEmpties ie) : base(ie)
+    [Serializable]
+    public class EnemyWeaponCtrl : WeaponController
     {
-    }
+        public EnemyWeaponCtrl(ItemEmpties ie) : base(ie)
+        {
+        }
 
-    public override void SetupStatsComponent()
-    {
-        base.SetupStatsComponent();
-        if (!Equip(EquipItemType.MeleeWeap)) Equip(EquipItemType.RangedWeap);
+        public override void SetupStatsComponent()
+        {
+            base.SetupStatsComponent();
+            if (!Equip(EquipItemType.MeleeWeap)) Equip(EquipItemType.RangedWeap);
+        }
+
     }
 
 }
-
