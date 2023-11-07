@@ -9,6 +9,7 @@ namespace Arcatech.Items
         public BaseUnit Owner { get; set; }
         public string SkillString { get; }
 
+
         [SerializeField] protected BaseEquippableItemComponent _prefab;
         protected BaseEquippableItemComponent _instantiated;
         public BaseEquippableItemComponent GetInstantiatedPrefab 

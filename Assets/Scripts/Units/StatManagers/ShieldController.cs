@@ -10,30 +10,25 @@ namespace Arcatech.Units
     {
         public Dictionary<ShieldStatType, StatValueContainer> GetShieldStats { get; private set; }
 
-        public EquipmentItem EquippedShieldItem { get; private set; }
         public ItemEmpties Empties { get; }
         public ShieldController(ItemEmpties ie) => Empties = ie;
-        public void LoadItem(EquipmentItem item)
+
+        
+        public override void LoadItem(EquipmentItem item, out string skill)
         {
+            base .LoadItem(item, out skill);
+            skill = null;
             if (item.ItemType == EquipItemType.Shield)
             {
-                EquippedShieldItem = item;
-                IsReady = true;
+                CurrentlyEquippedItem = item;
             }
         }
-        public IEnumerable<string> GetSkillStrings()
-        {
-            if (!IsReady) return null;
-            else return new string[1] { EquippedShieldItem.SkillString };
-        }
-
-
 
         public override void SetupStatsComponent()
         {
             if (!IsReady) return;
 
-            var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(EquippedShieldItem.ID);
+            var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(CurrentlyEquippedItem.ID);
 
             if (cfg == null) return;
 

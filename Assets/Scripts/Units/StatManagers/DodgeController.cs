@@ -38,6 +38,17 @@ namespace Arcatech.Units
             { st.Setup(); }
         }
 
+        public override void LoadItem(EquipmentItem item, out string skill)
+        {
+            skill = null;
+            if (item.ItemType == EquipItemType.Booster)
+            {
+                base.LoadItem(item, out skill);
+                CurrentlyEquippedItem = item;
+            }
+            
+        }
+
 
         public bool IsDodgePossibleCheck()
         {

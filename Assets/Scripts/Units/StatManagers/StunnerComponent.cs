@@ -7,7 +7,7 @@ namespace Arcatech.Units
     public class StunsController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
         public event SimpleEventsHandler StunHappenedEvent;
-        private StatValueContainer CurrentValue;
+        private StatValueContainer _current;
         private float _graceTime;
         private float _regen;
         [SerializeField] private bool isGracePeriod = false;
@@ -23,29 +23,29 @@ namespace Arcatech.Units
             var cfg = DataManager.Instance.GetConfigByID<StunsControllerConfig>(ID);
             if (cfg == null) return;
             IsReady = true;
-            CurrentValue = new StatValueContainer(cfg.StunResistance);
+            _current = new StatValueContainer(cfg.StunResistance);
             _regen = cfg.RegenPerSec;
             _graceTime = cfg.GracePeriod;
         }
         public override void UpdateInDelta(float deltaTime)
         {
             base.UpdateInDelta(deltaTime);
-            if (CurrentValue.GetCurrent <= 0f && !isGracePeriod)
+            if (_current.GetCurrent <= 0f && !isGracePeriod)
             {
                 StunHappenedEvent?.Invoke();
                 isGracePeriod = true;
                 _timer.ResetTimer();
             }
             _timer.TimerTick(deltaTime);
-            CurrentValue.ChangeCurrent(deltaTime * _regen);
+            _current.ChangeCurrent(deltaTime * _regen);
 #if UNITY_EDITOR
-            _currValue = CurrentValue.GetCurrent;
+            _currValue = _current.GetCurrent;
 #endif
         }
 
         public override void SetupStatsComponent()
         {
-            CurrentValue.Setup();
+            _current.Setup();
             _timer = new Timer(_graceTime);
             _timer.TimeUp += OnTimerExpiry;
         }
@@ -55,7 +55,7 @@ namespace Arcatech.Units
         }
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
-            return CurrentValue;
+            return _current;
         }
     }
 }

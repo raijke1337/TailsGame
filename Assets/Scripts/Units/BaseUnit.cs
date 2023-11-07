@@ -91,9 +91,6 @@ namespace Arcatech.Units
         {
             UpdateComponents();
 
-            string skill = item.SkillString;
-            if (skill.Length != 0) _controller.AddSkillString(skill);
-
             string result = string.Empty;
 
             switch (item.ItemType)
@@ -105,7 +102,7 @@ namespace Arcatech.Units
                     _controller.GetWeaponController.LoadItem(item, out result);
                     break;
                 case EquipItemType.Shield:
-                    _controller.GetShieldController.LoadItem(item);
+                    _controller.GetShieldController.LoadItem(item, out result);
                     break;
                 case EquipItemType.Booster:
                     _controller.GetDodgeController.LoadItem(item, out result);
@@ -114,6 +111,8 @@ namespace Arcatech.Units
                     Debug.Log($"No logic to equip {item} {item.ItemType}");
                     break;
             }
+            _controller.AddSkillString(result);
+
             //Debug.Log(result);
         }
 

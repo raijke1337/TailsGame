@@ -114,7 +114,12 @@ namespace Arcatech.Units
         {
             GameManager.Instance.GetGameControllers.StatsUpdatesHandler.RegisterUnitForStatUpdates(cont, isEnable);
         }
-        public void AddSkillString(string name, bool isAdd = true) => _skillCtrl.UpdateSkills(name, isAdd);
+        public void AddSkillString(string name, bool isAdd = true)
+        {
+            if (name == null) return;
+            _skillCtrl.UpdateSkills(name, isAdd);
+        }
+        
 
         public void ToggleBusyControls_AnimationEvent(int state)
         {
