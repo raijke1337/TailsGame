@@ -30,11 +30,11 @@ public class LevelButtonComp : Button
             _data = value;
         }
     }
-    public override void OnPointerClick(PointerEventData eventData)
-    {
-        base.OnPointerClick(eventData);
-        OnButtonClick?.Invoke(this);
-    }
+    //public override void OnPointerClick(PointerEventData eventData)
+    //{
+    //    base.OnPointerClick(eventData);
+    //    OnButtonClick?.Invoke(this);
+    //}
 
 
 
