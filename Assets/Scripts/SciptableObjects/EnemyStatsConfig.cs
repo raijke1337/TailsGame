@@ -10,7 +10,7 @@ public class EnemyStatsConfig : ScriptableObjectID
 
     public float atkRange;
 
-    public UnitType Type;
+    public ReferenceUnitType Type;
 
 }
 

@@ -71,7 +71,7 @@ public enum CursorType
     EnemyTarget,
     Item,
 }
-public enum UnitType : byte
+public enum ReferenceUnitType : byte
 {
     Small = 0,
     Big = 1,
@@ -117,4 +117,12 @@ public enum SoundType
     OnUse,
     OnExpiry,
     OnStunned
+}
+
+public enum DisplayValueType : byte
+{
+    Health=0,
+    Shield = 1,
+    Combo = 2
+
 }

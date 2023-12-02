@@ -8,6 +8,8 @@ namespace Arcatech.Items
     {
         private WeaponTriggerComponent _trigger;
 
+        public override int GetNumericValue => Mathf.RoundToInt(InternalCooldown);
+
         public override void SetUpWeapon(BaseWeaponConfig config)
         {
             base.SetUpWeapon(config);
@@ -17,7 +19,17 @@ namespace Arcatech.Items
             _trigger.ToggleCollider(false);
             _trigger.Owner = Owner;
 
-            GameManager.Instance.GetGameControllers.TriggersProjectilesManager.RegisterTrigger(_trigger);
+            try
+            {
+                GameManager.Instance.GetGameControllers.TriggersProjectilesManager.RegisterTrigger(_trigger);
+            }
+            catch
+            {
+                // this is probably a scene
+                // if the trifggers manager is not started this registering is not necessary
+            }
+
+            
         }
 
         public void ToggleColliders(bool enable)

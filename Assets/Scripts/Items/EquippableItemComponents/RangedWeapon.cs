@@ -19,6 +19,8 @@ namespace Arcatech.Items
         private TriggersProjectilesManager _manager;
         public SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
 
+        public override int GetNumericValue => Mathf.RoundToInt(_reload);
+
         protected virtual void Start()
         {
             if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");
@@ -62,6 +64,8 @@ namespace Arcatech.Items
         {
             base.SetUpWeapon(config);
             _manager = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
+            if (_manager == null) return; // equips level
+
             _manager.RegisterRangedWeapon(this);
         }
         protected virtual void CreateProjectile()

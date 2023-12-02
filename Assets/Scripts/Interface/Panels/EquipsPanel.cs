@@ -3,50 +3,44 @@ using Arcatech.Items;
 using AYellowpaper.SerializedCollections;
 using System;
 using UnityEngine;
-
-public class EquipsPanel : MenuPanelTiled
+namespace Arcatech.UI
 {
-    [SerializeField] protected SerializedDictionary<EquipItemType, ItemTileComponent> EquipsTiles;
-    public override void AddTileContent(InventoryItem content)
+    public class EquipsPanel : InventoryItemsHolder
     {
-        if (content == null) return;
-        try
+        [SerializeField] protected SerializedDictionary<EquipItemType, ItemTileComponent> EquipsTiles;
+        public override ItemTileComponent AddTileContent(InventoryItem content)
         {
-            EquipsTiles[content.ItemType].Item = content;
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning($"No slot for item in {this} {e}");
-        }
-    }
+            if (content == null) return null;
+            try
+            {
+                var tile = EquipsTiles[content.ItemType];
+                tile.Item = content;
+                return tile;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"No slot for item in {this} {e}");
+                return null;
+            }
 
-    public override void RemoveTileContent(InventoryItem content)
-    {
-        if (content == null) return;
-        try
-        {
-            EquipsTiles[content.ItemType].Clear();
         }
-        catch (Exception e)
-        {
-            Debug.LogWarning($"No equipped item {content} {e}");
-        }
-    }
 
-    public override void CreateTilesAndSub(int total)
-    {
-        foreach (var tile in EquipsTiles.Values)
+        public override ItemTileComponent RemoveTileContent(InventoryItem content)
         {
-            SubscribeToTileEvents(tile, true);
+            if (content == null) return null;
+            try
+            {
+                var t = EquipsTiles[content.ItemType];
+                t.Clear();
+                return t;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"No equipped item {content} {e}");
+                return null;
+            }
         }
-    }
-    protected override void OnDisable()
-    {
-        foreach (var tile in EquipsTiles.Values)
-        {
-            SubscribeToTileEvents(tile, false);
-        }
+
     }
 
 }
-

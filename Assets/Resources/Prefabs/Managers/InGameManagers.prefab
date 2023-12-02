@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3545365360258105453}
   - component: {fileID: 5617625471025218526}
   - component: {fileID: 5617625471025218527}
-  - component: {fileID: 5617625471025218520}
   - component: {fileID: 5617625471025218521}
   - component: {fileID: 2002169538427428736}
   m_Layer: 0
@@ -29,13 +28,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5617625471025218522}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3545365360258105453
 MonoBehaviour:
@@ -49,12 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b43cae61e4cd65498010e2b68bff53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SkillsPlacerManager: {fileID: 0}
-  TriggersProjectilesManager: {fileID: 0}
-  EventTriggersManager: {fileID: 0}
-  StatsUpdatesHandler: {fileID: 0}
-  UnitsManager: {fileID: 0}
-  GameInterfaceManager: {fileID: 0}
 --- !u!114 &5617625471025218526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,18 +71,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60d5e6b6f30caf14a95afc0aa94db277, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5617625471025218520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5617625471025218522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85fdfa4f5c8477540a6b106b1042f086, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &5617625471025218521

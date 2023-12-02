@@ -189,9 +189,9 @@ namespace Arcatech.Units.Inputs
         }
 
 
-        public override UnitType GetUnitType()
+        public override ReferenceUnitType GetUnitType()
         {
-            return UnitType.Player;
+            return ReferenceUnitType.Player;
         }
 
     }

@@ -30,14 +30,14 @@ namespace Arcatech.UI
 
         [SerializeField, Space] protected float _barFillRateMult = 1f;
 
-        private void Shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
-        {
-            if (arg1)
-            {
-                SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-            }
-            _bars.ProcessContainer(SHc, arg1);
-        }
+        //private void Shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
+        //{
+        //    if (arg1)
+        //    {
+        //        SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+        //    }
+        //    _bars.ProcessContainer(SHc, DisplayValueType.Shield);
+        //}
 
 
 
@@ -55,23 +55,23 @@ namespace Arcatech.UI
 
 
             HPc = _player.GetStats[BaseStatType.Health];
-            _bars.ProcessContainer(HPc, true);
-            _bars.ProcessContainer(_combo.ComboContainer, true);
+            _bars.ProcessContainer(HPc, DisplayValueType.Health);
+            _bars.ProcessContainer(_combo.ComboContainer,DisplayValueType.Combo);
 
-            _shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent; // item was equipped
+            //_shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent; // item was equipped
 
 
-            if (_shield.IsReady)
-            {                
-                SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-                _icons.TrackItemIcon(_shield.CurrentlyEquippedItem);
-                _bars.ProcessContainer(SHc, true);
-            }
-            if (_dodge.IsReady)
-            {
-                _icons.TrackItemIcon(_dodge.CurrentlyEquippedItem); // TODO: Placeholder , no cooldown
-            }
-            foreach (var weapon in _weapons.GetAvailableWeapons)
+            //if (_shield.IsReady)
+            //{                
+            //    SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+            //    _icons.TrackItemIcon(_shield.CurrentlyEquippedItem);
+            //    _bars.ProcessContainer(SHc, DisplayValueType.Shield);
+            //}
+            //if (_dodge.IsReady)
+            //{
+            //    _icons.TrackItemIcon(_dodge.CurrentlyEquippedItem); // TODO: Placeholder , no cooldown
+            //}
+            foreach (var weapon in _weapons.GetCurrentEquipped)
             {
                 _icons.TrackItemIcon(weapon);
             }

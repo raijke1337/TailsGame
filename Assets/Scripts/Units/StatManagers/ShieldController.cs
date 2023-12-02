@@ -8,50 +8,59 @@ namespace Arcatech.Units
     [Serializable]
     public class ShieldController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
     {
-        public Dictionary<ShieldStatType, StatValueContainer> GetShieldStats { get; private set; }
+        public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
+        private Dictionary<ShieldStatType, StatValueContainer> _stats;
 
-        public ItemEmpties Empties { get; }
-        public ShieldController(ItemEmpties ie) => Empties = ie;
 
-        
-        public override void LoadItem(EquipmentItem item, out string skill)
+        #region conditional
+        public ShieldController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
-            base .LoadItem(item, out skill);
-            skill = null;
-            if (item.ItemType == EquipItemType.Shield)
+            
+        }
+        protected override void FinishItemConfig(EquipmentItem item)
+        {
+            
+            var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(_equipment[EquipItemType.Shield].ID);
+
+            if (cfg == null)
             {
-                CurrentlyEquippedItem = item;
+                IsReady = false;
+                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
+            }
+            else
+            {
+                _stats = new Dictionary<ShieldStatType, StatValueContainer>();
+                foreach (KeyValuePair<ShieldStatType,StatValueContainer> p in cfg.Stats)
+                {
+                    _stats[p.Key] = new StatValueContainer(p.Value);
+                    _stats[p.Key].Setup();
+                }
+
             }
         }
-
-        public override void SetupStatsComponent()
+        protected override void InstantiateItem(EquipmentItem i)
         {
-            if (!IsReady) return;
-
-            var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(CurrentlyEquippedItem.ID);
-
-            if (cfg == null) return;
-
-            var _keys = cfg.Stats.Keys.ToArray();
-            var _values = cfg.Stats.Values.ToArray();
-            GetShieldStats = new Dictionary<ShieldStatType, StatValueContainer>();
-
-            for (int i = 0; i < _keys.Count(); i++)
-            {
-                GetShieldStats.Add(_keys[i], _values[i]);
-            }
-            foreach (var cont in GetShieldStats.Values)
-            {
-                cont.Setup();
-            }
+            var b = i.GetInstantiatedPrefab;
+            b.transform.parent = Empties.SheathedWeaponEmpty;
+            b.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
         }
+        #endregion
+
+
+
+        #region managed
 
         public override void UpdateInDelta(float deltaTime)
         {
             base.UpdateInDelta(deltaTime);
-            GetShieldStats[ShieldStatType.Shield].ChangeCurrent(GetShieldStats[ShieldStatType.ShieldRegen].GetCurrent * deltaTime * GetShieldStats[ShieldStatType.ShieldRegenMultiplier].GetCurrent);
+            if (_equipment.TryGetValue(EquipItemType.Shield, out var s))
+            {
+                s.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
+            }
         }
+    
 
+        #endregion
         public TriggeredEffect ProcessHealthChange(TriggeredEffect effect)
         {
             if (effect.InitialValue >= 0f)
@@ -60,9 +69,9 @@ namespace Arcatech.Units
             }
             else
             {
-                var adjDmg = effect.InitialValue * GetShieldStats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
+                var adjDmg = effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
                 effect.InitialValue -= adjDmg;
-                var AdjRep = effect.RepeatedValue * GetShieldStats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
+                var AdjRep = effect.RepeatedValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
                 effect.RepeatedValue -= AdjRep;
 
                 TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
@@ -76,7 +85,7 @@ namespace Arcatech.Units
 
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
-            return GetShieldStats[ShieldStatType.Shield];
+            return _stats[ShieldStatType.Shield];
         }
     }
 

@@ -13,7 +13,7 @@ public class SelectableItemPanel : MonoBehaviour
 
     public virtual void AssignItem(SelectableItem item)
     {
-        _description.text = item.GetText;
+        _description.text = item.GetTextID;
         item.ToggleCam(true);
     }
 
@@ -35,6 +35,11 @@ public class SelectableItemPanel : MonoBehaviour
             _act = value;
             gameObject.SetActive(value);
         }
+    }
+    private void OnDisable() // just in case isneeded isn't called somewehre (it is)
+    {
+        if (_item != null)
+        _item.ToggleCam(false);
     }
 
 }

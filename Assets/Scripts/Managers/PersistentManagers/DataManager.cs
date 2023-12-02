@@ -1,3 +1,5 @@
+using Arcatech;
+using Arcatech.Items;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +8,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
+using Extensions = Arcatech.Extensions;
 
 public class DataManager : MonoBehaviour
 {
@@ -23,51 +26,87 @@ public class DataManager : MonoBehaviour
     #endregion
 
 
-    private void Start()
-    {
-        FindAllConfigs();
-        SetupSaves();
-    }
+
     #region save
 
-    private SaveData _loadedSave;
-    public SaveData GetSaveData { get => _loadedSave; }
+    private SerializedSaveData _loadedSave;
+    public SerializedSaveData GetSaveData
+    {
+        get
+        {
+            if (_loadedSave == null) SetupSaves();
+            return _loadedSave;
+        }
+    }
     private string _savepath;
     private void SetupSaves()
     {
         _savepath = Application.dataPath + Constants.Configs.c_SavesPath;
+        // TODO proper serialization
 
         var data = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
         if (data == null)
         {
-            CreateDefaultSave();
+            _loadedSave = CreateDefaultSave();
         }
         else
         {
             _loadedSave = data;
         }
-
-        UpdateSaveData();
+        
     }
-    public void UpdateSaveData()
+    public void UpdateSaveData(string newLevel)
     {
+        if (!_loadedSave.OpenedLevels.Contains(newLevel))
+        {
+            _loadedSave.OpenedLevels.Add(newLevel);
+            Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
+        }
+    }
+    public void UpdateSaveData(ItemsStringsSave data)
+    {
+        _loadedSave.PlayerItems = data;
         Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
     }
 
-    public void CreateDefaultSave()
+    private SerializedSaveData CreateDefaultSave()
     {
-        Extensions.SaveLoad.SaveDataXML(new SaveData(new List<string> { Constants.Configs.c_FirstLevelID },
-            new UnitInventoryItems(GetConfigByID<UnitItemsSO>("player"))), _savepath);
-        _loadedSave = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
+
+        ItemsStringsSave items = new ItemsStringsSave();
+        var defcfg = GetConfigByID<UnitItemsSO>("player");
+        foreach (var e in defcfg.Equipment)
+        {
+            items.Equips.Add(e.ID);
+        }
+        foreach (var i in defcfg.Inventory)
+        {
+            items.Inventory.Add(i.ID);
+        }
+
+        SerializedSaveData save = new SerializedSaveData(
+            new List<string> 
+            { Constants.Configs.c_FirstLevelID },
+              items     
+            );
+        Extensions.SaveLoad.SaveDataXML(save, _savepath);
+
+        return save;
     }
 
 
-
+    public void OnNewGame()
+    {
+        CreateDefaultSave();
+    }
     #endregion
+
+
+
     #region configs
     [SerializeField] private List<ScriptableObjectID> _dictSO;
     private void FindAllConfigs()
     {
+        
         _dictSO = new List<ScriptableObjectID>();
         //Resources.FindObjectsOfTypeAll<ScriptableObjectID>());
 
@@ -116,8 +155,15 @@ public class DataManager : MonoBehaviour
     /// <returns>list of assets in specified folder</returns>
     public T GetConfigByID<T>(string ID = "default") where T : ScriptableObjectID
     {
-       // Debug.Log($"T is {typeof(T)}");
         List<T> list = new List<T>();
+
+        //Debug.Log($"Looking for cfg {ID} type {typeof(T)}");
+
+        if (_dictSO.Count == 0)
+        {
+            FindAllConfigs();
+        }
+
         foreach (var item in _dictSO)
         {
             if (item is T)
@@ -126,16 +172,14 @@ public class DataManager : MonoBehaviour
             }
 
         }
-        //Debug.Log($"Found total {list.Count} items of type {typeof(T)}");
         try
         {
             var result = list.First(t => t.ID == ID);
-            //Debug.Log($"Found config {result}");
             return result;
         }
         catch
         {
-            Debug.LogWarning($"Couldnt find {typeof (T)} with ID {ID}");
+            Debug.LogWarning($"Couldnt find {typeof(T)} with ID {ID}");
             return null;
         }
     }
@@ -176,11 +220,19 @@ public class DataManager : MonoBehaviour
         }
         return all.ToArray();
     }
+
+    public UnitInventoryItemConfigsContainer GenerateDefaultInventory(string id)
+    {
+        var cfg = GetConfigByID<UnitItemsSO>(id);
+        if (cfg == null) Debug.LogWarning($"No unit items SO found with ID {id}");
+        return new UnitInventoryItemConfigsContainer(cfg);
+    }
+
     #endregion
 
 
     public void SetPlayerPref(string pref, object value)
-    { 
+    {
         if (value is float)
         {
             PlayerPrefs.SetFloat(pref, (float)value);
@@ -191,11 +243,7 @@ public class DataManager : MonoBehaviour
         }
         if (value is string)
         {
-            PlayerPrefs.SetString(pref, (string)value); 
+            PlayerPrefs.SetString(pref, (string)value);
         }
     }
-
-
 }
-
-

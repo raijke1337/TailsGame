@@ -9,32 +9,58 @@ namespace Arcatech.UI
 {
     public class BarContainerUIScript : MonoBehaviour
     {
-        [SerializeField] private Image _bg;
-        [SerializeField] private Image _bar;
+        [SerializeField] private Image _fill;
         [SerializeField] private TextMeshProUGUI _text;
 
-        private float _curr;
-        private float _max;
+        private StatValueContainer _valueContainer;
+        private float _tgtFillValue = 1;
 
-        public void SetMax (float v)
-        {
-            _max = v;   
-        }
-        public void NewValue(float val)
-        {
-            _text.text = val.ToString();
-            _curr = val;
 
-            _bar.fillAmount = _curr / _max;
-        }
-
-        private void Awake()
-        {
-            if (_bg == null || _bar == null || _text == null)
+        public StatValueContainer Container 
+        { 
+            get
             {
-                Debug.LogError($"Not serialized properties in {gameObject}");
-            }    
+                return _valueContainer;
+            }
+                
+            set
+            {
+                if (_valueContainer != value)
+                {
+                    if (_valueContainer != null)
+                    {
+                        _valueContainer.ValueChangedEvent -= OnUpdatedValue;
+                    }
+                    _fill.fillAmount = _tgtFillValue;
+
+                    _valueContainer = value;
+                    _valueContainer.ValueChangedEvent += OnUpdatedValue;
+
+                    _text.text = value.ToString();
+                }
+            }                
         }
+
+
+
+        private void OnUpdatedValue(float old, float now)
+        {
+            _text.text = Container.ToString();
+            _tgtFillValue = Container.GetCurrent / Container.GetMax;
+        }
+
+        public void UpdateValues(float delta)
+        {
+            if (_tgtFillValue == _fill.fillAmount) return;
+            else
+            {
+                float vel = 0;
+                _fill.fillAmount = Mathf.SmoothDamp(_fill.fillAmount, _tgtFillValue, ref vel, delta);
+
+               // Debug.Log($"{this} ref velocity : {vel}");
+            }
+        }
+
 
 
 

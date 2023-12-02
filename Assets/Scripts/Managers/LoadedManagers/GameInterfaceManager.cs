@@ -1,40 +1,41 @@
 using Arcatech.UI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Managers
 {
     public class GameInterfaceManager : LoadedManagerBase
     {
         [SerializeField] private EnemyUnitPanel _tgt;
-        [SerializeField] private SelectableItemPanel _item;
         [SerializeField] private PlayerUnitPanel _player;
         [SerializeField] private GameTextComp _text;
-        [SerializeField] private MenuPanel _ded;
+        [SerializeField] private GameObject _ded;
         [SerializeField, Space] private float _selPanelDisappearTimer = 1f;
 
+        private TextsManager _texts;
 
         private Coroutine _cor;
 
         #region managed
         public override void Initiate()
         {
+            _texts = TextsManager.Instance;
+
             if (GameManager.Instance.GetCurrentLevelData.Type == LevelType.Game)
             {
                 _player.IsNeeded = true;
                 _player.StartController();
-                _item.IsNeeded = false;
                 _tgt.IsNeeded = false;
-                _text.IsNeeded = false;
-                _ded.OnToggle(false);
+                _text.gameObject.SetActive(false);
+                _ded.SetActive(false);
 
             }
             else
             {
                 _player.IsNeeded = false;
                 _tgt.IsNeeded = false;
-                _item.IsNeeded = false;
-                _text.IsNeeded = false;
-                _ded.OnToggle(false);
+                _text.gameObject.SetActive(false);
+                _ded.SetActive(false);
             }
 
         }
@@ -53,21 +54,21 @@ namespace Arcatech.Managers
 
         public void UpdateGameText(string ID, bool isShown)
         {
+
             if (isShown)
             {
-                _text.IsNeeded = true;
-                _text.SetText(TextsManager.Instance.GetContainerByID(ID));
+                _text.gameObject.SetActive(true);
+                _text.SetText(_texts.GetContainerByID(ID));
             }
             else
             {
-                _text.IsNeeded = false;
+                _text.gameObject.SetActive(false);
             }
         }
-
-        private IEnumerator HidePanelTimer(float time, SelectableItemPanel panel)
+        private IEnumerator HidePanelTimer(float time, GameObject panel)
         {
             yield return new WaitForSeconds(time);
-            panel.IsNeeded = false;
+            panel.SetActive(false);
         }
 
         public void UpdateSelected(SelectableItem item, bool show)
@@ -77,30 +78,27 @@ namespace Arcatech.Managers
                 if (_cor == null) StopCoroutine(_cor);
                 switch (item.Type)
                 {
-                    case SelectableItemType.None:
-                        Debug.LogWarning($"{item} has no selectable type set!");
+                    default:
                         break;
                     case SelectableItemType.Item:
-                        _tgt.IsNeeded = false;
-                        _item.IsNeeded = true;
-                        _item.AssignItem(item);
+                        _text.gameObject.SetActive(true);
+                        _text.SetText(_texts.GetContainerByID(item.GetTextID));
                         break;
                     case SelectableItemType.Unit:
                         _tgt.IsNeeded = true;
-                        _item.IsNeeded = false;
                         _tgt.AssignItem(item);
                         break;
                 }
             }
             if (!show)
             {
-                if (_item.IsNeeded)
+                if (_text.isActiveAndEnabled)
                 {
-                    _cor = StartCoroutine(HidePanelTimer(_selPanelDisappearTimer, _item));
+                    _cor = StartCoroutine(HidePanelTimer(_selPanelDisappearTimer, _text.gameObject));
                 }
                 else
                 {
-                    _cor = StartCoroutine(HidePanelTimer(_selPanelDisappearTimer, _tgt));
+                    _cor = StartCoroutine(HidePanelTimer(_selPanelDisappearTimer, _tgt.gameObject));
                 }
             }
         }
@@ -108,7 +106,7 @@ namespace Arcatech.Managers
         #region menus
         public void GameOver()
         {
-            _ded.OnToggle(true);
+            _ded.SetActive(true);
         }
         public void ToMain()
         {

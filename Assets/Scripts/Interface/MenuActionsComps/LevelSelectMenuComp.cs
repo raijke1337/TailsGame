@@ -1,40 +1,28 @@
 using Arcatech.Managers;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    public class LevelSelectMenuComp : MenuPanel
+    public class LevelSelectMenuComp : MonoBehaviour
     {
         [SerializeField] RectTransform _content;
-
         [SerializeField] private LevelButtonComp _buttonPrefab;
-
         private LevelButtonComp[] _buttons;
 
-        private void OnEnable()
+        private void Start()
         {
-            if (_buttonPrefab == null) Debug.LogError("Set button prefab in " + this);
-        }
-
-        protected override void OnStateChange(bool isShow)
-        {
-            if (isShow)
-            {
-                CreateButtons();
-            }
-            if (_buttons != null && !isShow)
-            {
-                foreach (var b in _buttons)
-                {
-                    if (b != null)
-                    Destroy(b.gameObject);
-                }
-            }
+            CreateButtons();
+            gameObject.SetActive(false);
         }
         public void CreateButtons()
         {
+#if UNITY_EDITOR
+            Assert.IsNotNull(_content);
+            Assert.IsNotNull(_buttonPrefab);
+#endif
             var save = DataManager.Instance.GetSaveData;
             List<LevelData> _lvls = new List<LevelData>();
             foreach (var l in save.OpenedLevels)
@@ -45,15 +33,17 @@ namespace Arcatech.UI
                     _lvls.Add(lv);
                 }
             }
-            float vertOffs = _buttonPrefab.GetSize.y;
+            //float vertOffs = _buttonPrefab.GetSize.y;
 
             _buttons = new LevelButtonComp[_lvls.Count];
+
+
             for (int i = 0; i < _lvls.Count; i++)
             {
                 var b = Instantiate(_buttonPrefab);
-                var rect = b.GetComponent<RectTransform>();
-                rect.SetParent(_content, false);
-                rect.position += new Vector3(0, -vertOffs * i, 0);
+                //var rect = b.GetComponent<RectTransform>();
+                b.transform.SetParent(_content, false);
+
 
                 b.LevelData = _lvls[i];
                 b.OnButtonClick += OnLevelSelected;
@@ -64,6 +54,7 @@ namespace Arcatech.UI
 
         private void OnLevelSelected(LevelButtonComp data)
         {
+
             GameManager.Instance.RequestLevelLoad(data.LevelData.LevelID);
         }
         public void OnBack()

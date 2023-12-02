@@ -18,7 +18,7 @@ namespace Arcatech.Units
 #endif
 
 
-        public StunsController(string ID = "default")
+        public StunsController(BaseUnit u, string ID = "default") : base (u)
         {
             var cfg = DataManager.Instance.GetConfigByID<StunsControllerConfig>(ID);
             if (cfg == null) return;
@@ -30,6 +30,8 @@ namespace Arcatech.Units
         public override void UpdateInDelta(float deltaTime)
         {
             base.UpdateInDelta(deltaTime);
+            if (_timer == null) return; //TODO something is werid here
+
             if (_current.GetCurrent <= 0f && !isGracePeriod)
             {
                 StunHappenedEvent?.Invoke();

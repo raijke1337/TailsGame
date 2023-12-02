@@ -1,8 +1,9 @@
+using Arcatech.Units.Stats;
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Linq;
 
-namespace Arcatech.Units.Stats
+namespace Arcatech.Units
 {
     [Serializable]
     public class BaseStatsController : BaseController, IStatsComponentForHandler, ITakesTriggers
@@ -20,15 +21,18 @@ namespace Arcatech.Units.Stats
         public override void UpdateInDelta(float deltaTime)
         {
             base.UpdateInDelta(deltaTime);
-            if (GetBaseStats[BaseStatType.Health].GetCurrent <= 0f) UnitDiedEvent?.Invoke();
+            if (GetBaseStats[BaseStatType.Health].GetCurrent <= 0f)
+            {
+                UnitDiedEvent?.Invoke();
+            }
         }
         #endregion
 
 
-        public BaseStatsController(string ID)
+        public BaseStatsController(BaseUnit owner) : base (owner)
         {
             GetBaseStats = new SerializedDictionary<BaseStatType, StatValueContainer>();
-            var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(ID);
+            var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(owner.GetID);
 
             if (cfg == null) return;
 
@@ -54,17 +58,13 @@ namespace Arcatech.Units.Stats
                 case TriggerChangedValue.Health:
                     result = GetBaseStats[BaseStatType.Health];
                     break;
-                case TriggerChangedValue.Shield:
-                    break;
-                case TriggerChangedValue.Combo:
-                    break;
                 case TriggerChangedValue.MoveSpeed:
                     result = GetBaseStats[BaseStatType.MoveSpeed];
                     break;
                 case TriggerChangedValue.TurnSpeed:
                     result = GetBaseStats[BaseStatType.TurnSpeed];
                     break;
-                case TriggerChangedValue.Stagger:
+                    default:
                     break;
             }
             return result;

@@ -30,6 +30,8 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySound(AudioClip clip, Vector3 place)
     {
+        if (clip == null) return;
+
         var s = Instantiate(_audioPrefab, place, Quaternion.identity,transform);
         s.clip = clip;
         s.Play();
@@ -38,6 +40,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayMusic(AudioClip clip)
     {
+        if (clip == null) return;
         _m = Instantiate(_musicPrefab);
         _m.clip = clip;
         _m.loop = true;

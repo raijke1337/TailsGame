@@ -1,40 +1,33 @@
 using Arcatech.Items;
 using TMPro;
 using UnityEngine;
-
-public class TooltipComp : MonoBehaviour
+namespace Arcatech.UI
 {
-    [SerializeField] private TextMeshProUGUI _name;
-    [SerializeField] private TextMeshProUGUI _desc;
-    private RectTransform _rect;
-
-    public RectTransform GetRect { get => _rect; }
-
-    public void SetTexts(InventoryItem item)
+    public class TooltipComp : MonoBehaviour
     {
-        if (_name == null | _desc == null)
+        [SerializeField] private TextMeshProUGUI _name;
+        [SerializeField] private TextMeshProUGUI _desc;
+        private RectTransform _rect;
+
+        public RectTransform GetRect { get => _rect; }
+
+        public void SetTexts(InventoryItem item)
         {
-            Debug.LogWarning("Set fields for " + this);
-            return;
+            if (_name == null | _desc == null)
+            {
+                Debug.LogWarning("Set fields for " + this);
+                return;
+            }
+            if (item == null) return;
+            _name.text = item.GetDisplayName;
+            _desc.text = item.GetDescription;
         }
-        if (item == null) return;
-        _name.text = item.DisplayName;
-        TextContainer descC;
-        try
+        private void Awake()
         {
-            descC = TextsManager.Instance.GetContainerByID(item.ID);
+            _rect = GetComponent<RectTransform>();
         }
-        catch
-        {
-            Debug.LogWarning($"No text description for {item.ID}");
-        }
-        _desc.text = item.Description.ToString();
+
+
+
     }
-    private void Awake()
-    {
-        _rect = GetComponent<RectTransform>();
-    }
-
-
-
 }

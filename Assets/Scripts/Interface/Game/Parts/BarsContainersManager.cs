@@ -1,3 +1,4 @@
+using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,58 +7,55 @@ namespace Arcatech.UI
 {
     public class BarsContainersManager : ManagedControllerBase
     {
-        private Dictionary<StatValueContainer, BarContainerUIScript> _bars;
+        [SerializeField] private BarContainerUIScript _hpB;
+        [SerializeField] private BarContainerUIScript _shB;
+        [SerializeField] private BarContainerUIScript _combB;
 
-        [SerializeField] BarContainerUIScript _barPrefab;
+        private List<BarContainerUIScript> _bars;
 
-        public void ProcessContainer(StatValueContainer cont, bool isAdding)
+
+
+        public void ProcessContainer(StatValueContainer cont, DisplayValueType type)
         {
-            if (isAdding)
+            switch (type)
             {
-                if (!_bars.ContainsKey(cont))
-                {
-                    _bars[cont] = Instantiate(_barPrefab, transform);
-                    cont.ValueChangedEvent += (cur, prev) => _bars[cont].NewValue(cur);
-                    var b = _bars[cont];
-                    b.SetMax(cont.GetMax);
-                    b.NewValue(cont.GetCurrent);                    
-                }
-                else
-                {
-                    Debug.LogWarning($"Loading already added container into {gameObject}");
-                }
-            }
-            if (!isAdding)
-            {
-                var go = _bars[cont];
-                cont.ValueChangedEvent -= (cur, prev) => _bars[cont].NewValue(cur);
-                _bars.Remove(cont);
-                Destroy(go); // remove the bar from panel
+                case DisplayValueType.Health:
+                    _hpB.Container = cont;
+                    break;
+                case DisplayValueType.Shield:
+                    _shB.Container = cont;
+                    break;
+                case DisplayValueType.Combo:
+                    _combB.Container = cont;
+                    break;
+                    default:
+                    break;
             }
         }
-        public void LoadContainers(IEnumerable<StatValueContainer> conts)
-        {
-            foreach (StatValueContainer cont in conts) ProcessContainer(cont,true);
-        }
 
-        public override void StartController()
-        {
-            _bars =  new Dictionary<StatValueContainer, BarContainerUIScript>();
-            if (_barPrefab == null) Debug.LogError($"Set bar prefab in {this}!");
-        }
 
         public override void UpdateController(float delta)
         {
-            
+            foreach (var c in _bars)
+            {
+                if (c != null)
+                c.UpdateValues(delta);
+            }
         }
 
         public override void StopController()
         {
-            if (_bars != null || _bars.Count == 0) ;
-            foreach (var cont in _bars.Keys)
+
+        }
+
+        public override void StartController()
+        {
+            _bars = new List<BarContainerUIScript>
             {
-                cont.ValueChangedEvent -= (cur, prev) => _bars[cont].NewValue(cur);
-            }
+                _hpB,
+                _shB,
+                _combB
+            };
         }
     }
 }

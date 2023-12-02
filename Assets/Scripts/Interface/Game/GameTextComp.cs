@@ -1,28 +1,18 @@
 using TMPro;
 using UnityEngine;
-
-public class GameTextComp : MonoBehaviour
+namespace Arcatech
 {
-    private TextMeshProUGUI _text;
-
-    public void SetText(TextContainer textc)
+    public class GameTextComp : MonoBehaviour
     {
-        if (_text == null)
+        [SerializeField] private TextMeshProUGUI _title;
+        [SerializeField] private TextMeshProUGUI _text;
+
+        public void SetText(TextContainer cont)
         {
-            _text = GetComponentInChildren<TextMeshProUGUI>();
+            _title.text = cont.GetTitle;
+            _text.text = cont.GetFormattedText;
         }
 
-        _text.text = textc.ToString();
-    }
-    protected bool _act;
-    public bool IsNeeded
-    {
-        get => _act;
-        set
-        {
-            _act = value;
-            gameObject.SetActive(value);
-        }
-    }
 
+    }
 }

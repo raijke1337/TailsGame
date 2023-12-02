@@ -31,7 +31,7 @@ namespace Arcatech.Units.Inputs
         public StateMachine GetFSM => _stateMachine;
 
 
-        public override UnitType GetUnitType() => _enemyStats.EnemyType;
+        public override ReferenceUnitType GetUnitType() => _enemyStats.EnemyType;
 
         #endregion
         #region managed
@@ -194,7 +194,7 @@ namespace Arcatech.Units.Inputs
 
         protected virtual void Fsm_AggroRequestedSM()
         {
-            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(ReferenceUnitType.Player);
         }
 
         protected virtual void Fsm_PlayerSpottedSM(PlayerUnit arg)
@@ -239,10 +239,10 @@ namespace Arcatech.Units.Inputs
         {
             LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position, lastDelta);
         }
-        protected virtual void Fsm_GetFocusUnitSM(UnitType type)
+        protected virtual void Fsm_GetFocusUnitSM(ReferenceUnitType type)
         {
-            if (type != UnitType.Self) _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(type);
-            else if (type == UnitType.Self) _stateMachine.FocusUnit = Unit;
+            if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(type);
+            else if (type == ReferenceUnitType.Self) _stateMachine.FocusUnit = Unit;
 
             if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
         }
@@ -257,7 +257,7 @@ namespace Arcatech.Units.Inputs
 
         public void ForceCombat()
         {
-            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(UnitType.Player);
+            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(ReferenceUnitType.Player);
         }
 
         #endregion

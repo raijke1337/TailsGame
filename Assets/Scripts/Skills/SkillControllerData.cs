@@ -1,45 +1,47 @@
 using System;
-
-[Serializable]
-public class SkillControllerData
+namespace Arcatech
 {
-    public string ID;
-    public CombatActionType SkillType;
-    public SkillData GetSkillData { get; }
-
-    private Timer _recTimer;
-    private bool _isReady = true;
-    public float GetCD => _recTimer.GetRemaining;
-
-
-    public virtual bool RequestUse()
+    [Serializable]
+    public class SkillControllerData
     {
-        bool result = _isReady;
-        if (_isReady)
+        public string ID;
+        public CombatActionType SkillType;
+        public SkillData GetSkillData { get; }
+
+        private Timer _recTimer;
+        private bool _isReady = true;
+        public float GetCD => _recTimer.GetRemaining;
+
+
+        public virtual bool RequestUse()
         {
-            _recTimer.ResetTimer();
-            _isReady = false;
+            bool result = _isReady;
+            if (_isReady)
+            {
+                _recTimer.ResetTimer();
+                _isReady = false;
+            }
+            return result;
         }
-        return result;
-    }
-    public virtual float Ticks(float time)
-    {
-        return _recTimer.TimerTick(time);
-    }
+        public virtual float Ticks(float time)
+        {
+            return _recTimer.TimerTick(time);
+        }
 
-    public SkillControllerData(SkillControllerDataConfig cfg)
-    {
-        ID = cfg.ID;
-        SkillType = cfg.SkillType;
-        GetSkillData = new SkillData(cfg.Data);
-        _recTimer = new Timer(GetSkillData.Recharge);
-        _recTimer.TimeUp += _recTimer_TimeUp;
+        public SkillControllerData(SkillControllerDataConfig cfg)
+        {
+            ID = cfg.ID;
+            SkillType = cfg.SkillType;
+            GetSkillData = new SkillData(cfg.Data);
+            _recTimer = new Timer(GetSkillData.Recharge);
+            _recTimer.TimeUp += _recTimer_TimeUp;
+        }
+        private void _recTimer_TimeUp(Timer arg)
+        {
+            _isReady = true;
+        }
+        // all logic moved to SkillsPlacerMan class, here we only have cooldown checking and data
+
     }
-    private void _recTimer_TimeUp(Timer arg)
-    {
-        _isReady = true;
-    }
-    // all logic moved to SkillsPlacerMan class, here we only have cooldown checking and data
 
 }
-

@@ -5,8 +5,9 @@ namespace Arcatech.Units
     [Serializable]
     public class EnemyWeaponCtrl : WeaponController
     {
-        public EnemyWeaponCtrl(ItemEmpties ie) : base(ie)
+        public EnemyWeaponCtrl(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
+
         }
 
         public override void SetupStatsComponent()

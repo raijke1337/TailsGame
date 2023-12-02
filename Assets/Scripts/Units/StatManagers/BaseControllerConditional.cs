@@ -10,35 +10,54 @@ namespace Arcatech.Units
 {
     public abstract class BaseControllerConditional : BaseController, IHasOwner
     {
-        protected EquipmentItem _item;
-        public SimpleEventsHandler<EquipmentItem> EquippedItemChangedEvent;
-
-
-        public virtual void LoadItem(EquipmentItem item, out string skill)
+        public BaseControllerConditional(ItemEmpties empties, BaseUnit _ow) : base (_ow)
         {
+            Empties = empties;
+        }
+        public ItemEmpties Empties { get; }
+
+        #region public
+        protected Dictionary<EquipItemType, EquipmentItem> _equipment = new Dictionary<EquipItemType, EquipmentItem>();
+
+        public virtual EquipmentItem[] GetCurrentEquipped { get => _equipment.Values.ToArray(); }
+
+        public void LoadItem(EquipmentItem item, out EquipmentItem removing)
+        {
+            Debug.Log($"Loading item {item.GetDisplayName} for {Owner} into {this}");
             item.Owner = Owner;
-            skill = item.SkillString;
+
+            OnItemAssign(item, out removing);
+            StateChangeCallback(IsReady, this);
         }
-        public BaseEquippableItemComponent CurrentlyEquippedItemObject
+        public virtual EquipmentItem RemoveItem(EquipItemType type)
         {
-            get => _item.GetInstantiatedPrefab;
+            var e = _equipment[type];
+            _equipment.Remove(type);
+            IsReady = false;
+            return e;
         }
 
-        public EquipmentItem CurrentlyEquippedItem 
-        { get
+        #endregion
+
+        protected virtual void OnItemAssign(EquipmentItem item, out EquipmentItem replacing)
+        {
+
+            replacing = null;
+            IsReady = true;
+
+            if (_equipment.TryGetValue(item.ItemType, out EquipmentItem val))
             {
-                return _item;
+                replacing = val;
             }
-            protected set
-            {
-                _item = value;
-                if (_item != null)
-                {
-                    EquippedItemChangedEvent?.Invoke(CurrentlyEquippedItem);
-                    IsReady = true;
-                }
-            }
+            var i = _equipment[item.ItemType] = item;
+            FinishItemConfig(i);
+            InstantiateItem(i);
         }
-        
+
+        protected abstract void FinishItemConfig(EquipmentItem item);
+        protected abstract void InstantiateItem(EquipmentItem i);
+
+
+
     }
 }

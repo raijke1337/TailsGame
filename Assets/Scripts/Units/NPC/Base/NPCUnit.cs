@@ -61,6 +61,13 @@ namespace Arcatech.Units
         }
 
 
+        protected override void InitInventory()
+        {
+            UnitEquipment = new UnitInventoryComponent(DataManager.Instance.GenerateDefaultInventory(StatsID), this);
+            CreateStartingEquipments(UnitEquipment);
+
+        }
+
     }
 
 }

@@ -22,11 +22,14 @@ namespace Arcatech.Managers
             _player = FindObjectOfType<PlayerUnit>();
             if (_player == null)
             {
-                Debug.Log("No player found, aborting init");
+                Debug.Log($"No player found in scene {this}");
                 return;
             }
+            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return; // used only for player overrides
+
             _allUnits.Add(_player);
-            FinalUnitInit(_player, true);
+            FinalUnitInit(_player, true);            
+
 
             _rooms.AddRange(FindObjectsOfType<RoomController>());
             if (_rooms.Count == 0)
@@ -124,6 +127,28 @@ namespace Arcatech.Managers
                 GameManager.Instance.OnPlayerDead();
             }
         }
+
+        #region scene
+
+        // used by gamemanager to draw equips in menu and gallery
+
+        // not necessary with inventory component
+        //public void EquipVisualItemOnUnit(BaseUnit unit, string itemID)
+        //{
+        //    if (unit is PlayerUnit p)
+        //    {
+        //        p.DrawItem(itemID);
+        //    }
+        //}
+        //public void EquipVisualItemOnUnit(BaseUnit unit, string[] itemID)
+        //{
+        //    if (unit is PlayerUnit p)
+        //    {
+        //        p.DrawItem(itemID);
+        //    }
+        //}
+
+        #endregion
 
     }
 

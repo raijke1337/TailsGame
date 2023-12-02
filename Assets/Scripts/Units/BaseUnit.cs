@@ -11,7 +11,7 @@ namespace Arcatech.Units
     public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers, IProducesSounds
     {
         [SerializeField] protected string StatsID;
-
+        public event SimpleEventsHandler<bool, BaseUnit> UnitCompletedBaseInitiationEvent;
         public string GetID => StatsID;
 
         protected Animator _animator;
@@ -21,7 +21,7 @@ namespace Arcatech.Units
 
         public Side Side;
 
-        public UnitType GetUnitType => _controller.GetUnitType();
+        public ReferenceUnitType GetUnitType => _controller.GetUnitType();
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats => _controller.GetStatsController.GetBaseStats;
 
         public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
@@ -33,7 +33,18 @@ namespace Arcatech.Units
 
 
         #region equipments
-        [SerializeField] public UnitInventoryComponent UnitEquipment;
+        [SerializeField] public UnitInventoryComponent UnitEquipment { get; protected set; }
+
+        protected abstract void InitInventory();
+
+        protected void CreateStartingEquipments(UnitInventoryComponent item) // equipment can't be changed mid-level so it's no problem here that this is run once
+        {
+            UpdateComponents();
+
+            _controller.AssignItems(item,out var sk);
+            _controller.ChangeSkillsList(sk, true);
+        }
+
 
         #endregion
 
@@ -46,22 +57,24 @@ namespace Arcatech.Units
         public virtual void InitiateUnit() // this is run by unit manager
         {
             UpdateComponents();
+            _controller.SetUnit(this);
+            _controller.StartController();
+            InitInventory();
             switch (GameManager.Instance.GetCurrentLevelData.Type)
             {
                 case LevelType.Scene:
                     _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                    _controller.SetUnit(this);
-                    _controller.StartController();
                     break;
                 case LevelType.Menu:
+                    // idle for scene menu
                     break;
-                case LevelType.Game:
-                    _controller.SetUnit(this);
-                    _controller.StartController();
+                case LevelType.Game:                   
                     _animator.SetLayerWeight(3, 0);
                     ControllerEventsBinds(true);
                     break;
             }
+
+            UnitCompletedBaseInitiationEvent?.Invoke(true, this);
             //Debug.Log($"Initiated {GetFullName}");
         }
 
@@ -69,6 +82,7 @@ namespace Arcatech.Units
         {
             ControllerEventsBinds(false);
             _controller.StopController();
+            UnitCompletedBaseInitiationEvent?.Invoke(false, this);
         }
 
 
@@ -86,35 +100,9 @@ namespace Arcatech.Units
 
         #endregion
 
+
         #region unit
-        protected virtual void CreateStartingEquipments(EquipmentItem item) // equipment can't be changed mid-level so it's no problem here that this is run once
-        {
-            UpdateComponents();
 
-            string result = string.Empty;
-
-            switch (item.ItemType)
-            {
-                case EquipItemType.MeleeWeap:
-                    _controller.GetWeaponController.LoadItem(item,out result);
-                    break;
-                case EquipItemType.RangedWeap:
-                    _controller.GetWeaponController.LoadItem(item, out result);
-                    break;
-                case EquipItemType.Shield:
-                    _controller.GetShieldController.LoadItem(item, out result);
-                    break;
-                case EquipItemType.Booster:
-                    _controller.GetDodgeController.LoadItem(item, out result);
-                    break;
-                default:
-                    Debug.Log($"No logic to equip {item} {item.ItemType}");
-                    break;
-            }
-            _controller.AddSkillString(result);
-
-            //Debug.Log(result);
-        }
 
         protected virtual void UpdateComponents()
         {
@@ -235,7 +223,7 @@ namespace Arcatech.Units
         protected virtual void AnimateStagger()
         {
             _animator.SetTrigger("TakeDamage");
-            Debug.Log($"{_controller.GetStatsController.GetDisplayName} got stunned!");
+            Debug.Log($"{GetFullName} got stunned!");
         }
 
 

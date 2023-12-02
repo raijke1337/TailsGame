@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class BossUnitPanel : EnemyUnitPanel
+namespace Arcatech.UI
 {
+    public class BossUnitPanel : EnemyUnitPanel
+    {
 
+    }
 }

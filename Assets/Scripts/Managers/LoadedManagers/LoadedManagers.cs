@@ -4,13 +4,19 @@ namespace Arcatech.Managers
 {
     public class LoadedManagers : MonoBehaviour
     {
-        public SkillsPlacerManager SkillsPlacerManager;
-        public TriggersProjectilesManager TriggersProjectilesManager;
-        public EventTriggersManager EventTriggersManager;
-        public StatsUpdatesHandler StatsUpdatesHandler;
-        public UnitsManager UnitsManager;
-        public GameInterfaceManager GameInterfaceManager;
-        public IsoCameraController CameraController;
+        public SkillsPlacerManager SkillsPlacerManager { get; private set; }
+        public TriggersProjectilesManager TriggersProjectilesManager { get; private set; }
+        public EventTriggersManager EventTriggersManager { get; private set; }
+        public UnitsManager UnitsManager { get; private set; }
+        public GameInterfaceManager GameInterfaceManager { get; private set; }
+        public IsoCameraController CameraController { get; private set; }
+
+
+
+
+
+
+
 
         private LoadedManagerBase[] _managers;
 
@@ -20,33 +26,36 @@ namespace Arcatech.Managers
         {
             _lvl = lv;
 
-            //Debug.Log($"Starting level manangers with leveldata: " + lv.LevelID);
+            //Debug.Log($"Starting {lv.LevelID} managers, mode: {_lvl.Type}");
 
             // if leveltype is scene only limited initiation for display
+
+            EventTriggersManager = GetComponent<EventTriggersManager>(); // for texts and event triggers
+
+            UnitsManager = GetComponent<UnitsManager>();
+
+            GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+
             if (_lvl.Type == LevelType.Game)
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
                 TriggersProjectilesManager = GetComponent<TriggersProjectilesManager>();
-                EventTriggersManager = GetComponent<EventTriggersManager>();
-                StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
-                UnitsManager = GetComponent<UnitsManager>();
-                GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
+                //StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
                 CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
 
                 _managers = new LoadedManagerBase[6];
 
                 _managers[0] = TriggersProjectilesManager;
                 _managers[1] = EventTriggersManager;
-                _managers[2] = StatsUpdatesHandler;
-                _managers[3] = UnitsManager;
-                _managers[4] = SkillsPlacerManager;
-                _managers[5] = GameInterfaceManager;
+                //_managers[2] = StatsUpdatesHandler; removed because now stats are updated by unit's controls - they are conditional and need easier handling
+                _managers[2] = UnitsManager;
+                _managers[3] = SkillsPlacerManager;
+                _managers[4] = GameInterfaceManager;
+                _managers[5] = CameraController;
             }
-            if (_lvl.Type == LevelType.Scene)
+            else
             {
-                EventTriggersManager = GetComponent<EventTriggersManager>();
-                GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
-                _managers = new LoadedManagerBase[2] { EventTriggersManager, GameInterfaceManager };
+                _managers = new LoadedManagerBase[3] { EventTriggersManager, UnitsManager, GameInterfaceManager };
             }
             foreach (var m in _managers)
             {
@@ -60,11 +69,13 @@ namespace Arcatech.Managers
                     Debug.Log($"Null manager {m.GetType()}");
                 }
             }
+            Debug.Log($"Finished loading managers for level {_lvl.LevelNameShort} mode is {_lvl.Type}");
 
         }
 
         public void UpdateManagers(float delta)
         {
+
             if (_lvl.Type == LevelType.Game)
             {
                 foreach (var m in _managers)

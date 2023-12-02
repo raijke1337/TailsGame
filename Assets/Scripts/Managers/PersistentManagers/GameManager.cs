@@ -31,22 +31,29 @@ namespace Arcatech.Managers
         public LevelData GetCurrentLevelData { get => _currentLevel; }
 
         #region default
-        private void Start()
+        private void OnEnable()
         {
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             var levelCards = DataManager.Instance.GetAssetsOfType<LevelCardSO>(Constants.Configs.c_LevelsPath);
-            _levels = new Dictionary<string, LevelData>();
+            _levels = new Dictionary<string, LevelData> {
+                {"",null}
+            };
+
             foreach (var level in levelCards)
             {
                 _levels[level.ID] = new LevelData(level);
             }
             _currentLevel = _levels["main"]; // TODO: Hardcode
+
+            //_gameControllers = Instantiate(GameControllersPrefab);
+            //_gameControllers.Initiate(_currentLevel);
         }
 
         private void Update()
         {
             if (_currentLevel != null && _currentLevel.Type == LevelType.Game && _gameControllers != null)
             {
+
                 _gameControllers.UpdateManagers(Time.deltaTime);
             }
         }
@@ -58,6 +65,8 @@ namespace Arcatech.Managers
 
         public void OnFinishedEquips()
         {
+            var newequips = _gameControllers.UnitsManager.GetPlayerUnit.UnitEquipment.PackSaveData;
+            DataManager.Instance.UpdateSaveData(newequips);
             LoadLevel(gameLevelID, true);
         }
 
@@ -98,24 +107,27 @@ namespace Arcatech.Managers
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            switch (_currentLevel.Type)
-            {
-                case LevelType.Menu:
-                    break;
-                case LevelType.Game:
-                    _gameControllers = Instantiate(GameControllersPrefab);
-                    _gameControllers.Initiate(_currentLevel);
-                    break;
-                case LevelType.Scene:
-                    _gameControllers = Instantiate(GameControllersPrefab);
-                    _gameControllers.Initiate(_currentLevel);
-                    break;
-            }
+            //switch (_currentLevel.Type)
+            //{
+            //    case LevelType.Menu:
+            //        break;
+            //    case LevelType.Game:
+            //        _gameControllers = Instantiate(GameControllersPrefab);
+            //        _gameControllers.Initiate(_currentLevel);
+            //        break;
+            //    case LevelType.Scene:
+            //        _gameControllers = Instantiate(GameControllersPrefab);
+            //        _gameControllers.Initiate(_currentLevel);
+            //        break;
+            //}
+            Debug.ClearDeveloperConsole();
+            _gameControllers = Instantiate(GameControllersPrefab);
+            _gameControllers.Initiate(_currentLevel);
         }
 
         public void OnStartNewGame()
         {
-            DataManager.Instance.CreateDefaultSave();
+            DataManager.Instance.OnNewGame();
             RequestLevelLoad("intro");
         }
         public void OnReturnToMain()
@@ -132,12 +144,12 @@ namespace Arcatech.Managers
             {
                 _gameControllers.Stop();
             }
-            if (!DataManager.Instance.GetSaveData.OpenedLevels.Contains(_currentLevel.LevelID))
-            {
-                DataManager.Instance.GetSaveData.OpenedLevels.Add(_currentLevel.LevelID);
-            }
-            DataManager.Instance.UpdateSaveData();
+
             var next = _currentLevel.NextLevelID;
+
+            DataManager.Instance.UpdateSaveData(next);
+
+            
             LoadLevel(next);
         }
 
@@ -148,7 +160,8 @@ namespace Arcatech.Managers
         }
         public void OnItemPickup(string itemID)
         {
-            DataManager.Instance.GetSaveData.PlayerItems.InventoryIDs.Add(itemID);
+            //DataManager.Instance.GetSaveData.PlayerItems.InventoryIDs.Add(itemID);
+            Debug.Log($"Picked up an item {itemID}");
         }
         public void QuitGame()
         {

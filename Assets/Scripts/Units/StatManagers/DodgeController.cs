@@ -9,47 +9,70 @@ namespace Arcatech.Units
     [Serializable]
     public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
     {
+        public DodgeController(ItemEmpties em, BaseUnit ow) : base(em, ow)
+        {
+
+        }
+
 
         Dictionary<DodgeStatType, StatValueContainer> _stats;
         public IReadOnlyDictionary<DodgeStatType, StatValueContainer> GetDodgeStats { get { return _stats; } }
-        public ItemEmpties Empties { get; }
-        public DodgeController(ItemEmpties ie) => Empties = ie;
         public int GetDodgeCharges() => _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0;
 
         private Queue<Timer> _timerQueue = new Queue<Timer>();
 
-        public override void SetupStatsComponent()
+
+#region conditional
+
+        protected override void FinishItemConfig(EquipmentItem item)
         {
-            if (!IsReady) return;
-            _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-            var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(CurrentlyEquippedItem.ID);
+            var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
 
             if (cfg == null)
             {
                 IsReady = false;
-                throw new Exception($"Mising cfg by ID {CurrentlyEquippedItem.ID} from item {CurrentlyEquippedItem} : {this}");
+                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
-
-            foreach (var c in cfg.Stats)
-            {
-                _stats[c.Key] = new StatValueContainer(c.Value);
-            }
-            foreach (var st in _stats.Values)
-            { st.Setup(); }
         }
-
-        public override void LoadItem(EquipmentItem item, out string skill)
+        protected override void InstantiateItem(EquipmentItem i)
         {
-            skill = null;
-            if (item.ItemType == EquipItemType.Booster)
+            var b = i.GetInstantiatedPrefab;
+            b.transform.parent = Empties.SheathedWeaponEmpty;
+            b.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
+        }
+#endregion
+
+        #region managed
+        public override void SetupStatsComponent()
+        {
+            if (!IsReady) // set ready by running OnItemAssign
             {
-                base.LoadItem(item, out skill);
-                CurrentlyEquippedItem = item;
+                Debug.Log($"{this} is not ready for setup, items: {_equipment.Values.Count}");
+                return;
             }
-            
+            else
+            {
+                _stats = new Dictionary<DodgeStatType, StatValueContainer>();
+                var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
+
+                foreach (var c in cfg.Stats)
+                {
+                    _stats[c.Key] = new StatValueContainer(c.Value);
+                }
+                foreach (var st in _stats.Values)
+                { st.Setup(); }
+            }
         }
 
+        public override void UpdateInDelta(float deltaTime)
+        {
+            foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
+            base.UpdateInDelta(deltaTime);
+        }
 
+        #endregion
+
+        #region dodging
         public bool IsDodgePossibleCheck()
         {
             if (_stats == null) return false;
@@ -60,7 +83,7 @@ namespace Arcatech.Units
                 var t = new Timer(_stats[DodgeStatType.Cooldown].GetCurrent);
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
-                //SoundPlayCallback(EquippedDodgeItem.GameItem.Sounds.SoundsDict[SoundType.OnUse]);
+                SoundPlayCallback(_equipment[EquipItemType.Booster].GetSounds.SoundsDict[SoundType.OnUse]);
                 return true;
             }
         }
@@ -71,21 +94,14 @@ namespace Arcatech.Units
             _stats[DodgeStatType.Charges].ChangeCurrent(1);
         }
 
-        public override void UpdateInDelta(float deltaTime)
-        {
-            foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
-            base.UpdateInDelta(deltaTime);
-        }
-
-
 
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
             return _stats[DodgeStatType.Charges];
         }
 
+
+        #endregion
+
     }
-
-
-
 }

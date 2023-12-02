@@ -10,75 +10,59 @@ namespace Arcatech.Units
     public class WeaponController : BaseControllerConditional
     {
 
-        public WeaponController(ItemEmpties ie) => Empties = ie;
-
-
-        private Dictionary<EquipItemType, EquipmentItem> _availableWeap = new Dictionary<EquipItemType, EquipmentItem>();
-        private Dictionary<EquipmentItem, BaseWeaponConfig> _cachedConfigs = new Dictionary<EquipmentItem, BaseWeaponConfig>();
-
-        public ItemEmpties Empties { get; }
-
-
-        public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
-
-        public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
-        public EquipmentItem[] GetAvailableWeapons => _availableWeap.Values.ToArray();
-
-
         #region item object operations
-        public override void LoadItem(EquipmentItem item, out string s)
+
+        public WeaponController (ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
-            base.LoadItem(item, out s ); // sets owner
-            if (!(item.ItemType == EquipItemType.MeleeWeap || item.ItemType == EquipItemType.RangedWeap)) return;
+
+        }
+
+        protected override void FinishItemConfig(EquipmentItem i)
+        {
+            var cfg = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(i.ID);
+            if (cfg == null)
+            {
+                throw new Exception($"Mising cfg by ID {i.ID} from item {i} : {this}");
+            }
             else
             {
-                _availableWeap[item.ItemType] = item;
-                var i = _availableWeap[item.ItemType];
-
-                var config = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(i.ID);
-                if (config == null)
-                {
-                    IsReady = false;
-                    throw new Exception($"Failed to config weapon {item.ID} on {Owner}");
-                }
-                else
-                {
-                    _cachedConfigs[i] = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(item.ID);
-                    var w = i.GetInstantiatedPrefab as BaseWeapon;
-                    w.Owner = Owner;    
-                    w.SetUpWeapon(_cachedConfigs[i]);
-
-
-                    switch (item.ItemType)
-                    {
-                        case EquipItemType.MeleeWeap:
-                            w.transform.parent = Empties.MeleeWeaponEmpty;
-                            w.transform.SetPositionAndRotation(Empties.MeleeWeaponEmpty.position, Empties.MeleeWeaponEmpty.rotation);
-                            Sheathe(item.ItemType);
-                            break;
-                        case EquipItemType.RangedWeap:
-                            w.transform.parent = Empties.RangedWeaponEmpty;
-                            w.transform.SetPositionAndRotation(Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation);
-                            Sheathe(item.ItemType);
-                            break;
-                        default:
-                            break;
-                    }
-                    //i.IsInstantiated = false; 
-                    // keep visible for sheathing
-                } 
+                var w = i.GetInstantiatedPrefab as BaseWeapon;
+                w.SetUpWeapon(cfg);
+                IsReady = true;
             }
+        }
+        protected override void InstantiateItem(EquipmentItem i)
+        {
+            switch (i.ItemType)
+            {
+                case EquipItemType.MeleeWeap:
+                    Sheathe(i.ItemType);
+                    break;
+                case EquipItemType.RangedWeap:
+                    Equip(i.ItemType);
+                    break;
+            }
+        }
+        public override EquipmentItem RemoveItem(EquipItemType type)
+        {
+            var e = _equipment[type];
+            _equipment.Remove(type);
+
+            IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) || (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
+
+
+            return e;
         }
 
         protected bool Equip(EquipItemType type)
         {
-            if (!_availableWeap.ContainsKey(type) || (_availableWeap[type] == null)) return false;
+            if (!_equipment.ContainsKey(type) || (_equipment[type] == null)) return false;
             else
             {
-                var weap = _availableWeap[type];
-                weap.IsInstantiated = true; // just in case
+                var weap = _equipment[type];
                 var w = weap.GetInstantiatedPrefab;
-                
+                IsReady = true;
+
                 switch (type)
                 {
                     case EquipItemType.MeleeWeap:
@@ -96,29 +80,30 @@ namespace Arcatech.Units
                 return true;
             }
         }
+        public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
 
+        public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
         protected virtual void SwitchWeapon(EquipItemType type)
         {
             SwitchAnimationLayersEvent?.Invoke(type);
 
-            foreach (var w in _availableWeap.Keys)
+
+            if (type == EquipItemType.MeleeWeap)
             {
-                if (w == type)
-                {
-                    Equip(type);
-                }
-                else
-                {
-                    Sheathe(type);
-                }
+                Equip(type);
+                Sheathe(EquipItemType.RangedWeap);
             }
-            
+            if (type == EquipItemType.RangedWeap)
+            {
+                Equip(type);
+                Sheathe(EquipItemType.MeleeWeap);
+            }            
         }
 
 
         protected void Sheathe(EquipItemType type)
         {
-            var item = _availableWeap[type].GetInstantiatedPrefab;
+            var item = _equipment[type].GetInstantiatedPrefab;
             item.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
             item.transform.parent = Empties.SheathedWeaponEmpty;
         }
@@ -130,36 +115,42 @@ namespace Arcatech.Units
 
         public virtual bool OnWeaponUseSuccessCheck(EquipItemType type, out string result)
         {
-            if (!_availableWeap.ContainsKey(type))
+            if (!_equipment.ContainsKey(type))
             {
                 result = ($"{Owner.GetFullName} used {type} but has no weapon of this type available;");
                 return false;
             }
             else
             {
-                return (_availableWeap[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
+                return (_equipment[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
             }
         }
         public void ToggleTriggersOnMelee(bool isEnable)
         {
             // todo might get nullref here
-                (_availableWeap[EquipItemType.MeleeWeap].GetInstantiatedPrefab as MeleeWeapon).ToggleColliders(isEnable);
+                (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab as MeleeWeapon).ToggleColliders(isEnable);
         }
 
         #endregion
 
         #region managed 
-        public override void SetupStatsComponent()
-        {
-            base.SetupStatsComponent();
-        }
-
 
         public override void UpdateInDelta(float deltaTime)
         {
-            foreach (var w in _availableWeap.Values)
+            base.UpdateInDelta(deltaTime);      
+            
+            if (debugEnabled && currentTimer > debugTime)
             {
-                w.UpdateInDelta(deltaTime);
+                Debug.Log($"Breakpoint");
+            }
+
+            if (_equipment.TryGetValue(EquipItemType.MeleeWeap, out var s))
+            {
+                s.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
+            }
+            if (_equipment.TryGetValue(EquipItemType.RangedWeap, out var r))
+            {
+                r.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
             }
         }
 

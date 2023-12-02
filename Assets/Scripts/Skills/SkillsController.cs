@@ -1,77 +1,80 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-[Serializable]
-public class SkillsController : BaseController, INeedsEmpties
+namespace Arcatech.Units
 {
-    // this is used in game for skill requests
-    private Dictionary<CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>();
-
-    public SkillEvents<EquipItemType> SwitchAnimationLayersEvent;
-    public ItemEmpties Empties { get; }
-    public SkillsController(ItemEmpties ie) => Empties = ie;
-
-
-    public void UpdateSkills(string skillID, bool isAdd)
+    [Serializable]
+    public class SkillsController : BaseController, INeedsEmpties
     {
-        var cfg = DataManager.Instance.GetConfigByID<SkillControllerDataConfig>(skillID);
-        if (cfg == null) { return; }
-        if (_skills == null) _skills = new Dictionary<CombatActionType, SkillControllerData>();
-        else
+        // this is used in game for skill requests
+        private Dictionary<CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>();
+
+        public SkillEvents<EquipItemType> SwitchAnimationLayersEvent;
+        public ItemEmpties Empties { get; }
+        public SkillsController(ItemEmpties ie,BaseUnit Owner) : base (Owner)
         {
-            var type = cfg.SkillType;
-            _skills[type] = new SkillControllerData(cfg);
+            Empties = ie;
+            IsReady = true;
         }
-        IsReady = _skills.Count > 0;
+
+
+        public void UpdateSkills(string skillID, bool isAdd)
+        {
+            var cfg = DataManager.Instance.GetConfigByID<SkillControllerDataConfig>(skillID);
+            if (cfg == null) { return; }
+            if (_skills == null) _skills = new Dictionary<CombatActionType, SkillControllerData>();
+            else
+            {
+                var type = cfg.SkillType;
+                _skills[type] = new SkillControllerData(cfg);
+            }
+            IsReady = _skills.Count > 0;
+        }
+
+
+        public bool RequestSkill(CombatActionType type, out float cost)
+        {
+            cost = 0f;
+            if (!_skills.ContainsKey(type)) return false;
+
+            var result = _skills[type].RequestUse();
+            cost = _skills[type].GetSkillData.SkillCost;
+            if (result)
+            {
+                switch (type)
+                {
+                    case CombatActionType.MeleeSpecialQ:
+                        SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
+                        break;
+                    case CombatActionType.RangedSpecialE:
+                        SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
+                        break;
+                }
+                try
+                {
+                    SoundPlayCallback(_skills[type].GetSkillData.AudioData.SoundsDict[SoundType.OnUse]);
+                }
+                catch
+                {
+                    Debug.Log($"No sound OnUse for {_skills[type].ID}");
+                }
+            }
+            return result;
+        }
+
+        public override void UpdateInDelta(float deltaTime)
+        {
+            foreach (var sk in _skills.Values)
+            {
+                sk.Ticks(deltaTime);
+            }
+        }
+
+        public string GetSkillIDByType(CombatActionType type) => _skills[type].ID;
+        public SkillData GetSkillDataByType(CombatActionType type) => _skills[type].GetSkillData;
+
     }
 
 
-    public bool RequestSkill(CombatActionType type, out float cost)
-    {
-        cost = 0f;
-        if (!_skills.ContainsKey(type)) return false;
-
-        var result = _skills[type].RequestUse();
-        cost = _skills[type].GetSkillData.SkillCost;
-        if (result)
-        {
-            switch (type)
-            {
-                case CombatActionType.MeleeSpecialQ:
-                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
-                    break;
-                case CombatActionType.RangedSpecialE:
-                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
-                    break;
-            }
-            try
-            {
-                SoundPlayCallback(_skills[type].GetSkillData.AudioData.SoundsDict[SoundType.OnUse]);
-            }
-            catch
-            {
-                Debug.Log($"No sound OnUse for {_skills[type].ID}");
-            }
-        }
-        return result;
-    }
-
-    public override void SetupStatsComponent()
-    { }
-
-    public override void UpdateInDelta(float deltaTime)
-    {
-        foreach (var sk in _skills.Values)
-        {
-            sk.Ticks(deltaTime);
-        }
-    }
-
-    public string GetSkillIDByType(CombatActionType type) => _skills[type].ID;
-    public SkillData GetSkillDataByType(CombatActionType type) => _skills[type].GetSkillData;
 
 }
-
-
-

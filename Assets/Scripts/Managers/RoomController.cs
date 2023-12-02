@@ -101,27 +101,27 @@ namespace Arcatech.Managers
 
 
         // used by inputs
-        public BaseUnit GetUnitForAI(UnitType type)
+        public BaseUnit GetUnitForAI(ReferenceUnitType type)
         {
             BaseUnit res = null;
             switch (type)
             {
-                case UnitType.Small:
+                case ReferenceUnitType.Small:
                     res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType == type);
                     break;
-                case UnitType.Big:
+                case ReferenceUnitType.Big:
                     res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType == type);
                     break;
-                case UnitType.Boss:
+                case ReferenceUnitType.Boss:
                     res = _npcUnits.ToList().FirstOrDefault(t => t.GetUnitType == type);
                     break;
-                case UnitType.Self:
+                case ReferenceUnitType.Self:
                     Debug.LogWarning(type + " was somehow requested, this should not happen");
                     break;
-                case UnitType.Any:
+                case ReferenceUnitType.Any:
                     Debug.LogWarning(type + " NYI");
                     break;
-                case UnitType.Player:
+                case ReferenceUnitType.Player:
                     res = _player;
                     break;
             }

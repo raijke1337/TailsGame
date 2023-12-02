@@ -5,7 +5,7 @@ namespace Arcatech.Managers
     public class IsoCameraController : LoadedManagerBase
     {
 
-        private Transform _target;
+        [SerializeField] private Transform _target;
 
         private Vector3 _offset;
         private Vector3 _desiredPos;

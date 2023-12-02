@@ -1,3 +1,4 @@
+using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Units.Stats;
 using System.Collections;
@@ -10,7 +11,7 @@ namespace Arcatech.Units
     {
         protected BaseUnit Unit;
 
-        public abstract UnitType GetUnitType();
+        public abstract ReferenceUnitType GetUnitType();
 
         [SerializeField] public bool IsInputsLocked; // todo ?
 
@@ -38,6 +39,91 @@ namespace Arcatech.Units
         public SkillsController GetSkillsController => _skillCtrl;
         public WeaponController GetWeaponController => _weaponCtrl;
 
+        public void AssignItems(UnitInventoryComponent items, out IEnumerable<string> skills)
+        {
+            items.EquipmentChangedEvent += OnEquipmentChangedEvent;
+            var list = new List<string>();
+
+            foreach (var item in items.GetCurrentEquips)
+            {
+                if (item.SkillString.Length != 0)
+                {
+                    list.Add(item.SkillString);
+                }
+                EquipmentItem removed = null;
+                switch (item.ItemType)
+                {
+                    default:
+                        Debug.Log($"assigned {item} on {Unit.name} controller but it is not implemented");
+                        break;
+                    case (EquipItemType.MeleeWeap):
+                        _weaponCtrl.LoadItem(item, out removed);
+                        break;
+                    case (EquipItemType.RangedWeap):
+                        _weaponCtrl.LoadItem(item, out removed);
+                        break;
+                    case (EquipItemType.Shield):
+                        _shieldCtrl.LoadItem(item, out removed);
+                        break;
+                    case (EquipItemType.Booster):
+                        _dodgeCtrl.LoadItem(item, out removed);
+                        break;
+                }
+            }
+            skills = new List<string>(list);
+        }
+
+        private void OnEquipmentChangedEvent(InventoryItem item, bool isAdded)
+        {
+            string removed = string.Empty;
+
+            if (item is EquipmentItem eq) // just in case
+            {
+                if (isAdded)
+                {
+                    switch (eq.ItemType)
+                    {
+                        default:
+                            Debug.Log($"{this} had a trigger for {item} adding: {isAdded} and nothing happened");
+                            break;
+                        case (EquipItemType.MeleeWeap):
+                            _weaponCtrl.LoadItem(eq, out _);
+                            break;
+                        case (EquipItemType.RangedWeap):
+                            _weaponCtrl.LoadItem(eq, out _);
+                            break;
+                        case (EquipItemType.Shield):
+                            _shieldCtrl.LoadItem(eq, out _);
+                            break;
+                        case (EquipItemType.Booster):
+                            _dodgeCtrl.LoadItem(eq, out _);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (eq.ItemType)
+                    {
+
+                        default:
+                            Debug.Log($"{this} had a trigger for {item} adding: {isAdded} and nothing happened");
+                            break;
+                        case (EquipItemType.MeleeWeap):
+                            _weaponCtrl.RemoveItem(eq.ItemType);
+                            break;
+                        case (EquipItemType.RangedWeap):
+                            _weaponCtrl.RemoveItem(eq.ItemType);
+                            break;
+                        case (EquipItemType.Shield):
+                            _shieldCtrl.RemoveItem(eq.ItemType);
+                            break;
+                        case (EquipItemType.Booster):
+                            _dodgeCtrl.RemoveItem(eq.ItemType);
+                            break;
+                    }
+                }
+            }                        
+        }
 
         public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
         public event SimpleEventsHandler StaggerHappened;
@@ -54,52 +140,77 @@ namespace Arcatech.Units
         public override void UpdateController(float delta)
         {
             lastDelta = delta;
+            foreach (BaseController ctrl in _controllers)
+            {
+                if (ctrl.IsReady)
+                ctrl.UpdateInDelta(delta);
+            }
         }
         public override void StartController()
         {
-            _statsCtrl = new BaseStatsController(Unit.GetID);
-            MoveDirectionFromInputs = InputDirectionOverride;
-            if (InputDirectionOverride != Vector3.zero) return; // Scene
-
-            _comboCtrl = new ComboController(Unit.GetID);
-            _stunsCtrl = new StunsController();
-            _shieldCtrl = new ShieldController(Empties);
-            _dodgeCtrl = new DodgeController(Empties);
-            _weaponCtrl = new WeaponController(Empties);
-            _skillCtrl = new SkillsController(Empties);
-
-
-            _controllers.Add(_shieldCtrl);
-            _controllers.Add(_dodgeCtrl);
-            _controllers.Add(_weaponCtrl);
-            _controllers.Add(_skillCtrl);
-            _controllers.Add(_comboCtrl);
-            _controllers.Add(_stunsCtrl);
-            _controllers.Add(_statsCtrl);
-
-            foreach (var ctrl in _controllers)
+            switch (GameManager.Instance.GetCurrentLevelData.Type)
             {
-                ctrl.ComponentChangedStateToEvent += RegisterController;
-                if (ctrl.IsReady) ctrl.Ping();
-                ctrl.SoundPlayEvent += Ctrl_SoundPlay;
+                case LevelType.Menu:
+                    Initialize(false);
+                    break;
+                case LevelType.Scene:
+                    Initialize(false);
+                    MoveDirectionFromInputs = InputDirectionOverride;
+                    break;
+                case LevelType.Game:
+                    Initialize(true);
+                    break;
             }
-
-            IsInputsLocked = false;
-            _weaponCtrl.Owner = Unit;
-            _stunsCtrl.StunHappenedEvent += StunEventCallback;
-
         }
+
+
 
 
         public override void StopController()
         {
             foreach (var ctrl in _controllers)
             {
-                ctrl.ComponentChangedStateToEvent -= RegisterController;
+                ctrl.StopStatsComponent();
                 ctrl.SoundPlayEvent -= Ctrl_SoundPlay;
             }
             _stunsCtrl.StunHappenedEvent -= StunEventCallback;
         }
+
+        private void Initialize(bool full)
+        {
+
+            _statsCtrl = new BaseStatsController(Unit);
+            _shieldCtrl = new ShieldController(Empties, Unit);
+            _dodgeCtrl = new DodgeController(Empties, Unit);
+            _weaponCtrl = new WeaponController(Empties, Unit);
+
+            _controllers.Add(_statsCtrl);
+            _controllers.Add(_shieldCtrl);
+            _controllers.Add(_dodgeCtrl);
+            _controllers.Add(_weaponCtrl);
+
+            if (full)
+            {
+                _comboCtrl = new ComboController(Unit);
+                _stunsCtrl = new StunsController(Unit);
+                _skillCtrl = new SkillsController(Empties, Unit);
+
+                _controllers.Add(_skillCtrl);
+                _controllers.Add(_comboCtrl);
+                _controllers.Add(_stunsCtrl);
+
+                IsInputsLocked = false;
+                _stunsCtrl.StunHappenedEvent += StunEventCallback;
+            }
+
+            foreach (var ctrl in _controllers)
+            {
+                //if (ctrl.IsReady) ctrl.Ping();
+                ctrl.SetupStatsComponent();
+                ctrl.SoundPlayEvent += Ctrl_SoundPlay;
+            }
+        }
+
         #endregion
 
         #region sounds 
@@ -107,17 +218,18 @@ namespace Arcatech.Units
         private void Ctrl_SoundPlay(AudioClip c, Vector3 z) => SoundPlay?.Invoke(c, z);
         #endregion
 
-
-
         #region input
-        protected void RegisterController(bool isEnable, IStatsComponentForHandler cont)
-        {
-            GameManager.Instance.GetGameControllers.StatsUpdatesHandler.RegisterUnitForStatUpdates(cont, isEnable);
-        }
-        public void AddSkillString(string name, bool isAdd = true)
+        public void ChangeSkillsList(string name, bool isAdd = true)
         {
             if (name == null) return;
             _skillCtrl.UpdateSkills(name, isAdd);
+        }
+        public void ChangeSkillsList(IEnumerable<string>names, bool isAdd = true)
+        {
+            foreach (var name in names)
+            {
+                ChangeSkillsList(name, isAdd);
+            }
         }
         
 

@@ -10,35 +10,15 @@ namespace Arcatech.Units
         private InputsPlayer _playerController;
         private VisualsController _visualController;
         private float[] _visualStagesHP;
-        private int _currentVisualStageIndex;
         protected Camera _faceCam;
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
 
-        #region items
+        #region managed
         public override void InitiateUnit()
         {
             base.InitiateUnit();
             UpdateComponents();
-
-            switch (GameManager.Instance.GetCurrentLevelData.Type)
-            {
-                case LevelType.Menu:
-                    if (_visualController == null) _visualController = GetComponent<VisualsController>();
-                    _visualController.Empties = _controller.GetEmpties;
-                    _visualController.ClearVisualItems();
-                    _visualController.CreateVisualItem(DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs.ToArray());
-                    break;
-                case LevelType.Scene:
-                    return;
-                case LevelType.Game:
-                    foreach (var eq in DataManager.Instance.GetSaveData.PlayerItems.EquipmentIDs)
-                    {
-                        var cfg = DataManager.Instance.GetConfigByID<Equip>(eq);
-                        CreateStartingEquipments(new EquipmentItem(cfg));
-                    }
-                    break;
-            }
 
             ToggleCamera(true);
 
@@ -55,11 +35,22 @@ namespace Arcatech.Units
                 _visualStagesHP[i] = maxHP;
                 maxHP -= coef;
             }
-            _currentVisualStageIndex = 0;
+        }
+        public override void RunUpdate(float delta)
+        {
+            base.RunUpdate(delta);
+            if (_controller.InputDirectionOverride != Vector3.zero) // for Scenes
+            {
+                PlayerMovement(_controller.InputDirectionOverride, delta);
+            }
+            else
+            {
+                PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
+            }
+
         }
 
         #endregion
-
 
         protected override void UpdateComponents()
         {
@@ -70,6 +61,12 @@ namespace Arcatech.Units
         }
 
 
+
+        public override void DisableUnit()
+        {
+            
+            base.DisableUnit();
+        }
 
         protected override void ControllerEventsBinds(bool isEnable)
         {
@@ -86,21 +83,9 @@ namespace Arcatech.Units
             }
         }
 
-        #region works
 
-        public override void RunUpdate(float delta)
-        {
-            base.RunUpdate(delta);
-            if (_controller.InputDirectionOverride != Vector3.zero) // for Scenes
-            {
-                PlayerMovement(_controller.InputDirectionOverride, delta);
-            }
-            else
-            {
-                PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
-            }
+        #region animator and movement
 
-        }
 
 
         //private Vector3 currVelocity;
@@ -158,31 +143,21 @@ namespace Arcatech.Units
         private void ChangeVisualStage(float value, float prevvalue)
         {
 
-            Debug.Log($"Visual stage {prevvalue} -> {value}");
-
-            //int newIndex = _currentVisualStageIndex + 1;
-            //if (newIndex >= _visualStagesHP.Count()) return;
-            //if (value <= _visualStagesHP[newIndex])
-            //{
-            //    _currentVisualStageIndex++;
-            //    _visualController.AdvanceMaterialStage();
-            //}
         }
 
         #endregion
 
-        #region visuals
+        #region inventory
 
-        public void DrawItem(string ID)
-        {
-            _visualController.CreateVisualItem(ID);
-        }
-        public void HideAllItems()
-        {
-            _visualController.ClearVisualItems();
-        }
-        public void HideItem(string ID) => _visualController.RemoveVisualItem(ID);
 
+        protected override void InitInventory()
+        {
+
+            var savedEquips = DataManager.Instance.GetSaveData.PlayerItems;
+
+            UnitEquipment = new UnitInventoryComponent(savedEquips, this);
+            CreateStartingEquipments(UnitEquipment);
+        }
         #endregion
 
     }

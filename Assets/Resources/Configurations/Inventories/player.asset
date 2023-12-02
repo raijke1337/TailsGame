@@ -13,11 +13,10 @@ MonoBehaviour:
   m_Name: player
   m_EditorClassIdentifier: 
   ID: player
-  Items:
-    EquipmentIDs:
-    - hammer_base
-    InventoryIDs:
-    - crossbow_base
-    - booster_base
-    - shield_base
-    DropsIDs: []
+  Equipment:
+  - {fileID: 11400000, guid: 80ce9a2598d6ef6439de9f4976534636, type: 2}
+  Inventory:
+  - {fileID: 11400000, guid: 2cf77b96ecc9faf4eb528cda87a21d79, type: 2}
+  - {fileID: 11400000, guid: eba0161257fdea14292d9243848ee89c, type: 2}
+  - {fileID: 11400000, guid: 647c6979eef1d3d41858d1cd27378428, type: 2}
+  Drops: []

@@ -6,11 +6,15 @@ namespace Arcatech.Items
     [Serializable]
     public class EquipmentItem : InventoryItem
     {
-        public BaseUnit Owner { get; set; }
         public string SkillString { get; }
 
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
+        [SerializeField] protected AudioComponentBase _sounds;
+
+        public AudioComponentBase GetSounds => _sounds;
+
+
         protected BaseEquippableItemComponent _instantiated;
         public BaseEquippableItemComponent GetInstantiatedPrefab 
         {
@@ -18,37 +22,28 @@ namespace Arcatech.Items
             {
                 if (_instantiated == null)
                 {
-                    _instantiated = GameObject.Instantiate(_prefab);                    
+                    _instantiated = GameObject.Instantiate(_prefab);
+                    _instantiated.Owner = Owner;
+                }
+                if (!_instantiated.gameObject.activeSelf)
+                {
+                    _instantiated.gameObject.SetActive(true);
                 }
                 return _instantiated;
             }          
         }
-        public bool IsInstantiated
+        public EquipmentItem(Item cfg, BaseUnit ow) : base (cfg,ow)
         {
-            get
+            if (cfg is Equip e)
             {
-                return (_instantiated!= null && _instantiated.isActiveAndEnabled); // mighht get nullref
-            }
-            set
-            {
-                if (_instantiated != null)
-                {
-                    _instantiated.gameObject.SetActive(value);
-                }
+                SkillString = e.SkillString;
+                _prefab = e.Item;
             }
         }
-
-        public EquipmentItem(Equip config) : base(config)
+        public void StopGameItem()
         {
-            SkillString = config.SkillString; _prefab = config.Item;
-        }
+            GameObject.Destroy(_instantiated);
 
-        public virtual void UpdateInDelta(float delta)
-        {
-            if (_instantiated!= null)
-            {
-                _instantiated.UpdateInDelta(delta);
-            }
         }
 
     }

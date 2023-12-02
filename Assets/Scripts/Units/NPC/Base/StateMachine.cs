@@ -64,7 +64,7 @@ namespace Arcatech.Units.Inputs
         public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
         public event StateMachineEvent<CombatActionType> ChangeRangeActionRequestSM;
         public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
-        public event StateMachineEvent<UnitType> RequestFocusSM;
+        public event StateMachineEvent<ReferenceUnitType> RequestFocusSM;
         public event StateMachineEvent AggroRequestedSM;
         public event StateMachineEvent RotationRequestedSM;
 
@@ -149,7 +149,7 @@ namespace Arcatech.Units.Inputs
         {
             AgressiveActionRequestSM?.Invoke(type);
         }
-        public void OnSetFocus(UnitType type) => RequestFocusSM?.Invoke(type);
+        public void OnSetFocus(ReferenceUnitType type) => RequestFocusSM?.Invoke(type);
         public bool CheckIsInStoppingRange()
         {
             var result = Vector3.Distance(NMAgent.transform.position, NMAgent.destination) < NMAgent.stoppingDistance;

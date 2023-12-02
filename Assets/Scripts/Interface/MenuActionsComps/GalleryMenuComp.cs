@@ -1,7 +1,7 @@
 using Arcatech.Managers;
 namespace Arcatech.UI
 {
-    public class GalleryMenuComp : MenuPanelTiled
+    public class GalleryMenuComp : InventoryItemsHolder
     {
         public void OnBack()
         {

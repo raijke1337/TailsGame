@@ -6,7 +6,6 @@ using UnityEngine;
 public class Item : ScriptableObjectID
 {
     public Sprite ItemIcon;
-    public string DisplayName;
     public string DescriptionContainerID;
     public EquipItemType ItemType;
 }

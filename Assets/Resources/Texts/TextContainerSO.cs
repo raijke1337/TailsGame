@@ -1,8 +1,11 @@
+using Arcatech;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Text")]
 public class TextContainerSO : ScriptableObject
 {
-    public TextContainer container;
+    public string ID;
+    public string Title;
+    public string[] Texts;
 }
 

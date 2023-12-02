@@ -18,24 +18,24 @@ namespace Arcatech.UI
             }
             set
             {
+                if (_image == null) _image = GetComponent<Image>(); 
                 _image.sprite = value.sprite;
             }
         }
         public TextMeshProUGUI Text
         {
-            get 
-            { 
+            get
+            {
                 return _text;
             }
-            set 
-            { 
-                _text = value; 
+            set
+            {
+                if (_text == null)
+                {
+                    _text = GetComponent<TextMeshProUGUI>();
+                }
+                _text = value;
             }
-        }
-        private void Awake()
-        {
-            _text = GetComponent<TextMeshProUGUI>();
-            _image = GetComponent<Image>();
         }
     }
 }

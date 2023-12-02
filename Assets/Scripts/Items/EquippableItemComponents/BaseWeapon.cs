@@ -6,8 +6,6 @@ namespace Arcatech.Items
     [Serializable]
     public abstract class BaseWeapon : BaseEquippableItemComponent
     {
-
-        public bool IsSetup { get; private set; } = false;
         protected StatValueContainer WeaponUses;
 
         protected float InternalCooldown;
@@ -50,8 +48,8 @@ namespace Arcatech.Items
             }
             WeaponUses = new StatValueContainer(config.Charges);
             InternalCooldown = config.InternalCooldown;
-            IsSetup = true;
         }
+
 
         public override void UpdateInDelta(float deltaTime)
         {

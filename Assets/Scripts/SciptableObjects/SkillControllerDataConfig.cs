@@ -1,10 +1,12 @@
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "New SkillControllerDataConfig", menuName = "Configurations/Skills")]
-public class SkillControllerDataConfig : ScriptableObjectID
+namespace Arcatech
 {
-    public CombatActionType SkillType;
-    public SkillData Data;
+    [CreateAssetMenu(fileName = "New SkillControllerDataConfig", menuName = "Configurations/Skills")]
+    public class SkillControllerDataConfig : ScriptableObjectID
+    {
+        public CombatActionType SkillType;
+        public SkillData Data;
+    }
+
+
 }
-
-

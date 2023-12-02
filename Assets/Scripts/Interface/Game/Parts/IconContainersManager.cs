@@ -15,7 +15,7 @@ namespace Arcatech.UI
             var icon = Instantiate(_iconPrefab, transform);
 
             icon.Image.sprite = item.ItemIcon;
-            icon.Text.text = "NYI";
+            icon.Text.text = item.GetInstantiatedPrefab.GetNumericValue.ToString();
             _icons.Add(icon);
         }
 

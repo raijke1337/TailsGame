@@ -1,15 +1,15 @@
 using Arcatech.Items;
+using Arcatech.UI;
 using Arcatech.Units;
 using UnityEngine;
-using UnityEngine.InputSystem;
 namespace Arcatech.Managers
 {
     public class EquipsLevelController : MonoBehaviour
     {
-        private SaveData saveData;
+        //private SerializedSaveData saveData;
 
-        [SerializeField] private MenuPanelTiled Items;
-        [SerializeField] private EquipsPanel Equipments;
+        [SerializeField] private InventoryItemsHolder _items;
+        [SerializeField] private EquipsPanel _equips;
 
         [SerializeField] private Canvas _tooltips;
         [SerializeField] private TooltipComp _tooltipPrefab;
@@ -37,96 +37,93 @@ namespace Arcatech.Managers
             {
                 Debug.LogError($"Player unit not found!");
             }
+            _player.InitiateUnit();
 
-            if (Items == null | Equipments == null)
+            if (_items == null | _equips == null)
             {
                 Debug.LogError("Set panels for " + gameObject.name);
                 return;
             }
-            saveData = DataManager.Instance.GetSaveData;
+            //saveData = DataManager.Instance.GetSaveData;
+            // load items from player instaed
+            // 
+            _items.StartController();
+            _equips.StartController();
 
-            FillTiles();
-            //Items.ShowtooltipToggle += HandleTooltipShow;
-            //Equipments.ShowtooltipToggle += HandleTooltipShow;
-            //Items.TileClickToggle += Items_EquipItemToggle;
-            //Equipments.TileClickToggle += Equipments_EquipItemToggle;
+            foreach (var i in _player.UnitEquipment.GetCurrentEquips)
+            {
+                var tile = _equips.AddTileContent(i);
+                tile.ItemClickedEvent += OnEquipmentTileClicked;
+            }
+            foreach (var e in _player.UnitEquipment.GetCurrentInventory)
+            {
+                var tile = _items.AddTileContent(e);
+                tile.ItemClickedEvent += OnInventoryTileClicked;
+            }
+
+
         }
 
-        private void FillTiles()
+        private void OnInventoryTileClicked(InventoryItem arg)
         {
-            Items.CreateTilesAndSub(99); // lol, todo
-            Equipments.CreateTilesAndSub(99);
 
-            var inventory = saveData.PlayerItems.InventoryIDs;
-            var equips = saveData.PlayerItems.EquipmentIDs;
+            if (arg is not EquipmentItem) return; // unequippable items
 
-            //foreach (var equip in equips)
-            //{
-            //    Equipments.AddTileContent(ItemsManager.Instance.GetItemContentByID(equip));
-            //}
-            //foreach (var item in inventory)
-            //{
-            //    Items.AddTileContent(ItemsManager.Instance.GetItemContentByID(item));
-            //}
 
+            ItemTileComponent tile = _items.RemoveTileContent(arg);
+            tile.ItemClickedEvent -= OnInventoryTileClicked;
+
+
+            // this just swaps subs for swithcing between windows
+            var equipTile = _equips.AddTileContent(tile.Item);
+            equipTile.ItemClickedEvent += OnEquipmentTileClicked;
+            // make the 
+
+
+            // TODO null here for some reason
+
+            _player.UnitEquipment.RemoveItem(arg);
+
+            _player.UnitEquipment.EquipItem(arg as EquipmentItem);
         }
 
-        //private void OnDisable()
-        //{
-        //    Items.ShowtooltipToggle -= HandleTooltipShow;
-        //    Equipments.ShowtooltipToggle -= HandleTooltipShow;
-        //    Items.TileClickToggle -= Items_EquipItemToggle;
-        //    Equipments.TileClickToggle -= Equipments_EquipItemToggle;
-        //}
+        private void OnEquipmentTileClicked(InventoryItem arg)
+        {
+           // Debug.Log("Clicked callback - equipment");
+            _equips.RemoveTileContent(arg).ItemClickedEvent -= OnEquipmentTileClicked;
+            _items.AddTileContent(arg).ItemClickedEvent += OnInventoryTileClicked;
 
-        //private void Equipments_EquipItemToggle(InventoryItem arg)
-        //{
-        //    Equipments.RemoveTileContent(arg);
-        //    Items.AddTileContent(arg);
-        //    UpdateItemsInSave(arg, false);
-        //}
+            _player.UnitEquipment.AddItem(_player.UnitEquipment.UnequipItem(arg.ItemType));
+        }
 
-        //private void Items_EquipItemToggle(InventoryItem arg)
-        //{
-        //    Items.RemoveTileContent(arg);
-        //    Equipments.AddTileContent(arg);
-        //    UpdateItemsInSave(arg, true);
-        //}
         private void Update()
         {
-            if (instantiatedTT == null)
-            {
-                instantiatedTT = Instantiate(_tooltipPrefab);
-                var rect = instantiatedTT.GetComponent<RectTransform>();
-                rect.SetParent(_tooltips.transform);
-            }
-            instantiatedTT.gameObject.SetActive(_showingTooltip);
-            if (_showingTooltip)
-            {
-                instantiatedTT.GetRect.anchoredPosition = Mouse.current.position.ReadValue();
-            }
+            _items.UpdateController(Time.deltaTime); // nothing here for now
+            _equips.UpdateController(Time.deltaTime);
+
+            //if (instantiatedTT == null)
+            //{
+            //    instantiatedTT = Instantiate(_tooltipPrefab);
+            //    var rect = instantiatedTT.GetComponent<RectTransform>();
+            //    rect.SetParent(_tooltips.transform);
+            //}
+            //instantiatedTT.gameObject.SetActive(_showingTooltip);
+            //if (_showingTooltip)
+            //{
+            //    instantiatedTT.GetRect.anchoredPosition = Mouse.current.position.ReadValue();
+            //}
         }
 
         private void HandleTooltipShow(InventoryItem arg1, bool arg2)
         {
-            _showingTooltip = arg2;
+            // _showingTooltip = arg2;
             //instantiatedTT.SetTexts(arg1);
         }
 
-        private void UpdateItemsInSave(InventoryItem cont, bool IsEquip)
+        private void OnDisable()
         {
-            if (IsEquip)
-            {
-                saveData.PlayerItems.EquipmentIDs.Add(cont.ID);
-                saveData.PlayerItems.InventoryIDs.Remove(cont.ID);
-            }
-            else
-            {
-                saveData.PlayerItems.EquipmentIDs.Remove(cont.ID);
-                saveData.PlayerItems.InventoryIDs.Add(cont.ID);
-            }
-            DataManager.Instance.UpdateSaveData();
-            //_player.InitInventory(_items);
+            _items.StopController();
+            _equips.StopController();
         }
 
 

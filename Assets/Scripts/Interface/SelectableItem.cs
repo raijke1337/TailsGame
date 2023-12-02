@@ -8,7 +8,9 @@ using UnityEngine.UI;
 public class SelectableItem : MonoBehaviour
 {
     public SelectableItemType Type;
-    public string GetText { get => gameObject.name; }
+
+    [SerializeField,Tooltip("ID for text container")] private string _selectableID;
+    public string GetTextID { get => _selectableID; }
     protected Camera _cam;
     public void ToggleCam(bool s)=> _cam.enabled = s;
 

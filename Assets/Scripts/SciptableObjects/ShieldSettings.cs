@@ -1,12 +1,14 @@
 
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
-
-[CreateAssetMenu(menuName = "Configurations/Shield")]
-public class ShieldSettings : ScriptableObjectID
+namespace Arcatech
 {
+    [CreateAssetMenu(menuName = "Configurations/Shield")]
+    public class ShieldSettings : ScriptableObjectID
+    {
 
-    public SerializedDictionary<ShieldStatType, StatValueContainer> Stats;
+        public SerializedDictionary<ShieldStatType, StatValueContainer> Stats;
+
+    }
 
 }
-

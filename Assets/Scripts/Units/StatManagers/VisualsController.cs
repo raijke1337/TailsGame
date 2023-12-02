@@ -66,22 +66,29 @@ namespace Arcatech.Units
         private ItemEmpties _empties;
         private List<EquipmentItem> _list = new List<EquipmentItem>();
 
-        public void CreateVisualItem(string itemID)
+        //public void CreateVisualItem(string itemID)
+        //{
+        //    var item = new EquipmentItem(DataManager.Instance.GetConfigByID<Equip>(itemID));
+        //    CreateVisualItem(item);
+        //}
+        public void CreateVisualItem(EquipmentItem item)
         {
-            var item = DataManager.Instance.GetConfigByID<Equip>(itemID);
-            _list.Add(new EquipmentItem(item));
+            _list.Add(item);
 
             switch (item.ItemType)
             {
                 default:
                     Debug.Log($"Equipping visual item {item.ID} and there is no logic for {item.ItemType} in {name}: NYI");
                     break;
+                case (EquipItemType.MeleeWeap):
+                    item.GetInstantiatedPrefab.transform.parent = _empties.MeleeWeaponEmpty;
+                    break;
             }
         }
-        public void CreateVisualItem(string[] itemIDs)
-        {
-            foreach (var i in itemIDs) CreateVisualItem(i);
-        }
+        //public void CreateVisualItem(string[] itemIDs)
+        //{
+        //    foreach (var i in itemIDs) CreateVisualItem(i);
+        //}
         public void ClearVisualItems()
         {
             Debug.Log($"Clearing all visuals in {name} : NYI");
