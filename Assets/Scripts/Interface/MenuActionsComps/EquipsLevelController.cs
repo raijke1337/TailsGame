@@ -10,6 +10,7 @@ namespace Arcatech.Managers
 
         [SerializeField] private InventoryItemsHolder _items;
         [SerializeField] private EquipsPanel _equips;
+        [SerializeField] private GameObject _weaponsMessage;
 
         [SerializeField] private Canvas _tooltips;
         [SerializeField] private TooltipComp _tooltipPrefab;
@@ -22,7 +23,15 @@ namespace Arcatech.Managers
 
         public void OnDone()
         {
-            GameManager.Instance.OnFinishedEquips();
+            if (_player.IsArmed)
+            {
+                GameManager.Instance.OnFinishedEquips();
+            }
+            else
+            {
+                _weaponsMessage.SetActive(true);
+            }
+            
         }
         public void OnMain()
         {

@@ -14,40 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: booster_base
   Stats:
-    reorderableList:
-      canAdd: 1
-      canRemove: 1
-      draggable: 1
-      expandable: 1
-      multipleSelection: 1
-      isExpanded: 1
-      label:
-        m_Text: Keys
-        m_Image: {fileID: 0}
-        m_Tooltip: 
-      headerHeight: 18
-      footerHeight: 13
-      slideEasing: 0.15
-      verticalSpacing: 2
-      showDefaultBackground: 1
-      elementDisplayType: 0
-      elementNameProperty: 
-      elementNameOverride: 
-      elementIcon: {fileID: 0}
-    reqReferences: {fileID: 0}
-    isExpanded: 1
-    _keyValues: 01000000000000000200000003000000
-    _keys: 01000000000000000200000003000000
-    _values:
-    - _start: 3
-      _max: 6
-      _min: 0
-    - _start: 3
-      _max: 5
-      _min: 0
-    - _start: 6
-      _max: 10
-      _min: 0
-    - _start: 3
-      _max: 0
-      _min: 0
+    _serializedList:
+    - Key: 0
+      Value:
+        _start: 3
+        _max: 0
+        _min: 0
+    - Key: 1
+      Value:
+        _start: 5
+        _max: 0
+        _min: 0
+    - Key: 2
+      Value:
+        _start: 3
+        _max: 0
+        _min: 0
+    - Key: 3
+      Value:
+        _start: 1
+        _max: 0
+        _min: 0

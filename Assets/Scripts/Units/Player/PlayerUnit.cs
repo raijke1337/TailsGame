@@ -13,7 +13,6 @@ namespace Arcatech.Units
         protected Camera _faceCam;
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
-
         #region managed
         public override void InitiateUnit()
         {
@@ -58,14 +57,6 @@ namespace Arcatech.Units
             if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
             if (_visualController == null) _visualController = GetComponent<VisualsController>();
             _visualController.Empties = _controller.GetEmpties;
-        }
-
-
-
-        public override void DisableUnit()
-        {
-            
-            base.DisableUnit();
         }
 
         protected override void ControllerEventsBinds(bool isEnable)

@@ -8,6 +8,7 @@ namespace Arcatech.Units
 {
     [Serializable]
     public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
+
     {
         public DodgeController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
@@ -33,6 +34,18 @@ namespace Arcatech.Units
                 IsReady = false;
                 throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
+            else
+            {
+                _stats = new Dictionary<DodgeStatType, StatValueContainer>();
+                var dat = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
+
+                foreach (var c in dat.Stats)
+                {
+                    _stats[c.Key] = new StatValueContainer(c.Value);
+                }
+                foreach (var st in _stats.Values)
+                { st.Setup(); }
+            }
         }
         protected override void InstantiateItem(EquipmentItem i)
         {
@@ -49,18 +62,6 @@ namespace Arcatech.Units
             {
                 Debug.Log($"{this} is not ready for setup, items: {_equipment.Values.Count}");
                 return;
-            }
-            else
-            {
-                _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-                var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
-
-                foreach (var c in cfg.Stats)
-                {
-                    _stats[c.Key] = new StatValueContainer(c.Value);
-                }
-                foreach (var st in _stats.Values)
-                { st.Setup(); }
             }
         }
 
@@ -83,7 +84,7 @@ namespace Arcatech.Units
                 var t = new Timer(_stats[DodgeStatType.Cooldown].GetCurrent);
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
-                SoundPlayCallback(_equipment[EquipItemType.Booster].GetSounds.SoundsDict[SoundType.OnUse]);
+                // SoundPlayCallback(_equipment[EquipItemType.Booster].GetSounds.SoundsDict[SoundType.OnUse]);
                 return true;
             }
         }

@@ -54,6 +54,7 @@ namespace Arcatech.Units
         {
             _equips[e.ItemType] = e;
             e.Owner = _owner;
+            e.OnEquip();
             EquipmentChangedEvent?.Invoke(e,true);
         }
         public void AddItem(InventoryItem i)
@@ -99,8 +100,10 @@ namespace Arcatech.Units
                 var i = _equips.Values.First(t => t.ID == ID);
                 _items.Remove(i);
                 ret = i;
-                InventoryChangedEvent?.Invoke(ret, false);
 
+                ret.OnUnequip();
+
+                InventoryChangedEvent?.Invoke(ret, false);
                 return ret;
             }
             catch
@@ -119,6 +122,7 @@ namespace Arcatech.Units
 
 
                 ret = i;
+                ret.OnUnequip();
                 InventoryChangedEvent?.Invoke(ret, false);
 
                 return ret;

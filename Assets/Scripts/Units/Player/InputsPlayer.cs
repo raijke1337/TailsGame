@@ -170,7 +170,7 @@ namespace Arcatech.Units.Inputs
         protected override void LerpRotateToTarget(Vector3 looktarget, float delta) // here we also apply turning animations
         {
             base.LerpRotateToTarget(looktarget, delta);
-            // TODO Detect rotation
+            // TODO Detect rotation to play animations
         }
 
         private void OnDrawGizmos()

@@ -39,6 +39,15 @@ namespace Arcatech.Units
         public SkillsController GetSkillsController => _skillCtrl;
         public WeaponController GetWeaponController => _weaponCtrl;
 
+
+        public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
+        public event SimpleEventsHandler StaggerHappened;
+
+        protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
+        protected void StunEventCallback() => StaggerHappened?.Invoke();
+
+
+        #region items
         public void AssignItems(UnitInventoryComponent items, out IEnumerable<string> skills)
         {
             items.EquipmentChangedEvent += OnEquipmentChangedEvent;
@@ -125,12 +134,10 @@ namespace Arcatech.Units
             }                        
         }
 
-        public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
-        public event SimpleEventsHandler StaggerHappened;
+
+        #endregion
 
 
-        protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
-        protected void StunEventCallback() => StaggerHappened?.Invoke();
         #region scenes
 
         public Vector3 InputDirectionOverride = Vector3.zero;
@@ -288,6 +295,11 @@ namespace Arcatech.Units
                 delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
         }
 
+
+        #endregion
+
+
+        #region dodging
         public void PerformDodging()
         {
             _dodgeCor = StartCoroutine(DodgingMovement());

@@ -40,10 +40,14 @@ namespace Arcatech.Items
                 _prefab = e.Item;
             }
         }
-        public void StopGameItem()
-        {
-            GameObject.Destroy(_instantiated);
 
+        public void OnEquip()
+        {
+            if (_instantiated != null) _instantiated.gameObject.SetActive(true);
+        }
+        public void OnUnequip()
+        {
+            if (_instantiated != null) _instantiated.gameObject.SetActive(false);
         }
 
     }

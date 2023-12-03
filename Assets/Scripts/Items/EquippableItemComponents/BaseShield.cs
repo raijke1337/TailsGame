@@ -5,7 +5,7 @@ namespace Arcatech.Items
 {
     public class BaseShield : BaseEquippableItemComponent
     {
-        public override int GetNumericValue => throw new System.NotImplementedException();
+        public override int GetNumericValue => 0;
 
         public override void UpdateInDelta(float delta)
         {

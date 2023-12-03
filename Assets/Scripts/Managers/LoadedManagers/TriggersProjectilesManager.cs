@@ -148,16 +148,10 @@ namespace Arcatech.Managers
             {
                 return;
             }
-            try
+            if (config.HitEffect!= null)
             {
-                var p = Instantiate(config.HitEffect, finaltgt.transform.position, Quaternion.identity);
-
-            }
-            catch
-            {
-                Debug.Log($"{ID} has no hit effect assigned");
-            }
-
+                Instantiate(config.HitEffect, finaltgt.transform.position, Quaternion.identity);
+            }            
             finaltgt.AddTriggeredEffect(effect);
         }
 

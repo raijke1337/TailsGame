@@ -83,11 +83,10 @@ namespace Arcatech.Units
         public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
 
         public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
+
         protected virtual void SwitchWeapon(EquipItemType type)
         {
             SwitchAnimationLayersEvent?.Invoke(type);
-
-
             if (type == EquipItemType.MeleeWeap)
             {
                 Equip(type);
@@ -103,9 +102,11 @@ namespace Arcatech.Units
 
         protected void Sheathe(EquipItemType type)
         {
-            var item = _equipment[type].GetInstantiatedPrefab;
-            item.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
-            item.transform.parent = Empties.SheathedWeaponEmpty;
+            if (_equipment.TryGetValue(type, out var equip))
+            {
+                equip.GetInstantiatedPrefab.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
+                equip.GetInstantiatedPrefab.transform.parent = Empties.SheathedWeaponEmpty;
+            }
         }
 
 
@@ -122,7 +123,13 @@ namespace Arcatech.Units
             }
             else
             {
-                return (_equipment[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
+                
+                bool ok = (_equipment[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
+                if (ok)
+                {
+                    SwitchWeapon(type);
+                }
+                return ok;
             }
         }
         public void ToggleTriggersOnMelee(bool isEnable)

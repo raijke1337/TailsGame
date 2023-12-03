@@ -1,6 +1,7 @@
 using Arcatech.Items;
 using Arcatech.Managers;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -44,12 +45,14 @@ namespace Arcatech.Units
             _controller.AssignItems(item,out var sk);
             _controller.ChangeSkillsList(sk, true);
         }
-
+        public bool IsArmed { get
+            {
+                var list = new List<EquipmentItem>(UnitEquipment.GetCurrentEquips);
+                return list.Any(t => t.ItemType == EquipItemType.MeleeWeap)|| list.Any(t => t.ItemType == EquipItemType.RangedWeap);              
+            }
+        }
 
         #endregion
-
-
-        protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
 
 
         //protected bool bindsComplete = false;
@@ -110,7 +113,7 @@ namespace Arcatech.Units
             if (_animator == null) _animator = GetComponent<Animator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
             if (_controller == null) _controller = GetComponent<ControlInputsBase>();
-            //if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
+           // if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         }
 
 
@@ -139,7 +142,7 @@ namespace Arcatech.Units
         {
             _animator.SetTrigger("Death");
             _controller.IsInputsLocked = true;
-            UnitPlaysSound(UnitSounds.SoundsDict[SoundType.OnExpiry], Vector3.zero);
+            //UnitPlaysSound(UnitSounds.SoundsDict[SoundType.OnExpiry], Vector3.zero);
             BaseUnitDiedEvent?.Invoke(this);
         }
         public virtual void AddTriggeredEffect(TriggeredEffect eff)
@@ -182,6 +185,11 @@ namespace Arcatech.Units
         }
         #endregion
         #region combat
+
+
+        protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
+
+
         protected virtual void AnimateCombatActivity(CombatActionType type)
         {
             if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;

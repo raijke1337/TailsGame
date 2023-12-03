@@ -61,16 +61,24 @@ namespace Arcatech.UI
             //_shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent; // item was equipped
 
 
-            //if (_shield.IsReady)
-            //{                
-            //    SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-            //    _icons.TrackItemIcon(_shield.CurrentlyEquippedItem);
-            //    _bars.ProcessContainer(SHc, DisplayValueType.Shield);
-            //}
-            //if (_dodge.IsReady)
-            //{
-            //    _icons.TrackItemIcon(_dodge.CurrentlyEquippedItem); // TODO: Placeholder , no cooldown
-            //}
+            if (_shield.IsReady)
+            {
+                SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+                _bars.ProcessContainer(SHc, DisplayValueType.Shield);
+
+                foreach (var i in _shield.GetCurrentEquipped)
+                {
+                    _icons.TrackItemIcon(i);
+                }
+            }
+
+            if (_dodge.IsReady)
+            {
+                foreach (var i in _dodge.GetCurrentEquipped)
+                {
+                    _icons.TrackItemIcon(i);
+                }
+            }
             foreach (var weapon in _weapons.GetCurrentEquipped)
             {
                 _icons.TrackItemIcon(weapon);
