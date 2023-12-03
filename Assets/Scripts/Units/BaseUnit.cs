@@ -34,7 +34,7 @@ namespace Arcatech.Units
 
 
         #region equipments
-        [SerializeField] public UnitInventoryComponent UnitEquipment { get; protected set; }
+        [SerializeField] public UnitInventoryComponent GetUnitInventory { get; protected set; }
 
         protected abstract void InitInventory();
 
@@ -47,7 +47,7 @@ namespace Arcatech.Units
         }
         public bool IsArmed { get
             {
-                var list = new List<EquipmentItem>(UnitEquipment.GetCurrentEquips);
+                var list = new List<EquipmentItem>(GetUnitInventory.GetCurrentEquips);
                 return list.Any(t => t.ItemType == EquipItemType.MeleeWeap)|| list.Any(t => t.ItemType == EquipItemType.RangedWeap);              
             }
         }

@@ -140,14 +140,13 @@ namespace Arcatech.Units
 
         #region inventory
 
-
         protected override void InitInventory()
         {
 
             var savedEquips = DataManager.Instance.GetSaveData.PlayerItems;
 
-            UnitEquipment = new UnitInventoryComponent(savedEquips, this);
-            CreateStartingEquipments(UnitEquipment);
+            GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
+            CreateStartingEquipments(GetUnitInventory);
         }
         #endregion
 

@@ -65,7 +65,7 @@ namespace Arcatech.Managers
 
         public void OnFinishedEquips()
         {
-            var newequips = _gameControllers.UnitsManager.GetPlayerUnit.UnitEquipment.PackSaveData;
+            var newequips = _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.PackSaveData;
             DataManager.Instance.UpdateSaveData(newequips);
             LoadLevel(gameLevelID, true);
         }
@@ -140,6 +140,7 @@ namespace Arcatech.Managers
 
         public void OnLevelComplete()
         {
+            OnFinishedEquips(); // update save data with picked up items
             if (_gameControllers != null)
             {
                 _gameControllers.Stop();
@@ -160,8 +161,8 @@ namespace Arcatech.Managers
         }
         public void OnItemPickup(string itemID)
         {
-            //DataManager.Instance.GetSaveData.PlayerItems.InventoryIDs.Add(itemID);
-            Debug.Log($"Picked up an item {itemID}");
+            Item item = DataManager.Instance.GetConfigByID<Item>(itemID);
+            _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.AddItem(new Items.InventoryItem(item, _gameControllers.UnitsManager.GetPlayerUnit));
         }
         public void QuitGame()
         {

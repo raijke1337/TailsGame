@@ -22,7 +22,6 @@ namespace Arcatech.Triggers
 
         public GameObject GetObject() => gameObject;
 
-
     }
 
 }

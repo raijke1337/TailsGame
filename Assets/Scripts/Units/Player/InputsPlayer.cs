@@ -131,8 +131,8 @@ namespace Arcatech.Units.Inputs
         }
         private void Dash_performed(CallbackContext obj)
         {
-            if (IsInputsLocked) return;
-            if (MoveDirectionFromInputs == Vector3.zero) return; //can't dash from standing
+            if (IsInputsLocked || MoveDirectionFromInputs == Vector3.zero) return;
+            //can't dash from standing
             if (_dodgeCtrl.IsDodgePossibleCheck())
             {
                 CombatActionSuccessCallback(CombatActionType.Dodge);

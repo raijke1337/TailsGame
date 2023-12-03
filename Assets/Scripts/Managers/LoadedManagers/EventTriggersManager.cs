@@ -47,7 +47,11 @@ namespace Arcatech.Managers
                 case LevelEventType.Cutscene:
                     break;
                 case LevelEventType.ItemPickup:
+                    tr.EnterEvent -= OnEventActivated;
+                        triggers.Remove(tr);
                     GameManager.Instance.OnItemPickup(tr.ContentIDString);
+
+                    Destroy(tr.gameObject);                    
                     break;
                 default:
                     Debug.LogWarning($"{this} can't handle event of type {tr.EventType}");

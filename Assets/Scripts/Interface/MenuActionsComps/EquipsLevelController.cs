@@ -59,12 +59,12 @@ namespace Arcatech.Managers
             _items.StartController();
             _equips.StartController();
 
-            foreach (var i in _player.UnitEquipment.GetCurrentEquips)
+            foreach (var i in _player.GetUnitInventory.GetCurrentEquips)
             {
                 var tile = _equips.AddTileContent(i);
                 tile.ItemClickedEvent += OnEquipmentTileClicked;
             }
-            foreach (var e in _player.UnitEquipment.GetCurrentInventory)
+            foreach (var e in _player.GetUnitInventory.GetCurrentInventory)
             {
                 var tile = _items.AddTileContent(e);
                 tile.ItemClickedEvent += OnInventoryTileClicked;
@@ -91,9 +91,9 @@ namespace Arcatech.Managers
 
             // TODO null here for some reason
 
-            _player.UnitEquipment.RemoveItem(arg);
+            _player.GetUnitInventory.RemoveItem(arg);
 
-            _player.UnitEquipment.EquipItem(arg as EquipmentItem);
+            _player.GetUnitInventory.EquipItem(arg as EquipmentItem);
         }
 
         private void OnEquipmentTileClicked(InventoryItem arg)
@@ -102,7 +102,7 @@ namespace Arcatech.Managers
             _equips.RemoveTileContent(arg).ItemClickedEvent -= OnEquipmentTileClicked;
             _items.AddTileContent(arg).ItemClickedEvent += OnInventoryTileClicked;
 
-            _player.UnitEquipment.AddItem(_player.UnitEquipment.UnequipItem(arg.ItemType));
+            _player.GetUnitInventory.AddItem(_player.GetUnitInventory.UnequipItem(arg.ItemType));
         }
 
         private void Update()

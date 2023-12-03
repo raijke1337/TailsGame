@@ -59,9 +59,17 @@ namespace Arcatech.Units
         }
         public void AddItem(InventoryItem i)
         {
-            _items.Add(i);
-            i.Owner = _owner;
-            InventoryChangedEvent?.Invoke(i,true);
+            if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t=>t.Value.ID == i.ID).Any())
+            {
+                Debug.LogWarning($"Not added item {i} to {_owner} because it is already owned");
+                return; // supposed to prevent duplication 
+            }
+            else
+            {
+                _items.Add(i);
+                i.Owner = _owner;
+                InventoryChangedEvent?.Invoke(i, true);
+            }
         }
         public InventoryItem RemoveItem(string ID)
         {

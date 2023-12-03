@@ -23,10 +23,17 @@ namespace Arcatech.Units
 
         public void LoadItem(EquipmentItem item, out EquipmentItem removing)
         {
-            Debug.Log($"Loading item {item.GetDisplayName} for {Owner} into {this}");
+            
             item.Owner = Owner;
 
             OnItemAssign(item, out removing);
+
+            Debug.Log($"Loaded item {item.GetDisplayName} for {Owner.GetFullName}");
+            if (removing != null)
+            {
+                Debug.Log($"Removed {removing.GetDisplayName}");
+            }
+
             StateChangeCallback(IsReady, this);
         }
         public virtual EquipmentItem RemoveItem(EquipItemType type)
@@ -43,12 +50,14 @@ namespace Arcatech.Units
         {
 
             replacing = null;
-            IsReady = true;
+            
 
             if (_equipment.TryGetValue(item.ItemType, out EquipmentItem val))
             {
                 replacing = val;
+                RemoveItem(replacing.ItemType);
             }
+            IsReady = true;
             var i = _equipment[item.ItemType] = item;
             FinishItemConfig(i);
             InstantiateItem(i);
