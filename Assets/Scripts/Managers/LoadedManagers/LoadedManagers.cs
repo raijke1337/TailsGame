@@ -1,5 +1,7 @@
 
 using UnityEngine;
+using UnityEngine.Assertions;
+
 namespace Arcatech.Managers
 {
     public class LoadedManagers : MonoBehaviour
@@ -59,17 +61,11 @@ namespace Arcatech.Managers
             }
             foreach (var m in _managers)
             {
+                Assert.IsNotNull(m);
 
-                if (m != null)
-                {
-                    m.Initiate();
-                }
-                else
-                {
-                    Debug.Log($"Null manager {m.GetType()}");
-                }
+                m.Initiate();
             }
-            Debug.Log($"Finished loading managers for level {_lvl.LevelNameShort} mode is {_lvl.Type}");
+            //Debug.Log($"Finished loading managers for level {_lvl.LevelNameShort} mode is {_lvl.Type}");
 
         }
 

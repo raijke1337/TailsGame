@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 using Arcatech.Managers;
+using Arcatech.UI;
 
 namespace Arcatech.Units.Inputs
 {
@@ -40,6 +41,7 @@ namespace Arcatech.Units.Inputs
             _controls.Game.SkillR.performed += SkillR_performed;
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
+            _controls.Game.Pause.performed += Pause_performed;
 
             _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
@@ -48,6 +50,13 @@ namespace Arcatech.Units.Inputs
 
             _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
         }
+
+        private void Pause_performed(CallbackContext obj)
+        {
+            _gameInterfaceManager.OnPauseRequest(true);
+
+        }
+
         public override void UpdateController(float delta)
         {
             base.UpdateController(delta);
@@ -69,6 +78,7 @@ namespace Arcatech.Units.Inputs
             _controls.Game.MainAttack.performed -= MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
             _aim.SelectionUpdatedEvent -= OnSelectedUpdate;
+            _controls.Game.Pause.performed -= Pause_performed;
 
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
@@ -92,7 +102,6 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked) return;
             if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap, out string text))
                 CombatActionSuccessCallback(CombatActionType.Ranged);
-            else Debug.Log(text);
 
         }
         protected void MeleeAttack_performed(CallbackContext obj)
@@ -100,43 +109,54 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked && !IsInMeleeCombo) return;
             if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap, out string text))
                 CombatActionSuccessCallback(CombatActionType.Melee);
-            else Debug.Log(text);
+            
         }
         protected void SkillR_performed(CallbackContext obj)
         {
             if (IsInputsLocked) return;
-            if (_skillCtrl.RequestSkill(CombatActionType.ShieldSpecialR, out var c))
+            if (_skillCtrl.TryUseSkill(CombatActionType.ShieldSpecialR, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                if (_comboCtrl.UseCombo(c))
-                    CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
+                _comboCtrl.UseCombo(sk.Cost);
+                SkillSpawnEventCallback(sk);
+                CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
             }
         }
         protected void SkillQ_performed(CallbackContext obj)
         {
             if (IsInputsLocked) return;
-            if (_skillCtrl.RequestSkill(CombatActionType.MeleeSpecialQ, out var c))
+            if (_skillCtrl.TryUseSkill(CombatActionType.MeleeSpecialQ, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                if (_comboCtrl.UseCombo(c))
-                    CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
+                _comboCtrl.UseCombo(sk.Cost);
+                SkillSpawnEventCallback(sk);
+                CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
             }
         }
         protected void SkillE_performed(CallbackContext obj)
         {
             if (IsInputsLocked) return;
-            if (_skillCtrl.RequestSkill(CombatActionType.RangedSpecialE, out var c))
+            if (_skillCtrl.TryUseSkill(CombatActionType.RangedSpecialE, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                if (_comboCtrl.UseCombo(c))
-                    CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
+                _comboCtrl.UseCombo(sk.Cost);
+                SkillSpawnEventCallback(sk);    
+                CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
             }
         }
         private void Dash_performed(CallbackContext obj)
         {
             if (IsInputsLocked || MoveDirectionFromInputs == Vector3.zero) return;
             //can't dash from standing
-            if (_dodgeCtrl.IsDodgePossibleCheck())
+            if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
+                _comboCtrl.UseCombo(sk.Cost);
+                SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.Dodge);
             }
+
+            // this is the old dash, non-skill
+            //if (_dodgeCtrl.IsDodgePossibleCheck())
+            //{
+            //    CombatActionSuccessCallback(CombatActionType.Dodge);
+            //}
         }
         #endregion
 
@@ -183,9 +203,9 @@ namespace Arcatech.Units.Inputs
 
         }
 
-        private void OnSelectedUpdate(bool isSelect)
+        private void OnSelectedUpdate(bool isSelect,BaseTargetableItem item)
         {
-            _gameInterfaceManager.UpdateSelected(_aim.GetSelectableItem, isSelect);
+            _gameInterfaceManager.OnPlayerSelectedTargetable(item, isSelect);
         }
 
 

@@ -1,4 +1,5 @@
 using Arcatech.Units;
+using Arcatech.Units.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Managers
@@ -11,11 +12,22 @@ namespace Arcatech.Managers
         private PlayerUnit _player;
         public PlayerUnit GetPlayerUnit { get => _player; }
         public List<NPCUnit> GetNPCs() => _npcs;
-        public SkillRequestedEvent RequestToPlaceSkills;
+        public SkillRequestedEvent UnitRequestsToPlaceASkillEvent;
 
         [SerializeField] private List<BaseUnit> _allUnits = new List<BaseUnit>();
 
-        private AudioManager _audioManager;
+        private EffectsManager _effects;
+
+        private bool _paused;
+        public bool GameplayPaused
+        {
+            get => _paused;
+            set
+            {
+                _player.GetInputs<InputsPlayer>().IsInputsLocked = value;
+                _paused = value;
+            }
+        }
 
         public override void Initiate()
         {
@@ -43,7 +55,7 @@ namespace Arcatech.Managers
                 room.Initiate();
             }
 
-            _audioManager = AudioManager.Instance;
+            _effects = EffectsManager.Instance;
         }
 
         private void AddNPCToList(NPCUnit n)
@@ -87,22 +99,29 @@ namespace Arcatech.Managers
             if (isEnable)
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-                u.SkillRequestSuccessEvent += (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
-                u.SoundPlayEvent += U_SoundPlayEvent;
+                u.SkillRequestSuccessEvent += (id, user, where) => UnitRequestsToPlaceASkillEvent?.Invoke(id, user, where);
+                u.UnitRequestsSound += U_SoundPlayEvent;
+                u.UnitRequestsParticles += U_UnitRequestsParticles;
                 u.InitiateUnit();
             }
             else
             {
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
-                u.SkillRequestSuccessEvent -= (id, user, where) => RequestToPlaceSkills?.Invoke(id, user, where);
-                u.SoundPlayEvent -= U_SoundPlayEvent;
+                u.SkillRequestSuccessEvent -= (id, user, where) => UnitRequestsToPlaceASkillEvent?.Invoke(id, user, where);
+                u.UnitRequestsSound -= U_SoundPlayEvent;
+                u.UnitRequestsParticles -= U_UnitRequestsParticles;
                 u.DisableUnit();
             }
         }
 
+        private void U_UnitRequestsParticles(CartoonFX.CFXR_Effect arg1, Transform arg2)
+        {
+            _effects.PlaceParticle(arg1, arg2);
+        }
+
         private void U_SoundPlayEvent(AudioClip c, Vector3 where)
         {
-            _audioManager.PlaySound(c, where);
+            _effects.PlaySound(c, where);
         }
 
         private void SetAIStateUnit(bool isProcessing, NPCUnit unit)

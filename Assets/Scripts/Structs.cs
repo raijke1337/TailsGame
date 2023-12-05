@@ -1,8 +1,10 @@
 
+using Arcatech.Skills;
+using Arcatech.Triggers;
 using Arcatech.Units;
+using CartoonFX;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 namespace Arcatech
 {
@@ -12,7 +14,7 @@ namespace Arcatech
     public delegate void SimpleEventsHandler<T1, T2>(T1 arg1, T2 arg2);
 
     public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
-    public delegate void SkillRequestedEvent(string ID, BaseUnit source, Transform where);
+    public delegate void SkillRequestedEvent(SkillObjectForControls data, BaseUnit source, Transform where);
 
     public delegate void WeaponEvents<T>(T arg);
     public delegate void DodgeEvents<T>(T arg);
@@ -37,26 +39,6 @@ namespace Arcatech
         }
     }
 
-
-    [Serializable]
-    public struct SkillData
-    {
-        public Sprite Icon;
-        public float Recharge;
-        public float FinalArea;
-        public float StartArea;
-        public float PersistTime;
-        public float SkillCost;
-        public string[] TriggerIDs;
-        public AudioComponentBase AudioData;
-
-
-        public SkillData(SkillData refs)
-        {
-            Icon = refs.Icon; Recharge = refs.Recharge; FinalArea = refs.FinalArea; StartArea = refs.StartArea; PersistTime = refs.PersistTime; SkillCost = refs.SkillCost; //TargetType = refs.TargetType;
-            TriggerIDs = refs.TriggerIDs; AudioData = refs.AudioData;
-        }
-    }
     [Serializable]
     public struct EnemyStats
     {
@@ -119,7 +101,6 @@ namespace Arcatech
         }
 
     }
-
     #endregion
 
 
@@ -127,19 +108,30 @@ namespace Arcatech
 
     #region interfaces
 
+    public interface IHasEffects
+    {
+        public AudioClip GetAudio(EffectMoment type);
+        public CFXR_Effect GetParticle(EffectMoment type);
+
+    }
+
     public interface ITakesTriggers
     {
         void AddTriggeredEffect(TriggeredEffect effect);
     }
 
-    public interface IStatsComponentForHandler
+    public interface IStatsComponentForHandler : IManaged
     {
         bool IsReady { get; }
         event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
+
+       // void Ping();
+    }
+    public interface IManaged
+    {
         void UpdateInDelta(float deltaTime);
         void SetupStatsComponent();
         void StopStatsComponent();
-       // void Ping();
     }
 
     public interface IHasID
@@ -159,7 +151,7 @@ namespace Arcatech
     public delegate void AudioEvents(AudioClip c, Vector3 position);
     public interface IProducesSounds
     {
-        public event AudioEvents SoundPlayEvent;
+        public event AudioEvents UnitRequestsSound;
 
     }
 

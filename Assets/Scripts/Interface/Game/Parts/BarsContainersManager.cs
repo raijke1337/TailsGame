@@ -2,41 +2,37 @@ using AYellowpaper.SerializedCollections;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.UI
 {
     public class BarsContainersManager : ManagedControllerBase
     {
-        [SerializeField] private BarContainerUIScript _hpB;
-        [SerializeField] private BarContainerUIScript _shB;
-        [SerializeField] private BarContainerUIScript _combB;
-
-        private List<BarContainerUIScript> _bars;
+        [SerializeField] SerializedDictionary<DisplayValueType, BarContainerUIScript> _barsDict;
 
 
-
-        public void ProcessContainer(StatValueContainer cont, DisplayValueType type)
+        public void LoadValues(StatValueContainer cont, DisplayValueType type)
         {
+            Assert.IsNotNull(cont,$"Loading null into {this}");
             switch (type)
             {
                 case DisplayValueType.Health:
-                    _hpB.Container = cont;
+                    _barsDict[type].Container = cont;
                     break;
                 case DisplayValueType.Shield:
-                    _shB.Container = cont;
+                    _barsDict[type].Container = cont;
                     break;
                 case DisplayValueType.Combo:
-                    _combB.Container = cont;
+                    _barsDict[type].Container = cont;
                     break;
-                    default:
+                default:
                     break;
             }
         }
 
-
         public override void UpdateController(float delta)
         {
-            foreach (var c in _bars)
+            foreach (var c in _barsDict.Values)
             {
                 if (c != null)
                 c.UpdateValues(delta);
@@ -50,12 +46,7 @@ namespace Arcatech.UI
 
         public override void StartController()
         {
-            _bars = new List<BarContainerUIScript>
-            {
-                _hpB,
-                _shB,
-                _combB
-            };
+
         }
     }
 }

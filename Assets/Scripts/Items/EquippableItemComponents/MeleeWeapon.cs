@@ -7,9 +7,6 @@ namespace Arcatech.Items
     public class MeleeWeapon : BaseWeapon
     {
         private WeaponTriggerComponent _trigger;
-
-        public override int GetNumericValue => Mathf.RoundToInt(InternalCooldown);
-
         public override void SetUpWeapon(BaseWeaponConfig config)
         {
             base.SetUpWeapon(config);

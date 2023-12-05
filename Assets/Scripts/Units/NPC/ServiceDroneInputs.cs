@@ -17,7 +17,7 @@ namespace Arcatech.Units.Inputs
                 case CombatActionType.MeleeSpecialQ:
                     break;
                 case CombatActionType.RangedSpecialE:
-                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetSkillDataByType(CombatActionType.RangedSpecialE).FinalArea / 2;
+                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetControlData(CombatActionType.RangedSpecialE).AoESettings.EndRad.x / 2;
                     break;
                 case CombatActionType.ShieldSpecialR:
                     break;

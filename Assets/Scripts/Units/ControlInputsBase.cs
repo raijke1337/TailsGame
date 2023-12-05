@@ -1,6 +1,9 @@
 using Arcatech.Items;
 using Arcatech.Managers;
+using Arcatech.Skills;
+using Arcatech.Triggers;
 using Arcatech.Units.Stats;
+using CartoonFX;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,13 +28,13 @@ namespace Arcatech.Units
         [SerializeField] protected ItemEmpties Empties;
         public ItemEmpties GetEmpties => Empties;
 
-        [SerializeField] protected BaseStatsController _statsCtrl;
-        [SerializeField] protected WeaponController _weaponCtrl;
-        [SerializeField] protected DodgeController _dodgeCtrl;
-        [SerializeField] protected ShieldController _shieldCtrl;
-        [SerializeField] protected SkillsController _skillCtrl;
-        [SerializeField] protected ComboController _comboCtrl;
-        [SerializeField] protected StunsController _stunsCtrl;
+        protected BaseStatsController _statsCtrl;
+         protected WeaponController _weaponCtrl;
+         protected DodgeController _dodgeCtrl;
+        protected ShieldController _shieldCtrl;
+         protected SkillsController _skillCtrl;
+        protected ComboController _comboCtrl;
+        protected StunsController _stunsCtrl;
 
         public DodgeController GetDodgeController => _dodgeCtrl;
         public ShieldController GetShieldController => _shieldCtrl;
@@ -45,19 +48,21 @@ namespace Arcatech.Units
 
         protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
         protected void StunEventCallback() => StaggerHappened?.Invoke();
+        protected void SkillSpawnEventCallback(SkillObjectForControls data) => SkillSpawnEvent?.Invoke(data,Unit,Empties.SkillsEmpty);
 
+        public event SkillRequestedEvent SkillSpawnEvent;
 
         #region items
-        public void AssignItems(UnitInventoryComponent items, out IEnumerable<string> skills)
+        public void AssignItems(UnitInventoryComponent items)
         {
             items.EquipmentChangedEvent += OnEquipmentChangedEvent;
-            var list = new List<string>();
+            var skillsItems = new List<EquipmentItem>();
 
             foreach (var item in items.GetCurrentEquips)
             {
-                if (item.SkillString.Length != 0)
+                if (item.ItemSkillConfig!=null)
                 {
-                    list.Add(item.SkillString);
+                    skillsItems.Add(item);
                 }
                 EquipmentItem removed = null;
                 switch (item.ItemType)
@@ -78,8 +83,20 @@ namespace Arcatech.Units
                         _dodgeCtrl.LoadItem(item, out removed);
                         break;
                 }
+                //if (removed != null)
+                //{
+                //    _skillCtrl.LoadItemSkill(removed, false);  // since skill ctrl has a dict skill will simply be repalced
+                //}
             }
-            skills = new List<string>(list);
+
+            if (_skillCtrl!=null) // null in scenes
+            {
+                foreach (var item in skillsItems)
+                {
+                    _skillCtrl.LoadItemSkill(item);
+                }
+            }
+
         }
 
         private void OnEquipmentChangedEvent(InventoryItem item, bool isAdded)
@@ -131,6 +148,7 @@ namespace Arcatech.Units
                             break;
                     }
                 }
+                _skillCtrl.LoadItemSkill(eq);
             }                        
         }
 
@@ -178,7 +196,8 @@ namespace Arcatech.Units
             foreach (var ctrl in _controllers)
             {
                 ctrl.StopStatsComponent();
-                ctrl.SoundPlayEvent -= Ctrl_SoundPlay;
+                ctrl.UnitRequestsSound -= Ctrl_SoundPlay;
+                ctrl.EffectsParticlePlace -= Ctrl_EffectsParticlePlace;
             }
             _stunsCtrl.StunHappenedEvent -= StunEventCallback;
         }
@@ -214,31 +233,22 @@ namespace Arcatech.Units
             {
                 //if (ctrl.IsReady) ctrl.Ping();
                 ctrl.SetupStatsComponent();
-                ctrl.SoundPlayEvent += Ctrl_SoundPlay;
+                ctrl.UnitRequestsSound += Ctrl_SoundPlay;
+                ctrl.EffectsParticlePlace += Ctrl_EffectsParticlePlace;
             }
         }
 
         #endregion
 
-        #region sounds 
+        #region effects 
         public event AudioEvents SoundPlay;
+        public event SimpleEventsHandler<CFXR_Effect, Transform> ParticlePlace;
         private void Ctrl_SoundPlay(AudioClip c, Vector3 z) => SoundPlay?.Invoke(c, z);
+
+        private void Ctrl_EffectsParticlePlace(CFXR_Effect eff, Transform where) => ParticlePlace(eff, where);
         #endregion
 
         #region input
-        public void ChangeSkillsList(string name, bool isAdd = true)
-        {
-            if (name == null) return;
-            _skillCtrl.UpdateSkills(name, isAdd);
-        }
-        public void ChangeSkillsList(IEnumerable<string>names, bool isAdd = true)
-        {
-            foreach (var name in names)
-            {
-                ChangeSkillsList(name, isAdd);
-            }
-        }
-        
 
         public void ToggleBusyControls_AnimationEvent(int state)
         {
@@ -300,10 +310,15 @@ namespace Arcatech.Units
 
 
         #region dodging
-        public void PerformDodging()
-        {
-            _dodgeCor = StartCoroutine(DodgingMovement());
-        }
+
+        // OLD //
+        // new is using a generic skill // 
+
+
+        //public void PerformDodging()
+        //{
+        //    _dodgeCor = StartCoroutine(DodgingMovement());
+        //}
 
         private Coroutine _dodgeCor;
         // stop the dodge like this

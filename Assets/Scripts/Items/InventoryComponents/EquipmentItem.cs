@@ -1,19 +1,22 @@
+using Arcatech.Effects;
+using Arcatech.Skills;
+using Arcatech.Triggers;
 using Arcatech.Units;
+using CartoonFX;
 using System;
 using UnityEngine;
 namespace Arcatech.Items
 {
     [Serializable]
-    public class EquipmentItem : InventoryItem
+    public class EquipmentItem : InventoryItem, IHasEffects
     {
-        public string SkillString { get; }
+        //public string SkillString { get; }
+        public SkillControlSettingsSO ItemSkillConfig { get; }
+        protected EffectsCollection _effects;
+
 
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
-        [SerializeField] protected AudioComponentBase _sounds;
-
-        public AudioComponentBase GetSounds => _sounds;
-
 
         protected BaseEquippableItemComponent _instantiated;
         public BaseEquippableItemComponent GetInstantiatedPrefab 
@@ -36,8 +39,9 @@ namespace Arcatech.Items
         {
             if (cfg is Equip e)
             {
-                SkillString = e.SkillString;
+                ItemSkillConfig = e.Skill;
                 _prefab = e.Item;
+                _effects = e.Effects;
             }
         }
 
@@ -50,6 +54,32 @@ namespace Arcatech.Items
             if (_instantiated != null) _instantiated.gameObject.SetActive(false);
         }
 
+        public AudioClip GetAudio(EffectMoment type)
+        {
+            try
+            {
+                return _effects.Sounds[type];
+            }
+            catch
+            {
+                //Debug.LogWarning($"Audio not set for {this.GetDisplayName} for {type}");
+                return null;
+            }
+        }
+
+        public CFXR_Effect GetParticle(EffectMoment type)
+        {
+            try
+            {
+                return _effects.Effects[type];
+            }
+
+            catch
+            {
+                //Debug.LogWarning($"Particle not set for {this.GetDisplayName} for {type}");
+                return null;
+            }
+        }
     }
 
 }

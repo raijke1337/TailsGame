@@ -1,3 +1,6 @@
+using Arcatech.Items;
+using Arcatech.Skills;
+using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,41 +9,58 @@ namespace Arcatech.Units
     [Serializable]
     public class SkillsController : BaseController, INeedsEmpties
     {
-        // this is used in game for skill requests
-        private Dictionary<CombatActionType, SkillControllerData> _skills = new Dictionary<CombatActionType, SkillControllerData>();
+
 
         public SkillEvents<EquipItemType> SwitchAnimationLayersEvent;
         public ItemEmpties Empties { get; }
         public SkillsController(ItemEmpties ie,BaseUnit Owner) : base (Owner)
         {
             Empties = ie;
-            IsReady = true;
         }
 
 
-        public void UpdateSkills(string skillID, bool isAdd)
+
+
+        // this is used in game for skill requests
+        private Dictionary<CombatActionType, SkillObjectForControls> _skills;
+        public void LoadItemSkill(EquipmentItem item)
         {
-            var cfg = DataManager.Instance.GetConfigByID<SkillControllerDataConfig>(skillID);
-            if (cfg == null) { return; }
-            if (_skills == null) _skills = new Dictionary<CombatActionType, SkillControllerData>();
+            if (item == null) return;
+
+            if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
+            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig);
+            
+
+            switch (item.ItemType)
+            {
+                case EquipItemType.MeleeWeap:
+                    _skills[CombatActionType.MeleeSpecialQ] = control;
+                    break;
+                case EquipItemType.RangedWeap:
+                    _skills[CombatActionType.RangedSpecialE] = control;
+                    break;
+                case EquipItemType.Shield:
+                    _skills[CombatActionType.ShieldSpecialR] = control;
+                    break;
+                case EquipItemType.Booster:
+                    _skills[CombatActionType.Dodge] = control;
+                    break;
+                default:
+                    break;                    
+            }
+        }
+
+
+
+        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillObjectForControls skillData)
+        {
+            skillData = null;
+            var skill = _skills[type];
+            if (skill == null) return false;    
+            if (CurrentCombo < skill.Cost) return false;
             else
             {
-                var type = cfg.SkillType;
-                _skills[type] = new SkillControllerData(cfg);
-            }
-            IsReady = _skills.Count > 0;
-        }
-
-
-        public bool RequestSkill(CombatActionType type, out float cost)
-        {
-            cost = 0f;
-            if (!_skills.ContainsKey(type)) return false;
-
-            var result = _skills[type].RequestUse();
-            cost = _skills[type].GetSkillData.SkillCost;
-            if (result)
-            {
+                skillData = skill;
                 switch (type)
                 {
                     case CombatActionType.MeleeSpecialQ:
@@ -50,28 +70,22 @@ namespace Arcatech.Units
                         SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
                         break;
                 }
-                try
-                {
-                    SoundPlayCallback(_skills[type].GetSkillData.AudioData.SoundsDict[SoundType.OnUse]);
-                }
-                catch
-                {
-                    Debug.Log($"No sound OnUse for {_skills[type].ID}");
-                }
+                return true;    
             }
-            return result;
         }
 
         public override void UpdateInDelta(float deltaTime)
         {
+            if (_skills == null) return;
+
             foreach (var sk in _skills.Values)
             {
-                sk.Ticks(deltaTime);
+                sk.UpdateInDelta(deltaTime);
             }
         }
 
-        public string GetSkillIDByType(CombatActionType type) => _skills[type].ID;
-        public SkillData GetSkillDataByType(CombatActionType type) => _skills[type].GetSkillData;
+        public SkillObjectForControls GetControlData(CombatActionType t) => _skills[t];
+
 
     }
 

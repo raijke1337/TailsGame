@@ -1,5 +1,8 @@
 using Arcatech.Items;
 using Arcatech.Managers;
+using Arcatech.Skills;
+using Arcatech.Triggers;
+using CartoonFX;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,11 +33,13 @@ namespace Arcatech.Units
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
+       
+        
         public event SkillRequestedEvent SkillRequestSuccessEvent;
 
 
         #region equipments
-        [SerializeField] public UnitInventoryComponent GetUnitInventory { get; protected set; }
+        public UnitInventoryComponent GetUnitInventory { get; protected set; }
 
         protected abstract void InitInventory();
 
@@ -42,8 +47,7 @@ namespace Arcatech.Units
         {
             UpdateComponents();
 
-            _controller.AssignItems(item,out var sk);
-            _controller.ChangeSkillsList(sk, true);
+            _controller.AssignItems(item);
         }
         public bool IsArmed { get
             {
@@ -125,6 +129,9 @@ namespace Arcatech.Units
                 _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened += AnimateStagger;
                 _controller.SoundPlay += UnitPlaysSound;
+                _controller.ParticlePlace += UnitPlacesParticle;
+
+                _controller.SkillSpawnEvent += _controller_SkillSpawnEvent;
             }
             else
             {
@@ -132,7 +139,15 @@ namespace Arcatech.Units
                 _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened -= AnimateStagger;
                 _controller.SoundPlay -= UnitPlaysSound;
+
+                _controller.ParticlePlace -= UnitPlacesParticle;
+                _controller.SkillSpawnEvent -= _controller_SkillSpawnEvent;
             }
+        }
+
+        private void _controller_SkillSpawnEvent(SkillObjectForControls data, BaseUnit source, Transform where)
+        {
+            SkillRequestSuccessEvent?.Invoke(data, source, where);
         }
 
         #endregion
@@ -186,10 +201,6 @@ namespace Arcatech.Units
         #endregion
         #region combat
 
-
-        protected void SkillRequestCallBack(string id, BaseUnit unit) => SkillRequestSuccessEvent?.Invoke(id, unit, unit._controller.GetEmpties.SkillsEmpty);
-
-
         protected virtual void AnimateCombatActivity(CombatActionType type)
         {
             if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
@@ -203,19 +214,20 @@ namespace Arcatech.Units
                     break;
                 case CombatActionType.Dodge:
                     _animator.SetTrigger("Dodge");
-                    _controller.PerformDodging();
+                    //_controller.PerformDodging(); old Dodge.
+                    //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.MeleeSpecialQ:
                     _animator.SetTrigger("QSpecial");
-                    SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
+                    //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.RangedSpecialE:
                     _animator.SetTrigger("ESpecial");
-                    SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
+                    //SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                     break;
                 case CombatActionType.ShieldSpecialR:
                     _animator.SetTrigger("RSpecial");
-                    SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
+                    //SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                     break;
             }
         }
@@ -237,11 +249,15 @@ namespace Arcatech.Units
 
         #endregion
 
-        #region sounds
-        public event AudioEvents SoundPlayEvent;
-        public AudioComponentBase UnitSounds;
+        #region effects
+        public event AudioEvents UnitRequestsSound;
+        public event SimpleEventsHandler<CFXR_Effect, Transform> UnitRequestsParticles;
 
-        private void UnitPlaysSound(AudioClip c, Vector3 z) => SoundPlayEvent?.Invoke(c, transform.position);
+        private void UnitPlacesParticle(CFXR_Effect arg1, Transform arg2)
+        {
+            UnitRequestsParticles?.Invoke(arg1, arg2);
+        }
+        private void UnitPlaysSound(AudioClip c, Vector3 z) => UnitRequestsSound?.Invoke(c, transform.position);
 
 
         #endregion

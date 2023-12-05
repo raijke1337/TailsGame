@@ -148,10 +148,15 @@ namespace Arcatech.Managers
             {
                 return;
             }
-            if (config.HitEffect!= null)
+            if (config.Effects.Effects.TryGetValue(EffectMoment.OnCollision, out var p))
             {
-                Instantiate(config.HitEffect, finaltgt.transform.position, Quaternion.identity);
+                Instantiate(p, finaltgt.transform.position, Quaternion.identity);
             }            
+            if (config.Effects.Sounds.TryGetValue(EffectMoment.OnCollision, out var s))
+            {
+                EffectsManager.Instance.PlaySound(s, finaltgt.transform.position);
+            }
+
             finaltgt.AddTriggeredEffect(effect);
         }
 

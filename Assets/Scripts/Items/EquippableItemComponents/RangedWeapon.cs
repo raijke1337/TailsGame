@@ -19,8 +19,6 @@ namespace Arcatech.Items
         private TriggersProjectilesManager _manager;
         public SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
 
-        public override int GetNumericValue => Mathf.RoundToInt(_reload);
-
         protected virtual void Start()
         {
             if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");

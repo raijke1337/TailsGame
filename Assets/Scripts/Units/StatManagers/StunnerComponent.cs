@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arcatech.Triggers;
+using System;
 using UnityEngine;
 
 namespace Arcatech.Units

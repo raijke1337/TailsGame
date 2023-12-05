@@ -35,7 +35,7 @@ namespace Arcatech.Managers
 
         private void OnEventActivated(LevelEventTrigger tr, bool isEnter)
         {
-            switch (tr.EventType)
+             switch (tr.EventType)
             {
                 case LevelEventType.TextDisplay:
                     GameManager.Instance.GetGameControllers.GameInterfaceManager.UpdateGameText(tr.ContentIDString, isEnter);

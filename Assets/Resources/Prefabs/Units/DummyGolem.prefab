@@ -1108,9 +1108,9 @@ GameObject:
   - component: {fileID: 122197050836451525}
   - component: {fileID: 491683572243449218}
   - component: {fileID: 280783704676542858}
-  - component: {fileID: -5660389385674504440}
   - component: {fileID: 5663640687062070928}
   - component: {fileID: 2233284501370506411}
+  - component: {fileID: -1630279269346806638}
   m_Layer: 0
   m_Name: DummyGolem
   m_TagString: Enemy
@@ -1228,20 +1228,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &-5660389385674504440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6282177902539391458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b997dfdd294e0a3479ec30fd2e197bdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 2
-  _selectableID: dummy_golem
 --- !u!114 &5663640687062070928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,7 +1299,19 @@ MonoBehaviour:
     SoundsDict:
       _serializedList:
       - Key: 3
-        Value: {fileID: 8300000, guid: 3af8a9d07bc438e458fa25f5e334a22b, type: 3}
+        Value: {fileID: 8300000, guid: 82e542950d5e84f64a8c027bec60b425, type: 3}
+--- !u!114 &-1630279269346806638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6282177902539391458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ead3ed2d4d426428fcf53f962ff604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6282183787786567646
 GameObject:
   m_ObjectHideFlags: 0

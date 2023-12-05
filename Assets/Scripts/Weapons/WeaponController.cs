@@ -123,10 +123,15 @@ namespace Arcatech.Units
             }
             else
             {
-                
-                bool ok = (_equipment[type].GetInstantiatedPrefab as BaseWeapon).UseWeapon(out result);
+                var weap = _equipment[type].GetInstantiatedPrefab as BaseWeapon;
+
+                bool ok = weap.UseWeapon(out result);
                 if (ok)
                 {
+                    SoundPlayCallback(_equipment[type].GetAudio(EffectMoment.OnStart));
+
+                    ParticlesPlayCallback(_equipment[type].GetParticle(EffectMoment.OnStart),weap.transform);
+
                     SwitchWeapon(type);
                 }
                 return ok;

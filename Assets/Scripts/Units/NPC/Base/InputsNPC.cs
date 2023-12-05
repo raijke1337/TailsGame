@@ -221,16 +221,32 @@ namespace Arcatech.Units.Inputs
                     if (success) CombatActionSuccessCallback(type);
                     break;
                 case CombatActionType.Dodge:
-                    text = ($"{Unit.GetFullName} requested {type} but {this} has no dodge controller implemented");
+                    if (_skillCtrl.TryUseSkill(type, 999, out var sk))
+                    {
+                        SkillSpawnEventCallback(sk);
+                        CombatActionSuccessCallback(type);
+                    }
                     break;
                 case CombatActionType.MeleeSpecialQ:
-                    if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
+                    {
+                        SkillSpawnEventCallback(sk);
+                        CombatActionSuccessCallback(type);
+                    }
                     break;
                 case CombatActionType.RangedSpecialE:
-                    if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
+                    {
+                        SkillSpawnEventCallback(sk);
+                        CombatActionSuccessCallback(type);
+                    }
                     break;
                 case CombatActionType.ShieldSpecialR:
-                    if (_skillCtrl.RequestSkill(type, out _)) CombatActionSuccessCallback(type);
+                    if (_skillCtrl.TryUseSkill(type,999,out  sk))
+                    {
+                        SkillSpawnEventCallback(sk);
+                        CombatActionSuccessCallback(type);
+                    }
                     break;
             }
         }

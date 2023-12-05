@@ -23,13 +23,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103638163925825030}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1.625, z: 1.625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7528200270838519807}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5140696321342504957
 GameObject:
@@ -56,13 +56,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5140696321342504957}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.00000003774895, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7528200270838519807}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5140696321345528829
 MeshFilter:
@@ -128,8 +128,7 @@ GameObject:
   - component: {fileID: 36502224206573431}
   - component: {fileID: 5001899029921475707}
   - component: {fileID: 2655914433986873063}
-  - component: {fileID: 1506626829934928237}
-  - component: {fileID: 7231533748803748100}
+  - component: {fileID: 9030934597805238917}
   m_Layer: 0
   m_Name: ServiceDrone
   m_TagString: Enemy
@@ -144,6 +143,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7922160222947965966}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.1, y: 0.134, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
@@ -152,7 +152,6 @@ Transform:
   - {fileID: 2945348626853354528}
   - {fileID: 5140696321342137309}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &7089608235682305441
 Animator:
@@ -265,19 +264,26 @@ MonoBehaviour:
     SkillsEmpty: {fileID: 2945348626853354528}
     OthersEmpty: {fileID: 2945348626853354528}
   _statsCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _weaponCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _dodgeCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _shieldCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _skillCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _comboCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
   _stunsCtrl:
-    _isReady: 0
+    debugTime: 0
+    debugEnabled: 0
     isGracePeriod: 0
     _currValue: 0
   InputDirectionOverride: {x: 0, y: 0, z: 0}
@@ -291,7 +297,7 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
---- !u!114 &1506626829934928237
+--- !u!114 &9030934597805238917
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -300,51 +306,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7922160222947965966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5881e021bd47e874ca416c1f21b96733, type: 3}
+  m_Script: {fileID: 11500000, guid: f1ead3ed2d4d426428fcf53f962ff604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StatsID: service_drone
-  Side: 1
-  UnitSounds:
-    SoundsDict:
-      reorderableList:
-        canAdd: 1
-        canRemove: 1
-        draggable: 1
-        expandable: 1
-        multipleSelection: 1
-        isExpanded: 1
-        label:
-          m_Text: Keys
-          m_Image: {fileID: 0}
-          m_Tooltip: 
-        headerHeight: 18
-        footerHeight: 13
-        slideEasing: 0.15
-        verticalSpacing: 2
-        showDefaultBackground: 1
-        elementDisplayType: 0
-        elementNameProperty: 
-        elementNameOverride: 
-        elementIcon: {fileID: 0}
-      reqReferences: {fileID: 0}
-      isExpanded: 1
-      _keyValues: 03000000
-      _keys: 03000000
-      _values:
-      - {fileID: 8300000, guid: e2ef13590109348d19c2566f7381c2f5, type: 3}
-  NPCEquipments:
-  - {fileID: -7946025007460106006, guid: 01d2e87053873ed41ae11672754225e2, type: 3}
---- !u!114 &7231533748803748100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7922160222947965966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b997dfdd294e0a3479ec30fd2e197bdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 2

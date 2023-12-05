@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace Arcatech.Triggers
+namespace Arcatech.Skills
 {
     public class ProjectileSkill : BaseSkill, IProjectile
     {
@@ -8,8 +8,8 @@ namespace Arcatech.Triggers
 
         private float _exp;
         private int _penetr;
-        public string GetID { get => SkillID; }
 
+        public string GetID => _skillID;
 
         public void OnUse()
         {
@@ -28,7 +28,8 @@ namespace Arcatech.Triggers
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (other == Owner.GetCollider) return;
+            // Debug.Log($"Trigger enter {this} {other.gameObject.name}");
+            if (other == null || Owner == null) return; //something weird may happen here
             base.OnTriggerEnter(other);
             if (_penetr > 0)
             {
@@ -37,7 +38,10 @@ namespace Arcatech.Triggers
             if (_penetr == 0) CallExpiry();
         }
 
+        public override void UpdateInDelta(float deltaTime)
+        {
 
+        }
     }
 
 }

@@ -1,22 +1,22 @@
-using Arcatech.Triggers;
+using Arcatech.Skills;
 using Arcatech.Units;
-using AYellowpaper.SerializedCollections;
-using System.Linq;
 using UnityEngine;
 namespace Arcatech.Managers
 {
     public class SkillsPlacerManager : LoadedManagerBase
     {
-        SerializedDictionary<string, BaseSkill> _skillsDict = new SerializedDictionary<string, BaseSkill>();
         public event SimpleEventsHandler<IProjectile> ProjectileSkillCreatedEvent;
         public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
+
+        private EffectsManager _effects;
 
         #region ManagerBase
         public override void Initiate()
         {
-            GameManager.Instance.GetGameControllers.UnitsManager.RequestToPlaceSkills += PlaceSkill;
-            LoadBaseSkills();
-            LoadDatasIntoSkills();
+            GameManager.Instance.GetGameControllers.UnitsManager.UnitRequestsToPlaceASkillEvent += DoSkillRequest;
+            _effects = EffectsManager.Instance;
+            //LoadBaseSkills();
+            //LoadDatasIntoSkills();
         }
 
         public override void RunUpdate(float delta)
@@ -26,22 +26,29 @@ namespace Arcatech.Managers
 
         public override void Stop()
         {
-            GameManager.Instance.GetGameControllers.UnitsManager.RequestToPlaceSkills -= PlaceSkill;
+            GameManager.Instance.GetGameControllers.UnitsManager.UnitRequestsToPlaceASkillEvent -= DoSkillRequest;
         }
 
         #endregion
 
 
-        private void PlaceSkill(string ID, BaseUnit source, Transform empty)
+        private void DoSkillRequest(SkillObjectForControls data, BaseUnit source, Transform where)
         {
-            var skill = Instantiate(_skillsDict[ID]);
+            var skill = Instantiate(data.Prefab);
+
             skill.Owner = source;
-            skill.transform.SetPositionAndRotation(empty.position, empty.rotation);
+            skill.AssignValues(data);
+            skill.SetupStatsComponent();
+           
+            skill.transform.SetPositionAndRotation(where.position, where.rotation);
+
+            _effects.PlaceParticle(data.Effects.Effects[EffectMoment.OnStart],source.transform);
+            _effects.PlaySound(data.Effects.Sounds[EffectMoment.OnStart], source.transform.position);
 
             if (skill is IProjectile)
             {
-                var sk = skill as IProjectile;
-                ProjectileSkillCreatedEvent?.Invoke(sk);
+                var s = skill as IProjectile;
+                ProjectileSkillCreatedEvent?.Invoke(s);
                 // further handling by projectiles manager (expiry, movement)
             }
             else
@@ -51,23 +58,6 @@ namespace Arcatech.Managers
             }
         }
 
-        private void LoadBaseSkills()
-        {
-            var skills = DataManager.Instance.GetAssetsOfType<BaseSkill>(Constants.PrefabsPaths.c_SkillPrefabs);
-            foreach (var skill in skills)
-            {
-                _skillsDict[skill.SkillID] = skill;
-            }
-        }
-        private void LoadDatasIntoSkills()
-        {
-            var cfgs = DataManager.Instance.GetAssetsOfType<SkillControllerDataConfig>(Constants.Configs.c_AllConfigsPath);
-            foreach (var skill in _skillsDict.Values)
-            {
-                var dataCfg = cfgs.First(t => t.ID == skill.SkillID);
-                skill.SkillData = new SkillData(dataCfg.Data);
-            }
-        }
 
         private void HandleSkillExpiry(IExpires item)
         {
@@ -76,14 +66,6 @@ namespace Arcatech.Managers
             Destroy(item.GetObject());
         }
 
-#if UNITY_EDITOR
-        [ContextMenu("Load skills and configs")]
-        public void RefreshStuff()
-        {
-            LoadBaseSkills();
-            LoadDatasIntoSkills();
-        }
-#endif
 
     }
 

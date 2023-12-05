@@ -9,13 +9,7 @@ using UnityEngine;
 namespace Arcatech
 {
 
-    [Serializable]
-    public class AudioComponentBase
-    {
-        [SerializeField] public SerializedDictionary<SoundType, AudioClip> SoundsDict;
-    }
-
-
+    #region saves
     [XmlRoot("GameSave"), Serializable]
     public class SerializedSaveData
     {
@@ -37,6 +31,10 @@ namespace Arcatech
         }
 
     }
+
+    #endregion
+
+    #region const
     public static class Constants
     {
         public static class Configs
@@ -69,6 +67,9 @@ namespace Arcatech
         {
             public const string c_MethodPrefix = "Fsm_";
         }
+
+#endregion
+    #region tools
 
     }
     [Serializable]
@@ -109,6 +110,9 @@ namespace Arcatech
             GetRemaining = GetInitial;
         }
     }
+
+    #endregion
+    #region stats
     [Serializable]
     public class StatValueContainer
     {
@@ -210,6 +214,9 @@ namespace Arcatech
         }
         public string GetID => ID;
     }
+    #endregion
+
+    #region projectiles
 
     [Serializable]
     public class ProjectileData
@@ -225,6 +232,9 @@ namespace Arcatech
             Penetration = config.ProjectilePenetration;
         }
     }
+    #endregion
+
+    #region items
     [Serializable]
     public class UnitInventoryItemConfigsContainer
     {
@@ -270,6 +280,10 @@ namespace Arcatech
 
         }
     }
+
+    #endregion
+    #region levels
+
     [Serializable]
     public class LevelData
     {
@@ -293,4 +307,5 @@ namespace Arcatech
             Music = data.Music;
         }
     }
+    #endregion
 }

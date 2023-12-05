@@ -81,14 +81,6 @@ public enum ReferenceUnitType : byte
     Player = 255
 }
 
-
-//public enum GameMode
-//{
-//    Menus,
-//    Paused,
-//    Gameplay
-//}
-
 public enum LevelEventType
 {
     TextDisplay,
@@ -103,26 +95,17 @@ public enum LevelType
     Game
 }
 
-public enum SelectableItemType
-{
-    None,
-    Item,
-    Unit
-}
-
-public enum SoundType
-{
-    None,
-    Idle,
-    OnUse,
-    OnExpiry,
-    OnStunned
-}
-
 public enum DisplayValueType : byte
 {
     Health=0,
     Shield = 1,
-    Combo = 2
-
+    Combo = 2,
+    Text = 3 // also useing bar container here since it already has text
+}
+public enum EffectMoment
+{
+    OnStart,
+    OnUpdate,
+    OnCollision,
+    OnExpiry
 }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83aad102a44ceec42a80ff29b1f9a9de, type: 3}
+  m_Name: hammer_spin
+  m_EditorClassIdentifier: 
+  ID: hammer_spin
+  GrowTime: 0.1
+  StartRad: 2
+  EndRad: 2
+  Cooldown: 10
+  Cost: 0
+  Triggers:
+  - {fileID: 11400000, guid: 81e7852ad3eee72448e752b6223c27e7, type: 2}
+  Prefab: {fileID: 6096554309314098554, guid: 69a581d51e15f6e42b79f52491f22d5a, type: 3}
+  Effects:
+    Sounds:
+      _serializedList:
+      - Key: 0
+        Value: {fileID: 8300000, guid: 2c5e6aa2b82fd4758855918792d9f9b2, type: 3}
+    Effects:
+      _serializedList:
+      - Key: 0
+        Value: {fileID: 3567366906591366297, guid: 95b8d3d65b5d7f1409c4ed1723887826,
+          type: 3}

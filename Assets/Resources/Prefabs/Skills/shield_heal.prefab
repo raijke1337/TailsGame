@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2065030226317109320}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &4605630956622319556
 SphereCollider:
@@ -40,9 +41,17 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2065030226317109320}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6096554309314098554
@@ -58,7 +67,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkillID: shield_heal
-  Source: {fileID: 0}
   SkillData:
     Icon: {fileID: 0}
     Recharge: 0
@@ -67,6 +75,8 @@ MonoBehaviour:
     PersistTime: 0
     SkillCost: 0
     TriggerIDs: []
-  EffectPrefab: {fileID: -1628450519078450835, guid: 264df6921c52bad41a45b5c8d9e9d471,
+    AudioData:
+      SoundsDict:
+        _serializedList: []
+  AreaOfEffect: {fileID: -1628450519078450835, guid: 264df6921c52bad41a45b5c8d9e9d471,
     type: 3}
-  UpgradedEffects: []

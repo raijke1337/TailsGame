@@ -1,3 +1,4 @@
+using Arcatech.Triggers;
 using System;
 using UnityEngine;
 
@@ -7,11 +8,13 @@ namespace Arcatech.Units
     public class ComboController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
 
-        public StatValueContainer ComboContainer { get; }
+        private StatValueContainer _container;
 
         protected float Degen;
         protected float Timeout;
         private float _currentTimeout = 0f;
+        public StatValueContainer GetAvailableCombo { get => _container; }
+
 
         public ComboController(BaseUnit owner) : base (owner)
         {
@@ -22,10 +25,10 @@ namespace Arcatech.Units
                 IsReady = false;
                 return;
             }            
-            ComboContainer = new StatValueContainer(cfg.ComboContainer);
+            _container = new StatValueContainer(cfg.ComboContainer);
             Degen = cfg.DegenCoeff;
             Timeout = cfg.HeatTimeout;
-            ComboContainer.Setup();
+            _container.Setup();
 
             IsReady = true;
         }
@@ -34,13 +37,13 @@ namespace Arcatech.Units
 
         public bool UseCombo(float value)
         {
-            bool result = ComboContainer.GetCurrent >= -value;    // because these are negative in configs
-            if (result) ComboContainer.ChangeCurrent(value);
+            bool result = _container.GetCurrent >= value;   
+            if (result) _container.ChangeCurrent(-value);
             return result;
         }
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
-            return ComboContainer;
+            return _container;
         }
 
         #endregion
@@ -58,7 +61,7 @@ namespace Arcatech.Units
                 _currentTimeout += deltaTime;
                 return;
             }
-            ComboContainer.ChangeCurrent(-Degen * deltaTime);
+            _container.ChangeCurrent(-Degen * deltaTime);
         }
 
         #endregion

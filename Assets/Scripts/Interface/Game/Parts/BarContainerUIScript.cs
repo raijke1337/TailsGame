@@ -31,16 +31,16 @@ namespace Arcatech.UI
                     {
                         _valueContainer.ValueChangedEvent -= OnUpdatedValue;
                     }
-                    _fill.fillAmount = _tgtFillValue;
-
                     _valueContainer = value;
+                    _fill.fillAmount = Container.GetCurrent / Container.GetMax;
+
                     _valueContainer.ValueChangedEvent += OnUpdatedValue;
 
                     _text.text = value.ToString();
+                    
                 }
             }                
         }
-
 
 
         private void OnUpdatedValue(float old, float now)

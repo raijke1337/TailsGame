@@ -1,4 +1,5 @@
 using Arcatech.Items;
+using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Arcatech.Units
         {
             if (effect.InitialValue >= 0f)
             {
-                return effect;
+                return effect; // heal effect
             }
             else
             {
@@ -77,7 +78,7 @@ namespace Arcatech.Units
                 TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
                 _activeEffects.Add(_shieldAbsord);
 
-                //SoundPlayCallback(EquippedShieldItem.Sounds.SoundsDict[SoundType.OnUse]); //SOUND
+                SoundPlayCallback(_equipment[EquipItemType.Shield].GetAudio(EffectMoment.OnStart));
 
                 return effect;
             }

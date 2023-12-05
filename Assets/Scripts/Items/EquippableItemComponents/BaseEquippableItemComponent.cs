@@ -1,4 +1,5 @@
-﻿using Arcatech.Units;
+﻿using Arcatech.Triggers;
+using Arcatech.Units;
 using UnityEngine;
 
 namespace Arcatech.Items
@@ -7,11 +8,9 @@ namespace Arcatech.Items
     {
         public BaseUnit Owner { get; set; }
         public abstract void UpdateInDelta(float delta);
-        /// <summary>
-        /// ammo, energy cost
-        /// </summary>
-        /// <returns>int</returns>
-        public abstract int GetNumericValue { get; }
+
+        // placeholder - ui takes values from weapions, not skill  controller
+        public virtual float GetNumericValue { get => 0; }
 
     }
 }

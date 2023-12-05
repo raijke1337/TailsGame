@@ -1,4 +1,6 @@
+using Arcatech.Triggers;
 using Arcatech.Units;
+using CartoonFX;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,14 +38,9 @@ namespace Arcatech.Units
             }
         }
 
-        //public void Ping()
-        //{
-        //    IsReady = _isReady;
-        //}
-        // used by inputs to properly register some components
         public virtual void StopStatsComponent()
         {
-            Debug.Log($"{this} was stopped");
+          //  Debug.Log($"{this} was stopped");
         }
 
         public virtual void HandleEffects(float deltaTime)
@@ -114,10 +111,21 @@ namespace Arcatech.Units
 
         }
 
-        #region sounds
+        #region effects
 
-        public event AudioEvents SoundPlayEvent;
-        protected virtual void SoundPlayCallback(AudioClip c) => SoundPlayEvent?.Invoke(c, Vector3.zero);
+        public event AudioEvents UnitRequestsSound;
+        public event SimpleEventsHandler<CFXR_Effect,Transform> EffectsParticlePlace;
+        protected virtual void SoundPlayCallback(AudioClip c)
+        {
+            if (c == null) return;
+           UnitRequestsSound?.Invoke(c, Vector3.zero);
+        }
+        protected virtual void ParticlesPlayCallback(CFXR_Effect eff,Transform where)
+        {
+            if (eff == null) return;
+            EffectsParticlePlace?.Invoke(eff,where);
+        }
+
 
         #endregion
 

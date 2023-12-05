@@ -1,3 +1,4 @@
+using Arcatech.UI;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -6,51 +7,14 @@ namespace Arcatech.Units.Inputs
 {
     public class AimingComponent : ManagedControllerBase
     {
-        private Camera _camera;
-        public SimpleEventsHandler<bool> SelectionUpdatedEvent;
-        private float _tgtDelay;
-
-        [Tooltip("Vertical offset for raycast plane"), SerializeField] private float _vertOffset = 0.1f;
-        public Vector3 GetLookPoint => _mousePos;
-        public SelectableItem GetSelectableItem
-        {
-            get => _item;
-            private set
-            {
-                _item = value;
-                SelectionUpdatedEvent?.Invoke(value != null);
-            }
-        }
-        private SelectableItem _item;
+        private Camera _camera; 
         private Plane _plane;
         private Vector3 _mousePos;
 
-        private void SetMousePos(Ray r)
-        {
-            // aiming
+        public SimpleEventsHandler<bool,BaseTargetableItem> SelectionUpdatedEvent;
 
-            if (_plane.Raycast(r, out float rayDist))
-            {
-                _mousePos = r.GetPoint(rayDist);
-            }
-            //
-        }
-        private void SetSelectable(Ray r)
-        {
-            if (_tgtDelay >= 0.5f)
-            {
-                _tgtDelay = 0;
-                //selectable item
-                if (Physics.Raycast(r, out RaycastHit hitInfo)) // todo dunno if good performance maybe do a coroutine instead
-                {
-                    var i = hitInfo.collider.gameObject.GetComponent<SelectableItem>();
-                    GetSelectableItem = i;
-                }
-            }
-        }
-
-
-
+        [Tooltip("Vertical offset for raycast plane"), SerializeField] private float _vertOffset = 0.1f;
+        public Vector3 GetLookPoint => _mousePos; // used by inputs to rotate towards crosshair
 
 
         #region managed
@@ -64,9 +28,25 @@ namespace Arcatech.Units.Inputs
         public override void UpdateController(float delta)
         {
             Ray r = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-            SetMousePos(r);
-            _tgtDelay += delta;
-            //SetSelectable(r);
+
+            // no object, aim at plane
+            if (_plane.Raycast(r, out float rayDist))
+            {
+                _mousePos = r.GetPoint(rayDist);
+                SelectionUpdatedEvent?.Invoke(false, null);
+            }
+
+            // hit a selectable
+            if (Physics.Raycast(r,out var hit))
+            {
+                if (hit.collider.gameObject.TryGetComponent<BaseTargetableItem>(out var item))
+                {
+                    _mousePos = hit.collider.transform.position; // aim at the center of the target
+                    SelectionUpdatedEvent?.Invoke(true,item);
+                }
+            }
+
+
         }
 
         public override void StopController()

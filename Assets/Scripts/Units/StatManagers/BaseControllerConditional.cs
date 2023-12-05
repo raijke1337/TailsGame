@@ -28,10 +28,10 @@ namespace Arcatech.Units
 
             OnItemAssign(item, out removing);
 
-            Debug.Log($"Loaded item {item.GetDisplayName} for {Owner.GetFullName}");
+            //Debug.Log($"Loaded item {item.GetDisplayName} for {Owner.GetFullName}");
             if (removing != null)
             {
-                Debug.Log($"Removed {removing.GetDisplayName}");
+              //  Debug.Log($"Removed {removing.GetDisplayName}");
             }
 
             StateChangeCallback(IsReady, this);
@@ -65,8 +65,6 @@ namespace Arcatech.Units
 
         protected abstract void FinishItemConfig(EquipmentItem item);
         protected abstract void InstantiateItem(EquipmentItem i);
-
-
 
     }
 }

@@ -1,4 +1,6 @@
 using Arcatech.Items;
+using Arcatech.Skills;
+using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,24 +29,27 @@ namespace Arcatech.Units
 
         protected override void FinishItemConfig(EquipmentItem item)
         {
-            var cfg = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
+
+            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration) item.ItemSkillConfig;
 
             if (cfg == null)
             {
                 IsReady = false;
-                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
+               // throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
             else
             {
                 _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-                var dat = DataManager.Instance.GetConfigByID<DodgeStatsConfig>(_equipment[EquipItemType.Booster].ID);
+                
 
-                foreach (var c in dat.Stats)
+                foreach (var c in cfg.DodgeSkillStats)
                 {
                     _stats[c.Key] = new StatValueContainer(c.Value);
                 }
                 foreach (var st in _stats.Values)
-                { st.Setup(); }
+                { 
+                    st.Setup();
+                }
             }
         }
         protected override void InstantiateItem(EquipmentItem i)
@@ -60,7 +65,7 @@ namespace Arcatech.Units
         {
             if (!IsReady) // set ready by running OnItemAssign
             {
-                Debug.Log($"{this} is not ready for setup, items: {_equipment.Values.Count}");
+                // Debug.Log($"{this} is not ready for setup, items: {_equipment.Values.Count}");
                 return;
             }
         }
@@ -84,7 +89,8 @@ namespace Arcatech.Units
                 var t = new Timer(_stats[DodgeStatType.Cooldown].GetCurrent);
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
-                // SoundPlayCallback(_equipment[EquipItemType.Booster].GetSounds.SoundsDict[SoundType.OnUse]);
+                SoundPlayCallback(_equipment[EquipItemType.Booster].GetAudio(EffectMoment.OnStart));
+                ParticlesPlayCallback(_equipment[EquipItemType.Booster].GetParticle(EffectMoment.OnStart),Empties.OthersEmpty);
                 return true;
             }
         }

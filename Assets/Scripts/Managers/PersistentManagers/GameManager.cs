@@ -45,8 +45,6 @@ namespace Arcatech.Managers
             }
             _currentLevel = _levels["main"]; // TODO: Hardcode
 
-            //_gameControllers = Instantiate(GameControllersPrefab);
-            //_gameControllers.Initiate(_currentLevel);
         }
 
         private void Update()
@@ -72,7 +70,7 @@ namespace Arcatech.Managers
 
         private void LoadLevel(string ID, bool forceLoad = false)
         {
-            AudioManager.Instance.CleanUpOnSceneChange();
+            EffectsManager.Instance.CleanUpOnSceneChange();
             if (ID == "") { LoadLevel("main", true); } // it happens in debug on level complete - the card has no "next level" ID
             if (forceLoad) // used in equips level 
             {
@@ -107,20 +105,6 @@ namespace Arcatech.Managers
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            //switch (_currentLevel.Type)
-            //{
-            //    case LevelType.Menu:
-            //        break;
-            //    case LevelType.Game:
-            //        _gameControllers = Instantiate(GameControllersPrefab);
-            //        _gameControllers.Initiate(_currentLevel);
-            //        break;
-            //    case LevelType.Scene:
-            //        _gameControllers = Instantiate(GameControllersPrefab);
-            //        _gameControllers.Initiate(_currentLevel);
-            //        break;
-            //}
-            Debug.ClearDeveloperConsole();
             _gameControllers = Instantiate(GameControllersPrefab);
             _gameControllers.Initiate(_currentLevel);
         }
@@ -137,6 +121,11 @@ namespace Arcatech.Managers
 
 
         #region game events
+        public void OnPlayerPaused(bool isPausing)
+        {
+            _gameControllers.UnitsManager.GameplayPaused = isPausing; // shoukld stop player inputs
+        }
+
 
         public void OnLevelComplete()
         {
