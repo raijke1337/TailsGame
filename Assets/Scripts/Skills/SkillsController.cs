@@ -3,6 +3,7 @@ using Arcatech.Skills;
 using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace Arcatech.Units
 {
@@ -34,7 +35,7 @@ namespace Arcatech.Units
             //if (_projSkillsData == null) _projSkillsData = new Dictionary<CombatActionType, ProjectileSettingsPackage>();
 
             SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig,Owner);
-
+            IsReady = true;
             switch (item.ItemType)
             {
                 case EquipItemType.MeleeWeap:
@@ -56,14 +57,14 @@ namespace Arcatech.Units
 
 
 
-        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillObjectForControls result)
+        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillComponent result)
         {
             result = null;
             var usedSkill = _skills[type];
             if (usedSkill == null || CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false; 
             else
             {
-                result = usedSkill;
+                result = usedSkill.GetInstantiatedSkillCollider;
                 switch (type)
                 {
                     case CombatActionType.MeleeSpecialQ:
@@ -88,7 +89,7 @@ namespace Arcatech.Units
         }
 
         public SkillObjectForControls GetControlData(CombatActionType t) => _skills[t];
-
+        public SkillObjectForControls[] GetControlData() => _skills.Values.ToArray();
 
     }
 

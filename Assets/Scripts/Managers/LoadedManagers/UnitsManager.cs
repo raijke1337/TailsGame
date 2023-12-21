@@ -151,7 +151,7 @@ namespace Arcatech.Managers
            // Debug.Log($"Effect {pack.Type} requested at {pack.Place.position}");
             _effects.ServeEffectsRequest(pack);
         }
-        private void ForwardSkillRequests(SkillObjectForControls cfg, BaseUnit user, Transform place)
+        private void ForwardSkillRequests(SkillComponent cfg, BaseUnit user, Transform place)
         {
             //Debug.Log($"{user.GetFullName} skill request {cfg.Description.Title}");
             _skills.ServeSkillRequest(cfg, user, place);

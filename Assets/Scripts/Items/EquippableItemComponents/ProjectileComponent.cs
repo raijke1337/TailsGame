@@ -24,7 +24,7 @@ namespace Arcatech.Items
             _data.TimeToLive -= deltaTime;
             if (_data.TimeToLive <= 0)
             {
-                ProjectileExpiredEvent?.Invoke(this);
+                Destroy(gameObject);
             }
         }
         #endregion
@@ -52,6 +52,12 @@ namespace Arcatech.Items
             ProjectileEnteredTriggerEvent?.Invoke(other, this);
         }
 
+
+
+        private void OnDestroy()
+        {
+            ProjectileExpiredEvent?.Invoke(this);
+        }
 
         public event SimpleEventsHandler<Collider, ProjectileComponent> ProjectileEnteredTriggerEvent;
 

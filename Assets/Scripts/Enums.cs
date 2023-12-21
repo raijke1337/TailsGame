@@ -107,3 +107,8 @@ public enum EffectMoment
     OnCollision,
     OnExpiry
 }
+public enum SkillState
+{
+    Placer,
+    AoE
+}

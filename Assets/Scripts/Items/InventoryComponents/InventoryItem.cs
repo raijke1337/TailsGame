@@ -21,7 +21,7 @@ namespace Arcatech.Items
 
         public InventoryItem(Item config, BaseUnit ow)
         {
-            ID = config.ID; ItemIcon = config.ItemIcon; ItemType = config.ItemType;
+            ID = config.ID; ItemIcon = config.Description.Picture; ItemType = config.ItemType;
             _description = new TextContainer(config.Description);
             Owner= ow;
         }

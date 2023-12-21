@@ -11,11 +11,9 @@ namespace Arcatech.UI
 
         private PlayerUnit _player;
 
-
-        private DodgeController _dodge;
-        private WeaponController _weapons;
         private ShieldController _shield;
         private ComboController _combo;
+        private SkillsController _skills;
 
 
         private StatValueContainer SHc;
@@ -26,29 +24,14 @@ namespace Arcatech.UI
 
         [SerializeField] IconContainersManager _icons;
         
-
-
-        
-
-        //private void Shield_ComponentChangedStateToEvent(bool arg1, IStatsComponentForHandler arg2)
-        //{
-        //    if (arg1)
-        //    {
-        //        SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-        //    }
-        //    _bars.ProcessContainer(SHc, DisplayValueType.Shield);
-        //}
-
-
-
         public override void StartController()
         {
             
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
-            _dodge = _player.GetInputs<InputsPlayer>().GetDodgeController;
-            _weapons = _player.GetInputs<InputsPlayer>().GetWeaponController;
             _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
             _combo = _player.GetInputs<InputsPlayer>().GetComboController;
+
+            _skills = _player.GetInputs().GetSkillsController;
 
             base.StartController(); // instantiate bars
 
@@ -60,31 +43,18 @@ namespace Arcatech.UI
             HEc = _combo.GetAvailableCombo;
             _bars.LoadValues(HEc,DisplayValueType.Combo);
 
-            //_shield.ComponentChangedStateToEvent += Shield_ComponentChangedStateToEvent; // item was equipped
-
-
             if (_shield.IsReady)
             {
                 SHc = _shield.GetShieldStats[ShieldStatType.Shield];
                 _bars.LoadValues(SHc, DisplayValueType.Shield);
-
-                //foreach (var i in _shield.GetCurrentEquipped)
-                //{
-                //    _icons.TrackItemIcon(i);
-                //}
             }
-
-            //if (_dodge.IsReady)
-            //{
-            //    foreach (var i in _dodge.GetCurrentEquipped)
-            //    {
-            //        _icons.TrackItemIcon(i);
-            //    }
-            //}
-            //foreach (var weapon in _weapons.GetCurrentEquipped)
-            //{
-            //    _icons.TrackItemIcon(weapon);
-            //}
+            if (_skills.IsReady)
+            {
+                foreach (var sk in _skills.GetControlData())
+                {
+                    _icons.TrackSkillIcon(sk);
+                }
+            }
 
         }
 

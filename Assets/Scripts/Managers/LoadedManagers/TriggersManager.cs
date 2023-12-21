@@ -192,8 +192,6 @@ namespace Arcatech.Managers
             {
                 _projectiles = new List<ProjectileComponent>();
             }
-            //var p = Instantiate(proj.ProjectilePrefab);
-
             proj.transform.SetPositionAndRotation(owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.position,
                 owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.rotation);
 
@@ -202,7 +200,7 @@ namespace Arcatech.Managers
             _projectiles.Add(proj);            
             ProjectileSubs(proj);
         }
-        public void ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager 
+        public ProjectileComponent ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager 
         {
             if (_projectiles == null)
             {
@@ -217,6 +215,8 @@ namespace Arcatech.Managers
             p.Setup(proj.Settings,owner);
             _projectiles.Add(p);
             ProjectileSubs(p);
+
+            return p;
         }
 
 
@@ -231,8 +231,6 @@ namespace Arcatech.Managers
             arg.ProjectileEnteredTriggerEvent -= ProjectileHit;
             arg.ProjectileExpiredEvent -= ProjectileExpired;
             _projectiles.Remove(arg);
-
-            Destroy(arg.gameObject);
         }
 
         private void ProjectileHit(Collider col, ProjectileComponent proj)

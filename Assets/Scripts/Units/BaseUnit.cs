@@ -31,7 +31,10 @@ namespace Arcatech.Units
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats => _controller.GetStatsController.GetBaseStats;
 
         public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
-
+        public ControlInputsBase GetInputs()
+        {
+            return _controller;
+        }
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
@@ -148,7 +151,7 @@ namespace Arcatech.Units
         }
 
 
-        protected void OnInputsCreateSkill(SkillObjectForControls data, BaseUnit source, Transform where)
+        protected void OnInputsCreateSkill(SkillComponent data, BaseUnit source, Transform where)
         {
             SkillRequestSuccessEvent?.Invoke(data, source, where);
         }

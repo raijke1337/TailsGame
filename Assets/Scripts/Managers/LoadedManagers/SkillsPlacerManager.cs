@@ -3,6 +3,7 @@ using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace Arcatech.Managers
 {
@@ -13,23 +14,16 @@ namespace Arcatech.Managers
         private EffectsManager effectsManager;
         private TriggersManager triggers;
 
-        private List<SkillObjectForControls> _cachedSkills;
-
         #region ManagerBase
         public override void Initiate()
         {
             effectsManager = EffectsManager.Instance;
             triggers = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
-            _cachedSkills = new List<SkillObjectForControls>();
         }
 
         public override void RunUpdate(float delta)
         {
-            foreach (SkillObjectForControls skillObject in _cachedSkills)
-            {
-             if (skillObject.SkillObjects.Placer!= null) skillObject.SkillObjects.Placer.UpdateInDelta(delta);
-              if (skillObject.SkillObjects.Area!= null) skillObject.SkillObjects.Area.UpdateInDelta(delta);
-            }
+
         }
 
         public override void Stop()
@@ -40,66 +34,62 @@ namespace Arcatech.Managers
         #endregion
 
 
-        public void ServeSkillRequest(SkillObjectForControls data, BaseUnit source, Transform where)
+        public void ServeSkillRequest(SkillComponent comp, BaseUnit source, Transform where)
         {
-            _cachedSkills.Add(data);
 
-            var placer = data.SkillObjects.Placer = Instantiate(data.PlacerPrefab,transform);
-
-            effectsManager.ServeEffectsRequest(new EffectRequestPackage(data.Effects, EffectMoment.OnStart, where));
-
-            placer.SetupStatsComponent();
-            placer.transform.SetPositionAndRotation(where.position, source.transform.rotation) ;
-            placer.TimeToLive = data.PlacerSettings.TotalTime;
-            if (placer.Collider is SphereCollider sp)
+            effectsManager.ServeEffectsRequest(new EffectRequestPackage(comp.Data.Effects, EffectMoment.OnStart, where));
+            if (comp.Data is ProjectileSkillSO pr)
             {
-                sp.radius = data.PlacerSettings.Radius;
+                //placer.TimeToLive = comp.GetProjectileData.Settings.TimeToLive;
+                var ppp = triggers.ServeProjectileRequest(pr.SkillProjectile, source); // proejctile skill
+                comp.transform.SetParent(ppp.transform, false);
+            }
+            else
+            {
+                comp.transform.SetPositionAndRotation(where.position, source.transform.rotation);
             }
 
-            if (data.GetProjectileData!=null)
-            {
-                placer.TimeToLive = data.GetProjectileData.Settings.TimeToLive;
-                triggers.ServeProjectileRequest(data.GetProjectileData, source); // proejctile skill
-            }
-            data.PlacerTriggerEvent += (t) => PlacerHit(t,data);
-            data.AreaTriggerEvent += (t) => AreaHit(t, data);
+            comp.TriggerEnterEvent += (t,t2) => HandleSkillTriggerEvent(t,t2,comp);
+            comp.SkillDestroyedEvent += HandleSkillDestructionEvent;
 
         }
 
-
-        private void PlacerHit(Collider hit, SkillObjectForControls comp)
+        private void HandleSkillTriggerEvent (Collider col, SkillState state, SkillComponent comp)
         {
-            if (CheckAreaCollision(hit,comp,out var p))
+            if (CheckAreaCollision(col,comp,out var w,out var t) && t != null)
             {
-                Destroy(comp.SkillObjects.Placer);
-                comp.SkillObjects.Area = Instantiate(comp.AreaOfEffectPrefab, p.position, p.rotation);
-
-                comp.SkillObjects.Area.TimeToLive = comp.AreaSettings.TotalTime;
-                if (comp.SkillObjects.Area.TryGetComponent(out SphereCollider sp))
+                switch (state)
                 {
-                    sp.radius = comp.AreaSettings.Radius;
+                    case SkillState.Placer:
+                        effectsManager.ServeEffectsRequest(new EffectRequestPackage(comp.Data.Effects, EffectMoment.OnCollision, w));
+                        //Debug.Log($"{comp.Data.Description.Title} activated by {t}");
+                        comp.AdvanceStage();
+                        break;
+                    case SkillState.AoE:
+                        foreach (var ef in comp.Data.Triggers)
+                        {
+                            triggers.ServeTriggerApplication(ef, comp.Owner, t,true);
+                        }
+                        //if (t!=null) Debug.Log($"{comp.Data.Description.Title} has hit {t}");
+                        break;
                 }
             }
         }
-        private void AreaHit(Collider hit, SkillObjectForControls comp)
+        private void HandleSkillDestructionEvent(SkillComponent c)
         {
-            if (hit.TryGetComponent(out BaseUnit u))
-            {
-                Debug.Log($"Skill area of {comp.Description.Title} hit {u}");
-                foreach (var t in comp.Triggers)
-                {
-                    triggers.ServeTriggerApplication(t, comp.Owner, u, true);
-                }
-            }
+            c.SkillDestroyedEvent -= HandleSkillDestructionEvent;
+            c.TriggerEnterEvent -= (t, t2) => HandleSkillTriggerEvent(t, t2, c);
         }
 
 
-
-        private bool CheckAreaCollision(Collider hit, SkillObjectForControls comp, out Transform where)
+        private bool CheckAreaCollision(Collider hit, SkillComponent comp, out Transform where, out BaseUnit taget)
         {
             where = null;
-
-            if (hit.gameObject.isStatic || (hit.TryGetComponent(out BaseUnit unit) && comp.Owner != unit))
+            taget = null;
+            
+            if (hit.gameObject.isStatic || //hits a wall
+                (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
+                (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser &&  taget == comp.Owner)) // self target skills
             {
                 where = hit.transform;
                 return true;
@@ -107,7 +97,7 @@ namespace Arcatech.Managers
 
             else return false;
         }
-    
+
     }
 
 }

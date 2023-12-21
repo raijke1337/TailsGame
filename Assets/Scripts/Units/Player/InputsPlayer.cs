@@ -116,7 +116,7 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked) return;
             if (_skillCtrl.TryUseSkill(CombatActionType.ShieldSpecialR, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                _comboCtrl.UseCombo(sk.Cost);
+                _comboCtrl.UseCombo(sk.Data.Cost);
                 SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
             }
@@ -126,7 +126,7 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked) return;
             if (_skillCtrl.TryUseSkill(CombatActionType.MeleeSpecialQ, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                _comboCtrl.UseCombo(sk.Cost);
+                _comboCtrl.UseCombo(sk.Data.Cost);
                 SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
             }
@@ -136,7 +136,7 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked) return;
             if (_skillCtrl.TryUseSkill(CombatActionType.RangedSpecialE, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                _comboCtrl.UseCombo(sk.Cost);
+                _comboCtrl.UseCombo(sk.Data.Cost);
                 SkillSpawnEventCallback(sk);    
                 CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
             }
@@ -147,7 +147,7 @@ namespace Arcatech.Units.Inputs
             //can't dash from standing
             if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                _comboCtrl.UseCombo(sk.Cost);
+                _comboCtrl.UseCombo(sk.Data.Cost);
                 SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.Dodge);
             }

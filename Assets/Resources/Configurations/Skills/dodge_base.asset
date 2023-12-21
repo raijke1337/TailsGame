@@ -15,15 +15,11 @@ MonoBehaviour:
   Description: {fileID: 11400000, guid: d1fab18a739ed224ebed8e8fa56a17c2, type: 2}
   Cooldown: 0
   Cost: 0
-  AreaOfEffect: {fileID: 3629370675284093089, guid: ee2574c286d6223469fe1a9111ddb67a,
+  SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
-  AreaSettings:
-    Radius: 0.1
-    TotalTime: 0.01
-  Placer: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb, type: 3}
-  PlacerSettings:
-    Radius: 0.1
-    TotalTime: 0.01
+  PlacerRadius: 0.1
+  AoERadius: 0.1
+  AoETime: 0.01
   Triggers: []
   Effects:
     Sounds:

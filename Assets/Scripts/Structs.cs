@@ -25,7 +25,7 @@ namespace Arcatech
     public delegate void StateMachineEvent<T>(T arg);
 
 
-    public delegate void SkillRequestedEvent(SkillObjectForControls data, BaseUnit source, Transform where);
+    public delegate void SkillRequestedEvent(SkillComponent data, BaseUnit source, Transform where);
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
 
     public delegate void SimpleTriggerEvent(BaseUnit target,bool isEnter);

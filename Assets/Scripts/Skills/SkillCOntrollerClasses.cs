@@ -3,56 +3,51 @@ using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Arcatech.Skills
-{ 
+{
     #region skill configs
 
     [Serializable]
     public class SkillObjectForControls
     {
-
+        // skill controller data
         public BaseUnit Owner { get; }
-        public TextContainerSO Description { get; }
-
-
-        public float FullCooldown { get; }
         public float CurrentCooldown { get; protected set; }
-        public int Cost { get; }
 
+        // end
+        public SkillComponent GetInstantiatedSkillCollider
+        {
+            get
+            {
+                var item =  GameObject.Instantiate(_settings.SkillObject);
+                item.Data = _settings;
+                item.Owner = Owner;
 
-        public SkillArea AreaOfEffectPrefab { get; }
-        public SphereSettings AreaSettings { get; }
-        public SkillPlacer PlacerPrefab { get; }
-        public SphereSettings PlacerSettings { get; }
+                return item;
+            }
+        }
 
+        // from stored cfg
+        private SkillControlSettingsSO _settings;
 
-        public BaseStatTriggerConfig[] Triggers { get; }
-         public EffectsCollection Effects { get; }
-
-
+        public TextContainerSO Description { get => _settings.Description; }
+        public BaseStatTriggerConfig[] Triggers { get => _settings.Triggers; }
+        public EffectsCollection Effects { get => _settings.Effects; }
+        public int Cost { get => _settings.Cost; }
+        public float PlacerRadius { get => _settings.PlacerRadius; }
+        public float EffectRadius { get => _settings.AoERadius;  }
         public ProjectileConfiguration GetProjectileData
         { get;private set;}
 
-        public InstantiatedSkillObjects SkillObjects;
+        // end
 
         public SkillObjectForControls(SkillControlSettingsSO cfg,BaseUnit owner)
         {
-
-            //ID = cfg.ID;
-            FullCooldown = cfg.Cooldown;
-            Cost = cfg.Cost;
-            Effects = cfg.Effects;
-            Triggers = new BaseStatTriggerConfig[cfg.Triggers.Length];
-            for (int i = 0; i < cfg.Triggers.Length; i++)
-            {
-                Triggers[i] = cfg.Triggers[i];
-            }
+            Owner = owner;
+            _settings = cfg;
+            CurrentCooldown = 0;
 
             if (cfg is DodgeSkillConfiguration dodge)
             {
@@ -62,52 +57,29 @@ namespace Arcatech.Skills
             {
                 GetProjectileData = projectile.SkillProjectile;
             }
-            AreaOfEffectPrefab = cfg.AreaOfEffect;
-            AreaSettings = cfg.AreaSettings;
-            PlacerPrefab = cfg.Placer;
-            PlacerSettings = cfg.PlacerSettings;
-
-            CurrentCooldown = FullCooldown;
-
-            Owner = owner;
-            SkillObjects = new InstantiatedSkillObjects();
-            SkillObjects.Placer.TriggerEnterEvent += PlacerTriggerEvent; //null here
-
-            SkillObjects.Area.TriggerEnterEvent += AreaTriggerEvent;
         }
-
-        public event SimpleEventsHandler<Collider> PlacerTriggerEvent;
-        public event SimpleEventsHandler<Collider> AreaTriggerEvent;
-
 
         public virtual bool TryUse()
         {
-            bool ok = CurrentCooldown > FullCooldown;
+            bool ok = CurrentCooldown <= 0;
             if (ok)
             {
-                CurrentCooldown = 0;
+                CurrentCooldown = _settings.Cooldown;
             }
 
             return ok;
         }
-        public virtual float UpdateInDelta(float time)
+        public virtual void UpdateInDelta(float time)
         {
-            return CurrentCooldown += time;
+            if (CurrentCooldown > 0)
+            {
+                CurrentCooldown -= time;
+            }
         }
     }
 
 
     #endregion
-    [Serializable]
-    public class SphereSettings
-    {
-        [Range(0.1f,10f)]public float Radius;
-        [Range(0.01f, 10f)] public float TotalTime;     
-    }
 
-    public class InstantiatedSkillObjects
-    {
-        public SkillPlacer Placer;
-        public SkillArea Area;
-    }
+
 }

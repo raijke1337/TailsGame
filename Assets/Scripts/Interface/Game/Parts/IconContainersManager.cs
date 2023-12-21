@@ -16,12 +16,9 @@ namespace Arcatech.UI
         public void TrackSkillIcon(SkillObjectForControls skill )
         {
             var icon = Instantiate(_iconPrefab, transform);
-            if (_dict == null)
-            {
-                _dict = new Dictionary<SkillObjectForControls, IconContainerUIScript>();
-            }
+            _dict ??= new Dictionary<SkillObjectForControls, IconContainerUIScript>();
             _dict[skill] = icon;
-            //_dict[skill].Image = skill.GetSprite;
+            icon.Image.sprite = skill.Description.Picture;
         }
 
         public void UntrackSkillIcon(SkillObjectForControls o)
@@ -52,7 +49,7 @@ namespace Arcatech.UI
             
             foreach (var item in _dict.Keys)
             {
-                _dict[item].Text = item.CurrentCooldown.ToString();
+                _dict[item].Text = Mathf.RoundToInt(item.CurrentCooldown).ToString();
             }
         }
 

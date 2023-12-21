@@ -13,17 +13,13 @@ MonoBehaviour:
   m_Name: shield_heal
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: b2015d538ff3bbc45b9027b43cb21caa, type: 2}
-  Cooldown: 0
+  Cooldown: 20
   Cost: 0
-  AreaOfEffect: {fileID: 3629370675284093089, guid: ee2574c286d6223469fe1a9111ddb67a,
+  SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
-  AreaSettings:
-    Radius: 0.1
-    TotalTime: 0.01
-  Placer: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb, type: 3}
-  PlacerSettings:
-    Radius: 0.1
-    TotalTime: 0.01
+  PlacerRadius: 0.1
+  AoERadius: 0.1
+  AoETime: 0.01
   Triggers:
   - {fileID: 11400000, guid: f82fa659d0b8ab84ea7a891a25f82c90, type: 2}
   Effects:
@@ -37,6 +33,7 @@ MonoBehaviour:
       _serializedList:
       - Key: 0
         Value:
-          Effects: []
+          Effects:
+          - {fileID: 1429954232896169629, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
           _scale: 0
           Duration: 0

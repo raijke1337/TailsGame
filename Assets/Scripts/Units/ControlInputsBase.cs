@@ -326,7 +326,7 @@ namespace Arcatech.Units
 
 
         #region skill requests manager
-        protected void SkillSpawnEventCallback(SkillObjectForControls data)
+        protected void SkillSpawnEventCallback(SkillComponent data)
         {
             SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[EquipItemType.RangedWeap]);
         }
