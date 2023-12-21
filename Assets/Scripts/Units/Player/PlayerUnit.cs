@@ -8,8 +8,8 @@ namespace Arcatech.Units
     public class PlayerUnit : BaseUnit
     {
         private InputsPlayer _playerController;
-        private VisualsController _visualController;
-        private float[] _visualStagesHP;
+        //private VisualsController _visualController;
+        //private float[] _visualStagesHP;
         protected Camera _faceCam;
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
@@ -21,19 +21,19 @@ namespace Arcatech.Units
 
             ToggleCamera(true);
 
-            var stats = _controller.GetStatsController;
+            //var stats = _controller.GetStatsController;
 
-            float maxHP = stats.GetBaseStats[BaseStatType.Health].GetMax;
-            stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
+            //float maxHP = stats.GetBaseStats[BaseStatType.Health].GetMax;
+           // stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
 
-            int stages = _visualController.StagesTotal;
-            _visualStagesHP = new float[stages];
-            var coef = maxHP / stages;
-            for (int i = 0; i < stages; i++)
-            {
-                _visualStagesHP[i] = maxHP;
-                maxHP -= coef;
-            }
+           // int stages = _visualController.StagesTotal;
+            //_visualStagesHP = new float[stages];
+            //var coef = maxHP / stages;
+            //for (int i = 0; i < stages; i++)
+            //{
+              //  _visualStagesHP[i] = maxHP;
+              //  maxHP -= coef;
+            //}
         }
         public override void RunUpdate(float delta)
         {
@@ -55,8 +55,8 @@ namespace Arcatech.Units
         {
             base.UpdateComponents();
             if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-            if (_visualController == null) _visualController = GetComponent<VisualsController>();
-            _visualController.Empties = _controller.GetEmpties;
+          //  if (_visualController == null) _visualController = GetComponent<VisualsController>();
+            //_visualController.Empties = _controller.GetEmpties;
         }
 
         protected override void ControllerEventsBinds(bool isEnable)
@@ -131,10 +131,10 @@ namespace Arcatech.Units
             _playerController.IsInMeleeCombo = false;
         }
 
-        private void ChangeVisualStage(float value, float prevvalue)
-        {
+        //private void ChangeVisualStage(float value, float prevvalue)
+        //{
 
-        }
+        //}
 
         #endregion
 

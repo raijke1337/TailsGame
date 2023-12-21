@@ -7,10 +7,11 @@ namespace Arcatech
         [SerializeField] private TextMeshProUGUI _title;
         [SerializeField] private TextMeshProUGUI _text;
 
-        public void SetText(TextContainer cont)
+        public void SetText(TextContainerSO cont)
         {
-            _title.text = cont.GetTitle;
-            _text.text = cont.GetFormattedText;
+            var txt = new TextContainer(cont);
+            _title.text = txt.GetTitle;
+            _text.text = txt.GetFormattedText;
         }
 
 

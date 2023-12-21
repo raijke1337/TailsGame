@@ -1,75 +1,86 @@
+using Arcatech.Effects;
 using CartoonFX;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-public class EffectsManager : MonoBehaviour
+namespace Arcatech.Managers
 {
-    #region singleton
-    public static EffectsManager Instance;
-    private void Awake()
+    public class EffectsManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-    }
-    #endregion
-    private void Start()
-    {
-        SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
-    }
-
-    private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
-    {
-        _fx = new List<AudioSource>();
-    }
-
-    [SerializeField] private AudioSource _audioPrefab;
-    [SerializeField] private AudioSource _musicPrefab;
-    private List<AudioSource> _fx;
-    private AudioSource _m;
-
-    public void PlaySound(AudioClip clip, Vector3 place)
-    {
-        if (clip == null) return;
-
-        var s = Instantiate(_audioPrefab, place, Quaternion.identity,transform);
-        s.clip = clip;
-        s.Play();
-        _fx.Add(s);
-        StartCoroutine(TerminateObject(s));
-    }
-    public void PlaceParticle(CFXR_Effect eff, Transform wh)
-    {
-        Instantiate(eff,wh.position,wh.rotation);
-    }
-    public void PlayMusic(AudioClip clip)
-    {
-        if (clip == null) return;
-        _m = Instantiate(_musicPrefab);
-        _m.clip = clip;
-        _m.loop = true;
-        _m.Play();
-    }
-
-    private IEnumerator TerminateObject(AudioSource s)
-    {
-        yield return new WaitForSeconds(s.clip.length);
-        _fx.ToList().Remove(s);
-        Destroy(s.gameObject);
-    }
-
-    public void CleanUpOnSceneChange()
-    {
-        StopAllCoroutines();
-        if (_fx == null) return;
-        foreach (var fx in _fx.ToList())
+        #region singleton
+        public static EffectsManager Instance;
+        private void Awake()
         {
-            if (fx == null) return;
-            fx.Stop();
-            Destroy(fx.gameObject);
-            Destroy(_m.gameObject);
+            if (Instance == null) Instance = this;
         }
-    }
+        #endregion
+        private void Start()
+        {
+            SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
+        }
 
+        private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
+        {
+            PlayMusic(GameManager.Instance.GetCurrentLevelData.Music);
+        }
+
+        [SerializeField] private AudioSource _audioPrefab;
+        [SerializeField] private AudioSource _musicPrefab;
+        private AudioSource _musicObj;
+
+
+        public void ServeEffectsRequest(EffectRequestPackage pack)
+        {
+            var place = pack.Place;
+
+            if (pack.Collection.Sounds.TryGetValue(pack.Type, out var c) && c.Sounds.Length >0)
+            {
+                PlaceSound(c.Sounds[Random.Range(0,c.Sounds.Length-1)], c.Loudness,place) ;
+            }
+            if (pack.Collection.Effects.TryGetValue(pack.Type, out var cont)&&cont.Effects.Length>0)
+            {
+                PlaceParticle(cont.Effects[Random.Range(0,cont.Effects.Length-1)],cont.Scale,place,cont.Duration) ;
+            }
+        }
+
+
+        private void PlaceSound(AudioClip clip, float volumeMult, Transform place)
+        {
+            var s = Instantiate(_audioPrefab, place.position, Quaternion.identity, transform);
+            s.clip = clip;
+            s.volume *= volumeMult;
+            s.Play();
+
+            Destroy(s.gameObject,s.clip.length);
+        }
+        private void PlaceParticle(CFXR_Effect eff, Vector3 scale, Transform place,float time)
+        {
+            var p = Instantiate(eff,place.position,place.rotation);
+            p.transform.localScale = scale;
+            if (time != 0) // 0 means it will play once and disappear
+            {
+                p.Animate(time);
+
+            }
+        }
+
+        private void PlayMusic(AudioClip clip)
+        {
+            if (clip == null) return;
+            _musicObj = Instantiate(_musicPrefab);
+            _musicObj.clip = clip;
+            _musicObj.loop = true;
+            _musicObj.Play();
+        }
+
+
+        public void CleanUpOnSceneChange()
+        {
+            StopAllCoroutines();
+            if(_musicObj!=null) Destroy(_musicObj.gameObject);
+        }
+
+    }
 }

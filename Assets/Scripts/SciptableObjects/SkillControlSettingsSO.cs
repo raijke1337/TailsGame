@@ -3,17 +3,22 @@ using Arcatech.Triggers;
 using UnityEngine;
 namespace Arcatech.Skills
 {
-    [CreateAssetMenu(fileName = "New Skill Config", menuName = "Skills/Skill")]
-    public class SkillControlSettingsSO : ScriptableObjectID
+    [CreateAssetMenu(fileName = "New Self Skill Config", menuName = "Skills/Self Skill")]
+    public class SkillControlSettingsSO : ScriptableObject
     {
-        [Space]
-        public float GrowTime;
-        [Range(0.01f, 10)] public float StartRad;
-        [Range(0.01f, 10)] public float EndRad;
+
+        public TextContainerSO Description;
         [Space] public float Cooldown;
         [Range(0, 100)] public int Cost;
+
+
+        [Space]public SkillArea AreaOfEffect;
+        public SphereSettings AreaSettings;
+        [Space]public SkillPlacer Placer;
+        public SphereSettings PlacerSettings;
+        
+
         [Space] public BaseStatTriggerConfig[] Triggers;
-        [Space] public BaseSkill Prefab;
-        public EffectsCollection Effects;
+        [Space] public EffectsCollection Effects;
     }
 }

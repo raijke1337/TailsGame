@@ -1,5 +1,7 @@
 ﻿using Arcatech.Effects;
+using Arcatech.Items;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,82 +12,102 @@ using UnityEngine;
 namespace Arcatech.Skills
 { 
     #region skill configs
-    [Serializable]
-    public class SkillAoESettings
-    {
-        public float GrowTime { get; }
-        public Vector3 StartRad { get; }
-        public Vector3 EndRad { get; }
 
-        public SkillAoESettings(float time, Vector3 start, Vector3 end)
-        {
-            GrowTime = time;
-            StartRad = start;
-            EndRad = end;
-        }
-        public SkillAoESettings(float time)
-        {
-            GrowTime = time;
-            StartRad = EndRad = Vector3.one;
-        }
-    }
     [Serializable]
     public class SkillObjectForControls
     {
-        private Timer _recTimer;
-        private bool _isReady = true;
-        private float _baseCd;
 
-        public float GetCD => _recTimer.GetRemaining;
-        public string ID { get; }
-        public SkillAoESettings AoESettings { get; }
-        public BaseStatTriggerConfig[] GetTriggers { get; }
+        public BaseUnit Owner { get; }
+        public TextContainerSO Description { get; }
 
-        public BaseSkill Prefab;
-        public int Cost { get;private set; }
-        public EffectsCollection Effects { get; }
 
-        public SkillObjectForControls(SkillControlSettingsSO cfg)
+        public float FullCooldown { get; }
+        public float CurrentCooldown { get; protected set; }
+        public int Cost { get; }
+
+
+        public SkillArea AreaOfEffectPrefab { get; }
+        public SphereSettings AreaSettings { get; }
+        public SkillPlacer PlacerPrefab { get; }
+        public SphereSettings PlacerSettings { get; }
+
+
+        public BaseStatTriggerConfig[] Triggers { get; }
+         public EffectsCollection Effects { get; }
+
+
+        public ProjectileConfiguration GetProjectileData
+        { get;private set;}
+
+        public InstantiatedSkillObjects SkillObjects;
+
+        public SkillObjectForControls(SkillControlSettingsSO cfg,BaseUnit owner)
         {
 
-            ID = cfg.ID;
-            _baseCd = cfg.Cooldown;
-            Prefab = cfg.Prefab;
+            //ID = cfg.ID;
+            FullCooldown = cfg.Cooldown;
             Cost = cfg.Cost;
             Effects = cfg.Effects;
-            Vector3 rad = new(cfg.StartRad, cfg.StartRad);
-            Vector3 endR = new(cfg.EndRad, cfg.EndRad);
-            AoESettings = new SkillAoESettings(cfg.GrowTime, rad, endR);
-            GetTriggers = new BaseStatTriggerConfig[cfg.Triggers.Length];
+            Triggers = new BaseStatTriggerConfig[cfg.Triggers.Length];
             for (int i = 0; i < cfg.Triggers.Length; i++)
             {
-                GetTriggers[i] = cfg.Triggers[i];
+                Triggers[i] = cfg.Triggers[i];
             }
 
-            _recTimer = new Timer(_baseCd);
-            _recTimer.TimeUp += _recTimer_TimeUp;
+            if (cfg is DodgeSkillConfiguration dodge)
+            {
+                Debug.Log($"TODO dodge skill setting {dodge}");
+            }
+            if (cfg is ProjectileSkillSO projectile)
+            {
+                GetProjectileData = projectile.SkillProjectile;
+            }
+            AreaOfEffectPrefab = cfg.AreaOfEffect;
+            AreaSettings = cfg.AreaSettings;
+            PlacerPrefab = cfg.Placer;
+            PlacerSettings = cfg.PlacerSettings;
+
+            CurrentCooldown = FullCooldown;
+
+            Owner = owner;
+            SkillObjects = new InstantiatedSkillObjects();
+            SkillObjects.Placer.TriggerEnterEvent += PlacerTriggerEvent; //null here
+
+            SkillObjects.Area.TriggerEnterEvent += AreaTriggerEvent;
         }
+
+        public event SimpleEventsHandler<Collider> PlacerTriggerEvent;
+        public event SimpleEventsHandler<Collider> AreaTriggerEvent;
 
 
         public virtual bool TryUse()
         {
-            bool result = _isReady;
-            if (_isReady)
+            bool ok = CurrentCooldown > FullCooldown;
+            if (ok)
             {
-                _recTimer.ResetTimer();
-                _isReady = false;
+                CurrentCooldown = 0;
             }
-            return result;
+
+            return ok;
         }
         public virtual float UpdateInDelta(float time)
         {
-            return _recTimer.TimerTick(time);
-        }
-        private void _recTimer_TimeUp(Timer arg)
-        {
-            _isReady = true;
+            return CurrentCooldown += time;
         }
     }
 
+
     #endregion
+    [Serializable]
+    public class SphereSettings
+    {
+        [Range(0.1f,10f)]public float Radius;
+        [Range(0.01f, 10f)] public float TotalTime;     
+    }
+
+    public class InstantiatedSkillObjects
+    {
+        public SkillPlacer Placer;
+        public SkillArea Area;
+    }
 }

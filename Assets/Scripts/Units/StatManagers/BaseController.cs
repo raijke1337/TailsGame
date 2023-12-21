@@ -1,3 +1,5 @@
+using Arcatech.Effects;
+using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using CartoonFX;
@@ -8,7 +10,7 @@ using UnityEngine;
 namespace Arcatech.Units
 {
     [Serializable]
-    public abstract class BaseController : IStatsComponentForHandler, IProducesSounds, IHasOwner
+    public abstract class BaseController : IStatsComponentForHandler, IHasOwner, IHasEffects
     {
         protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
         public BaseUnit Owner { get; }
@@ -73,7 +75,7 @@ namespace Arcatech.Units
             }
         }
 
-        public virtual void AddTriggeredEffect(TriggeredEffect effect)
+        public virtual void PickTriggeredEffectHandler(TriggeredEffect effect)
         {
             _activeEffects.Add(effect);
         }
@@ -91,6 +93,9 @@ namespace Arcatech.Units
         [SerializeField] protected bool debugEnabled;
 
         #endregion
+
+
+        #region managed
         public virtual void UpdateInDelta(float deltaTime)
         {
             if (debugEnabled)
@@ -110,24 +115,34 @@ namespace Arcatech.Units
         {
 
         }
+        #endregion
 
-        #region effects
 
-        public event AudioEvents UnitRequestsSound;
-        public event SimpleEventsHandler<CFXR_Effect,Transform> EffectsParticlePlace;
-        protected virtual void SoundPlayCallback(AudioClip c)
-        {
-            if (c == null) return;
-           UnitRequestsSound?.Invoke(c, Vector3.zero);
-        }
-        protected virtual void ParticlesPlayCallback(CFXR_Effect eff,Transform where)
-        {
-            if (eff == null) return;
-            EffectsParticlePlace?.Invoke(eff,where);
-        }
+        #region Effects
 
+        public event EffectsManagerEvent BaseControllerEffectEvent;
+        protected void EffectEventCallback(EffectRequestPackage pack) => BaseControllerEffectEvent?.Invoke(pack);
 
         #endregion
+
+        #region triggers from weapons and /skills (todo)/
+
+        public event TriggerEvent BaseControllerTriggerEvent;
+        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter,BaseStatTriggerConfig cfg ) => BaseControllerTriggerEvent?.Invoke(target,source,isEnter,cfg);
+
+        #endregion
+
+        #region projectile spawn
+
+        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
+
+        protected void SpawnProjectileCallBack(ProjectileComponent proj)
+        {
+            SpawnProjectileEvent?.Invoke(proj);
+        }
+
+        #endregion
+
 
     }
 

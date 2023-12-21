@@ -216,23 +216,6 @@ namespace Arcatech
     }
     #endregion
 
-    #region projectiles
-
-    [Serializable]
-    public class ProjectileData
-    {
-        public float TimeToLive;
-        public float Speed;
-        public int Penetration;
-
-        public ProjectileData(ProjectileDataConfig config)
-        {
-            TimeToLive = config.TimeToLive;
-            Speed = config.ProjectileSpeed;
-            Penetration = config.ProjectilePenetration;
-        }
-    }
-    #endregion
 
     #region items
     [Serializable]

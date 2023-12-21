@@ -1,4 +1,5 @@
 using Arcatech.Items;
+using Arcatech.Skills;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,31 +8,52 @@ namespace Arcatech.UI
 {
     public class IconContainersManager : ManagedControllerBase
     {
-        private List<IconContainerUIScript> _icons;
+        
         [SerializeField] private IconContainerUIScript _iconPrefab;
 
-        public void TrackItemIcon(EquipmentItem item) // TODO: Proper tracking once items are refactored
+        private Dictionary<SkillObjectForControls,IconContainerUIScript> _dict;
+
+        public void TrackSkillIcon(SkillObjectForControls skill )
         {
             var icon = Instantiate(_iconPrefab, transform);
+            if (_dict == null)
+            {
+                _dict = new Dictionary<SkillObjectForControls, IconContainerUIScript>();
+            }
+            _dict[skill] = icon;
+            //_dict[skill].Image = skill.GetSprite;
+        }
 
-            icon.Image.sprite = item.ItemIcon;
-            icon.Text.text = item.GetInstantiatedPrefab.GetNumericValue.ToString();
-            _icons.Add(icon);
+        public void UntrackSkillIcon(SkillObjectForControls o)
+        {
+            if (_dict != null && _dict.TryGetValue(o,out var icon))
+            {
+                Destroy(_dict[o]);
+                _dict.Remove(o);
+            }             
         }
 
 
         public override void StartController()
         {
-            _icons = new List<IconContainerUIScript>();
             if (_iconPrefab == null)
             {
                 Debug.LogError($"Set icon prefab in {this}!");
             }
+            if (_dict == null)
+            {
+                _dict = new Dictionary<SkillObjectForControls, IconContainerUIScript>();
+            }
         }
+
 
         public override void UpdateController(float delta)
         {
             
+            foreach (var item in _dict.Keys)
+            {
+                _dict[item].Text = item.CurrentCooldown.ToString();
+            }
         }
 
         public override void StopController()

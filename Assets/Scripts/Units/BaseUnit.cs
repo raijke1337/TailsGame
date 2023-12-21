@@ -1,3 +1,4 @@
+using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
@@ -12,10 +13,10 @@ namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase))]
 
-    public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers, IProducesSounds
+    public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers, IHasEffects
     {
         [SerializeField] protected string StatsID;
-        public event SimpleEventsHandler<bool, BaseUnit> UnitCompletedBaseInitiationEvent;
+
         public string GetID => StatsID;
 
         protected Animator _animator;
@@ -24,6 +25,7 @@ namespace Arcatech.Units
         protected ControlInputsBase _controller;
 
         public Side Side;
+        public ItemEmpties GetEmpties => _controller.GetEmpties;
 
         public ReferenceUnitType GetUnitType => _controller.GetUnitType();
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats => _controller.GetStatsController.GetBaseStats;
@@ -33,8 +35,10 @@ namespace Arcatech.Units
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
-       
-        
+
+
+
+
         public event SkillRequestedEvent SkillRequestSuccessEvent;
 
 
@@ -58,8 +62,6 @@ namespace Arcatech.Units
 
         #endregion
 
-
-        //protected bool bindsComplete = false;
         #region managed
         public virtual void InitiateUnit() // this is run by unit manager
         {
@@ -81,7 +83,6 @@ namespace Arcatech.Units
                     break;
             }
 
-            UnitCompletedBaseInitiationEvent?.Invoke(true, this);
             //Debug.Log($"Initiated {GetFullName}");
         }
 
@@ -89,7 +90,6 @@ namespace Arcatech.Units
         {
             ControllerEventsBinds(false);
             _controller.StopController();
-            UnitCompletedBaseInitiationEvent?.Invoke(false, this);
         }
 
 
@@ -110,7 +110,6 @@ namespace Arcatech.Units
 
         #region unit
 
-
         protected virtual void UpdateComponents()
         {
             if (GetCollider == null) GetCollider = GetComponent<Collider>();
@@ -128,24 +127,28 @@ namespace Arcatech.Units
                 _controller.GetStatsController.UnitDiedEvent += OnDeath;
                 _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened += AnimateStagger;
-                _controller.SoundPlay += UnitPlaysSound;
-                _controller.ParticlePlace += UnitPlacesParticle;
 
-                _controller.SkillSpawnEvent += _controller_SkillSpawnEvent;
+                _controller.SkillSpawnEvent += OnInputsCreateSkill;
+                _controller.EffectEventRequest += EffectEventCallback;
+
+                _controller.TriggerEventRequest += TriggerEventCallback;
+
+                _controller.SpawnProjectileEvent += PlaceProjectileCallback;
             }
             else
             {
                 _controller.GetStatsController.UnitDiedEvent -= OnDeath;
                 _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened -= AnimateStagger;
-                _controller.SoundPlay -= UnitPlaysSound;
-
-                _controller.ParticlePlace -= UnitPlacesParticle;
-                _controller.SkillSpawnEvent -= _controller_SkillSpawnEvent;
+                _controller.SkillSpawnEvent -= OnInputsCreateSkill;
+                _controller.EffectEventRequest -= EffectEventCallback;
+                _controller.TriggerEventRequest -= TriggerEventCallback;
+                _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
             }
         }
 
-        private void _controller_SkillSpawnEvent(SkillObjectForControls data, BaseUnit source, Transform where)
+
+        protected void OnInputsCreateSkill(SkillObjectForControls data, BaseUnit source, Transform where)
         {
             SkillRequestSuccessEvent?.Invoke(data, source, where);
         }
@@ -160,12 +163,12 @@ namespace Arcatech.Units
             //UnitPlaysSound(UnitSounds.SoundsDict[SoundType.OnExpiry], Vector3.zero);
             BaseUnitDiedEvent?.Invoke(this);
         }
-        public virtual void AddTriggeredEffect(TriggeredEffect eff)
+        public virtual void PickTriggeredEffectHandler(TriggeredEffect eff)
         {
-            _controller.AddTriggeredEffect(eff);
+            _controller.PickTriggeredEffectHandler(eff);
         }
         #endregion
-        #region movement
+        #region movement, animations
         //sets animator values 
         protected virtual void AnimateMovement()
         {
@@ -198,8 +201,6 @@ namespace Arcatech.Units
             _animator.SetFloat("ForwardMove", z);
             _animator.SetFloat("SideMove", x);
         }
-        #endregion
-        #region combat
 
         protected virtual void AnimateCombatActivity(CombatActionType type)
         {
@@ -214,7 +215,7 @@ namespace Arcatech.Units
                     break;
                 case CombatActionType.Dodge:
                     _animator.SetTrigger("Dodge");
-                    //_controller.PerformDodging(); old Dodge.
+                    _controller.PerformDodging(); //old Dodge.
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.MeleeSpecialQ:
@@ -248,21 +249,33 @@ namespace Arcatech.Units
 
 
         #endregion
-
-        #region effects
-        public event AudioEvents UnitRequestsSound;
-        public event SimpleEventsHandler<CFXR_Effect, Transform> UnitRequestsParticles;
-
-        private void UnitPlacesParticle(CFXR_Effect arg1, Transform arg2)
+       
+        
+        
+        #region trigger events
+        public event TriggerEvent UnitTriggerRequestEvent;
+        protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, BaseStatTriggerConfig cfg)
         {
-            UnitRequestsParticles?.Invoke(arg1, arg2);
+            UnitTriggerRequestEvent?.Invoke(tg, src, ent, cfg); 
         }
-        private void UnitPlaysSound(AudioClip c, Vector3 z) => UnitRequestsSound?.Invoke(c, transform.position);
-
 
         #endregion
 
 
+        #region effects
+
+        public event EffectsManagerEvent BaseControllerEffectEvent;
+        protected void EffectEventCallback(EffectRequestPackage pack) => BaseControllerEffectEvent?.Invoke(pack);
+        #endregion
+
+
+        #region projectiles
+        public event SimpleEventsHandler<ProjectileComponent, BaseUnit> UnitPlacedProjectileEvent;
+        protected void PlaceProjectileCallback(ProjectileComponent comp)
+        {
+            UnitPlacedProjectileEvent?.Invoke(comp,this);
+        }
+        #endregion
 
 
 

@@ -6,13 +6,17 @@ namespace Arcatech.Managers
 {
     public class EventTriggersManager : LoadedManagerBase
     {
-        [SerializeField] private List<LevelEventTrigger> triggers = new List<LevelEventTrigger>();
+        [SerializeField] private List<BaseLevelEventTrigger> triggers = new List<BaseLevelEventTrigger>();
+        private GameInterfaceManager _ui;
+        private TriggersManager _trigs;
 
         #region managed
         public override void Initiate()
         {
             if (triggers != null) triggers.Clear();
-            triggers = new List<LevelEventTrigger>();
+            triggers = new List<BaseLevelEventTrigger>();
+            _ui = GameManager.Instance.GetGameControllers.GameInterfaceManager;
+            _trigs = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
         }
 
         public override void RunUpdate(float delta)
@@ -22,42 +26,48 @@ namespace Arcatech.Managers
 
         public override void Stop()
         {
-            foreach (var t in triggers.ToList()) { t.EnterEvent -= OnEventActivated; }
+            foreach (var t in triggers.ToList()) { t.PlayerTagTriggerEvent -= OnEventActivated; }
         }
         #endregion
 
-        public void RegisterEventTrigger(LevelEventTrigger tr)
+        public void RegisterEventTrigger(BaseLevelEventTrigger tr)
         {
             triggers.Add(tr);
-            tr.EnterEvent += OnEventActivated;
+            tr.PlayerTagTriggerEvent += OnEventActivated;
         }
 
 
-        private void OnEventActivated(LevelEventTrigger tr, bool isEnter)
+        private void OnEventActivated(BaseLevelEventTrigger tr, bool isEnter)
         {
-             switch (tr.EventType)
+            if (tr is LevelEffectTrigger ef)
             {
-                case LevelEventType.TextDisplay:
-                    GameManager.Instance.GetGameControllers.GameInterfaceManager.UpdateGameText(tr.ContentIDString, isEnter);
-                    break;
-                case LevelEventType.LevelComplete:
-                    if (isEnter)  // to prevent double completes
-                        GameManager.Instance.OnLevelComplete();
-                    break;
-                case LevelEventType.Cutscene:
-                    break;
-                case LevelEventType.ItemPickup:
-                    tr.EnterEvent -= OnEventActivated;
-                        triggers.Remove(tr);
-                    GameManager.Instance.OnItemPickup(tr.ContentIDString);
+                foreach (var e in ef.Triggers)
+                {
+                    _trigs.ServeTriggerApplication(e, null, GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit,isEnter);
+                }
+            }
+            if (tr is LevelRewardTrigger rew)
+            {
+                GameManager.Instance.OnItemPickup(rew.Content);
+                tr.PlayerTagTriggerEvent -= OnEventActivated;
+                triggers.Remove(tr);
+                Destroy(rew.gameObject);
 
-                    Destroy(tr.gameObject);                    
-                    break;
-                default:
-                    Debug.LogWarning($"{this} can't handle event of type {tr.EventType}");
-                    break;
+            }
+            if (tr is LevelTextTrigger txt)
+            {
+                _ui.UpdateGameText(txt.Text,isEnter);
+            }
+            if (tr is LevelCompleteTrigger comp)
+            {
+                GameManager.Instance.OnLevelComplete();
+            }
+            else
+            {
+                Debug.Log($"{tr.GetType()} has no assigned logic in {this}");
             }
         }
+
 
     }
 }

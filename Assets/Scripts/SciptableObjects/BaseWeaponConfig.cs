@@ -1,14 +1,17 @@
 using Arcatech;
+using Arcatech.Triggers;
 using System.Collections.Generic;
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "New BaseWeaponConfig", menuName = "Configurations/Weapons", order = 1)]
-public class BaseWeaponConfig : ScriptableObjectID
+namespace Arcatech.Items
 {
-    public StatValueContainer Charges;
-    public List<string> TriggerIDs;
+    [CreateAssetMenu(fileName = "New BaseWeaponConfig", menuName = "Configurations/Weapons", order = 1)]
+    public class BaseWeaponConfig : ScriptableObjectID
+    {
+        public StatValueContainer Charges;
+        public List<BaseStatTriggerConfig> WeaponEffects;
 
-    public float InternalCooldown;
+        public float InternalCooldown;
+
+    }
 
 }
-

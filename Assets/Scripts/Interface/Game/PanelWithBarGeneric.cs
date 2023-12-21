@@ -7,6 +7,9 @@ namespace Arcatech.UI
     {
         [SerializeField] protected BarsContainersManager _bars;
         [SerializeField, Space] protected float _barFillRateMult = 1f;
+        [SerializeField, Space] protected float _disappearTimer = 1f;
+
+        
 
         protected bool _act;
         public virtual bool IsNeeded

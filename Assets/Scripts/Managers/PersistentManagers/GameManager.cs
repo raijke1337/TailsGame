@@ -1,4 +1,5 @@
 //using Newtonsoft.Json;
+using Arcatech.Units;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -11,10 +12,12 @@ namespace Arcatech.Managers
     public class GameManager : MonoBehaviour
     {
 
-        //public GameMode GameMode { get; private set; }
+        [SerializeField] private PlayerUnit PlayerPrefab;
         [SerializeField] private LoadedManagers GameControllersPrefab;
         [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
         [SerializeField] private IsoCameraController gameCameraPrefab;
+
+
         private LoadedManagers _gameControllers;
 
         public LoadedManagers GetGameControllers => _gameControllers;
@@ -148,9 +151,9 @@ namespace Arcatech.Managers
         {
             _gameControllers.GameInterfaceManager.GameOver();
         }
-        public void OnItemPickup(string itemID)
+
+        public void OnItemPickup(Item item)
         {
-            Item item = DataManager.Instance.GetConfigByID<Item>(itemID);
             _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.AddItem(new Items.InventoryItem(item, _gameControllers.UnitsManager.GetPlayerUnit));
         }
         public void QuitGame()

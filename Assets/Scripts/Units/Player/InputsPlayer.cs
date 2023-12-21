@@ -100,14 +100,14 @@ namespace Arcatech.Units.Inputs
         protected void RangedAttack_performed(CallbackContext obj)
         {
             if (IsInputsLocked) return;
-            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap, out string text))
+            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap))
                 CombatActionSuccessCallback(CombatActionType.Ranged);
 
         }
         protected void MeleeAttack_performed(CallbackContext obj)
         {
             if (IsInputsLocked && !IsInMeleeCombo) return;
-            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap, out string text))
+            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap))
                 CombatActionSuccessCallback(CombatActionType.Melee);
             
         }

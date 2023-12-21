@@ -33,7 +33,6 @@ public enum DodgeStatType
 {
     Charges,
     Range,
-    Cooldown,
     Speed
 }
 
@@ -99,8 +98,7 @@ public enum DisplayValueType : byte
 {
     Health=0,
     Shield = 1,
-    Combo = 2,
-    Text = 3 // also useing bar container here since it already has text
+    Combo = 2
 }
 public enum EffectMoment
 {

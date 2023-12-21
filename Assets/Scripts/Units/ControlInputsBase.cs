@@ -1,3 +1,4 @@
+using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
@@ -48,9 +49,9 @@ namespace Arcatech.Units
 
         protected void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
         protected void StunEventCallback() => StaggerHappened?.Invoke();
-        protected void SkillSpawnEventCallback(SkillObjectForControls data) => SkillSpawnEvent?.Invoke(data,Unit,Empties.SkillsEmpty);
 
-        public event SkillRequestedEvent SkillSpawnEvent;
+
+
 
         #region items
         public void AssignItems(UnitInventoryComponent items)
@@ -102,6 +103,8 @@ namespace Arcatech.Units
         private void OnEquipmentChangedEvent(InventoryItem item, bool isAdded)
         {
             string removed = string.Empty;
+           // Debug.Log($"Testing if on equipchange is called twice");
+           // it isnt
 
             if (item is EquipmentItem eq) // just in case
             {
@@ -148,7 +151,10 @@ namespace Arcatech.Units
                             break;
                     }
                 }
-                _skillCtrl.LoadItemSkill(eq);
+                if (_skillCtrl != null) // null in scenes
+                {
+                    _skillCtrl.LoadItemSkill(eq);
+                }
             }                        
         }
 
@@ -187,19 +193,14 @@ namespace Arcatech.Units
                     break;
             }
         }
-
-
-
-
         public override void StopController()
         {
             foreach (var ctrl in _controllers)
             {
                 ctrl.StopStatsComponent();
-                ctrl.UnitRequestsSound -= Ctrl_SoundPlay;
-                ctrl.EffectsParticlePlace -= Ctrl_EffectsParticlePlace;
-            }
-            _stunsCtrl.StunHappenedEvent -= StunEventCallback;
+                _stunsCtrl.StunHappenedEvent -= StunEventCallback;
+                ControllerSubs(ctrl, false);
+            }        
         }
 
         private void Initialize(bool full)
@@ -231,67 +232,117 @@ namespace Arcatech.Units
 
             foreach (var ctrl in _controllers)
             {
-                //if (ctrl.IsReady) ctrl.Ping();
                 ctrl.SetupStatsComponent();
-                ctrl.UnitRequestsSound += Ctrl_SoundPlay;
-                ctrl.EffectsParticlePlace += Ctrl_EffectsParticlePlace;
+                ControllerSubs(ctrl, true);
             }
         }
 
-        #endregion
-
-        #region effects 
-        public event AudioEvents SoundPlay;
-        public event SimpleEventsHandler<CFXR_Effect, Transform> ParticlePlace;
-        private void Ctrl_SoundPlay(AudioClip c, Vector3 z) => SoundPlay?.Invoke(c, z);
-
-        private void Ctrl_EffectsParticlePlace(CFXR_Effect eff, Transform where) => ParticlePlace(eff, where);
-        #endregion
-
-        #region input
-
-        public void ToggleBusyControls_AnimationEvent(int state)
+        protected void ControllerSubs(BaseController ctrl, bool isStart)
         {
-            IsInputsLocked = state != 0;
+            if (isStart)
+            {
+                ctrl.BaseControllerEffectEvent += EffectEventCallback;
+                ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
+                ctrl.SpawnProjectileEvent += ProjectileEventCallBack;
+
+
+            }
+            else
+            {
+                ctrl.BaseControllerEffectEvent -= EffectEventCallback;
+                ctrl.BaseControllerTriggerEvent -= TriggerEventCallBack;
+                ctrl.SpawnProjectileEvent -= ProjectileEventCallBack;
+            }
         }
 
+        private void ProjectileEventCallBack(ProjectileComponent arg)
+        {
+            SpawnProjectileEvent?.Invoke(arg);
+        }
+        #endregion
 
-        public void AddTriggeredEffect(TriggeredEffect eff)
+        #region effects manager
+
+
+        public event EffectsManagerEvent EffectEventRequest;
+        protected void EffectEventCallback(EffectRequestPackage pack)
+        {
+            EffectEventRequest?.Invoke(pack);
+        }
+        #endregion
+
+        #region triggers
+
+        public event TriggerEvent TriggerEventRequest;
+        public void PickTriggeredEffectHandler(TriggeredEffect eff)
         {
             switch (eff.StatType)
             {
                 case TriggerChangedValue.Health:
                     if (!_shieldCtrl.IsReady)
                     {
-                        _statsCtrl.AddTriggeredEffect(eff);
+                        _statsCtrl.PickTriggeredEffectHandler(eff);
                     }
                     else
                     {
-                        _statsCtrl.AddTriggeredEffect(_shieldCtrl.ProcessHealthChange(eff));
+                        _statsCtrl.PickTriggeredEffectHandler(_shieldCtrl.ProcessHealthChange(eff));
                     }
                     break;
                 case TriggerChangedValue.Shield:
-                    _shieldCtrl.AddTriggeredEffect(eff);
+                    _shieldCtrl.PickTriggeredEffectHandler(eff);
                     break;
                 case TriggerChangedValue.Combo:
-                    _comboCtrl.AddTriggeredEffect(eff);
+                    _comboCtrl.PickTriggeredEffectHandler(eff);
                     break;
                 case TriggerChangedValue.MoveSpeed:
-                    _statsCtrl.AddTriggeredEffect(eff);
+                    _statsCtrl.PickTriggeredEffectHandler(eff);
                     break;
                 case TriggerChangedValue.TurnSpeed:
-                    _statsCtrl.AddTriggeredEffect(eff);
+                    _statsCtrl.PickTriggeredEffectHandler(eff);
                     break;
                 case TriggerChangedValue.Stagger:
-                    _stunsCtrl.AddTriggeredEffect(eff);
+                    _stunsCtrl.PickTriggeredEffectHandler(eff);
                     break;
             }
         }
+
+
+        protected void TriggerEventCallBack(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg)
+        {
+            TriggerEventRequest?.Invoke(target, source, isEnter, cfg);
+        }
+
+        #endregion
+        #region projectiles
+
+        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
+
+        protected void SpawnProjectileCallBack(ProjectileComponent proj)
+        {
+            SpawnProjectileEvent?.Invoke(proj);
+        }
+
+        #endregion
+
+
+        #region skill requests manager
+        protected void SkillSpawnEventCallback(SkillObjectForControls data)
+        {
+            SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[EquipItemType.RangedWeap]);
+        }
+
+        public event SkillRequestedEvent SkillSpawnEvent;
+
         #endregion
 
         #region movement
 
 
+
+        public void ToggleBusyControls_AnimationEvent(int state)
+        {
+            IsInputsLocked = state != 0;
+        }
 
         public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
         protected Vector3 MoveDirectionFromInputs;
@@ -311,19 +362,16 @@ namespace Arcatech.Units
 
         #region dodging
 
-        // OLD //
-        // new is using a generic skill // 
 
-
-        //public void PerformDodging()
-        //{
-        //    _dodgeCor = StartCoroutine(DodgingMovement());
-        //}
+        public void PerformDodging()
+        {
+            _dodgeCor = StartCoroutine(DodgingMovement());
+        }
 
         private Coroutine _dodgeCor;
         // stop the dodge like this
 
-        private void OnCollisionEnter(Collision collision)
+        protected  void OnCollisionEnter(Collision collision)
         {
             if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
             {

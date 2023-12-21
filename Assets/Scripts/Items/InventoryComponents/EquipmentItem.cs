@@ -8,33 +8,49 @@ using UnityEngine;
 namespace Arcatech.Items
 {
     [Serializable]
-    public class EquipmentItem : InventoryItem, IHasEffects
+    public class EquipmentItem : InventoryItem
     {
-        //public string SkillString { get; }
+        
         public SkillControlSettingsSO ItemSkillConfig { get; }
         protected EffectsCollection _effects;
-
-
+        public EffectsCollection GetEffects => _effects;
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
 
         protected BaseEquippableItemComponent _instantiated;
-        public BaseEquippableItemComponent GetInstantiatedPrefab 
+        public BaseEquippableItemComponent GetInstantiatedPrefab()
         {
-            get
+            if (_instantiated == null)
             {
-                if (_instantiated == null)
-                {
-                    _instantiated = GameObject.Instantiate(_prefab);
-                    _instantiated.Owner = Owner;
-                }
-                if (!_instantiated.gameObject.activeSelf)
-                {
-                    _instantiated.gameObject.SetActive(true);
-                }
-                return _instantiated;
-            }          
+                GenerateObject();
+            }
+            if (!_instantiated.gameObject.activeSelf)
+            {
+                _instantiated.gameObject.SetActive(true);
+            }
+            return _instantiated;
         }
+        public void SetItemEmpty(Transform parent)
+        {
+            if (_instantiated == null)
+            {
+                GenerateObject();
+            }
+            _instantiated.transform.SetParent(parent, false);
+        }
+
+
+        private void GenerateObject()
+        {
+            _instantiated = GameObject.Instantiate(_prefab);
+            _instantiated.Owner = Owner;
+            if (_instantiated is BaseWeapon weap)
+            {
+                weap.TriggerEvent += OnWeapTriggerEvent;
+            }
+        }
+
+
         public EquipmentItem(Item cfg, BaseUnit ow) : base (cfg,ow)
         {
             if (cfg is Equip e)
@@ -48,38 +64,24 @@ namespace Arcatech.Items
         public void OnEquip()
         {
             if (_instantiated != null) _instantiated.gameObject.SetActive(true);
+
         }
+
+        public event TriggerEvent PrefabTriggerHitSomething;
+        private void OnWeapTriggerEvent(BaseUnit target, BaseUnit source,bool isEnter,BaseStatTriggerConfig cfg)
+        {
+            //Debug.Log($"On weapon trigger event in {GetDisplayName}");
+            if (isEnter)
+            {
+                PrefabTriggerHitSomething?.Invoke(target, source, isEnter, cfg);
+            }
+        }
+
         public void OnUnequip()
         {
             if (_instantiated != null) _instantiated.gameObject.SetActive(false);
         }
 
-        public AudioClip GetAudio(EffectMoment type)
-        {
-            try
-            {
-                return _effects.Sounds[type];
-            }
-            catch
-            {
-                //Debug.LogWarning($"Audio not set for {this.GetDisplayName} for {type}");
-                return null;
-            }
-        }
-
-        public CFXR_Effect GetParticle(EffectMoment type)
-        {
-            try
-            {
-                return _effects.Effects[type];
-            }
-
-            catch
-            {
-                //Debug.LogWarning($"Particle not set for {this.GetDisplayName} for {type}");
-                return null;
-            }
-        }
     }
 
 }

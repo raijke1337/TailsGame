@@ -68,23 +68,23 @@ namespace Arcatech.UI
                 SHc = _shield.GetShieldStats[ShieldStatType.Shield];
                 _bars.LoadValues(SHc, DisplayValueType.Shield);
 
-                foreach (var i in _shield.GetCurrentEquipped)
-                {
-                    _icons.TrackItemIcon(i);
-                }
+                //foreach (var i in _shield.GetCurrentEquipped)
+                //{
+                //    _icons.TrackItemIcon(i);
+                //}
             }
 
-            if (_dodge.IsReady)
-            {
-                foreach (var i in _dodge.GetCurrentEquipped)
-                {
-                    _icons.TrackItemIcon(i);
-                }
-            }
-            foreach (var weapon in _weapons.GetCurrentEquipped)
-            {
-                _icons.TrackItemIcon(weapon);
-            }
+            //if (_dodge.IsReady)
+            //{
+            //    foreach (var i in _dodge.GetCurrentEquipped)
+            //    {
+            //        _icons.TrackItemIcon(i);
+            //    }
+            //}
+            //foreach (var weapon in _weapons.GetCurrentEquipped)
+            //{
+            //    _icons.TrackItemIcon(weapon);
+            //}
 
         }
 

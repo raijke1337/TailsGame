@@ -208,16 +208,15 @@ namespace Arcatech.Units.Inputs
         protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
         {
             bool success;
-            string text;
 
             switch (type)
             {
                 case CombatActionType.Melee:
-                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap, out text);
+                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
                     if (success) CombatActionSuccessCallback(type);
                     break;
                 case CombatActionType.Ranged:
-                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap, out text);
+                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap);
                     if (success) CombatActionSuccessCallback(type);
                     break;
                 case CombatActionType.Dodge:

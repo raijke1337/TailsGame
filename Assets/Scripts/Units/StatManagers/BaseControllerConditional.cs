@@ -33,6 +33,7 @@ namespace Arcatech.Units
             {
               //  Debug.Log($"Removed {removing.GetDisplayName}");
             }
+            item.PrefabTriggerHitSomething += TriggerEventCallback;
 
             StateChangeCallback(IsReady, this);
         }
@@ -40,6 +41,9 @@ namespace Arcatech.Units
         {
             var e = _equipment[type];
             _equipment.Remove(type);
+
+            e.PrefabTriggerHitSomething -= TriggerEventCallback;
+
             IsReady = false;
             return e;
         }

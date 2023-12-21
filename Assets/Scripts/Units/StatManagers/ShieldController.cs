@@ -41,9 +41,7 @@ namespace Arcatech.Units
         }
         protected override void InstantiateItem(EquipmentItem i)
         {
-            var b = i.GetInstantiatedPrefab;
-            b.transform.parent = Empties.SheathedWeaponEmpty;
-            b.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
+            i.SetItemEmpty(Empties.ItemPositions[EquipItemType.Shield]);
         }
         #endregion
 
@@ -56,7 +54,7 @@ namespace Arcatech.Units
             base.UpdateInDelta(deltaTime);
             if (_equipment.TryGetValue(EquipItemType.Shield, out var s))
             {
-                s.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
+                s.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
             }
         }
     
@@ -68,7 +66,7 @@ namespace Arcatech.Units
             {
                 return effect; // heal effect
             }
-            else
+            else // MASSIVE TODO HERE btw
             {
                 var adjDmg = effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
                 effect.InitialValue -= adjDmg;
@@ -77,9 +75,6 @@ namespace Arcatech.Units
 
                 TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
                 _activeEffects.Add(_shieldAbsord);
-
-                SoundPlayCallback(_equipment[EquipItemType.Shield].GetAudio(EffectMoment.OnStart));
-
                 return effect;
             }
         }

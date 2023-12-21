@@ -12,24 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43d4ded5403effe4d8820d0d57a052d9, type: 3}
   m_Name: dodge_base
   m_EditorClassIdentifier: 
-  ID: dodge_base
-  GrowTime: 0
-  StartRad: 0
-  EndRad: 0
+  Description: {fileID: 11400000, guid: d1fab18a739ed224ebed8e8fa56a17c2, type: 2}
   Cooldown: 0
   Cost: 0
+  AreaOfEffect: {fileID: 3629370675284093089, guid: ee2574c286d6223469fe1a9111ddb67a,
+    type: 3}
+  AreaSettings:
+    Radius: 0.1
+    TotalTime: 0.01
+  Placer: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb, type: 3}
+  PlacerSettings:
+    Radius: 0.1
+    TotalTime: 0.01
   Triggers: []
-  Prefab: {fileID: 8301056084255673616, guid: 0abbe200b3c0cc14d8c91b861178b3b0, type: 3}
   Effects:
     Sounds:
       _serializedList:
       - Key: 0
-        Value: {fileID: 8300000, guid: cc6699269b4c1d44ea1e860518b9bb73, type: 3}
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 9252e8fa39c35424aadec395c7fb01e6, type: 3}
+          - {fileID: 8300000, guid: 8fa2049eeb1c54f3789c757d43a98731, type: 3}
+          - {fileID: 8300000, guid: 881ec96694f1a456094b9a2da21ea901, type: 3}
+          Loudness: 1
     Effects:
-      _serializedList:
-      - Key: 0
-        Value: {fileID: 7177991128484655639, guid: 59a35ab9f68edff40b6e5332bed330f5,
-          type: 3}
+      _serializedList: []
   DodgeSkillStats:
     _serializedList:
     - Key: 0
@@ -45,10 +52,5 @@ MonoBehaviour:
     - Key: 2
       Value:
         _start: 3
-        _max: 0
-        _min: 0
-    - Key: 3
-      Value:
-        _start: 2.5
         _max: 0
         _min: 0

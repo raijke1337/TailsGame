@@ -1,5 +1,6 @@
 using Arcatech.Managers;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using System.Collections;
 using UnityEngine;
 
@@ -9,30 +10,57 @@ namespace Arcatech.Items
     {
         [SerializeField, Range(0, 5), Tooltip("time to reload")] protected float _reload = 2f;
         [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
-
-
-        [SerializeField] private ProjectileTrigger _projectilePrefab;
-
-
         protected int shotsToDo = 1;
 
-        private TriggersProjectilesManager _manager;
-        public SimpleEventsHandler<IProjectile> PlacedProjectileEvent;
+        [SerializeField] private ProjectileConfiguration _projectile;      
+
+        public SimpleEventsHandler<ProjectileComponent> PlacedProjectileEvent;
+        protected void CreateProjectile()
+        {
+            WeaponUses.ChangeCurrent(-1);
+            var p = Instantiate(_projectile.ProjectilePrefab);
+            p.Setup(_projectile.Settings, Owner);
+
+            PlacedProjectileEvent?.Invoke(p);
+
+            ProjectileSubs(p, true);
+        }
+
+
+
+        protected void ProjectileSubs(ProjectileComponent p, bool isSub)
+        {
+            if (isSub)
+            {
+                p.ProjectileEnteredTriggerEvent += CheckForProjectileHit;
+                p.ProjectileExpiredEvent += (t) => ProjectileSubs(t, false);
+            }
+            else
+            {
+                p.ProjectileEnteredTriggerEvent -= CheckForProjectileHit;
+            }
+
+        }
+
+        private void CheckForProjectileHit(Collider c, ProjectileComponent p)
+        { 
+            if (c.TryGetComponent(out BaseUnit u) && u.Side != Owner.Side)
+            {
+                TriggerActivationCallback(u);
+            }
+        }
 
         protected virtual void Start()
         {
-            if (_projectilePrefab == null) Debug.LogError($"Set projectile prefab for {this}");
+            if (_projectile == null) Debug.LogError($"Set projectile for {this}");
         }
-
-        public override bool UseWeapon(out string reason)
+        #region weapon
+        public override bool UseWeapon()
         {
-            bool ok = base.UseWeapon(out string result);
-            reason = result;
-            // todo wtf?
+            bool ok = base.UseWeapon();
 
             if (IsBusy)
             {
-                reason = "Weapon is busy";
                 return false;
             }
 
@@ -58,32 +86,20 @@ namespace Arcatech.Items
             WeaponUses.ChangeCurrent(WeaponUses.GetMax);
             IsBusy = false;
         }
-        public override void SetUpWeapon(BaseWeaponConfig config)
+
+
+        protected override void FinishWeaponConfig()
         {
-            base.SetUpWeapon(config);
-            _manager = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
-            if (_manager == null) return; // equips level
-
-            _manager.RegisterRangedWeapon(this);
         }
-        protected virtual void CreateProjectile()
-        {
 
-            WeaponUses.ChangeCurrent(-1);
 
-            var pr = Instantiate(_projectilePrefab);
-            pr.Owner = Owner;
-
-            pr.transform.position = transform.position;
-            pr.transform.forward = Owner.transform.forward;
-            PlacedProjectileEvent?.Invoke(pr);
-
-            pr.SetTriggerIDS(_effectsIDs);
-        }
         protected virtual void CheckReload()
         {
             if (WeaponUses.GetCurrent <= 0) StartCoroutine(ReloadCoroutine());
         }
+        #endregion
+
+
 
     }
 

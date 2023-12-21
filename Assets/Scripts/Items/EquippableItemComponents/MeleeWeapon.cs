@@ -1,41 +1,30 @@
+using Arcatech.Effects;
 using Arcatech.Managers;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Items
 {
     [RequireComponent(typeof(WeaponTriggerComponent))]
     public class MeleeWeapon : BaseWeapon
     {
-        private WeaponTriggerComponent _trigger;
-        public override void SetUpWeapon(BaseWeaponConfig config)
+
+        protected override void FinishWeaponConfig()
         {
-            base.SetUpWeapon(config);
+            var t = GetComponent<WeaponTriggerComponent>();
+            _triggers.Add(t);
+            t.TriggerHitUnitEvent  += OnTriggerHit;
+        }
 
-            _trigger = GetComponent<WeaponTriggerComponent>();
-            _trigger.SetTriggerIDS(_effectsIDs);
-            _trigger.ToggleCollider(false);
-            _trigger.Owner = Owner;
-
-            try
-            {
-                GameManager.Instance.GetGameControllers.TriggersProjectilesManager.RegisterTrigger(_trigger);
-            }
-            catch
-            {
-                // this is probably a scene
-                // if the trifggers manager is not started this registering is not necessary
-            }
-
-            
+        private void OnTriggerHit(BaseUnit target,bool isenter)
+        {
+            TriggerActivationCallback(target);
         }
 
         public void ToggleColliders(bool enable)
         {
-            _trigger.ToggleCollider(enable);
+            _triggers[0].ToggleCollider(enable);
         }
-
-
-
     }
 
 }

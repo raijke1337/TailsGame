@@ -23,13 +23,17 @@ namespace Arcatech.Units
 
         // this is used in game for skill requests
         private Dictionary<CombatActionType, SkillObjectForControls> _skills;
+//        private Dictionary<CombatActionType, ProjectileSettingsPackage> _projSkillsData;
+
+
         public void LoadItemSkill(EquipmentItem item)
         {
             if (item == null) return;
 
             if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
-            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig);
-            
+            //if (_projSkillsData == null) _projSkillsData = new Dictionary<CombatActionType, ProjectileSettingsPackage>();
+
+            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig,Owner);
 
             switch (item.ItemType)
             {
@@ -52,15 +56,14 @@ namespace Arcatech.Units
 
 
 
-        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillObjectForControls skillData)
+        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillObjectForControls result)
         {
-            skillData = null;
-            var skill = _skills[type];
-            if (skill == null) return false;    
-            if (CurrentCombo < skill.Cost) return false;
+            result = null;
+            var usedSkill = _skills[type];
+            if (usedSkill == null || CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false; 
             else
             {
-                skillData = skill;
+                result = usedSkill;
                 switch (type)
                 {
                     case CombatActionType.MeleeSpecialQ:

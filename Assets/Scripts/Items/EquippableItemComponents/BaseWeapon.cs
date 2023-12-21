@@ -1,3 +1,6 @@
+using Arcatech.Effects;
+using Arcatech.Triggers;
+using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,18 +14,30 @@ namespace Arcatech.Items
         protected float InternalCooldown;
         protected float _currentCooldown;
 
-        public float GetRemainingUses { get { return WeaponUses.GetCurrent; } }
 
         protected bool IsBusy = false;
-        protected List<string> _effectsIDs;
 
-        public virtual bool UseWeapon(out string reason)
+        #region triggers
+
+        protected List<WeaponTriggerComponent> _triggers;
+        protected List<BaseStatTriggerConfig> _weaponEffects;
+
+        public event TriggerEvent TriggerEvent;
+
+        protected void TriggerActivationCallback(BaseUnit target)
         {
-            reason = "Ok";
+            foreach (var eff in _weaponEffects)
+            {
+                TriggerEvent?.Invoke(target, Owner,true,eff);
+            }
+        }
+
+        #endregion
+        public virtual bool UseWeapon()
+        {
 
             if (_currentCooldown < InternalCooldown)
             {
-                reason = "Weapon on cooldown";
                 return false;
             }
             else
@@ -32,29 +47,24 @@ namespace Arcatech.Items
             }
         }
 
-        // loaded by weaponcontroller
-        public virtual void AddTriggerData(string effectID)
+        public void SetUpWeapon(BaseWeaponConfig config)
         {
-            if (_effectsIDs == null) _effectsIDs = new List<string>();
-            _effectsIDs.Add(effectID);
-        }
+            if (_weaponEffects == null) _weaponEffects = new List<BaseStatTriggerConfig>();
+            _weaponEffects.AddRange(config.WeaponEffects);
 
-        public virtual void SetUpWeapon(BaseWeaponConfig config)
-        {
-
-            foreach (string triggerID in config.TriggerIDs)
-            {
-                AddTriggerData(triggerID);
-            }
             WeaponUses = new StatValueContainer(config.Charges);
             InternalCooldown = config.InternalCooldown;
+            _triggers = new List<WeaponTriggerComponent>();
+            FinishWeaponConfig();
         }
+        protected abstract void FinishWeaponConfig();
 
 
         public override void UpdateInDelta(float deltaTime)
         {
             _currentCooldown += deltaTime;
         }
+        
     }
 
 }

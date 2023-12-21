@@ -11,6 +11,10 @@ namespace Arcatech.Items
 
         // placeholder - ui takes values from weapions, not skill  controller
         public virtual float GetNumericValue { get => 0; }
+        public virtual void SetParent(Transform parent)
+        {
+            gameObject.transform.SetParent(parent, false);
+        }
 
     }
 }

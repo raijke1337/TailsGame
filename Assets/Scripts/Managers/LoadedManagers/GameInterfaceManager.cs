@@ -52,20 +52,18 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        public void UpdateGameText(string ID, bool isShown)
+        public void UpdateGameText(TextContainerSO text, bool isShown)
         {
-
             if (isShown)
             {
                 _text.gameObject.SetActive(true);
-                _text.SetText(_texts.GetContainerByID(ID));
+                _text.SetText(text);
             }
             else
             {
                 _text.gameObject.SetActive(false);
             }
         }
-
 
         public void OnPlayerSelectedTargetable(BaseTargetableItem item, bool show)
         {
@@ -81,14 +79,22 @@ namespace Arcatech.Managers
             }
             if (!show)
             {
-                _cor = StartCoroutine(HideTargetPanel(_selPanelDisappearTimer));
+                paneltimer = _selPanelDisappearTimer;
+                _cor = StartCoroutine(HidePanel(_tgt));
             }
         }
 
-        private IEnumerator HideTargetPanel(float time)
+
+        private float paneltimer;
+        private IEnumerator HidePanel(PanelWithBarGeneric item)
         {
-            yield return new WaitForSeconds(time);
-            _tgt.IsNeeded = false;
+            while (paneltimer >0)
+            {
+                paneltimer -= Time.deltaTime;
+                yield return null;
+            }
+            item.IsNeeded = false;
+            yield return null;
         }
 
         #region menus

@@ -1,4 +1,6 @@
+using Arcatech.Effects;
 using Arcatech.Items;
+using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +28,17 @@ namespace Arcatech.Units
             }
             else
             {
-                var w = i.GetInstantiatedPrefab as BaseWeapon;
+                var w = (i.GetInstantiatedPrefab()) as BaseWeapon;
                 w.SetUpWeapon(cfg);
                 IsReady = true;
+                if (w is RangedWeapon rr)
+                {
+                    rr.PlacedProjectileEvent += SpawnProjectileCallBack;
+                }
             }
         }
+
+
         protected override void InstantiateItem(EquipmentItem i)
         {
             switch (i.ItemType)
@@ -59,19 +67,16 @@ namespace Arcatech.Units
             if (!_equipment.ContainsKey(type) || (_equipment[type] == null)) return false;
             else
             {
-                var weap = _equipment[type];
-                var w = weap.GetInstantiatedPrefab;
+                var weap = _equipment[type];                
                 IsReady = true;
 
                 switch (type)
                 {
                     case EquipItemType.MeleeWeap:
-                        w.transform.parent = Empties.MeleeWeaponEmpty;
-                        w.transform.SetPositionAndRotation(Empties.MeleeWeaponEmpty.position, Empties.MeleeWeaponEmpty.rotation);
+                        weap.SetItemEmpty(Empties.ItemPositions[EquipItemType.MeleeWeap]);
                         break;
                     case EquipItemType.RangedWeap:
-                        w.transform.parent = Empties.RangedWeaponEmpty;
-                        w.transform.SetPositionAndRotation(Empties.RangedWeaponEmpty.position, Empties.RangedWeaponEmpty.rotation);
+                        weap.SetItemEmpty(Empties.ItemPositions[EquipItemType.RangedWeap]);
                         break;
                     default:
                         return false;             
@@ -104,8 +109,7 @@ namespace Arcatech.Units
         {
             if (_equipment.TryGetValue(type, out var equip))
             {
-                equip.GetInstantiatedPrefab.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
-                equip.GetInstantiatedPrefab.transform.parent = Empties.SheathedWeaponEmpty;
+                equip.SetItemEmpty(Empties.ItemPositions[EquipItemType.Other]);
             }
         }
 
@@ -114,24 +118,20 @@ namespace Arcatech.Units
 
         #region ctrl functins
 
-        public virtual bool OnWeaponUseSuccessCheck(EquipItemType type, out string result)
+        public virtual bool OnWeaponUseSuccessCheck(EquipItemType type)
         {
             if (!_equipment.ContainsKey(type))
             {
-                result = ($"{Owner.GetFullName} used {type} but has no weapon of this type available;");
                 return false;
             }
             else
             {
-                var weap = _equipment[type].GetInstantiatedPrefab as BaseWeapon;
+                var weap = _equipment[type].GetInstantiatedPrefab() as BaseWeapon;
 
-                bool ok = weap.UseWeapon(out result);
+                bool ok = weap.UseWeapon();
                 if (ok)
                 {
-                    SoundPlayCallback(_equipment[type].GetAudio(EffectMoment.OnStart));
-
-                    ParticlesPlayCallback(_equipment[type].GetParticle(EffectMoment.OnStart),weap.transform);
-
+                    EffectEventCallback(new EffectRequestPackage(_equipment[type].GetEffects, EffectMoment.OnStart,weap.transform));
                     SwitchWeapon(type);
                 }
                 return ok;
@@ -140,7 +140,7 @@ namespace Arcatech.Units
         public void ToggleTriggersOnMelee(bool isEnable)
         {
             // todo might get nullref here
-                (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab as MeleeWeapon).ToggleColliders(isEnable);
+                (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeapon).ToggleColliders(isEnable);
         }
 
         #endregion
@@ -158,16 +158,16 @@ namespace Arcatech.Units
 
             if (_equipment.TryGetValue(EquipItemType.MeleeWeap, out var s))
             {
-                s.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
+                s.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
             }
             if (_equipment.TryGetValue(EquipItemType.RangedWeap, out var r))
             {
-                r.GetInstantiatedPrefab.UpdateInDelta(deltaTime);
+                r.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
             }
         }
 
         public override void StopStatsComponent()
-        {
+        {            
             base.StopStatsComponent();
         }
 

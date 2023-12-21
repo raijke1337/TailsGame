@@ -32,7 +32,7 @@ namespace Arcatech
                     AssetDatabase.Refresh();
                     return data;
                 }
-                catch (FileNotFoundException e)
+                catch
                 {
                     Debug.Log("Save file not found, creating new");
                     return null;

@@ -24,9 +24,16 @@ MonoBehaviour:
     Sounds:
       _serializedList:
       - Key: 2
-        Value: {fileID: 8300000, guid: 1fd31868d68903d4f9e2c4a3b7ef98f3, type: 3}
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 5ff823f546b52574a931e1d9b44290a6, type: 3}
+          Loudness: 0
     Effects:
       _serializedList:
       - Key: 2
-        Value: {fileID: 4948917956195466284, guid: 662372284ddeee54fad3c2462587922e,
-          type: 3}
+        Value:
+          Effects:
+          - {fileID: 4721690578303343282, guid: 2f8640c91e25cd34ab8f8c9413a02b91, type: 3}
+          - {fileID: 1689240447785993955, guid: 6ba1454cd4061fa449ba3e22578c5d5d, type: 3}
+          _scale: 1
+          Duration: 0

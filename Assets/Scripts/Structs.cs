@@ -1,7 +1,9 @@
 
+using Arcatech.Effects;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using AYellowpaper.SerializedCollections;
 using CartoonFX;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,7 @@ namespace Arcatech
     public delegate void SimpleEventsHandler<T>(T arg);
     public delegate void SimpleEventsHandler<T1, T2>(T1 arg1, T2 arg2);
 
-    public delegate void TriggerEventApplication(string ID, BaseUnit target, BaseUnit source);
-    public delegate void SkillRequestedEvent(SkillObjectForControls data, BaseUnit source, Transform where);
+
 
     public delegate void WeaponEvents<T>(T arg);
     public delegate void DodgeEvents<T>(T arg);
@@ -24,6 +25,11 @@ namespace Arcatech
     public delegate void StateMachineEvent<T>(T arg);
 
 
+    public delegate void SkillRequestedEvent(SkillObjectForControls data, BaseUnit source, Transform where);
+    public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
+
+    public delegate void SimpleTriggerEvent(BaseUnit target,bool isEnter);
+    public delegate void TriggerEvent(BaseUnit target, BaseUnit source,bool isEnter,BaseStatTriggerConfig cfg);
 
 
     #region structs 
@@ -62,13 +68,12 @@ namespace Arcatech
     {
         public TextContainer(TextContainerSO c)
         {
-            ID = c.ID; _title = c.Title; _texts = c.Texts;
+            _title = c.Title; _texts = c.Texts;
         }
 
         private string _title;
         public string GetTitle { get => _title; }
 
-        public string ID { get; }
         string[] _texts;
 
         public string GetFormattedText
@@ -90,16 +95,7 @@ namespace Arcatech
     [Serializable]
     public class ItemEmpties
     {
-        public Transform MeleeWeaponEmpty;
-        public Transform RangedWeaponEmpty;
-        public Transform SheathedWeaponEmpty;
-        public Transform SkillsEmpty;
-        public Transform OthersEmpty;
-        public void ParentAndAdjust(Transform item)
-        {
-            // nyi
-        }
-
+        public SerializedDictionary<EquipItemType, Transform> ItemPositions;
     }
     #endregion
 
@@ -110,14 +106,12 @@ namespace Arcatech
 
     public interface IHasEffects
     {
-        public AudioClip GetAudio(EffectMoment type);
-        public CFXR_Effect GetParticle(EffectMoment type);
-
+        public event EffectsManagerEvent BaseControllerEffectEvent;
     }
 
     public interface ITakesTriggers
     {
-        void AddTriggeredEffect(TriggeredEffect effect);
+        void PickTriggeredEffectHandler(TriggeredEffect effect);
     }
 
     public interface IStatsComponentForHandler : IManaged
@@ -143,32 +137,20 @@ namespace Arcatech
 
     public interface IAppliesTriggers : IHasGameObject
     {
-        event TriggerEventApplication TriggerApplicationRequestEvent;
+        event SimpleTriggerEvent TriggerHitUnitEvent;
     }
 
-    #region sound
 
-    public delegate void AudioEvents(AudioClip c, Vector3 position);
-    public interface IProducesSounds
-    {
-        public event AudioEvents UnitRequestsSound;
-
-    }
-
-    #endregion
     public interface IExpires : IHasGameObject
     {
-        event SimpleEventsHandler<IExpires> HasExpiredEvent;
+        event SimpleEventsHandler<IExpires> SkillComponentExpiredEvent;
     }
-    public interface ISkill : IHasID, IAppliesTriggers, IHasOwner, IExpires, IHasGameObject
-    {
-        void OnUse();
-        void OnUpdate(float delta);
-    }
-    public interface IProjectile : ISkill
-    {
-        void SetProjectileData(ProjectileDataConfig cfg);
-    }
+    //public interface ISkill : IHasID, IAppliesTriggers, IExpires, IHasGameObject
+    //{
+    //    void OnUse();
+    //    void OnUpdate(float delta);
+    //}
+
     public interface INeedsEmpties
     { ItemEmpties Empties { get; } }
 

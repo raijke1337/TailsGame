@@ -1,3 +1,6 @@
+using Arcatech.Effects;
+using Arcatech.Items;
+using Arcatech.Skills;
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
 using System.Collections.Generic;
@@ -12,11 +15,11 @@ namespace Arcatech.Managers
         private PlayerUnit _player;
         public PlayerUnit GetPlayerUnit { get => _player; }
         public List<NPCUnit> GetNPCs() => _npcs;
-        public SkillRequestedEvent UnitRequestsToPlaceASkillEvent;
-
         [SerializeField] private List<BaseUnit> _allUnits = new List<BaseUnit>();
 
         private EffectsManager _effects;
+        private SkillsPlacerManager _skills;
+        private TriggersManager _trigger;
 
         private bool _paused;
         public bool GameplayPaused
@@ -31,13 +34,24 @@ namespace Arcatech.Managers
 
         public override void Initiate()
         {
+            if (_effects == null) { 
+            _effects = EffectsManager.Instance; }
+            if (_trigger == null) 
+            {
+                _trigger = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
+            }
+            if (_skills == null)
+            {
+                _skills = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
+            }
+
             _player = FindObjectOfType<PlayerUnit>();
             if (_player == null)
             {
                 Debug.Log($"No player found in scene {this}");
                 return;
             }
-            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return; // used only for player overrides
+            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return; // used only for player actions overrides ie scene, intro etc
 
             _allUnits.Add(_player);
             FinalUnitInit(_player, true);            
@@ -55,7 +69,6 @@ namespace Arcatech.Managers
                 room.Initiate();
             }
 
-            _effects = EffectsManager.Instance;
         }
 
         private void AddNPCToList(NPCUnit n)
@@ -99,36 +112,57 @@ namespace Arcatech.Managers
             if (isEnable)
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-                u.SkillRequestSuccessEvent += (id, user, where) => UnitRequestsToPlaceASkillEvent?.Invoke(id, user, where);
-                u.UnitRequestsSound += U_SoundPlayEvent;
-                u.UnitRequestsParticles += U_UnitRequestsParticles;
+                u.SkillRequestSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
+                u.BaseControllerEffectEvent += ForwardEffectsRequest;
+                u.UnitTriggerRequestEvent += ForwardTriggerRequest;
+                u.UnitPlacedProjectileEvent += ForwardProjectileRequest;
+
+
                 u.InitiateUnit();
             }
             else
             {
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
-                u.SkillRequestSuccessEvent -= (id, user, where) => UnitRequestsToPlaceASkillEvent?.Invoke(id, user, where);
-                u.UnitRequestsSound -= U_SoundPlayEvent;
-                u.UnitRequestsParticles -= U_UnitRequestsParticles;
+
+                u.SkillRequestSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
+                u.BaseControllerEffectEvent -= ForwardEffectsRequest; 
+                u.UnitTriggerRequestEvent -= ForwardTriggerRequest;
+                u.UnitPlacedProjectileEvent -= ForwardProjectileRequest;
+
+
                 u.DisableUnit();
             }
         }
 
-        private void U_UnitRequestsParticles(CartoonFX.CFXR_Effect arg1, Transform arg2)
+        private void ForwardProjectileRequest(ProjectileComponent arg,BaseUnit owner)
         {
-            _effects.PlaceParticle(arg1, arg2);
+           // Debug.Log($"{owner} placed projectile {arg}");
+            _trigger.ServeProjectileRequest(arg,owner);
         }
 
-        private void U_SoundPlayEvent(AudioClip c, Vector3 where)
+        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, Triggers.BaseStatTriggerConfig cfg)
         {
-            _effects.PlaySound(c, where);
+            //Debug.Log($"{source.GetFullName} trigger request {cfg.name}");
+            _trigger.ServeTriggerApplication(cfg, source, target, isEnter);
         }
+
+        private void ForwardEffectsRequest(EffectRequestPackage pack)
+        {
+           // Debug.Log($"Effect {pack.Type} requested at {pack.Place.position}");
+            _effects.ServeEffectsRequest(pack);
+        }
+        private void ForwardSkillRequests(SkillObjectForControls cfg, BaseUnit user, Transform place)
+        {
+            //Debug.Log($"{user.GetFullName} skill request {cfg.Description.Title}");
+            _skills.ServeSkillRequest(cfg, user, place);
+        }
+
+
 
         private void SetAIStateUnit(bool isProcessing, NPCUnit unit)
         {
             unit.AiToggle(isProcessing);
         }
-
 
         private void HandleUnitDeath(BaseUnit unit)
         {
@@ -146,29 +180,6 @@ namespace Arcatech.Managers
                 GameManager.Instance.OnPlayerDead();
             }
         }
-
-        #region scene
-
-        // used by gamemanager to draw equips in menu and gallery
-
-        // not necessary with inventory component
-        //public void EquipVisualItemOnUnit(BaseUnit unit, string itemID)
-        //{
-        //    if (unit is PlayerUnit p)
-        //    {
-        //        p.DrawItem(itemID);
-        //    }
-        //}
-        //public void EquipVisualItemOnUnit(BaseUnit unit, string[] itemID)
-        //{
-        //    if (unit is PlayerUnit p)
-        //    {
-        //        p.DrawItem(itemID);
-        //    }
-        //}
-
-        #endregion
-
     }
 
 }

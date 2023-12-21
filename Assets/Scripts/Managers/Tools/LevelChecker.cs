@@ -51,10 +51,8 @@ public class LevelChecker : MonoBehaviour
         {
             _rigidsFix.Add(item);
         }
-        foreach (var item in list.Where(t => t.GetComponent<LevelEventTrigger>() != null))
+        foreach (var item in list.Where(t => t.GetComponent<BaseLevelEventTrigger>() != null))
         {
-            if (item.GetComponent<LevelEventTrigger>().EventType == LevelEventType.TextDisplay)
-                _textsFix.Add(item);
         }
 
         if (_floorFix.Count == 0 && _staticsFix.Count == 0 && _collidersFix.Count == 0 && _rigidsFix.Count == 0)

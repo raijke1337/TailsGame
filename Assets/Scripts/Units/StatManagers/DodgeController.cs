@@ -1,3 +1,4 @@
+using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Skills;
 using Arcatech.Triggers;
@@ -23,7 +24,7 @@ namespace Arcatech.Units
         public int GetDodgeCharges() => _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0;
 
         private Queue<Timer> _timerQueue = new Queue<Timer>();
-
+        private EquipmentItem _booster;
 
 #region conditional
 
@@ -51,12 +52,11 @@ namespace Arcatech.Units
                     st.Setup();
                 }
             }
+            _booster = _equipment[EquipItemType.Booster];
         }
         protected override void InstantiateItem(EquipmentItem i)
         {
-            var b = i.GetInstantiatedPrefab;
-            b.transform.parent = Empties.SheathedWeaponEmpty;
-            b.transform.SetPositionAndRotation(Empties.SheathedWeaponEmpty.position, Empties.SheathedWeaponEmpty.rotation);
+            i.SetItemEmpty(Empties.ItemPositions[EquipItemType.Booster]);
         }
 #endregion
 
@@ -86,11 +86,12 @@ namespace Arcatech.Units
             else
             {
                 _stats[DodgeStatType.Charges].ChangeCurrent(-1);
-                var t = new Timer(_stats[DodgeStatType.Cooldown].GetCurrent);
+                var t = new Timer(_booster.ItemSkillConfig.Cooldown);
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
-                SoundPlayCallback(_equipment[EquipItemType.Booster].GetAudio(EffectMoment.OnStart));
-                ParticlesPlayCallback(_equipment[EquipItemType.Booster].GetParticle(EffectMoment.OnStart),Empties.OthersEmpty);
+
+                EffectEventCallback(new EffectRequestPackage(_booster.GetEffects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
+
                 return true;
             }
         }

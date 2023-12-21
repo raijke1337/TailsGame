@@ -1,72 +1,113 @@
+using Arcatech.Effects;
 using Arcatech.Skills;
+using Arcatech.Triggers;
 using Arcatech.Units;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Managers
 {
     public class SkillsPlacerManager : LoadedManagerBase
     {
-        public event SimpleEventsHandler<IProjectile> ProjectileSkillCreatedEvent;
-        public event SimpleEventsHandler<IAppliesTriggers> SkillAreaPlacedEvent;
 
-        private EffectsManager _effects;
+
+        private EffectsManager effectsManager;
+        private TriggersManager triggers;
+
+        private List<SkillObjectForControls> _cachedSkills;
 
         #region ManagerBase
         public override void Initiate()
         {
-            GameManager.Instance.GetGameControllers.UnitsManager.UnitRequestsToPlaceASkillEvent += DoSkillRequest;
-            _effects = EffectsManager.Instance;
-            //LoadBaseSkills();
-            //LoadDatasIntoSkills();
+            effectsManager = EffectsManager.Instance;
+            triggers = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
+            _cachedSkills = new List<SkillObjectForControls>();
         }
 
         public override void RunUpdate(float delta)
         {
-
+            foreach (SkillObjectForControls skillObject in _cachedSkills)
+            {
+             if (skillObject.SkillObjects.Placer!= null) skillObject.SkillObjects.Placer.UpdateInDelta(delta);
+              if (skillObject.SkillObjects.Area!= null) skillObject.SkillObjects.Area.UpdateInDelta(delta);
+            }
         }
 
         public override void Stop()
         {
-            GameManager.Instance.GetGameControllers.UnitsManager.UnitRequestsToPlaceASkillEvent -= DoSkillRequest;
+
         }
 
         #endregion
 
 
-        private void DoSkillRequest(SkillObjectForControls data, BaseUnit source, Transform where)
+        public void ServeSkillRequest(SkillObjectForControls data, BaseUnit source, Transform where)
         {
-            var skill = Instantiate(data.Prefab);
+            _cachedSkills.Add(data);
 
-            skill.Owner = source;
-            skill.AssignValues(data);
-            skill.SetupStatsComponent();
-           
-            skill.transform.SetPositionAndRotation(where.position, where.rotation);
+            var placer = data.SkillObjects.Placer = Instantiate(data.PlacerPrefab,transform);
 
-            _effects.PlaceParticle(data.Effects.Effects[EffectMoment.OnStart],source.transform);
-            _effects.PlaySound(data.Effects.Sounds[EffectMoment.OnStart], source.transform.position);
+            effectsManager.ServeEffectsRequest(new EffectRequestPackage(data.Effects, EffectMoment.OnStart, where));
 
-            if (skill is IProjectile)
+            placer.SetupStatsComponent();
+            placer.transform.SetPositionAndRotation(where.position, source.transform.rotation) ;
+            placer.TimeToLive = data.PlacerSettings.TotalTime;
+            if (placer.Collider is SphereCollider sp)
             {
-                var s = skill as IProjectile;
-                ProjectileSkillCreatedEvent?.Invoke(s);
-                // further handling by projectiles manager (expiry, movement)
+                sp.radius = data.PlacerSettings.Radius;
             }
-            else
+
+            if (data.GetProjectileData!=null)
             {
-                SkillAreaPlacedEvent?.Invoke(skill);
-                skill.HasExpiredEvent += HandleSkillExpiry;
+                placer.TimeToLive = data.GetProjectileData.Settings.TimeToLive;
+                triggers.ServeProjectileRequest(data.GetProjectileData, source); // proejctile skill
+            }
+            data.PlacerTriggerEvent += (t) => PlacerHit(t,data);
+            data.AreaTriggerEvent += (t) => AreaHit(t, data);
+
+        }
+
+
+        private void PlacerHit(Collider hit, SkillObjectForControls comp)
+        {
+            if (CheckAreaCollision(hit,comp,out var p))
+            {
+                Destroy(comp.SkillObjects.Placer);
+                comp.SkillObjects.Area = Instantiate(comp.AreaOfEffectPrefab, p.position, p.rotation);
+
+                comp.SkillObjects.Area.TimeToLive = comp.AreaSettings.TotalTime;
+                if (comp.SkillObjects.Area.TryGetComponent(out SphereCollider sp))
+                {
+                    sp.radius = comp.AreaSettings.Radius;
+                }
+            }
+        }
+        private void AreaHit(Collider hit, SkillObjectForControls comp)
+        {
+            if (hit.TryGetComponent(out BaseUnit u))
+            {
+                Debug.Log($"Skill area of {comp.Description.Title} hit {u}");
+                foreach (var t in comp.Triggers)
+                {
+                    triggers.ServeTriggerApplication(t, comp.Owner, u, true);
+                }
             }
         }
 
 
-        private void HandleSkillExpiry(IExpires item)
+
+        private bool CheckAreaCollision(Collider hit, SkillObjectForControls comp, out Transform where)
         {
-            item.HasExpiredEvent -= HandleSkillExpiry;
-            //AudioManager.Instance.UnRegisterSound(this as IHasSounds);
-            Destroy(item.GetObject());
+            where = null;
+
+            if (hit.gameObject.isStatic || (hit.TryGetComponent(out BaseUnit unit) && comp.Owner != unit))
+            {
+                where = hit.transform;
+                return true;
+            }
+
+            else return false;
         }
-
-
+    
     }
 
 }

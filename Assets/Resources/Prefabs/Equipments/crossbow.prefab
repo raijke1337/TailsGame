@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7480995966858221551}
-  m_LocalRotation: {x: 0.18737254, y: -0.5000971, z: -0.4126809, w: 0.73789495}
-  m_LocalPosition: {x: 0.06271261, y: 1.1741526, z: 0.16980278}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7480995966855116269
 MeshFilter:
@@ -96,38 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8691e83a8ad2b9a41b471acfee8e030b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemContent: {fileID: 11400000, guid: 8f69dcf6732035848bd11213aa66eef6, type: 2}
-  Sounds:
-    SoundsDict:
-      reorderableList:
-        canAdd: 1
-        canRemove: 1
-        draggable: 1
-        expandable: 1
-        multipleSelection: 1
-        isExpanded: 1
-        label:
-          m_Text: Keys
-          m_Image: {fileID: 0}
-          m_Tooltip: 
-        headerHeight: 18
-        footerHeight: 13
-        slideEasing: 0.15
-        verticalSpacing: 2
-        showDefaultBackground: 1
-        elementDisplayType: 0
-        elementNameProperty: 
-        elementNameOverride: 
-        elementIcon: {fileID: 0}
-      reqReferences: {fileID: 0}
-      isExpanded: 1
-      _keyValues: 02000000
-      _keys: 02000000
-      _values:
-      - {fileID: 8300000, guid: e00797bb3cdc1424bb8cc457a6a0e458, type: 3}
   _reload: 2
   _spreadMax: 0.1
-  _projectilePrefab: {fileID: 7390308057254535331, guid: fb4a746d684c53c43bcd799d45e5e582,
-    type: 3}
+  _projectile: {fileID: 11400000, guid: b3fa6612246aa484c8155a0b358f011d, type: 2}
   _shotsPause: 0.1
   _shots: 3

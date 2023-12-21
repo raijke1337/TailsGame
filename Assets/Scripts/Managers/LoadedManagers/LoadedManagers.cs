@@ -7,7 +7,7 @@ namespace Arcatech.Managers
     public class LoadedManagers : MonoBehaviour
     {
         public SkillsPlacerManager SkillsPlacerManager { get; private set; }
-        public TriggersProjectilesManager TriggersProjectilesManager { get; private set; }
+        public TriggersManager TriggersProjectilesManager { get; private set; }
         public EventTriggersManager EventTriggersManager { get; private set; }
         public UnitsManager UnitsManager { get; private set; }
         public GameInterfaceManager GameInterfaceManager { get; private set; }
@@ -41,7 +41,7 @@ namespace Arcatech.Managers
             if (_lvl.Type == LevelType.Game)
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
-                TriggersProjectilesManager = GetComponent<TriggersProjectilesManager>();
+                TriggersProjectilesManager = GetComponent<TriggersManager>();
                 //StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
                 CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
 

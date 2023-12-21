@@ -17,16 +17,6 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        private void Start()
-        {
-            var texts = DataManager.Instance.GetAssetsOfType<TextContainerSO>(Constants.Texts.c_TextsPath);
-            foreach (var text in texts)
-            {
-                textContainers[text.ID] = new TextContainer(text);
-            }
-            // Debug.Log($"Found total {textContainers.Count} texts");
-        }
-
         private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
 
         public TextContainer GetContainerByID(string ID)

@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccee416184735944cbe0eb09820712b2, type: 3}
+  m_Name: crossbow_special
+  m_EditorClassIdentifier: 
+  Description: {fileID: 11400000, guid: b43a51dbb2cccb44cb6344888bb599aa, type: 2}
+  Cooldown: 5
+  Cost: 0
+  AreaOfEffect: {fileID: 3629370675284093089, guid: ee2574c286d6223469fe1a9111ddb67a,
+    type: 3}
+  AreaSettings:
+    Radius: 5
+    TotalTime: 0.01
+  Placer: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb, type: 3}
+  PlacerSettings:
+    Radius: 0.3
+    TotalTime: 0.01
+  Triggers:
+  - {fileID: 11400000, guid: 2bfca0ce346ef194cbf4fe56602fff3a, type: 2}
+  Effects:
+    Sounds:
+      _serializedList:
+      - Key: 0
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 522e3ab7bac86e443bd5721d8933b455, type: 3}
+          - {fileID: 8300000, guid: 07cc499b4e48b544aadf3af4b86365bd, type: 3}
+          - {fileID: 8300000, guid: bbf962a63a63c7b46a8e1d13be6b9177, type: 3}
+          - {fileID: 8300000, guid: 446efb2bed112d943bac13192a0a0cc7, type: 3}
+          - {fileID: 8300000, guid: c7dfaade8a16d6f4e953914319840ee9, type: 3}
+          Loudness: 0.64
+      - Key: 2
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 09406575510c06349bf310090c08bb69, type: 3}
+          Loudness: 1
+    Effects:
+      _serializedList:
+      - Key: 0
+        Value:
+          Effects:
+          - {fileID: 2069507768163691186, guid: 17749527f24a38e4a8518725a42d1df3, type: 3}
+          - {fileID: 4948917956195466284, guid: 662372284ddeee54fad3c2462587922e, type: 3}
+          _scale: 0.133
+          Duration: 0
+      - Key: 2
+        Value:
+          Effects:
+          - {fileID: 2069507768163691186, guid: 17749527f24a38e4a8518725a42d1df3, type: 3}
+          _scale: 0.1
+          Duration: 0
+  SkillProjectile: {fileID: 11400000, guid: 41f50b15f8e253649aa5f282d608a3b0, type: 2}

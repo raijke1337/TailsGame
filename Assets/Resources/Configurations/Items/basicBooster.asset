@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: booster_base
   ItemIcon: {fileID: 21300000, guid: b5be2c7793b350f40bce79134dcf0ef7, type: 3}
-  DescriptionContainerID: booster_base
+  Description: {fileID: 11400000, guid: dcd0031a70aa8da46a9e67e55b5913f3, type: 2}
   ItemType: 4
   Skill: {fileID: 11400000, guid: cb37095c933aad34da650c3826a3d3ec, type: 2}
   Item: {fileID: 2980722090164582330, guid: f1aa1a5e7e757844d9f774dc883ddbdc, type: 3}
@@ -22,9 +22,9 @@ MonoBehaviour:
     Sounds:
       _serializedList:
       - Key: 0
-        Value: {fileID: 8300000, guid: 01d0a3486283f403981eab77081251eb, type: 3}
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 0bd05763df902854a80475577a26666a, type: 3}
+          Loudness: 0
     Effects:
-      _serializedList:
-      - Key: 0
-        Value: {fileID: 6302470118341617898, guid: 42913e44bd86c194f80b76492e6fe2fd,
-          type: 3}
+      _serializedList: []
