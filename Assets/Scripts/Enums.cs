@@ -96,7 +96,7 @@ public enum LevelType
 
 public enum DisplayValueType : byte
 {
-    Health=0,
+    Health = 0,
     Shield = 1,
     Combo = 2
 }

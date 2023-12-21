@@ -19,7 +19,7 @@ namespace Arcatech.Units
 #endif
 
 
-        public StunsController(BaseUnit u, string ID = "default") : base (u)
+        public StunsController(BaseUnit u, string ID = "default") : base(u)
         {
             var cfg = DataManager.Instance.GetConfigByID<StunsControllerConfig>(ID);
             if (cfg == null) return;

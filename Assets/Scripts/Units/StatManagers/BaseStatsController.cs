@@ -30,14 +30,14 @@ namespace Arcatech.Units
         #endregion
 
 
-        public BaseStatsController(BaseUnit owner) : base (owner)
+        public BaseStatsController(BaseUnit owner) : base(owner)
         {
             GetBaseStats = new SerializedDictionary<BaseStatType, StatValueContainer>();
             var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(owner.GetID);
 
             if (cfg == null) return;
 
-            
+
             var _keys = cfg.Stats.Keys.ToArray();
             var _values = cfg.Stats.Values.ToArray();
 
@@ -65,7 +65,7 @@ namespace Arcatech.Units
                 case TriggerChangedValue.TurnSpeed:
                     result = GetBaseStats[BaseStatType.TurnSpeed];
                     break;
-                    default:
+                default:
                     break;
             }
             return result;

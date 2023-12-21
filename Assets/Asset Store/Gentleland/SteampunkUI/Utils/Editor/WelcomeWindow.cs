@@ -16,7 +16,7 @@ namespace Gentleland.Utils.SteampunkUI
         public static void OpenWindow()
         {
             PackageSettings settings = AssetDatabase.LoadAssetAtPath<PackageSettings>(PackageSettings.PackageSettingsPath);
-            
+
             if (settings == null)
             {
                 settings = ScriptableObject.CreateInstance<PackageSettings>();
@@ -39,7 +39,7 @@ namespace Gentleland.Utils.SteampunkUI
         {
             if (!initialized)
             {
-                string[] s = AssetDatabase.FindAssets(PackageSettings.imageName + " t:Texture"); 
+                string[] s = AssetDatabase.FindAssets(PackageSettings.imageName + " t:Texture");
                 if (s.Length > 0)
                 {
                     image = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(s[0]));
@@ -57,7 +57,7 @@ namespace Gentleland.Utils.SteampunkUI
             float margin = 20;
             if (image != null)
             {
-                GUI.DrawTexture(new Rect(position.width / 2 - imageWidth/2, margin, imageWidth, imageHeight), image, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(position.width / 2 - imageWidth / 2, margin, imageWidth, imageHeight), image, ScaleMode.ScaleToFit);
             }
             GUILayout.BeginArea(new Rect(20, imageHeight + 2 * margin, position.width - margin * 2, position.height - imageHeight + 2 * margin));
             GUILayout.Label(
@@ -81,10 +81,10 @@ CEO - Gentleland"
             }
             if (GUILayout.Button("Documentation.pdf"))
             {
-                string[]s = AssetDatabase.FindAssets(PackageSettings.PackageDocumentationName);
+                string[] s = AssetDatabase.FindAssets(PackageSettings.PackageDocumentationName);
                 if (s.Length > 0)
                 {
-                    Application.OpenURL(Application.dataPath +"/../"+ AssetDatabase.GUIDToAssetPath(s[0]));
+                    Application.OpenURL(Application.dataPath + "/../" + AssetDatabase.GUIDToAssetPath(s[0]));
                 }
                 else
                 {

@@ -1,5 +1,3 @@
-using Arcatech.Effects;
-using Arcatech.Managers;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
@@ -13,10 +11,10 @@ namespace Arcatech.Items
         {
             var t = GetComponent<WeaponTriggerComponent>();
             _triggers.Add(t);
-            t.TriggerHitUnitEvent  += OnTriggerHit;
+            t.TriggerHitUnitEvent += OnTriggerHit;
         }
 
-        private void OnTriggerHit(BaseUnit target,bool isenter)
+        private void OnTriggerHit(BaseUnit target, bool isenter)
         {
             TriggerActivationCallback(target);
         }

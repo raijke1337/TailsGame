@@ -1,5 +1,4 @@
 using Arcatech.Units;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
@@ -15,7 +14,7 @@ namespace Arcatech.Triggers
         {
             if (other.TryGetComponent<BaseUnit>(out var c))
             {
-               // Debug.Log($"Trigger callback by {this.gameObject.name} on {c}");
+                // Debug.Log($"Trigger callback by {this.gameObject.name} on {c}");
                 TriggerCallback(c, true);
             }
         }

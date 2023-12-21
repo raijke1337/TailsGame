@@ -1,6 +1,4 @@
 using AYellowpaper.SerializedCollections;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,7 +11,7 @@ namespace Arcatech.UI
 
         public void LoadValues(StatValueContainer cont, DisplayValueType type)
         {
-            Assert.IsNotNull(cont,$"Loading null into {this}");
+            Assert.IsNotNull(cont, $"Loading null into {this}");
             switch (type)
             {
                 case DisplayValueType.Health:
@@ -35,7 +33,7 @@ namespace Arcatech.UI
             foreach (var c in _barsDict.Values)
             {
                 if (c != null)
-                c.UpdateValues(delta);
+                    c.UpdateValues(delta);
             }
         }
 

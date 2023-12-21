@@ -21,7 +21,7 @@ namespace Arcatech.Skills
         {
             get
             {
-                var item =  GameObject.Instantiate(_settings.SkillObject);
+                var item = GameObject.Instantiate(_settings.SkillObject);
                 item.Data = _settings;
                 item.Owner = Owner;
 
@@ -37,13 +37,13 @@ namespace Arcatech.Skills
         public EffectsCollection Effects { get => _settings.Effects; }
         public int Cost { get => _settings.Cost; }
         public float PlacerRadius { get => _settings.PlacerRadius; }
-        public float EffectRadius { get => _settings.AoERadius;  }
+        public float EffectRadius { get => _settings.AoERadius; }
         public ProjectileConfiguration GetProjectileData
-        { get;private set;}
+        { get; private set; }
 
         // end
 
-        public SkillObjectForControls(SkillControlSettingsSO cfg,BaseUnit owner)
+        public SkillObjectForControls(SkillControlSettingsSO cfg, BaseUnit owner)
         {
             Owner = owner;
             _settings = cfg;

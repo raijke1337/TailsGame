@@ -1,9 +1,4 @@
 ﻿using Arcatech.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Arcatech.Skills
@@ -12,6 +7,6 @@ namespace Arcatech.Skills
     public class ProjectileSkillSO : SkillControlSettingsSO
     {
         public ProjectileConfiguration SkillProjectile;
-    
+
     }
 }

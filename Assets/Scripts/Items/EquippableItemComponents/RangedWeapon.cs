@@ -1,5 +1,3 @@
-using Arcatech.Managers;
-using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections;
 using UnityEngine;
@@ -12,7 +10,7 @@ namespace Arcatech.Items
         [SerializeField, Range(0, 1), Tooltip("spread of shots")] protected float _spreadMax = 0.1f;
         protected int shotsToDo = 1;
 
-        [SerializeField] private ProjectileConfiguration _projectile;      
+        [SerializeField] private ProjectileConfiguration _projectile;
 
         public SimpleEventsHandler<ProjectileComponent> PlacedProjectileEvent;
         protected void CreateProjectile()
@@ -43,7 +41,7 @@ namespace Arcatech.Items
         }
 
         private void CheckForProjectileHit(Collider c, ProjectileComponent p)
-        { 
+        {
             if (c.TryGetComponent(out BaseUnit u) && u.Side != Owner.Side)
             {
                 TriggerActivationCallback(u);

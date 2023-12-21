@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 namespace Gentleland.StemapunkUI.DemoAndExample
 {
@@ -19,13 +17,13 @@ namespace Gentleland.StemapunkUI.DemoAndExample
         public void Increment()
         {
             value += 1;
-            textMesh.text = "" +value;
+            textMesh.text = "" + value;
         }
 
         public void Decrement()
         {
             value -= 1;
-            textMesh.text = ""+value;
+            textMesh.text = "" + value;
 
         }
     }

@@ -1,4 +1,3 @@
-using Arcatech;
 using Arcatech.Triggers;
 using System.Collections.Generic;
 using UnityEngine;

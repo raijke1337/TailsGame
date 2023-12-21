@@ -241,7 +241,7 @@ namespace Arcatech.Units.Inputs
                     }
                     break;
                 case CombatActionType.ShieldSpecialR:
-                    if (_skillCtrl.TryUseSkill(type,999,out  sk))
+                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);

@@ -1,6 +1,5 @@
 using Arcatech.Items;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 

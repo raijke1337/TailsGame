@@ -1,8 +1,6 @@
 using AYellowpaper.SerializedCollections;
 using CartoonFX;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Effects
 {
@@ -23,7 +21,7 @@ namespace Arcatech.Effects
     public class CFXR_Container
     {
         public CFXR_Effect[] Effects;
-        [SerializeField, Range(1,0)] private float _scale;
+        [SerializeField, Range(1, 0)] private float _scale;
         public Vector3 Scale { get => new Vector3(_scale, _scale, _scale); }
         public float Duration;
     }

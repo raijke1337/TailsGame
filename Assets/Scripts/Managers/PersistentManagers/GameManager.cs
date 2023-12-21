@@ -1,10 +1,8 @@
 //using Newtonsoft.Json;
 using Arcatech.Units;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 using UnityEngine.SceneManagement;
 
 namespace Arcatech.Managers
@@ -142,7 +140,7 @@ namespace Arcatech.Managers
 
             DataManager.Instance.UpdateSaveData(next);
 
-            
+
             LoadLevel(next);
         }
 

@@ -3,8 +3,6 @@ using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
-using Arcatech.Units.Stats;
-using CartoonFX;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,10 +28,10 @@ namespace Arcatech.Units
         public ItemEmpties GetEmpties => Empties;
 
         protected BaseStatsController _statsCtrl;
-         protected WeaponController _weaponCtrl;
-         protected DodgeController _dodgeCtrl;
+        protected WeaponController _weaponCtrl;
+        protected DodgeController _dodgeCtrl;
         protected ShieldController _shieldCtrl;
-         protected SkillsController _skillCtrl;
+        protected SkillsController _skillCtrl;
         protected ComboController _comboCtrl;
         protected StunsController _stunsCtrl;
 
@@ -61,7 +59,7 @@ namespace Arcatech.Units
 
             foreach (var item in items.GetCurrentEquips)
             {
-                if (item.ItemSkillConfig!=null)
+                if (item.ItemSkillConfig != null)
                 {
                     skillsItems.Add(item);
                 }
@@ -90,7 +88,7 @@ namespace Arcatech.Units
                 //}
             }
 
-            if (_skillCtrl!=null) // null in scenes
+            if (_skillCtrl != null) // null in scenes
             {
                 foreach (var item in skillsItems)
                 {
@@ -103,8 +101,8 @@ namespace Arcatech.Units
         private void OnEquipmentChangedEvent(InventoryItem item, bool isAdded)
         {
             string removed = string.Empty;
-           // Debug.Log($"Testing if on equipchange is called twice");
-           // it isnt
+            // Debug.Log($"Testing if on equipchange is called twice");
+            // it isnt
 
             if (item is EquipmentItem eq) // just in case
             {
@@ -155,7 +153,7 @@ namespace Arcatech.Units
                 {
                     _skillCtrl.LoadItemSkill(eq);
                 }
-            }                        
+            }
         }
 
 
@@ -174,7 +172,7 @@ namespace Arcatech.Units
             foreach (BaseController ctrl in _controllers)
             {
                 if (ctrl.IsReady)
-                ctrl.UpdateInDelta(delta);
+                    ctrl.UpdateInDelta(delta);
             }
         }
         public override void StartController()
@@ -200,7 +198,7 @@ namespace Arcatech.Units
                 ctrl.StopStatsComponent();
                 _stunsCtrl.StunHappenedEvent -= StunEventCallback;
                 ControllerSubs(ctrl, false);
-            }        
+            }
         }
 
         private void Initialize(bool full)
@@ -371,7 +369,7 @@ namespace Arcatech.Units
         private Coroutine _dodgeCor;
         // stop the dodge like this
 
-        protected  void OnCollisionEnter(Collision collision)
+        protected void OnCollisionEnter(Collision collision)
         {
             if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
             {

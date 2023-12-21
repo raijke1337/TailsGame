@@ -11,10 +11,10 @@ namespace Arcatech.Skills
         [Space] public float Cooldown;
         [Range(0, 100)] public int Cost;
 
-        [Space]public SkillComponent SkillObject;
-        [Range(0.1f,10f)] public float PlacerRadius;
+        [Space] public SkillComponent SkillObject;
+        [Range(0.1f, 10f)] public float PlacerRadius;
         [Range(0.1f, 10f)] public float AoERadius;
-        [Space,Range(0.01f,5f)] public float AoETime;
+        [Space, Range(0.01f, 5f)] public float AoETime;
 
         [Space] public BaseStatTriggerConfig[] Triggers;
         [Space] public EffectsCollection Effects;

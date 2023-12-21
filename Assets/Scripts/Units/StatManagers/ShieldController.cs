@@ -2,7 +2,6 @@ using Arcatech.Items;
 using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcatech.Units
 {
@@ -16,11 +15,11 @@ namespace Arcatech.Units
         #region conditional
         public ShieldController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
-            
+
         }
         protected override void FinishItemConfig(EquipmentItem item)
         {
-            
+
             var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(_equipment[EquipItemType.Shield].ID);
 
             if (cfg == null)
@@ -31,7 +30,7 @@ namespace Arcatech.Units
             else
             {
                 _stats = new Dictionary<ShieldStatType, StatValueContainer>();
-                foreach (KeyValuePair<ShieldStatType,StatValueContainer> p in cfg.Stats)
+                foreach (KeyValuePair<ShieldStatType, StatValueContainer> p in cfg.Stats)
                 {
                     _stats[p.Key] = new StatValueContainer(p.Value);
                     _stats[p.Key].Setup();
@@ -57,7 +56,7 @@ namespace Arcatech.Units
                 s.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
             }
         }
-    
+
 
         #endregion
         public TriggeredEffect ProcessHealthChange(TriggeredEffect effect)

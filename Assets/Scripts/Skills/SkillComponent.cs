@@ -1,11 +1,5 @@
-using Arcatech.Effects;
-using Arcatech.Triggers;
 using Arcatech.Units;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Arcatech.Skills
 {
@@ -18,7 +12,7 @@ namespace Arcatech.Skills
 
         protected SkillState CurrentState = SkillState.Placer;
 
-        public SimpleEventsHandler<Collider,SkillState> TriggerEnterEvent;
+        public SimpleEventsHandler<Collider, SkillState> TriggerEnterEvent;
         public SimpleEventsHandler<SkillComponent> SkillDestroyedEvent;
 
         protected SphereCollider _collider;
@@ -40,12 +34,12 @@ namespace Arcatech.Skills
             //_framesAoe = 0;
             TriggerEnterEvent?.Invoke(other, CurrentState);
         }
-        
+
         private void Awake()
         {
             _collider = GetComponent<SphereCollider>();
             _collider.isTrigger = true;
-            
+
         }
         private void Start()
         {
@@ -55,7 +49,7 @@ namespace Arcatech.Skills
 
         private void OnDestroy()
         {
-            SkillDestroyedEvent?.Invoke(this);   
+            SkillDestroyedEvent?.Invoke(this);
         }
 
         private int _framesAoe = 0;

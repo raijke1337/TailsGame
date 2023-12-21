@@ -1,6 +1,5 @@
 using Arcatech.UI;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Managers
 {
@@ -69,9 +68,9 @@ namespace Arcatech.Managers
         {
             if (show)
             {
-                if (_cor != null) 
-                { 
-                    StopAllCoroutines(); 
+                if (_cor != null)
+                {
+                    StopAllCoroutines();
                 }
 
                 paneltimer = _selPanelDisappearTimer;
@@ -89,7 +88,7 @@ namespace Arcatech.Managers
         private float paneltimer;
         private IEnumerator HidePanel(PanelWithBarGeneric item)
         {
-            while (paneltimer >0)
+            while (paneltimer > 0)
             {
                 paneltimer -= Time.deltaTime;
                 yield return null;

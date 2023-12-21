@@ -34,9 +34,11 @@ namespace Arcatech.Managers
 
         public override void Initiate()
         {
-            if (_effects == null) { 
-            _effects = EffectsManager.Instance; }
-            if (_trigger == null) 
+            if (_effects == null)
+            {
+                _effects = EffectsManager.Instance;
+            }
+            if (_trigger == null)
             {
                 _trigger = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
             }
@@ -54,7 +56,7 @@ namespace Arcatech.Managers
             if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return; // used only for player actions overrides ie scene, intro etc
 
             _allUnits.Add(_player);
-            FinalUnitInit(_player, true);            
+            FinalUnitInit(_player, true);
 
 
             _rooms.AddRange(FindObjectsOfType<RoomController>());
@@ -125,7 +127,7 @@ namespace Arcatech.Managers
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
 
                 u.SkillRequestSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
-                u.BaseControllerEffectEvent -= ForwardEffectsRequest; 
+                u.BaseControllerEffectEvent -= ForwardEffectsRequest;
                 u.UnitTriggerRequestEvent -= ForwardTriggerRequest;
                 u.UnitPlacedProjectileEvent -= ForwardProjectileRequest;
 
@@ -134,10 +136,10 @@ namespace Arcatech.Managers
             }
         }
 
-        private void ForwardProjectileRequest(ProjectileComponent arg,BaseUnit owner)
+        private void ForwardProjectileRequest(ProjectileComponent arg, BaseUnit owner)
         {
-           // Debug.Log($"{owner} placed projectile {arg}");
-            _trigger.ServeProjectileRequest(arg,owner);
+            // Debug.Log($"{owner} placed projectile {arg}");
+            _trigger.ServeProjectileRequest(arg, owner);
         }
 
         private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, Triggers.BaseStatTriggerConfig cfg)
@@ -148,7 +150,7 @@ namespace Arcatech.Managers
 
         private void ForwardEffectsRequest(EffectRequestPackage pack)
         {
-           // Debug.Log($"Effect {pack.Type} requested at {pack.Place.position}");
+            // Debug.Log($"Effect {pack.Type} requested at {pack.Place.position}");
             _effects.ServeEffectsRequest(pack);
         }
         private void ForwardSkillRequests(SkillComponent cfg, BaseUnit user, Transform place)

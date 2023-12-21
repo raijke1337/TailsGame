@@ -1,16 +1,12 @@
 ﻿using Arcatech.Items;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Arcatech.Units
 {
     public abstract class BaseControllerConditional : BaseController, IHasOwner
     {
-        public BaseControllerConditional(ItemEmpties empties, BaseUnit _ow) : base (_ow)
+        public BaseControllerConditional(ItemEmpties empties, BaseUnit _ow) : base(_ow)
         {
             Empties = empties;
         }
@@ -23,7 +19,7 @@ namespace Arcatech.Units
 
         public void LoadItem(EquipmentItem item, out EquipmentItem removing)
         {
-            
+
             item.Owner = Owner;
 
             OnItemAssign(item, out removing);
@@ -31,7 +27,7 @@ namespace Arcatech.Units
             //Debug.Log($"Loaded item {item.GetDisplayName} for {Owner.GetFullName}");
             if (removing != null)
             {
-              //  Debug.Log($"Removed {removing.GetDisplayName}");
+                //  Debug.Log($"Removed {removing.GetDisplayName}");
             }
             item.PrefabTriggerHitSomething += TriggerEventCallback;
 
@@ -54,7 +50,7 @@ namespace Arcatech.Units
         {
 
             replacing = null;
-            
+
 
             if (_equipment.TryGetValue(item.ItemType, out EquipmentItem val))
             {

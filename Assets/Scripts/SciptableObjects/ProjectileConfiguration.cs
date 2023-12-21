@@ -10,7 +10,8 @@ namespace Arcatech.Items
         public ProjectileSettingsPackage Settings;
 
     }
-    [Serializable] public class ProjectileSettingsPackage
+    [Serializable]
+    public class ProjectileSettingsPackage
     {
         public float TimeToLive;
         public float ProjectileSpeed;

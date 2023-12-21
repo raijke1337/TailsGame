@@ -4,7 +4,6 @@ using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using AYellowpaper.SerializedCollections;
-using CartoonFX;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,13 +27,14 @@ namespace Arcatech
     public delegate void SkillRequestedEvent(SkillComponent data, BaseUnit source, Transform where);
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
 
-    public delegate void SimpleTriggerEvent(BaseUnit target,bool isEnter);
-    public delegate void TriggerEvent(BaseUnit target, BaseUnit source,bool isEnter,BaseStatTriggerConfig cfg);
+    public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
+    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg);
 
 
     #region structs 
 
-    [Serializable] public class ItemsStringsSave
+    [Serializable]
+    public class ItemsStringsSave
     {
         public List<string> Equips;
         public List<string> Inventory;
@@ -119,7 +119,7 @@ namespace Arcatech
         bool IsReady { get; }
         event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
 
-       // void Ping();
+        // void Ping();
     }
     public interface IManaged
     {

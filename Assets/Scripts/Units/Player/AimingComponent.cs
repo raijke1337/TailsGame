@@ -1,17 +1,15 @@
 using Arcatech.UI;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.InputSystem;
 namespace Arcatech.Units.Inputs
 {
     public class AimingComponent : ManagedControllerBase
     {
-        private Camera _camera; 
+        private Camera _camera;
         private Plane _plane;
         private Vector3 _mousePos;
 
-        public SimpleEventsHandler<bool,BaseTargetableItem> SelectionUpdatedEvent;
+        public SimpleEventsHandler<bool, BaseTargetableItem> SelectionUpdatedEvent;
 
         [Tooltip("Vertical offset for raycast plane"), SerializeField] private float _vertOffset = 0.1f;
         public Vector3 GetLookPoint => _mousePos; // used by inputs to rotate towards crosshair
@@ -37,12 +35,12 @@ namespace Arcatech.Units.Inputs
             }
 
             // hit a selectable
-            if (Physics.Raycast(r,out var hit))
+            if (Physics.Raycast(r, out var hit))
             {
                 if (hit.collider.gameObject.TryGetComponent<BaseTargetableItem>(out var item))
                 {
                     _mousePos = hit.collider.transform.position; // aim at the center of the target
-                    SelectionUpdatedEvent?.Invoke(true,item);
+                    SelectionUpdatedEvent?.Invoke(true, item);
                 }
             }
 

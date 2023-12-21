@@ -6,7 +6,7 @@ namespace Gentleland.Utils.SteampunkUI
 {
     public class PackageSettings : ScriptableObject
     {
-        public const string PackageSettingsName= "GentlelandSettings_SteampunkUI";
+        public const string PackageSettingsName = "GentlelandSettings_SteampunkUI";
         public const string PackageSettingsPath = "Assets/GentlelandSettings/GentlelandSettings_SteampunkUI.asset";
         public const string PackageSettingsFolder = "GentlelandSettings";
         public const string PackageSettingsFolderPath = "Assets/GentlelandSettings";

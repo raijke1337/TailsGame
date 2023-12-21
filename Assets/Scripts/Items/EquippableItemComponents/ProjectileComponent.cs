@@ -1,19 +1,16 @@
-﻿using Arcatech.Triggers;
-using Arcatech.Units;
-using System;
-using System.Collections;
+﻿using Arcatech.Units;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
-    public  class ProjectileComponent : MonoBehaviour
+    public class ProjectileComponent : MonoBehaviour
     {
 
         #region managed
 
         public BaseUnit Owner { get; set; }
         private ProjectileSettingsPackage _data;
-        public void Setup(ProjectileSettingsPackage set,BaseUnit owner)
+        public void Setup(ProjectileSettingsPackage set, BaseUnit owner)
         {
             _data = new ProjectileSettingsPackage() { ProjectilePenetration = set.ProjectilePenetration, ProjectileSpeed = set.ProjectileSpeed, TimeToLive = set.TimeToLive };
             Owner = owner;

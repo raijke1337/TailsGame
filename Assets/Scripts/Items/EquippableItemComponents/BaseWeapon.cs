@@ -1,9 +1,7 @@
-using Arcatech.Effects;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 namespace Arcatech.Items
 {
     [Serializable]
@@ -28,7 +26,7 @@ namespace Arcatech.Items
         {
             foreach (var eff in _weaponEffects)
             {
-                TriggerEvent?.Invoke(target, Owner,true,eff);
+                TriggerEvent?.Invoke(target, Owner, true, eff);
             }
         }
 
@@ -64,7 +62,7 @@ namespace Arcatech.Items
         {
             _currentCooldown += deltaTime;
         }
-        
+
     }
 
 }

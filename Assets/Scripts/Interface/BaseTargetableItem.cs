@@ -1,29 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    public  class BaseTargetableItem : MonoBehaviour
+    public class BaseTargetableItem : MonoBehaviour
     {
-        public string GetTitle { get => _title;}
+        public string GetTitle { get => _title; }
         [SerializeField] protected string _title;
 
         protected Camera _cam;
 
         protected virtual void LookUpValuesOnActivation()
         {
-            
+
         }
         public RenderTexture ToggleCam(bool s)
         {
             LookUpValuesOnActivation();
             if (_cam == null)
             {
-                var c  = new GameObject("ItemCamera", typeof(Camera));
+                var c = new GameObject("ItemCamera", typeof(Camera));
                 c.tag = "Untagged";
                 _cam = c.GetComponent<Camera>();
                 _cam.orthographic = true;
@@ -36,7 +32,7 @@ namespace Arcatech.UI
                 _cam.transform.position = transform.position + new Vector3(0.5f, 0.7f, 0.5f); // magic numbers woo
                 _cam.transform.Rotate(new Vector3(30, 225, 0));
             }
-             _cam.enabled = s;
+            _cam.enabled = s;
             return _cam.targetTexture;
         }
     }

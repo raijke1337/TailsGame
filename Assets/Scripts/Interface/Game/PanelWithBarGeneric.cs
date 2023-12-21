@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.UI
 {
@@ -9,7 +7,7 @@ namespace Arcatech.UI
         [SerializeField, Space] protected float _barFillRateMult = 1f;
         [SerializeField, Space] protected float _disappearTimer = 1f;
 
-        
+
 
         protected bool _act;
         public virtual bool IsNeeded

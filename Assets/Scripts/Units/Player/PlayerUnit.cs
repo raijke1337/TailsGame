@@ -1,5 +1,3 @@
-using Arcatech.Items;
-using Arcatech.Managers;
 using Arcatech.Units.Inputs;
 using System.Linq;
 using UnityEngine;
@@ -24,15 +22,15 @@ namespace Arcatech.Units
             //var stats = _controller.GetStatsController;
 
             //float maxHP = stats.GetBaseStats[BaseStatType.Health].GetMax;
-           // stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
+            // stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
 
-           // int stages = _visualController.StagesTotal;
+            // int stages = _visualController.StagesTotal;
             //_visualStagesHP = new float[stages];
             //var coef = maxHP / stages;
             //for (int i = 0; i < stages; i++)
             //{
-              //  _visualStagesHP[i] = maxHP;
-              //  maxHP -= coef;
+            //  _visualStagesHP[i] = maxHP;
+            //  maxHP -= coef;
             //}
         }
         public override void RunUpdate(float delta)
@@ -55,7 +53,7 @@ namespace Arcatech.Units
         {
             base.UpdateComponents();
             if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-          //  if (_visualController == null) _visualController = GetComponent<VisualsController>();
+            //  if (_visualController == null) _visualController = GetComponent<VisualsController>();
             //_visualController.Empties = _controller.GetEmpties;
         }
 

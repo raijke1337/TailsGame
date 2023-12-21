@@ -12,8 +12,8 @@ namespace Arcatech.Units
         /// <summary>
         /// item, isadded
         /// </summary>
-        public event SimpleEventsHandler<InventoryItem,bool> EquipmentChangedEvent;
-        public event SimpleEventsHandler<InventoryItem,bool> InventoryChangedEvent;
+        public event SimpleEventsHandler<InventoryItem, bool> EquipmentChangedEvent;
+        public event SimpleEventsHandler<InventoryItem, bool> InventoryChangedEvent;
 
         private Dictionary<EquipItemType, EquipmentItem> _equips;//TODO
         private List<InventoryItem> _items;
@@ -23,10 +23,11 @@ namespace Arcatech.Units
 
 
         public ItemsStringsSave PackSaveData // used by player unit
-        { get
+        {
+            get
             {
 
-                ItemsStringsSave cont =  new ItemsStringsSave();
+                ItemsStringsSave cont = new ItemsStringsSave();
                 foreach (var e in _equips.Values)
                 {
                     cont.Equips.Add(e.ID);
@@ -55,11 +56,11 @@ namespace Arcatech.Units
             _equips[e.ItemType] = e;
             e.Owner = _owner;
             e.OnEquip();
-            EquipmentChangedEvent?.Invoke(e,true);
+            EquipmentChangedEvent?.Invoke(e, true);
         }
         public void AddItem(InventoryItem i)
         {
-            if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t=>t.Value.ID == i.ID).Any())
+            if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
                 Debug.LogWarning($"Not added item {i} to {_owner} because it is already owned");
                 return; // supposed to prevent duplication 
@@ -142,7 +143,7 @@ namespace Arcatech.Units
         }
 
         // for default inventory setup from config SOs
-        public UnitInventoryComponent (UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
+        public UnitInventoryComponent(UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
         {
             _owner = owner;
 
@@ -171,9 +172,9 @@ namespace Arcatech.Units
                 else _drops.Add(new InventoryItem(i, _owner));
             }
 
-            
 
-        } 
+
+        }
         // for player laod from save
         public UnitInventoryComponent(ItemsStringsSave strings, BaseUnit owner)
         {
@@ -192,8 +193,9 @@ namespace Arcatech.Units
             foreach (var i in strings.Inventory)
             {
                 var item = DataManager.Instance.GetConfigByID<Item>(i);
-                if (item is Equip e)                {
-                    
+                if (item is Equip e)
+                {
+
                     _items.Add(new EquipmentItem(e, _owner));
                 }
 

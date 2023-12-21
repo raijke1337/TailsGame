@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    [RequireComponent(typeof(TextMeshProUGUI),typeof(Image))]
+    [RequireComponent(typeof(TextMeshProUGUI), typeof(Image))]
     public class IconContainerUIScript : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _text;
@@ -13,13 +13,13 @@ namespace Arcatech.UI
 
         public Image Image
         {
-            get 
-            { 
+            get
+            {
                 return _image;
             }
             set
             {
-                if (_image == null) _image = GetComponent<Image>(); 
+                if (_image == null) _image = GetComponent<Image>();
                 _image.sprite = value.sprite;
             }
         }

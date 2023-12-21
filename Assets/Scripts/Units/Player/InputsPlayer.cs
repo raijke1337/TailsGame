@@ -1,9 +1,7 @@
-using System.Reflection;
-using System;
-using UnityEngine;
-using static UnityEngine.InputSystem.InputAction;
 using Arcatech.Managers;
 using Arcatech.UI;
+using UnityEngine;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace Arcatech.Units.Inputs
 {
@@ -28,6 +26,8 @@ namespace Arcatech.Units.Inputs
             base.StartController();
 
             if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+
+
             _adj ??= new IsoCamAdjust();
 
             _controls = new PlayerControls();
@@ -53,6 +53,8 @@ namespace Arcatech.Units.Inputs
 
         private void Pause_performed(CallbackContext obj)
         {
+            if (_gameInterfaceManager == null) return; // weirdstuff happening here as it's called from NULL TODO
+
             _gameInterfaceManager.OnPauseRequest(true);
 
         }
@@ -83,6 +85,7 @@ namespace Arcatech.Units.Inputs
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
+
         }
 
         #endregion
@@ -109,7 +112,7 @@ namespace Arcatech.Units.Inputs
             if (IsInputsLocked && !IsInMeleeCombo) return;
             if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap))
                 CombatActionSuccessCallback(CombatActionType.Melee);
-            
+
         }
         protected void SkillR_performed(CallbackContext obj)
         {
@@ -137,7 +140,7 @@ namespace Arcatech.Units.Inputs
             if (_skillCtrl.TryUseSkill(CombatActionType.RangedSpecialE, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
                 _comboCtrl.UseCombo(sk.Data.Cost);
-                SkillSpawnEventCallback(sk);    
+                SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
             }
         }
@@ -204,7 +207,7 @@ namespace Arcatech.Units.Inputs
 
         }
 
-        private void OnSelectedUpdate(bool isSelect,BaseTargetableItem item)
+        private void OnSelectedUpdate(bool isSelect, BaseTargetableItem item)
         {
             _gameInterfaceManager.OnPlayerSelectedTargetable(item, isSelect);
         }

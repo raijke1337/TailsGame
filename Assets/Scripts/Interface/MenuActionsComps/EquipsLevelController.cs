@@ -31,7 +31,7 @@ namespace Arcatech.Managers
             {
                 _weaponsMessage.SetActive(true);
             }
-            
+
         }
         public void OnMain()
         {
@@ -98,7 +98,7 @@ namespace Arcatech.Managers
 
         private void OnEquipmentTileClicked(InventoryItem arg)
         {
-           // Debug.Log("Clicked callback - equipment");
+            // Debug.Log("Clicked callback - equipment");
             _equips.RemoveTileContent(arg).ItemClickedEvent -= OnEquipmentTileClicked;
             _items.AddTileContent(arg).ItemClickedEvent += OnInventoryTileClicked;
 

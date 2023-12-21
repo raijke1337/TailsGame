@@ -1,8 +1,6 @@
 using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Triggers;
-using Arcatech.Units;
-using CartoonFX;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +17,7 @@ namespace Arcatech.Units
 
         public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
 
-        public BaseController (BaseUnit owner)
+        public BaseController(BaseUnit owner)
         {
             Owner = owner;
         }
@@ -42,7 +40,7 @@ namespace Arcatech.Units
 
         public virtual void StopStatsComponent()
         {
-          //  Debug.Log($"{this} was stopped");
+            //  Debug.Log($"{this} was stopped");
         }
 
         public virtual void HandleEffects(float deltaTime)
@@ -108,8 +106,8 @@ namespace Arcatech.Units
                 }
             }
 
-            if (!IsReady) return; 
-                HandleEffects(deltaTime);
+            if (!IsReady) return;
+            HandleEffects(deltaTime);
         }
         public virtual void SetupStatsComponent()
         {
@@ -128,7 +126,7 @@ namespace Arcatech.Units
         #region triggers from weapons and /skills (todo)/
 
         public event TriggerEvent BaseControllerTriggerEvent;
-        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter,BaseStatTriggerConfig cfg ) => BaseControllerTriggerEvent?.Invoke(target,source,isEnter,cfg);
+        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg) => BaseControllerTriggerEvent?.Invoke(target, source, isEnter, cfg);
 
         #endregion
 

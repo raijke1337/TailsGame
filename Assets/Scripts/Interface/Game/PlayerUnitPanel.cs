@@ -23,10 +23,10 @@ namespace Arcatech.UI
         protected List<StatValueContainer> _cont = new List<StatValueContainer>();
 
         [SerializeField] IconContainersManager _icons;
-        
+
         public override void StartController()
         {
-            
+
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
             _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
             _combo = _player.GetInputs<InputsPlayer>().GetComboController;
@@ -41,7 +41,7 @@ namespace Arcatech.UI
             HPc = _player.GetStats[BaseStatType.Health];
             _bars.LoadValues(HPc, DisplayValueType.Health);
             HEc = _combo.GetAvailableCombo;
-            _bars.LoadValues(HEc,DisplayValueType.Combo);
+            _bars.LoadValues(HEc, DisplayValueType.Combo);
 
             if (_shield.IsReady)
             {

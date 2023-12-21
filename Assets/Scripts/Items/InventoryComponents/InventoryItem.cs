@@ -1,7 +1,4 @@
-using Arcatech.Managers;
 using Arcatech.Units;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Arcatech.Items
@@ -23,9 +20,9 @@ namespace Arcatech.Items
         {
             ID = config.ID; ItemIcon = config.Description.Picture; ItemType = config.ItemType;
             _description = new TextContainer(config.Description);
-            Owner= ow;
+            Owner = ow;
         }
-        
+
 
     }
 }

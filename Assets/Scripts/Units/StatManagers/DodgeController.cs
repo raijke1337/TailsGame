@@ -5,7 +5,6 @@ using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -26,29 +25,29 @@ namespace Arcatech.Units
         private Queue<Timer> _timerQueue = new Queue<Timer>();
         private EquipmentItem _booster;
 
-#region conditional
+        #region conditional
 
         protected override void FinishItemConfig(EquipmentItem item)
         {
 
-            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration) item.ItemSkillConfig;
+            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration)item.ItemSkillConfig;
 
             if (cfg == null)
             {
                 IsReady = false;
-               // throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
+                // throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
             else
             {
                 _stats = new Dictionary<DodgeStatType, StatValueContainer>();
-                
+
 
                 foreach (var c in cfg.DodgeSkillStats)
                 {
                     _stats[c.Key] = new StatValueContainer(c.Value);
                 }
                 foreach (var st in _stats.Values)
-                { 
+                {
                     st.Setup();
                 }
             }
@@ -58,7 +57,7 @@ namespace Arcatech.Units
         {
             i.SetItemEmpty(Empties.ItemPositions[EquipItemType.Booster]);
         }
-#endregion
+        #endregion
 
         #region managed
         public override void SetupStatsComponent()

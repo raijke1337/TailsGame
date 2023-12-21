@@ -1,9 +1,6 @@
 using Arcatech.Effects;
 using Arcatech.Items;
-using Arcatech.Triggers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -14,7 +11,7 @@ namespace Arcatech.Units
 
         #region item object operations
 
-        public WeaponController (ItemEmpties em, BaseUnit ow) : base(em, ow)
+        public WeaponController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
 
         }
@@ -67,7 +64,7 @@ namespace Arcatech.Units
             if (!_equipment.ContainsKey(type) || (_equipment[type] == null)) return false;
             else
             {
-                var weap = _equipment[type];                
+                var weap = _equipment[type];
                 IsReady = true;
 
                 switch (type)
@@ -79,7 +76,7 @@ namespace Arcatech.Units
                         weap.SetItemEmpty(Empties.ItemPositions[EquipItemType.RangedWeap]);
                         break;
                     default:
-                        return false;             
+                        return false;
                 }
 
                 return true;
@@ -101,7 +98,7 @@ namespace Arcatech.Units
             {
                 Equip(type);
                 Sheathe(EquipItemType.MeleeWeap);
-            }            
+            }
         }
 
 
@@ -131,7 +128,7 @@ namespace Arcatech.Units
                 bool ok = weap.UseWeapon();
                 if (ok)
                 {
-                    EffectEventCallback(new EffectRequestPackage(_equipment[type].GetEffects, EffectMoment.OnStart,weap.transform));
+                    EffectEventCallback(new EffectRequestPackage(_equipment[type].GetEffects, EffectMoment.OnStart, weap.transform));
                     SwitchWeapon(type);
                 }
                 return ok;
@@ -140,7 +137,7 @@ namespace Arcatech.Units
         public void ToggleTriggersOnMelee(bool isEnable)
         {
             // todo might get nullref here
-                (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeapon).ToggleColliders(isEnable);
+            (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeapon).ToggleColliders(isEnable);
         }
 
         #endregion
@@ -149,8 +146,8 @@ namespace Arcatech.Units
 
         public override void UpdateInDelta(float deltaTime)
         {
-            base.UpdateInDelta(deltaTime);      
-            
+            base.UpdateInDelta(deltaTime);
+
             if (debugEnabled && currentTimer > debugTime)
             {
                 Debug.Log($"Breakpoint");
@@ -167,7 +164,7 @@ namespace Arcatech.Units
         }
 
         public override void StopStatsComponent()
-        {            
+        {
             base.StopStatsComponent();
         }
 

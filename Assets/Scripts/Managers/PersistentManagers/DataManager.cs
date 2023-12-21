@@ -1,11 +1,7 @@
 using Arcatech;
-using Arcatech.Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 using Extensions = Arcatech.Extensions;
@@ -53,7 +49,7 @@ public class DataManager : MonoBehaviour
         {
             _loadedSave = data;
         }
-        
+
     }
     public void UpdateSaveData(string newLevel)
     {
@@ -84,9 +80,9 @@ public class DataManager : MonoBehaviour
         }
 
         SerializedSaveData save = new SerializedSaveData(
-            new List<string> 
+            new List<string>
             { Constants.Configs.c_FirstLevelID },
-              items     
+              items
             );
         Extensions.SaveLoad.SaveDataXML(save, _savepath);
 
@@ -106,7 +102,7 @@ public class DataManager : MonoBehaviour
     [SerializeField] private List<ScriptableObjectID> _dictSO;
     private void FindAllConfigs()
     {
-        
+
         _dictSO = new List<ScriptableObjectID>();
         //Resources.FindObjectsOfTypeAll<ScriptableObjectID>());
 

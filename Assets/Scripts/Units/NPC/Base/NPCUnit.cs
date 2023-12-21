@@ -1,9 +1,6 @@
-using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Units.Inputs;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(InputsNPC))]

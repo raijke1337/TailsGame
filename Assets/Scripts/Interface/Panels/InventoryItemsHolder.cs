@@ -1,5 +1,4 @@
 using Arcatech.Items;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -38,7 +37,7 @@ namespace Arcatech.UI
         public virtual ItemTileComponent RemoveTileContent(InventoryItem content)
         {
             if (content == null) return null;
-            var tile = _tiles.First(t=>t.Item == content);
+            var tile = _tiles.First(t => t.Item == content);
             _tiles.Remove(tile);
             Destroy(tile.gameObject);
             return tile;
@@ -52,7 +51,7 @@ namespace Arcatech.UI
 
         public override void UpdateController(float delta)
         {
-            
+
         }
 
         public override void StopController()

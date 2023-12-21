@@ -14,7 +14,7 @@ namespace Arcatech.Managers
 
 
         protected EffectsManager _effects;
-        
+
 
 
 
@@ -26,7 +26,7 @@ namespace Arcatech.Managers
 
             foreach (var t in staticTriggers)
             {
-                t.TriggerHitUnitEvent += (ta,tb)=> HandleStaticTrigger(ta,tb,t);
+                t.TriggerHitUnitEvent += (ta, tb) => HandleStaticTrigger(ta, tb, t);
                 _staticT.Add(t);
             }
             _effects = EffectsManager.Instance;
@@ -60,13 +60,13 @@ namespace Arcatech.Managers
 
         private void HandleStaticTrigger(BaseUnit target, bool isEnter, BaseLevelEventTrigger lv)
         {
-            Debug.Log($"{this} received a call from {lv} : {target} is entering the zone: {isEnter}");
+           // Debug.Log($"{this} received a call from {lv} : {target} is entering the zone: {isEnter}");
         }
 
         public void ServeTriggerApplication(BaseStatTriggerConfig cfg, BaseUnit source, BaseUnit target, bool IsEnter)
         {
             //Debug.Log($"Applying trigger {cfg.ID} from {source} to {target}");
-            if (IsEnter) ApplyTriggerEffect(cfg, target,source);
+            if (IsEnter) ApplyTriggerEffect(cfg, target, source);
         }
 
 
@@ -78,7 +78,7 @@ namespace Arcatech.Managers
             if (source is null)
             {
                 // static trigger (trap, health pack etc)
-                 switch (config.TargetType)
+                switch (config.TargetType)
                 {
                     case TriggerTargetType.TargetsEnemies:
                         if (target is PlayerUnit player)
@@ -197,7 +197,7 @@ namespace Arcatech.Managers
 
             proj.transform.forward = owner.transform.forward;
 
-            _projectiles.Add(proj);            
+            _projectiles.Add(proj);
             ProjectileSubs(proj);
         }
         public ProjectileComponent ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager 
@@ -212,7 +212,7 @@ namespace Arcatech.Managers
                 owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.rotation);
 
             p.transform.forward = owner.transform.forward;
-            p.Setup(proj.Settings,owner);
+            p.Setup(proj.Settings, owner);
             _projectiles.Add(p);
             ProjectileSubs(p);
 
@@ -242,7 +242,7 @@ namespace Arcatech.Managers
             }
             if (col.TryGetComponent(out BaseUnit hit) && hit.Side != proj.Owner.Side)
             {
-                if (proj.Decrement(1)<= 0)
+                if (proj.Decrement(1) <= 0)
                 {
                     proj.StopProjectile(col.transform);
                 }

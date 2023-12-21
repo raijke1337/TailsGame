@@ -1,8 +1,6 @@
 using Arcatech.Effects;
 using Arcatech.Skills;
-using Arcatech.Triggers;
 using Arcatech.Units;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 namespace Arcatech.Managers
@@ -49,14 +47,14 @@ namespace Arcatech.Managers
                 comp.transform.SetPositionAndRotation(where.position, source.transform.rotation);
             }
 
-            comp.TriggerEnterEvent += (t,t2) => HandleSkillTriggerEvent(t,t2,comp);
+            comp.TriggerEnterEvent += (t, t2) => HandleSkillTriggerEvent(t, t2, comp);
             comp.SkillDestroyedEvent += HandleSkillDestructionEvent;
 
         }
 
-        private void HandleSkillTriggerEvent (Collider col, SkillState state, SkillComponent comp)
+        private void HandleSkillTriggerEvent(Collider col, SkillState state, SkillComponent comp)
         {
-            if (CheckAreaCollision(col,comp,out var w,out var t) && t != null)
+            if (CheckAreaCollision(col, comp, out var w, out var t) && t != null)
             {
                 switch (state)
                 {
@@ -68,7 +66,7 @@ namespace Arcatech.Managers
                     case SkillState.AoE:
                         foreach (var ef in comp.Data.Triggers)
                         {
-                            triggers.ServeTriggerApplication(ef, comp.Owner, t,true);
+                            triggers.ServeTriggerApplication(ef, comp.Owner, t, true);
                         }
                         //if (t!=null) Debug.Log($"{comp.Data.Description.Title} has hit {t}");
                         break;
@@ -89,7 +87,7 @@ namespace Arcatech.Managers
 
             if ((comp.Data is DodgeSkillConfiguration d) || hit.gameObject.isStatic || //hits a wall
                 (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
-                (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser &&  taget == comp.Owner)) // self target skills
+                (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
             {
                 where = hit.transform;
                 return true;

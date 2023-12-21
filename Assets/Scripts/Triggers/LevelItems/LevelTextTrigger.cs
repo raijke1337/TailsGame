@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
@@ -18,10 +16,13 @@ namespace Arcatech.Triggers
             }
         }
 
-        protected override void Start()
+        protected override void OnEnter()
         {
-            base.Start();
-            Text = _text;
         }
+
+        protected override void OnExit()
+        {
+        }
+
     }
 }

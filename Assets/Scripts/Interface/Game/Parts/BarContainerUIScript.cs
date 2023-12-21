@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,13 +13,13 @@ namespace Arcatech.UI
         private float _tgtFillValue = 1;
 
 
-        public StatValueContainer Container 
-        { 
+        public StatValueContainer Container
+        {
             get
             {
                 return _valueContainer;
             }
-                
+
             set
             {
                 if (_valueContainer != value)
@@ -37,9 +34,9 @@ namespace Arcatech.UI
                     _valueContainer.ValueChangedEvent += OnUpdatedValue;
 
                     _text.text = value.ToString();
-                    
+
                 }
-            }                
+            }
         }
 
 
@@ -57,7 +54,7 @@ namespace Arcatech.UI
                 float vel = 0;
                 _fill.fillAmount = Mathf.SmoothDamp(_fill.fillAmount, _tgtFillValue, ref vel, delta);
 
-               // Debug.Log($"{this} ref velocity : {vel}");
+                // Debug.Log($"{this} ref velocity : {vel}");
             }
         }
 

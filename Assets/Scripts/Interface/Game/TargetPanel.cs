@@ -1,8 +1,5 @@
-using Arcatech.Units;
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Arcatech.UI
@@ -24,7 +21,7 @@ namespace Arcatech.UI
             _currentItem = item;
             _description.text = item.GetTitle;
             _image.texture = item.ToggleCam(true);
-            
+
 
             if (item is TargetableUnit u)
             {

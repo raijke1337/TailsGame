@@ -1,4 +1,3 @@
-using Arcatech;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Text")]

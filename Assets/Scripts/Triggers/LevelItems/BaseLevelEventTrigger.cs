@@ -1,28 +1,33 @@
-using Arcatech.Managers;
+using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
     public abstract class BaseLevelEventTrigger : BaseTrigger
     {
-        public SimpleEventsHandler<BaseLevelEventTrigger, bool> PlayerTagTriggerEvent;
-
         protected override void Start()
         {
             base.Start();
-            Collider.isTrigger = true; // wtf
-            //GameManager.Instance.GetGameControllers.EventTriggersManager.RegisterEventTrigger(this);
+            Collider.isTrigger = true; 
         }
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (!other.CompareTag("Player")) return;
-            PlayerTagTriggerEvent?.Invoke(this, true);
+            if (other.gameObject.TryGetComponent(out PlayerUnit p))
+            {
+                TriggerCallback(p, true);
+                OnEnter();
+            }
         }
         protected override void OnTriggerExit(Collider other)
         {
-            if (!other.CompareTag("Player")) return;
-            PlayerTagTriggerEvent?.Invoke(this, false);
+            if (other.gameObject.TryGetComponent(out PlayerUnit p))
+            {
+                TriggerCallback(p, true);
+                OnExit();
+            }
         }
+        protected abstract void OnEnter();
+        protected abstract void OnExit();
 
 
     }

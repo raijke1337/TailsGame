@@ -1,4 +1,3 @@
-using Arcatech.Effects;
 using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Triggers
@@ -6,7 +5,7 @@ namespace Arcatech.Triggers
     [RequireComponent(typeof(Collider))]
     public abstract class BaseTrigger : MonoBehaviour
     {
-        
+
 
         #region trigger
 

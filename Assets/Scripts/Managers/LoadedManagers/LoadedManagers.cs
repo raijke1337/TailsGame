@@ -28,9 +28,6 @@ namespace Arcatech.Managers
         {
             _lvl = lv;
 
-            //Debug.Log($"Starting {lv.LevelID} managers, mode: {_lvl.Type}");
-
-            // if leveltype is scene only limited initiation for display
 
             EventTriggersManager = GetComponent<EventTriggersManager>(); // for texts and event triggers
 
@@ -42,14 +39,12 @@ namespace Arcatech.Managers
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
                 TriggersProjectilesManager = GetComponent<TriggersManager>();
-                //StatsUpdatesHandler = GetComponent<StatsUpdatesHandler>();
                 CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
 
                 _managers = new LoadedManagerBase[6];
 
                 _managers[0] = TriggersProjectilesManager;
                 _managers[1] = EventTriggersManager;
-                //_managers[2] = StatsUpdatesHandler; removed because now stats are updated by unit's controls - they are conditional and need easier handling
                 _managers[2] = UnitsManager;
                 _managers[3] = SkillsPlacerManager;
                 _managers[4] = GameInterfaceManager;
@@ -65,7 +60,6 @@ namespace Arcatech.Managers
 
                 m.Initiate();
             }
-            //Debug.Log($"Finished loading managers for level {_lvl.LevelNameShort} mode is {_lvl.Type}");
 
         }
 

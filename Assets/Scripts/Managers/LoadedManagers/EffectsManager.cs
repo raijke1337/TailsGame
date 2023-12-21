@@ -1,8 +1,5 @@
 using Arcatech.Effects;
 using CartoonFX;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Arcatech.Managers
@@ -35,13 +32,13 @@ namespace Arcatech.Managers
         {
             var place = pack.Place;
 
-            if (pack.Collection.Sounds.TryGetValue(pack.Type, out var c) && c.Sounds.Length >0)
+            if (pack.Collection.Sounds.TryGetValue(pack.Type, out var c) && c.Sounds.Length > 0)
             {
-                PlaceSound(c.Sounds[Random.Range(0,c.Sounds.Length-1)], c.Loudness,place) ;
+                PlaceSound(c.Sounds[Random.Range(0, c.Sounds.Length - 1)], c.Loudness, place);
             }
-            if (pack.Collection.Effects.TryGetValue(pack.Type, out var cont)&&cont.Effects.Length>0)
+            if (pack.Collection.Effects.TryGetValue(pack.Type, out var cont) && cont.Effects.Length > 0)
             {
-                PlaceParticle(cont.Effects[Random.Range(0,cont.Effects.Length-1)],cont.Scale,place,cont.Duration) ;
+                PlaceParticle(cont.Effects[Random.Range(0, cont.Effects.Length - 1)], cont.Scale, place, cont.Duration);
             }
         }
 
@@ -53,11 +50,11 @@ namespace Arcatech.Managers
             s.volume *= volumeMult;
             s.Play();
 
-            Destroy(s.gameObject,s.clip.length);
+            Destroy(s.gameObject, s.clip.length);
         }
-        private void PlaceParticle(CFXR_Effect eff, Vector3 scale, Transform place,float time)
+        private void PlaceParticle(CFXR_Effect eff, Vector3 scale, Transform place, float time)
         {
-            var p = Instantiate(eff,place.position,place.rotation);
+            var p = Instantiate(eff, place.position, place.rotation);
             p.transform.localScale = scale;
             if (time != 0) // 0 means it will play once and disappear
             {
@@ -79,7 +76,7 @@ namespace Arcatech.Managers
         public void CleanUpOnSceneChange()
         {
             StopAllCoroutines();
-            if(_musicObj!=null) Destroy(_musicObj.gameObject);
+            if (_musicObj != null) Destroy(_musicObj.gameObject);
         }
 
     }

@@ -3,7 +3,6 @@ using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
-using CartoonFX;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -56,10 +55,12 @@ namespace Arcatech.Units
 
             _controller.AssignItems(item);
         }
-        public bool IsArmed { get
+        public bool IsArmed
+        {
+            get
             {
                 var list = new List<EquipmentItem>(GetUnitInventory.GetCurrentEquips);
-                return list.Any(t => t.ItemType == EquipItemType.MeleeWeap)|| list.Any(t => t.ItemType == EquipItemType.RangedWeap);              
+                return list.Any(t => t.ItemType == EquipItemType.MeleeWeap) || list.Any(t => t.ItemType == EquipItemType.RangedWeap);
             }
         }
 
@@ -80,7 +81,7 @@ namespace Arcatech.Units
                 case LevelType.Menu:
                     // idle for scene menu
                     break;
-                case LevelType.Game:                   
+                case LevelType.Game:
                     _animator.SetLayerWeight(3, 0);
                     ControllerEventsBinds(true);
                     break;
@@ -119,7 +120,7 @@ namespace Arcatech.Units
             if (_animator == null) _animator = GetComponent<Animator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
             if (_controller == null) _controller = GetComponent<ControlInputsBase>();
-           // if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
+            // if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         }
 
 
@@ -252,14 +253,14 @@ namespace Arcatech.Units
 
 
         #endregion
-       
-        
-        
+
+
+
         #region trigger events
         public event TriggerEvent UnitTriggerRequestEvent;
         protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, BaseStatTriggerConfig cfg)
         {
-            UnitTriggerRequestEvent?.Invoke(tg, src, ent, cfg); 
+            UnitTriggerRequestEvent?.Invoke(tg, src, ent, cfg);
         }
 
         #endregion
@@ -276,7 +277,7 @@ namespace Arcatech.Units
         public event SimpleEventsHandler<ProjectileComponent, BaseUnit> UnitPlacedProjectileEvent;
         protected void PlaceProjectileCallback(ProjectileComponent comp)
         {
-            UnitPlacedProjectileEvent?.Invoke(comp,this);
+            UnitPlacedProjectileEvent?.Invoke(comp, this);
         }
         #endregion
 

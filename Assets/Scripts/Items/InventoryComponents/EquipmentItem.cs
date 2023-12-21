@@ -2,7 +2,6 @@ using Arcatech.Effects;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
-using CartoonFX;
 using System;
 using UnityEngine;
 namespace Arcatech.Items
@@ -10,7 +9,7 @@ namespace Arcatech.Items
     [Serializable]
     public class EquipmentItem : InventoryItem
     {
-        
+
         public SkillControlSettingsSO ItemSkillConfig { get; }
         protected EffectsCollection _effects;
         public EffectsCollection GetEffects => _effects;
@@ -51,7 +50,7 @@ namespace Arcatech.Items
         }
 
 
-        public EquipmentItem(Item cfg, BaseUnit ow) : base (cfg,ow)
+        public EquipmentItem(Item cfg, BaseUnit ow) : base(cfg, ow)
         {
             if (cfg is Equip e)
             {
@@ -68,7 +67,7 @@ namespace Arcatech.Items
         }
 
         public event TriggerEvent PrefabTriggerHitSomething;
-        private void OnWeapTriggerEvent(BaseUnit target, BaseUnit source,bool isEnter,BaseStatTriggerConfig cfg)
+        private void OnWeapTriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg)
         {
             //Debug.Log($"On weapon trigger event in {GetDisplayName}");
             if (isEnter)

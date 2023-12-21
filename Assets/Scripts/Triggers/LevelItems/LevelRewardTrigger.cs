@@ -1,7 +1,4 @@
 using CartoonFX;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Arcatech.Triggers
 {
@@ -9,5 +6,13 @@ namespace Arcatech.Triggers
     {
         public Item Content;
         public CFXR_Effect Effect;
+
+        protected override void OnEnter()
+        {
+        }
+
+        protected override void OnExit()
+        {
+        }
     }
 }

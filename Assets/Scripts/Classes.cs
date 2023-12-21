@@ -1,5 +1,4 @@
 using Arcatech.Items;
-using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,8 +67,8 @@ namespace Arcatech
             public const string c_MethodPrefix = "Fsm_";
         }
 
-#endregion
-    #region tools
+        #endregion
+        #region tools
 
     }
     [Serializable]
@@ -256,7 +255,7 @@ namespace Arcatech
                     Drops.Add(i);
                 }
             }
-                ID = cfg.ID;
+            ID = cfg.ID;
         }
         public UnitInventoryItemConfigsContainer()
         {

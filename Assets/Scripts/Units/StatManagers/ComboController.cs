@@ -1,6 +1,5 @@
 using Arcatech.Triggers;
 using System;
-using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -16,7 +15,7 @@ namespace Arcatech.Units
         public StatValueContainer GetAvailableCombo { get => _container; }
 
 
-        public ComboController(BaseUnit owner) : base (owner)
+        public ComboController(BaseUnit owner) : base(owner)
         {
 
             var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>(owner.GetID);
@@ -24,7 +23,7 @@ namespace Arcatech.Units
             {
                 IsReady = false;
                 return;
-            }            
+            }
             _container = new StatValueContainer(cfg.ComboContainer);
             Degen = cfg.DegenCoeff;
             Timeout = cfg.HeatTimeout;
@@ -37,7 +36,7 @@ namespace Arcatech.Units
 
         public bool UseCombo(float value)
         {
-            bool result = _container.GetCurrent >= value;   
+            bool result = _container.GetCurrent >= value;
             if (result) _container.ChangeCurrent(-value);
             return result;
         }
@@ -49,7 +48,7 @@ namespace Arcatech.Units
         #endregion
 
 
-        
+
         #region managed
 
         public override void UpdateInDelta(float deltaTime)

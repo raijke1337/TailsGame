@@ -1,10 +1,8 @@
 using Arcatech.Items;
 using Arcatech.Skills;
-using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 namespace Arcatech.Units
 {
     [Serializable]
@@ -14,7 +12,7 @@ namespace Arcatech.Units
 
         public SkillEvents<EquipItemType> SwitchAnimationLayersEvent;
         public ItemEmpties Empties { get; }
-        public SkillsController(ItemEmpties ie,BaseUnit Owner) : base (Owner)
+        public SkillsController(ItemEmpties ie, BaseUnit Owner) : base(Owner)
         {
             Empties = ie;
         }
@@ -24,7 +22,7 @@ namespace Arcatech.Units
 
         // this is used in game for skill requests
         private Dictionary<CombatActionType, SkillObjectForControls> _skills;
-//        private Dictionary<CombatActionType, ProjectileSettingsPackage> _projSkillsData;
+        //        private Dictionary<CombatActionType, ProjectileSettingsPackage> _projSkillsData;
 
 
         public void LoadItemSkill(EquipmentItem item)
@@ -33,7 +31,7 @@ namespace Arcatech.Units
 
             if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
 
-            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig,Owner);
+            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig, Owner);
             IsReady = true;
             switch (item.ItemType)
             {
@@ -50,7 +48,7 @@ namespace Arcatech.Units
                     _skills[CombatActionType.Dodge] = control;
                     break;
                 default:
-                    break;                    
+                    break;
             }
         }
 
@@ -59,31 +57,31 @@ namespace Arcatech.Units
         public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillComponent result)
         {
             result = null;
-            var usedSkill = _skills[type];
-           if ( usedSkill == null ) return false;
-
-            switch (type)
+            if (_skills.TryGetValue(type, out var usedSkill))
             {
-                case CombatActionType.Dodge:
-                    
-                    break;
-                default:
-                    if (CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false;
-                    else
-                    {
-                        result = usedSkill.GetInstantiatedSkillCollider;
-                        switch (type)
+                switch (type)
+                {
+                    case CombatActionType.Dodge:
+                        break;
+                    default:
+                        if (CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false;
+                        else
                         {
-                            case CombatActionType.MeleeSpecialQ:
-                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
-                                break;
-                            case CombatActionType.RangedSpecialE:
-                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
-                                break;
+                            result = usedSkill.GetInstantiatedSkillCollider;
+                            switch (type)
+                            {
+                                case CombatActionType.MeleeSpecialQ:
+                                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
+                                    break;
+                                case CombatActionType.RangedSpecialE:
+                                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
+                                    break;
+                            }
+                            return true;
                         }
-                        return true;
-                    }
+                }
             }
+
             return false;
         }
 
