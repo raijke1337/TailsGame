@@ -71,9 +71,10 @@ namespace Arcatech.Managers
             {
                 if (_cor != null) 
                 { 
-                    StopCoroutine(_cor); 
+                    StopAllCoroutines(); 
                 }
 
+                paneltimer = _selPanelDisappearTimer;
                 _tgt.IsNeeded = true;
                 _tgt.AssignItem(item);
             }

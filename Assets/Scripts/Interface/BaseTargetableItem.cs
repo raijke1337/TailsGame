@@ -7,18 +7,18 @@ using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    public class BaseTargetableItem : MonoBehaviour
+    public  class BaseTargetableItem : MonoBehaviour
     {
         public string GetTitle { get => _title;}
-        protected string _title;
+        [SerializeField] protected string _title;
 
         protected Camera _cam;
 
         protected virtual void LookUpValuesOnActivation()
         {
-            _title = "Item";
+            
         }
-        public void ToggleCam(bool s)
+        public RenderTexture ToggleCam(bool s)
         {
             LookUpValuesOnActivation();
             if (_cam == null)
@@ -37,6 +37,7 @@ namespace Arcatech.UI
                 _cam.transform.Rotate(new Vector3(30, 225, 0));
             }
              _cam.enabled = s;
+            return _cam.targetTexture;
         }
     }
 

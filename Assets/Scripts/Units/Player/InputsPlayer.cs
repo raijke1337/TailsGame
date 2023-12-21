@@ -145,10 +145,11 @@ namespace Arcatech.Units.Inputs
         {
             if (IsInputsLocked || MoveDirectionFromInputs == Vector3.zero) return;
             //can't dash from standing
-            if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
+            //if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
+            if (_dodgeCtrl.IsDodgePossibleCheck())
             {
-                _comboCtrl.UseCombo(sk.Data.Cost);
-                SkillSpawnEventCallback(sk);
+                //_comboCtrl.UseCombo(sk.Data.Cost);
+                //SkillSpawnEventCallback(sk);
                 CombatActionSuccessCallback(CombatActionType.Dodge);
             }
 

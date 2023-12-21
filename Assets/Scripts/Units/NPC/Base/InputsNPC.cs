@@ -220,14 +220,14 @@ namespace Arcatech.Units.Inputs
                     if (success) CombatActionSuccessCallback(type);
                     break;
                 case CombatActionType.Dodge:
-                    if (_skillCtrl.TryUseSkill(type, 999, out var sk))
+                    if (_dodgeCtrl.IsDodgePossibleCheck())
                     {
-                        SkillSpawnEventCallback(sk);
+                        //SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.MeleeSpecialQ:
-                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
+                    if (_skillCtrl.TryUseSkill(type, 999, out var sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);

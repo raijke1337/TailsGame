@@ -1,9 +1,8 @@
 using Arcatech.Units;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.UI
 {
+    [RequireComponent(typeof(BaseUnit))]
     public class TargetableUnit : BaseTargetableItem
     {
         public StatValueContainer GetHealthStat { get => _hp; }

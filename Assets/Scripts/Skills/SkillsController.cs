@@ -32,7 +32,6 @@ namespace Arcatech.Units
             if (item == null) return;
 
             if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
-            //if (_projSkillsData == null) _projSkillsData = new Dictionary<CombatActionType, ProjectileSettingsPackage>();
 
             SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig,Owner);
             IsReady = true;
@@ -61,21 +60,31 @@ namespace Arcatech.Units
         {
             result = null;
             var usedSkill = _skills[type];
-            if (usedSkill == null || CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false; 
-            else
+           if ( usedSkill == null ) return false;
+
+            switch (type)
             {
-                result = usedSkill.GetInstantiatedSkillCollider;
-                switch (type)
-                {
-                    case CombatActionType.MeleeSpecialQ:
-                        SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
-                        break;
-                    case CombatActionType.RangedSpecialE:
-                        SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
-                        break;
-                }
-                return true;    
+                case CombatActionType.Dodge:
+                    
+                    break;
+                default:
+                    if (CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false;
+                    else
+                    {
+                        result = usedSkill.GetInstantiatedSkillCollider;
+                        switch (type)
+                        {
+                            case CombatActionType.MeleeSpecialQ:
+                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
+                                break;
+                            case CombatActionType.RangedSpecialE:
+                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
+                                break;
+                        }
+                        return true;
+                    }
             }
+            return false;
         }
 
         public override void UpdateInDelta(float deltaTime)

@@ -12,11 +12,19 @@ namespace Arcatech.UI
 
         [SerializeField] protected TextMeshProUGUI _description;
         [SerializeField] protected RawImage _image;
+        private BaseTargetableItem _currentItem;
 
         public virtual void AssignItem(BaseTargetableItem item)
         {
+            if (item != _currentItem && _currentItem != null)
+            {
+                _currentItem.ToggleCam(false);
+            }
+
+            _currentItem = item;
             _description.text = item.GetTitle;
-            item.ToggleCam(true);
+            _image.texture = item.ToggleCam(true);
+            
 
             if (item is TargetableUnit u)
             {
