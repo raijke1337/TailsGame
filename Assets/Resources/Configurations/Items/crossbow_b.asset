@@ -12,20 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b117a74a6b9915a42b2992f60878ea55, type: 3}
   m_Name: crossbow_b
   m_EditorClassIdentifier: 
-  ID: 
-  Description: {fileID: 0}
-  ItemType: 0
-  Skill: {fileID: 0}
-  Item: {fileID: 0}
+  ID: crossbow_base
+  Description: {fileID: 11400000, guid: 2cd372f00c81af148863460c8adf9854, type: 2}
+  ItemType: 2
+  Item: {fileID: 7433877491313162267, guid: b1836079eb052ef488c0adb519459f14, type: 3}
+  Skill: {fileID: 11400000, guid: 7d94902e77c21ff42abe9b282934e6cf, type: 2}
   Effects:
     Sounds:
-      _serializedList: []
+      _serializedList:
+      - Key: 0
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 24252664d1f41c140864d611ea092c18, type: 3}
+          - {fileID: 8300000, guid: 6b50bafaa2ac38c43a8bd2a002b7cfe0, type: 3}
+          - {fileID: 8300000, guid: a31d3d19acf252a4989e16e695393b1e, type: 3}
+          - {fileID: 8300000, guid: f9cfc0e6ef7909a4fa3f8663ac5f3034, type: 3}
+          Loudness: 0.67
     Effects:
-      _serializedList: []
-  WeaponConfig:
-    Charges:
-      _start: 0
-      _max: 0
-      _min: 0
-    WeaponEffects: []
-    InternalCooldown: 0
+      _serializedList:
+      - Key: 0
+        Value:
+          Effects:
+          - {fileID: 492719237779392340, guid: 12900b9cc657de24896713ff7cc67b77, type: 3}
+          _scale: 0.2
+          Duration: 0
+  WeaponCooldown: 0.051
+  WeaponHitTriggers:
+  - {fileID: 11400000, guid: ebd1db45db61ad945a7075a5c6e6dd4d, type: 2}
+  RangedConfig:
+    Projectile: {fileID: 11400000, guid: b3fa6612246aa484c8155a0b358f011d, type: 2}
+    Ammo: 9
+    ShotsPerUse: 3
+    Reload: 5
+    Spread: 0.1

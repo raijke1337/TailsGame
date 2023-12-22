@@ -14,7 +14,7 @@ namespace Arcatech
         {
             _title.text = cont.Title;
             _text.text = cont.GetFormattedText;
-            _picture.sprite = cont.Picture;
+           // _picture.sprite = cont.Picture;
         }
 
 

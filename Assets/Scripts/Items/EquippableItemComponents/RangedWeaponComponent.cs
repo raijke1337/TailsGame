@@ -1,7 +1,3 @@
-using Arcatech.Units;
-using System.Collections;
-using UnityEngine;
-
 namespace Arcatech.Items
 {
     public class RangedWeaponComponent : BaseWeaponComponent
@@ -15,6 +11,7 @@ namespace Arcatech.Items
 
         public override void OnItemUse()
         {
+
         }
 
 
