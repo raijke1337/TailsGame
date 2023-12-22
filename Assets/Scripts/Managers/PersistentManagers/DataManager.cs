@@ -1,4 +1,5 @@
 using Arcatech;
+using Arcatech.Items;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -216,11 +217,8 @@ public class DataManager : MonoBehaviour
         }
         return all.ToArray();
     }
-
-    public UnitInventoryItemConfigsContainer GenerateDefaultInventory(string id)
+    public UnitInventoryItemConfigsContainer GenerateDefaultInventory(UnitItemsSO cfg)
     {
-        var cfg = GetConfigByID<UnitItemsSO>(id);
-        if (cfg == null) Debug.LogWarning($"No unit items SO found with ID {id}");
         return new UnitInventoryItemConfigsContainer(cfg);
     }
 

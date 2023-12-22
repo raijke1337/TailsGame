@@ -1,6 +1,7 @@
 ﻿using Arcatech.Items;
 using System.Collections.Generic;
 using System.Linq;
+using static UnityEditor.Progress;
 
 namespace Arcatech.Units
 {
@@ -15,7 +16,7 @@ namespace Arcatech.Units
         #region public
         protected Dictionary<EquipItemType, EquipmentItem> _equipment = new Dictionary<EquipItemType, EquipmentItem>();
 
-        public virtual EquipmentItem[] GetCurrentEquipped { get => _equipment.Values.ToArray(); }
+        //public virtual EquipmentItem[] GetCurrentEquipped { get => _equipment.Values.ToArray(); }
 
         public void LoadItem(EquipmentItem item, out EquipmentItem removing)
         {
@@ -29,16 +30,21 @@ namespace Arcatech.Units
             {
                 //  Debug.Log($"Removed {removing.GetDisplayName}");
             }
-            item.PrefabTriggerHitSomething += TriggerEventCallback;
-
+            if (item is WeaponItem w)
+            {
+                w.PrefabTriggerHitSomething += TriggerEventCallback;
+            }
+           
             StateChangeCallback(IsReady, this);
         }
         public virtual EquipmentItem RemoveItem(EquipItemType type)
         {
             var e = _equipment[type];
             _equipment.Remove(type);
-
-            e.PrefabTriggerHitSomething -= TriggerEventCallback;
+            if (e is WeaponItem w)
+            {
+                w.PrefabTriggerHitSomething -= TriggerEventCallback;
+            }
 
             IsReady = false;
             return e;
@@ -65,6 +71,14 @@ namespace Arcatech.Units
 
         protected abstract void FinishItemConfig(EquipmentItem item);
         protected abstract void InstantiateItem(EquipmentItem i);
+        public override void UpdateInDelta(float deltaTime)
+        {
+            base.UpdateInDelta(deltaTime);
+            foreach (var e in _equipment.Values)
+            {
+                e.DoUpdates(deltaTime);
+            }
+        }
 
     }
 }

@@ -200,22 +200,10 @@ namespace Arcatech.Managers
             _projectiles.Add(proj);
             ProjectileSubs(proj);
         }
-        public ProjectileComponent ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager 
+        public ProjectileComponent ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager , needed to set the location correctly
         {
-            if (_projectiles == null)
-            {
-                _projectiles = new List<ProjectileComponent>();
-            }
-            var p = Instantiate(proj.ProjectilePrefab);
-
-            p.transform.SetPositionAndRotation(owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.position,
-                owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.rotation);
-
-            p.transform.forward = owner.transform.forward;
-            p.Setup(proj.Settings, owner);
-            _projectiles.Add(p);
-            ProjectileSubs(p);
-
+            var p = proj.GetProjectile(owner);
+            ServeProjectileRequest(p, owner);   
             return p;
         }
 

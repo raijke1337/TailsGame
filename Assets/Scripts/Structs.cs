@@ -45,53 +45,7 @@ namespace Arcatech
         }
     }
 
-    [Serializable]
-    public struct EnemyStats
-    {
-        public float AttackRange;
 
-        public float LookSpereCastRadius;
-        public float LookSpereCastRange;
-
-        public ReferenceUnitType EnemyType;
-        public EnemyStats(EnemyStatsConfig cfg)
-        {
-            LookSpereCastRadius = cfg.lookSphereRad;
-            LookSpereCastRange = cfg.lookRange;
-            AttackRange = cfg.atkRange;
-            EnemyType = cfg.Type;
-        }
-    }
-
-    [Serializable]
-    public struct TextContainer
-    {
-        public TextContainer(TextContainerSO c)
-        {
-            _title = c.Title; _texts = c.Texts;
-        }
-
-        private string _title;
-        public string GetTitle { get => _title; }
-
-        string[] _texts;
-
-        public string GetFormattedText
-        {
-            get
-            {
-                string result = string.Empty;
-
-                foreach (string rec in _texts)
-                {
-                    result += $"{rec} \n";
-                }
-
-                return result;
-            }
-        }
-
-    }
     [Serializable]
     public class ItemEmpties
     {

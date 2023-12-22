@@ -53,7 +53,7 @@ namespace Arcatech.Units
             base.UpdateInDelta(deltaTime);
             if (_equipment.TryGetValue(EquipItemType.Shield, out var s))
             {
-                s.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
+                s.DoUpdates(deltaTime);
             }
         }
 

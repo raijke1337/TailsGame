@@ -7,19 +7,19 @@ namespace Arcatech.Items
     public class InventoryItem
     {
         public string ID;
-        public Sprite ItemIcon;
-        public string GetDisplayName => _description.GetTitle;
+        public Sprite ItemIcon { get => _description.Picture; }
+        public string GetDisplayName => _description.Title;
         public string GetDescription => _description.GetFormattedText;
 
         public EquipItemType ItemType { get; }
-        protected TextContainer _description;
+        protected TextContainerSO _description;
         public BaseUnit Owner;
 
 
         public InventoryItem(Item config, BaseUnit ow)
         {
-            ID = config.ID; ItemIcon = config.Description.Picture; ItemType = config.ItemType;
-            _description = new TextContainer(config.Description);
+            ID = config.ID; ItemType = config.ItemType;
+            _description = (config.Description);
             Owner = ow;
         }
 

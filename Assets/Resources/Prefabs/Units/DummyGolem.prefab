@@ -1242,34 +1242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsInputsLocked: 0
   Empties:
-    MeleeWeaponEmpty: {fileID: 0}
-    RangedWeaponEmpty: {fileID: 0}
-    SheathedWeaponEmpty: {fileID: 0}
-    SkillsEmpty: {fileID: 0}
-    OthersEmpty: {fileID: 0}
-  _statsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _weaponCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _dodgeCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _shieldCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _skillCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _comboCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _stunsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-    isGracePeriod: 0
-    _currValue: 0
+    ItemPositions:
+      _serializedList: []
   InputDirectionOverride: {x: 0, y: 0, z: 0}
   DebugEnabled: 0
   patrolPoints: []
@@ -1281,6 +1255,7 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+  EnemyStats: {fileID: 11400000, guid: 71f064c3e0a7e694bae5c699cf71276f, type: 2}
 --- !u!114 &2233284501370506411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1293,13 +1268,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StatsID: dummy_golem
   Side: 1
-  UnitSounds:
-    SoundsDict:
-      _serializedList:
-      - Key: 3
-        Value: {fileID: 8300000, guid: 82e542950d5e84f64a8c027bec60b425, type: 3}
+  StatsConfig: {fileID: 11400000, guid: 8a09d2f2652417944a4780d201db334c, type: 2}
+  _defaultItems: {fileID: 11400000, guid: 9cfdc9e9530253345b2c1e5324b43d01, type: 2}
 --- !u!114 &-1630279269346806638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1312,6 +1283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1ead3ed2d4d426428fcf53f962ff604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _title: 
 --- !u!1 &6282183787786567646
 GameObject:
   m_ObjectHideFlags: 0

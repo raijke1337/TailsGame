@@ -1,4 +1,5 @@
 //using Newtonsoft.Json;
+using Arcatech.Items;
 using Arcatech.Units;
 using System.Collections.Generic;
 using UnityEditor;

@@ -17,20 +17,20 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
+        //private Dictionary<string, TextContainer> textContainers = new Dictionary<string, TextContainer>();
 
-        public TextContainer GetContainerByID(string ID)
-        {
-            try
-            {
-                return textContainers[ID];
-            }
-            catch
-            {
-                Debug.LogWarning($"No text container for ID {ID}");
-                return new TextContainer();
-            }
-        }
+        //public TextContainer GetContainerByID(string ID)
+        //{
+        //    try
+        //    {
+        //        return textContainers[ID];
+        //    }
+        //    catch
+        //    {
+        //        Debug.LogWarning($"No text container for ID {ID}");
+        //        return new TextContainer();
+        //    }
+        //}
 
 
 

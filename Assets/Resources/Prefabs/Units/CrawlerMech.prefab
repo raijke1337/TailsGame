@@ -780,6 +780,7 @@ GameObject:
   - component: {fileID: 5255978924601524907}
   - component: {fileID: 4680322785318675946}
   - component: {fileID: 2960065711646976030}
+  - component: {fileID: 5033806308573016183}
   m_Layer: 0
   m_Name: CrawlerMech
   m_TagString: Enemy
@@ -911,34 +912,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsInputsLocked: 0
   Empties:
-    MeleeWeaponEmpty: {fileID: 5255978924687065452}
-    RangedWeaponEmpty: {fileID: 5255978924687065452}
-    SheathedWeaponEmpty: {fileID: 5255978924687065452}
-    SkillsEmpty: {fileID: 3983754378033790471}
-    OthersEmpty: {fileID: 5255978924687065452}
-  _statsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _weaponCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _dodgeCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _shieldCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _skillCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _comboCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _stunsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-    isGracePeriod: 0
-    _currValue: 0
+    ItemPositions:
+      _serializedList:
+      - Key: 0
+        Value: {fileID: 2045661042590052793}
+      - Key: 1
+        Value: {fileID: 6283096187127337481}
+      - Key: 2
+        Value: {fileID: 6283096187127337481}
+      - Key: 3
+        Value: {fileID: 6283096187127337481}
+      - Key: 4
+        Value: {fileID: 6283096187127337481}
+      - Key: 5
+        Value: {fileID: 6283096187127337481}
+      - Key: 6
+        Value: {fileID: 6283096187127337481}
+      - Key: 255
+        Value: {fileID: 6283096187127337481}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
   DebugEnabled: 0
   patrolPoints: []
@@ -950,6 +941,7 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+  EnemyStats: {fileID: 11400000, guid: adbc8c0730f940244a54f53fc03f85ff, type: 2}
 --- !u!114 &2960065711646976030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -962,6 +954,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1ead3ed2d4d426428fcf53f962ff604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5033806308573016183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255978924601524911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Side: 1
+  StatsConfig: {fileID: 11400000, guid: ba12167310a77ec44b989f57a32e05ea, type: 2}
+  _defaultItems: {fileID: 11400000, guid: cb8f3e177a5d7d647bfae10227e18234, type: 2}
 --- !u!1 &5255978924687065453
 GameObject:
   m_ObjectHideFlags: 0

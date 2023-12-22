@@ -59,7 +59,7 @@ namespace Arcatech.Units
 
             foreach (var item in items.GetCurrentEquips)
             {
-                if (item.ItemSkillConfig != null)
+                if (item.Skill != null)
                 {
                     skillsItems.Add(item);
                 }

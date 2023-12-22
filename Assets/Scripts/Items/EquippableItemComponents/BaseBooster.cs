@@ -2,15 +2,8 @@ namespace Arcatech.Items
 {
     public class BaseBooster : BaseEquippableItemComponent
     {
-
-        public override void UpdateInDelta(float delta)
+        public override void OnItemUse()
         {
-            //if (_spawnedSkill != null)
-            // {
-            //     _spawnedSkill.UpdateInDelta(delta);
-            // }
         }
-        public override float GetNumericValue => base.GetNumericValue;
-
     }
 }

@@ -18,21 +18,11 @@ namespace Arcatech.Units
 
         protected override void FinishItemConfig(EquipmentItem i)
         {
-            var cfg = DataManager.Instance.GetConfigByID<BaseWeaponConfig>(i.ID);
-            if (cfg == null)
+            if (i is RangedWeaponItem rr)
             {
-                throw new Exception($"Mising cfg by ID {i.ID} from item {i} : {this}");
+                rr.PlacedProjectileEvent += SpawnProjectileCallBack;
             }
-            else
-            {
-                var w = (i.GetInstantiatedPrefab()) as BaseWeapon;
-                w.SetUpWeapon(cfg);
-                IsReady = true;
-                if (w is RangedWeapon rr)
-                {
-                    rr.PlacedProjectileEvent += SpawnProjectileCallBack;
-                }
-            }
+            IsReady = true;
         }
 
 
@@ -123,12 +113,10 @@ namespace Arcatech.Units
             }
             else
             {
-                var weap = _equipment[type].GetInstantiatedPrefab() as BaseWeapon;
-
-                bool ok = weap.UseWeapon();
+                bool ok = _equipment[type].TryUseItem();
                 if (ok)
                 {
-                    EffectEventCallback(new EffectRequestPackage(_equipment[type].GetEffects, EffectMoment.OnStart, weap.transform));
+                    EffectEventCallback(new EffectRequestPackage(_equipment[type].Effects, EffectMoment.OnStart, _equipment[type].GetInstantiatedPrefab().transform));
                     SwitchWeapon(type);
                 }
                 return ok;
@@ -137,7 +125,7 @@ namespace Arcatech.Units
         public void ToggleTriggersOnMelee(bool isEnable)
         {
             // todo might get nullref here
-            (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeapon).ToggleColliders(isEnable);
+            (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeaponComponent).ToggleColliders(isEnable);
         }
 
         #endregion
@@ -151,15 +139,6 @@ namespace Arcatech.Units
             if (debugEnabled && currentTimer > debugTime)
             {
                 Debug.Log($"Breakpoint");
-            }
-
-            if (_equipment.TryGetValue(EquipItemType.MeleeWeap, out var s))
-            {
-                s.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
-            }
-            if (_equipment.TryGetValue(EquipItemType.RangedWeap, out var r))
-            {
-                r.GetInstantiatedPrefab().UpdateInDelta(deltaTime);
             }
         }
 

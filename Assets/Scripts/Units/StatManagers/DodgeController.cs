@@ -30,7 +30,7 @@ namespace Arcatech.Units
         protected override void FinishItemConfig(EquipmentItem item)
         {
 
-            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration)item.ItemSkillConfig;
+            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration)item.Skill;
 
             if (cfg == null)
             {
@@ -85,11 +85,11 @@ namespace Arcatech.Units
             else
             {
                 _stats[DodgeStatType.Charges].ChangeCurrent(-1);
-                var t = new Timer(_booster.ItemSkillConfig.Cooldown);
+                var t = new Timer(_booster.Skill.Cooldown);
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
 
-                EffectEventCallback(new EffectRequestPackage(_booster.GetEffects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
+                EffectEventCallback(new EffectRequestPackage(_booster.Effects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
 
                 return true;
             }

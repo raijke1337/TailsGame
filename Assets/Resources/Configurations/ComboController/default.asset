@@ -9,14 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26539a42cd194d142b66788a215e6300, type: 3}
-  m_Name: spider_claws
+  m_Script: {fileID: 11500000, guid: c67d37c97e77bf44298e6125a6b7bd36, type: 3}
+  m_Name: default
   m_EditorClassIdentifier: 
-  ID: spider_claws
-  WType: 1
-  _charges: 0
-  TriggerIDs:
-  - spider_bot_hit
-  SkillID: spider_bot_explode
-  ComboValue: 0
-  InternalCooldown: 0.5
+  ID: default
+  ComboContainer:
+    _start: 0
+    _max: 100
+    _min: 0
+  DegenCoeff: 1
+  HeatTimeout: 1

@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: basicBooster
   m_EditorClassIdentifier: 
   ID: booster_base
-  ItemIcon: {fileID: 21300000, guid: b5be2c7793b350f40bce79134dcf0ef7, type: 3}
   Description: {fileID: 11400000, guid: dcd0031a70aa8da46a9e67e55b5913f3, type: 2}
   ItemType: 4
   Skill: {fileID: 11400000, guid: cb37095c933aad34da650c3826a3d3ec, type: 2}
@@ -25,6 +24,12 @@ MonoBehaviour:
         Value:
           Sounds:
           - {fileID: 8300000, guid: 0bd05763df902854a80475577a26666a, type: 3}
-          Loudness: 0
+          Loudness: 0.52
     Effects:
-      _serializedList: []
+      _serializedList:
+      - Key: 0
+        Value:
+          Effects:
+          - {fileID: 7407110167235851954, guid: 0c2509361b13505428ce788b7f846686, type: 3}
+          _scale: 0.464
+          Duration: 0

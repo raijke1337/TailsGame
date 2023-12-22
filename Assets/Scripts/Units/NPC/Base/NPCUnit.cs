@@ -1,3 +1,4 @@
+using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Units.Inputs;
 using UnityEngine;
@@ -14,6 +15,11 @@ namespace Arcatech.Units
         //used by room ctrl
         public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
         //public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
+        [SerializeField] protected UnitItemsSO _defaultItems;
+
+
+
+
 
         public override void InitiateUnit()
         {
@@ -23,12 +29,6 @@ namespace Arcatech.Units
 
             _controller.GetStatsController.GetBaseStats[BaseStatType.Health].ValueChangedEvent += OnOuch;
 
-
-            //TODO fix proper equipping must equip NEW ITEM()
-            //foreach (var item in UnitEquipment.Equips.Values.ID)
-            //{
-            //    HandleStartingEquipment(new EquipmentItem(item));
-            //}
         }
         // used by room controller
         public void ForceCombat()
@@ -60,7 +60,7 @@ namespace Arcatech.Units
 
         protected override void InitInventory()
         {
-            GetUnitInventory = new UnitInventoryComponent(DataManager.Instance.GenerateDefaultInventory(StatsID), this);
+            GetUnitInventory = new UnitInventoryComponent(DataManager.Instance.GenerateDefaultInventory(_defaultItems), this);
             CreateStartingEquipments(GetUnitInventory);
 
         }

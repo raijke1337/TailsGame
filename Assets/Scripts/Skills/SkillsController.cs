@@ -31,7 +31,7 @@ namespace Arcatech.Units
 
             if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
 
-            SkillObjectForControls control = new SkillObjectForControls(item.ItemSkillConfig, Owner);
+            SkillObjectForControls control = new SkillObjectForControls(item.Skill, Owner);
             IsReady = true;
             switch (item.ItemType)
             {

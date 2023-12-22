@@ -6,10 +6,9 @@ namespace Arcatech.UI
     public class BaseTargetableItem : MonoBehaviour
     {
         public string GetTitle { get => _title; }
-        [SerializeField] protected string _title;
+        protected string _title;
 
         protected Camera _cam;
-
         protected virtual void LookUpValuesOnActivation()
         {
 

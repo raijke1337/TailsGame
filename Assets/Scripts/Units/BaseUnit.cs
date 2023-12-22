@@ -3,6 +3,7 @@ using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
+using Arcatech.Units.Stats;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,11 +13,9 @@ namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase))]
 
-    public abstract class BaseUnit : MonoBehaviour, IHasID, ITakesTriggers, IHasEffects
+    public abstract class BaseUnit : MonoBehaviour, ITakesTriggers, IHasEffects
     {
-        [SerializeField] protected string StatsID;
 
-        public string GetID => StatsID;
 
         protected Animator _animator;
         protected Rigidbody _rigidbody;
@@ -24,6 +23,7 @@ namespace Arcatech.Units
         protected ControlInputsBase _controller;
 
         public Side Side;
+        public BaseStatsConfig StatsConfig;
         public ItemEmpties GetEmpties => _controller.GetEmpties;
 
         public ReferenceUnitType GetUnitType => _controller.GetUnitType();
@@ -164,7 +164,6 @@ namespace Arcatech.Units
         {
             _animator.SetTrigger("Death");
             _controller.IsInputsLocked = true;
-            //UnitPlaysSound(UnitSounds.SoundsDict[SoundType.OnExpiry], Vector3.zero);
             BaseUnitDiedEvent?.Invoke(this);
         }
         public virtual void PickTriggeredEffectHandler(TriggeredEffect eff)

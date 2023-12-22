@@ -25,13 +25,12 @@ namespace Arcatech.Units.Inputs
         [SerializeField] protected State DummyState;
         [SerializeField] protected State CurrentState;
 
-        protected EnemyStats _enemyStats;
         protected NavMeshAgent _navMeshAg;
         [Space, SerializeField] protected StateMachine _stateMachine;
         public StateMachine GetFSM => _stateMachine;
 
-
-        public override ReferenceUnitType GetUnitType() => _enemyStats.EnemyType;
+        [SerializeField] protected EnemyStatsConfig EnemyStats;
+        public override ReferenceUnitType GetUnitType() => EnemyStats.UnitType;
 
         #endregion
         #region managed
@@ -43,15 +42,11 @@ namespace Arcatech.Units.Inputs
             {
                 patrolPoints.Add(transform);
             }
-
-            _enemyStats = new EnemyStats(DataManager.Instance.GetConfigByID<EnemyStatsConfig>(Unit.GetID));
-
-
             _navMeshAg = GetComponent<NavMeshAgent>();
 
             _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
-            _navMeshAg.stoppingDistance = _enemyStats.AttackRange;
-            _stateMachine = new StateMachine(_navMeshAg, _enemyStats, InitialState, DummyState, Unit);
+            _navMeshAg.stoppingDistance = EnemyStats.AttackRange;
+            _stateMachine = new StateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
 
             StateMachineBinds(true);
             _stateMachine.SetPatrolPoints(patrolPoints);
@@ -285,13 +280,13 @@ namespace Arcatech.Units.Inputs
             // state gizmos
             Gizmos.color = CurrentState.StateGizmoColor;
             Gizmos.DrawSphere(_stateMachine.EyesEmpty.position, 0.1f);
-            Gizmos.DrawLine(_stateMachine.EyesEmpty.position, _stateMachine.EyesEmpty.position + _stateMachine.EyesEmpty.forward * _enemyStats.LookSpereCastRange);
+            Gizmos.DrawLine(_stateMachine.EyesEmpty.position, _stateMachine.EyesEmpty.position + _stateMachine.EyesEmpty.forward * EnemyStats.LookRange);
             //navmesh gizmos
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(_stateMachine.NMAgent.transform.position, _stateMachine.NMAgent.transform.position + _stateMachine.NMAgent.transform.forward);
             // aggro range gizmo
             Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookSpereCastRange); // look sphere range is used to call nearby allies into combat
+            Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookRange); // look sphere range is used to call nearby allies into combat
         }
 #endif
 

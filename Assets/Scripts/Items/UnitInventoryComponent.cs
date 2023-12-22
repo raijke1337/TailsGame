@@ -15,7 +15,7 @@ namespace Arcatech.Units
         public event SimpleEventsHandler<InventoryItem, bool> EquipmentChangedEvent;
         public event SimpleEventsHandler<InventoryItem, bool> InventoryChangedEvent;
 
-        private Dictionary<EquipItemType, EquipmentItem> _equips;//TODO
+        private Dictionary<EquipItemType, EquipmentItem> _equips;
         private List<InventoryItem> _items;
         private List<InventoryItem> _drops;
 
@@ -153,28 +153,49 @@ namespace Arcatech.Units
 
             foreach (var e in cfg.Equipment)
             {
-                _equips[e.ItemType] = new EquipmentItem(e, _owner);
+                _equips[e.ItemType] = ProduceItem(e) as EquipmentItem;
             }
             foreach (var i in cfg.Inventory)
             {
-                if (i is Equip e)
-                {
-                    _items.Add(new EquipmentItem(e, _owner));
-                }
-                else _items.Add(new InventoryItem(i, _owner));
+                _items.Add(ProduceItem(i));
             }
             foreach (var i in cfg.Drops)
             {
-                if (i is Equip e)
+                _drops.Add(ProduceItem(i));
+            }
+        }
+
+        private InventoryItem ProduceItem(Item cfg)
+        {
+            InventoryItem ret;
+            if (cfg is Equip e)
+            {
+                if (cfg is Weapon w)
                 {
-                    _drops.Add(new EquipmentItem(e, _owner));
+                    if (cfg is RangedWeapon r)
+                    {
+                        ret = new RangedWeaponItem(r, _owner);
+                    }
+                    else
+                    {
+                        ret = new WeaponItem(w, _owner);
+                    }
                 }
-                else _drops.Add(new InventoryItem(i, _owner));
+                else
+                {
+                    ret = new EquipmentItem(e, _owner);
+                }    
+            }
+            else
+            {
+                ret =  new InventoryItem(cfg, _owner);
             }
 
-
-
+            return ret;
+            //cringe but it should work
         }
+
+
         // for player laod from save
         public UnitInventoryComponent(ItemsStringsSave strings, BaseUnit owner)
         {

@@ -1,3 +1,4 @@
+using Arcatech.Units;
 using System;
 using UnityEngine;
 namespace Arcatech.Items
@@ -9,6 +10,13 @@ namespace Arcatech.Items
         public ProjectileComponent ProjectilePrefab;
         public ProjectileSettingsPackage Settings;
 
+        public ProjectileComponent GetProjectile(BaseUnit owner)
+        {
+
+            var c = Instantiate(ProjectilePrefab);
+            c.Setup(Settings, owner);
+            return c;
+    }
     }
     [Serializable]
     public class ProjectileSettingsPackage

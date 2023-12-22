@@ -1,17 +1,20 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+
 namespace Arcatech
 {
     public class GameTextComp : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _title;
         [SerializeField] private TextMeshProUGUI _text;
+        [SerializeField] private Image _picture;
 
         public void SetText(TextContainerSO cont)
         {
-            var txt = new TextContainer(cont);
-            _title.text = txt.GetTitle;
-            _text.text = txt.GetFormattedText;
+            _title.text = cont.Title;
+            _text.text = cont.GetFormattedText;
+            _picture.sprite = cont.Picture;
         }
 
 

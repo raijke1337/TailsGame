@@ -9,8 +9,8 @@ namespace Arcatech.Items
     public class Equip : Item
     {
 
-        public SkillControlSettingsSO Skill;
         public BaseEquippableItemComponent Item;
+        public SkillControlSettingsSO Skill;
         public EffectsCollection Effects;
 
     }

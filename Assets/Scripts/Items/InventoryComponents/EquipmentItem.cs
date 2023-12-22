@@ -10,13 +10,25 @@ namespace Arcatech.Items
     public class EquipmentItem : InventoryItem
     {
 
-        public SkillControlSettingsSO ItemSkillConfig { get; }
-        protected EffectsCollection _effects;
-        public EffectsCollection GetEffects => _effects;
+        public SkillControlSettingsSO Skill { get; }
+        public EffectsCollection Effects { get; }
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
 
         protected BaseEquippableItemComponent _instantiated;
+
+
+        public EquipmentItem(Item cfg, BaseUnit ow) : base(cfg, ow)
+        {
+            if (cfg is Equip e)
+            {
+                Skill = e.Skill;
+                _prefab = e.Item;
+                Effects = e.Effects;
+            }
+        }
+
+
         public BaseEquippableItemComponent GetInstantiatedPrefab()
         {
             if (_instantiated == null)
@@ -29,6 +41,16 @@ namespace Arcatech.Items
             }
             return _instantiated;
         }
+        protected virtual void GenerateObject()
+        {
+            _instantiated = GameObject.Instantiate(_prefab);
+            _instantiated.Owner = Owner;
+
+        }
+
+
+
+
         public void SetItemEmpty(Transform parent)
         {
             if (_instantiated == null)
@@ -37,49 +59,24 @@ namespace Arcatech.Items
             }
             _instantiated.transform.SetParent(parent, false);
         }
-
-
-        private void GenerateObject()
-        {
-            _instantiated = GameObject.Instantiate(_prefab);
-            _instantiated.Owner = Owner;
-            if (_instantiated is BaseWeapon weap)
-            {
-                weap.TriggerEvent += OnWeapTriggerEvent;
-            }
-        }
-
-
-        public EquipmentItem(Item cfg, BaseUnit ow) : base(cfg, ow)
-        {
-            if (cfg is Equip e)
-            {
-                ItemSkillConfig = e.Skill;
-                _prefab = e.Item;
-                _effects = e.Effects;
-            }
-        }
-
         public void OnEquip()
         {
             if (_instantiated != null) _instantiated.gameObject.SetActive(true);
 
         }
-
-        public event TriggerEvent PrefabTriggerHitSomething;
-        private void OnWeapTriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg)
-        {
-            //Debug.Log($"On weapon trigger event in {GetDisplayName}");
-            if (isEnter)
-            {
-                PrefabTriggerHitSomething?.Invoke(target, source, isEnter, cfg);
-            }
-        }
-
         public void OnUnequip()
         {
             if (_instantiated != null) _instantiated.gameObject.SetActive(false);
         }
+
+        public virtual bool TryUseItem()
+        {
+            if (true) _instantiated.OnItemUse();
+            return true;
+        }
+
+        public virtual void DoUpdates(float d)
+        { }
 
     }
 

@@ -20,7 +20,7 @@ namespace Arcatech.Units.Inputs
         {
             var eyes = new GameObject("SphereCaster");
             eyes.transform.SetPositionAndRotation(StateMachineUnit.transform.position, StateMachineUnit.transform.rotation);
-            eyes.transform.position += (Vector3.up * GetEnemyStats.LookSpereCastRadius); // move up to not cast at floor only
+            eyes.transform.position += (Vector3.up * GetEnemyStats.LookSphereRadius); // move up to not cast at floor only
             eyes.transform.SetParent(StateMachineUnit.transform, true);
 
             EyesEmpty = eyes.transform;
@@ -41,7 +41,7 @@ namespace Arcatech.Units.Inputs
         public State RemainState { get; private set; }
         public Vector3 CurrentVelocity { get; protected set; }
         public float TimeInState { get; private set; }
-        public EnemyStats GetEnemyStats { get; private set; }
+        public EnemyStatsConfig GetEnemyStats { get; private set; }
         public BaseUnit StateMachineUnit { get; }
         // set by inputs , bool for potential checks
         private bool wasSelectedUnitUpdated;
@@ -77,7 +77,7 @@ namespace Arcatech.Units.Inputs
         public Transform EyesEmpty { get; private set; } // used for sphere casting to look
 
         #region setups
-        public StateMachine(NavMeshAgent agent, EnemyStats stats, State init, State dummy, BaseUnit unit)
+        public StateMachine(NavMeshAgent agent, EnemyStatsConfig stats, State init, State dummy, BaseUnit unit)
         {
             NMAgent = agent;
             GetEnemyStats = stats;
@@ -124,7 +124,7 @@ namespace Arcatech.Units.Inputs
         }
         public bool OnLookSphereCast()
         {
-            Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSpereCastRadius, EyesEmpty.forward, out var hit, GetEnemyStats.LookSpereCastRange);
+            Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSphereRadius, EyesEmpty.forward, out var hit, GetEnemyStats.LookRange);
             if (hit.collider == null) return false;
             var _coll = hit.collider;
 #if UNITY_EDITOR

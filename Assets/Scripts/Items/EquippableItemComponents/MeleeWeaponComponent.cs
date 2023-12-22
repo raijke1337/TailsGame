@@ -4,24 +4,24 @@ using UnityEngine;
 namespace Arcatech.Items
 {
     [RequireComponent(typeof(WeaponTriggerComponent))]
-    public class MeleeWeapon : BaseWeapon
+    public class MeleeWeaponComponent : BaseWeaponComponent
     {
 
         protected override void FinishWeaponConfig()
         {
             var t = GetComponent<WeaponTriggerComponent>();
             _triggers.Add(t);
-            t.TriggerHitUnitEvent += OnTriggerHit;
-        }
-
-        private void OnTriggerHit(BaseUnit target, bool isenter)
-        {
-            TriggerActivationCallback(target);
+            t.TriggerHitUnitEvent += TriggerActivationCallback;
         }
 
         public void ToggleColliders(bool enable)
         {
             _triggers[0].ToggleCollider(enable);
+        }
+
+        public override void OnItemUse()
+        {
+            //whoosh
         }
     }
 

@@ -33,7 +33,7 @@ namespace Arcatech.Units
         public BaseStatsController(BaseUnit owner) : base(owner)
         {
             GetBaseStats = new SerializedDictionary<BaseStatType, StatValueContainer>();
-            var cfg = DataManager.Instance.GetConfigByID<BaseStatsConfig>(owner.GetID);
+            var cfg = owner.StatsConfig;
 
             if (cfg == null) return;
 

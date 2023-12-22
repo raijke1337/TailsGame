@@ -10,7 +10,7 @@ namespace Arcatech.Units.Inputs
                 case CombatActionType.Melee:
                     break;
                 case CombatActionType.Ranged:
-                    _stateMachine.NMAgent.stoppingDistance = _enemyStats.AttackRange;
+                    _stateMachine.NMAgent.stoppingDistance = EnemyStats.AttackRange;
                     break;
                 case CombatActionType.Dodge:
                     break;

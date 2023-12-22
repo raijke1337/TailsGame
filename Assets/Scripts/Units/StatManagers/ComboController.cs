@@ -18,7 +18,7 @@ namespace Arcatech.Units
         public ComboController(BaseUnit owner) : base(owner)
         {
 
-            var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>(owner.GetID);
+            var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>("default");
             if (cfg == null)
             {
                 IsReady = false;

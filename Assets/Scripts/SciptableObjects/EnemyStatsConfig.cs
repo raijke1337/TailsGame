@@ -5,12 +5,12 @@ using UnityEngine;
 public class EnemyStatsConfig : ScriptableObjectID
 {
 
-    public float lookRange;
-    public float lookSphereRad;
+    public float LookRange;
+    public float LookSphereRadius;
 
-    public float atkRange;
+    public float AttackRange;
 
-    public ReferenceUnitType Type;
+    public ReferenceUnitType UnitType;
 
 }
 

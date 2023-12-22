@@ -72,7 +72,7 @@ namespace Arcatech.Managers
             var otherUnits = new List<NPCUnit>();
             otherUnits.AddRange(_npcUnits);
             otherUnits.Remove(arg);
-            var range = arg.GetStateMachine.GetEnemyStats.LookSpereCastRange;
+            var range = arg.GetStateMachine.GetEnemyStats.LookRange;
             foreach (var u in otherUnits)
             {
                 var dist = Vector3.Distance(arg.transform.position, u.transform.position);

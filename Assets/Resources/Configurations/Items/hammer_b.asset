@@ -9,15 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b607bbfc1a5dd647ab4ac0c73784711, type: 3}
-  m_Name: hammer_base
+  m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
+  m_Name: hammer_b
   m_EditorClassIdentifier: 
   ID: hammer_base
-  ItemIcon: {fileID: 21300000, guid: 3a34746bdeb74874183899dda21424bf, type: 3}
   Description: {fileID: 11400000, guid: 1ba0a6149890aa74aa207821ae06c3f1, type: 2}
   ItemType: 1
   Skill: {fileID: 11400000, guid: 8dd1834734bb08c45bfe56e7d3f23668, type: 2}
-  Item: {fileID: 5188941293757656330, guid: 51161367717f82f488065e8932e4c042, type: 3}
+  Item: {fileID: 0}
   Effects:
     Sounds:
       _serializedList:
@@ -25,8 +24,17 @@ MonoBehaviour:
         Value:
           Sounds:
           - {fileID: 8300000, guid: 01d0a3486283f403981eab77081251eb, type: 3}
-          - {fileID: 8300000, guid: 6af9693bdc5b046ffaad0c1866e7690b, type: 3}
           - {fileID: 8300000, guid: 2c5e6aa2b82fd4758855918792d9f9b2, type: 3}
-          Loudness: 1
+          - {fileID: 8300000, guid: 6af9693bdc5b046ffaad0c1866e7690b, type: 3}
+          Loudness: 0
     Effects:
       _serializedList: []
+  WeaponConfig:
+    Charges:
+      _start: 4
+      _max: 0
+      _min: 0
+    WeaponEffects:
+    - {fileID: 11400000, guid: e4e5f4df65e19e94db47014bb1dc698c, type: 2}
+    - {fileID: 11400000, guid: d13e365eeab07bc45b326eeba35eb6de, type: 2}
+    InternalCooldown: 0.1
