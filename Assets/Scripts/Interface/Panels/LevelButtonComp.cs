@@ -1,12 +1,13 @@
+using Arcatech.Scenes;
 using TMPro;
 using UnityEngine;
 namespace Arcatech.UI
 {
     public class LevelButtonComp : MonoBehaviour
     {
-        private LevelData _data;
+        [SerializeField] private SceneContainer _data;
         private TextMeshProUGUI _text;
-        public event SimpleEventsHandler<LevelButtonComp> OnButtonClick;
+        public event SimpleEventsHandler<SceneContainer> OnButtonClick;
         private RectTransform _rect;
         public Vector2 GetSize
         {
@@ -16,7 +17,7 @@ namespace Arcatech.UI
                 return _rect.sizeDelta;
             }
         }
-        public LevelData LevelData
+        public SceneContainer LevelData
         {
             get
             {
@@ -25,14 +26,14 @@ namespace Arcatech.UI
             set
             {
                 _text = GetComponentInChildren<TextMeshProUGUI>();
-                _text.text = value.LevelNameShort;
+                _text.text = value.Description.Title;
                 _data = value;
             }
         }
 
         public void ClickedEventCall()
         {
-            OnButtonClick?.Invoke(this);
+            OnButtonClick?.Invoke(_data);
         }
 
     }

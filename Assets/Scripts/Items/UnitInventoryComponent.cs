@@ -2,6 +2,7 @@ using Arcatech.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -58,7 +59,7 @@ namespace Arcatech.Units
             e.OnEquip();
             EquipmentChangedEvent?.Invoke(e, true);
         }
-        public void AddItem(InventoryItem i)
+        public void AddItem(Item i)
         {
             if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
@@ -67,10 +68,15 @@ namespace Arcatech.Units
             }
             else
             {
-                _items.Add(i);
-                i.Owner = _owner;
-                InventoryChangedEvent?.Invoke(i, true);
+                var res = ProduceItem(i);
+                _items.Add(res);
+                InventoryChangedEvent?.Invoke(res, true);
             }
+        }
+        public void MoveItemToInventory(InventoryItem item)
+        {
+            _items.Add(item);
+            InventoryChangedEvent?.Invoke(item, true);
         }
         public InventoryItem RemoveItem(string ID)
         {
@@ -208,25 +214,14 @@ namespace Arcatech.Units
             foreach (var e in strings.Equips)
             {
                 var item = DataManager.Instance.GetConfigByID<Equip>(e);
-                _equips[item.ItemType] = new EquipmentItem(item, _owner);
+                _equips[item.ItemType] = ProduceItem(item) as EquipmentItem;
             }
 
             foreach (var i in strings.Inventory)
             {
                 var item = DataManager.Instance.GetConfigByID<Item>(i);
-                if (item is Equip e)
-                {
-
-                    _items.Add(new EquipmentItem(e, _owner));
-                }
-
-                else
-                {
-                    _items.Add(new InventoryItem(item, _owner));
-                }
+                _items.Add(ProduceItem(item));
             }
-
-
         }
 
 

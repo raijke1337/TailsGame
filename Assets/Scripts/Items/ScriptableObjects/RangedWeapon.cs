@@ -7,6 +7,5 @@ namespace Arcatech.Items
     public class RangedWeapon : Weapon
     {
         public RangedWeaponConfig RangedConfig;
-
     }
 }

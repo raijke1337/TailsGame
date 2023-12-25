@@ -53,7 +53,7 @@ namespace Arcatech.Managers
                 Debug.Log($"No player found in scene {this}");
                 return;
             }
-            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return; // used only for player actions overrides ie scene, intro etc
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return; // used only for player actions overrides ie scene, intro etc
 
             _allUnits.Add(_player);
             FinalUnitInit(_player, true);

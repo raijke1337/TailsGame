@@ -177,7 +177,7 @@ namespace Arcatech.Units
         }
         public override void StartController()
         {
-            switch (GameManager.Instance.GetCurrentLevelData.Type)
+            switch (GameManager.Instance.GetCurrentLevelData.LevelType)
             {
                 case LevelType.Menu:
                     Initialize(false);

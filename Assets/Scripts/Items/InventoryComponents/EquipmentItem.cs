@@ -69,11 +69,7 @@ namespace Arcatech.Items
             if (_instantiated != null) _instantiated.gameObject.SetActive(false);
         }
 
-        public virtual bool TryUseItem()
-        {
-            if (true) _instantiated.OnItemUse();
-            return true;
-        }
+
 
         public virtual void DoUpdates(float d)
         { }

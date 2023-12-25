@@ -73,7 +73,7 @@ namespace Arcatech.Units
             _controller.SetUnit(this);
             _controller.StartController();
             InitInventory();
-            switch (GameManager.Instance.GetCurrentLevelData.Type)
+            switch (GameManager.Instance.GetCurrentLevelData.LevelType)
             {
                 case LevelType.Scene:
                     _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
@@ -105,7 +105,7 @@ namespace Arcatech.Units
                 return;
             }
             AnimateMovement();
-            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             _controller.UpdateController(delta);
         }
 
@@ -207,7 +207,7 @@ namespace Arcatech.Units
 
         protected virtual void AnimateCombatActivity(CombatActionType type)
         {
-            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             switch (type)
             {
                 case CombatActionType.Melee:

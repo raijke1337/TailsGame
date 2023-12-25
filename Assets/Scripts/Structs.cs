@@ -33,17 +33,7 @@ namespace Arcatech
 
     #region structs 
 
-    [Serializable]
-    public class ItemsStringsSave
-    {
-        public List<string> Equips;
-        public List<string> Inventory;
-        public ItemsStringsSave()
-        {
-            Equips = new List<string>();
-            Inventory = new List<string>();
-        }
-    }
+
 
 
     [Serializable]

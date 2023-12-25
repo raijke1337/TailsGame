@@ -1,4 +1,5 @@
 
+using Arcatech.Scenes;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -22,9 +23,9 @@ namespace Arcatech.Managers
 
         private LoadedManagerBase[] _managers;
 
-        private LevelData _lvl;
+        private SceneContainer _lvl;
 
-        public void Initiate(LevelData lv)
+        public void Initiate(SceneContainer lv)
         {
             _lvl = lv;
 
@@ -35,7 +36,7 @@ namespace Arcatech.Managers
 
             GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
 
-            if (_lvl.Type == LevelType.Game)
+            if (_lvl.LevelType == LevelType.Game)
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
                 TriggersProjectilesManager = GetComponent<TriggersManager>();
@@ -66,7 +67,7 @@ namespace Arcatech.Managers
         public void UpdateManagers(float delta)
         {
 
-            if (_lvl.Type == LevelType.Game)
+            if (_lvl.LevelType == LevelType.Game)
             {
                 foreach (var m in _managers)
                 {
@@ -78,7 +79,7 @@ namespace Arcatech.Managers
         }
         public void Stop()
         {
-            if (_lvl.Type == LevelType.Game || _lvl.Type == LevelType.Scene)
+            if (_lvl.LevelType == LevelType.Game || _lvl.LevelType == LevelType.Scene)
             {
                 foreach (var m in _managers)
                 { if (m != null) m.Stop(); }

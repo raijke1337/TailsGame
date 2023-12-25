@@ -1,7 +1,9 @@
 //using Newtonsoft.Json;
 using Arcatech.Items;
+using Arcatech.Scenes;
 using Arcatech.Units;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,48 +14,60 @@ namespace Arcatech.Managers
     {
 
         [SerializeField] private PlayerUnit PlayerPrefab;
-        [SerializeField] private LoadedManagers GameControllersPrefab;
+        [SerializeField,Tooltip("Level to use for equips change,started if requested to load a level of type GAME")] private SceneContainer EquipmentsScene;
+
+
+        [Space,SerializeField] private LoadedManagers GameControllersPrefab;
         [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
         [SerializeField] private IsoCameraController gameCameraPrefab;
 
-
+       
         private LoadedManagers _gameControllers;
 
         public LoadedManagers GetGameControllers => _gameControllers;
         public GameInterfaceManager GetGameInterfacePrefab => gameInterfaceManagerPrefab;
         public IsoCameraController GetGameCameraPrefab => gameCameraPrefab;
 
+        #region levels management
 
 
-        public LevelData GetLevelData(string ID) => _levels[ID];
-        private Dictionary<string, LevelData> _levels;
+        public SceneContainer[] GetDefaultGameLevels
+        {
+            get
+            {
+                return _levels.Values.Where(t => t.IsUnlockedByDefault == true && t.LevelType == LevelType.Game).ToArray();
+            }
+        }
 
-        private LevelData _currentLevel;
-        private string gameLevelID;
-        public LevelData GetCurrentLevelData { get => _currentLevel; }
+        public SceneContainer GetCurrentLevelData { get => _currentLevel; }
+        private SceneContainer _currentLevel;
+        public SceneContainer GetLevelData(int index) => _levels[index];
+        private Dictionary<int, SceneContainer> _levels;
+
+
+
+
+
+
+
+
+
+
+        #endregion
+
+
+
 
         #region default
         private void OnEnable()
         {
-            SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-            var levelCards = DataManager.Instance.GetAssetsOfType<LevelCardSO>(Constants.Configs.c_LevelsPath);
-            _levels = new Dictionary<string, LevelData> {
-                {"",null}
-            };
-
-            foreach (var level in levelCards)
-            {
-                _levels[level.ID] = new LevelData(level);
-            }
-            _currentLevel = _levels["main"]; // TODO: Hardcode
-
+            SceneManager.sceneLoaded += SwitchedScenesCleanUp;
         }
 
         private void Update()
         {
-            if (_currentLevel != null && _currentLevel.Type == LevelType.Game && _gameControllers != null)
+            if (_currentLevel != null && _currentLevel.LevelType == LevelType.Game && _gameControllers != null)
             {
-
                 _gameControllers.UpdateManagers(Time.deltaTime);
             }
         }
@@ -83,7 +97,7 @@ namespace Arcatech.Managers
             {
                 try
                 {
-                    var typeLoad = _levels[ID].Type;
+                    var typeLoad = _levels[ID].LevelType;
                     switch (typeLoad)
                     {
                         case LevelType.Menu:
@@ -100,12 +114,12 @@ namespace Arcatech.Managers
                 }
                 catch
                 {
-                    Debug.Log($"Something went wrong when switching to level {ID} from {_currentLevel.LevelID}");
+                    Debug.Log($"Something went wrong when switching to level {ID} from {_currentLevel.ID}");
                 }
             }
         }
 
-        private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+        private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
         {
             _gameControllers = Instantiate(GameControllersPrefab);
             _gameControllers.Initiate(_currentLevel);
@@ -114,7 +128,7 @@ namespace Arcatech.Managers
         public void OnStartNewGame()
         {
             DataManager.Instance.OnNewGame();
-            RequestLevelLoad("intro");
+            RequestLevelLoad("intro0");
         }
         public void OnReturnToMain()
         {
@@ -129,20 +143,21 @@ namespace Arcatech.Managers
         }
 
 
-        public void OnLevelComplete()
+        public void OnLevelCompleteTrigger(SceneContainer completedLV)
         {
+            gameLevelID = completedLV.ID;
             OnFinishedEquips(); // update save data with picked up items
             if (_gameControllers != null)
             {
                 _gameControllers.Stop();
             }
 
-            var next = _currentLevel.NextLevelID;
+            var next = completedLV.NextLevel;
 
-            DataManager.Instance.UpdateSaveData(next);
+            DataManager.Instance.UpdateSaveData(completedLV);
 
 
-            LoadLevel(next);
+            LoadLevel(next.ID);
         }
 
 
@@ -153,7 +168,7 @@ namespace Arcatech.Managers
 
         public void OnItemPickup(Item item)
         {
-            _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.AddItem(new Items.InventoryItem(item, _gameControllers.UnitsManager.GetPlayerUnit));
+            _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.AddItem(item);
         }
         public void QuitGame()
         {

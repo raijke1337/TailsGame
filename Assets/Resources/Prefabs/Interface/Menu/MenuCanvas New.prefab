@@ -3767,13 +3767,14 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6686885159015226963}
-        m_TargetAssemblyTypeName: Arcatech.UI.MainMenuComp, Assembly-CSharp
-        m_MethodName: OnGallery
-        m_Mode: 1
+      - m_Target: {fileID: 4190454573045328351}
+        m_TargetAssemblyTypeName: Arcatech.UI.LevelSelectMenuComp, Assembly-CSharp
+        m_MethodName: OnLevelSelected
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 11400000, guid: 0775704f387b12b4b8ddb363dda0e343,
+            type: 2}
+          m_ObjectArgumentAssemblyTypeName: Arcatech.Scenes.SceneContainer, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -6164,7 +6165,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1820537810037486314}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Arcatech.Managers.GameManager, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &4718634675987938075
 MonoBehaviour:
   m_ObjectHideFlags: 0

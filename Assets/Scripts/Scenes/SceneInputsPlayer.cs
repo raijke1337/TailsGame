@@ -1,6 +1,8 @@
+using Arcatech.Units;
+using Arcatech.Units.Inputs;
 using System.Collections;
 using UnityEngine;
-namespace Arcatech.Units.Inputs
+namespace Arcatech.Scenes
 {
     public class SceneInputsPlayer : MonoBehaviour
     {

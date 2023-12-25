@@ -102,7 +102,7 @@ namespace Arcatech.Managers
             _equips.RemoveTileContent(arg).ItemClickedEvent -= OnEquipmentTileClicked;
             _items.AddTileContent(arg).ItemClickedEvent += OnInventoryTileClicked;
 
-            _player.GetUnitInventory.AddItem(_player.GetUnitInventory.UnequipItem(arg.ItemType));
+            _player.GetUnitInventory.MoveItemToInventory(_player.GetUnitInventory.UnequipItem(arg.ItemType));
         }
 
         private void Update()

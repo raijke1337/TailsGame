@@ -20,7 +20,7 @@ namespace Arcatech.Managers
         {
             _texts = TextsManager.Instance;
 
-            if (GameManager.Instance.GetCurrentLevelData.Type == LevelType.Game)
+            if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
                 _player.IsNeeded = true;
                 _player.StartController();
@@ -115,7 +115,7 @@ namespace Arcatech.Managers
         }
         public void OnRestart()
         {
-            GameManager.Instance.RequestLevelLoad(GameManager.Instance.GetCurrentLevelData.LevelID);
+            GameManager.Instance.RequestLevelLoad(GameManager.Instance.GetCurrentLevelData.ID);
         }
 
         #endregion

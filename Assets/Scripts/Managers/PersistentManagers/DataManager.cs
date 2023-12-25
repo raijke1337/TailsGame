@@ -1,5 +1,7 @@
 using Arcatech;
 using Arcatech.Items;
+using Arcatech.Managers;
+using Arcatech.Scenes;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,6 +16,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance;
     private void Awake()
     {
+        _serializer = new SavesSerializer();
         if (Instance == null)
         {
             Instance = this;
@@ -24,49 +27,37 @@ public class DataManager : MonoBehaviour
 
 
 
-    #region save
+    #region saves
 
-    private SerializedSaveData _loadedSave;
-    public SerializedSaveData GetSaveData
+    private SavesSerializer _serializer;
+
+    private GameSave _loadedSave;
+    public GameSave GetSaveData
     {
         get
         {
-            if (_loadedSave == null) SetupSaves();
+            if (_loadedSave == null && _serializer.TryLoadSaveData(out var s))
+            {
+
+            }
             return _loadedSave;
         }
     }
-    private string _savepath;
-    private void SetupSaves()
-    {
-        _savepath = Application.dataPath + Constants.Configs.c_SavesPath;
-        // TODO proper serialization
-
-        var data = Extensions.SaveLoad.LoadSaveDataFromXML(_savepath);
-        if (data == null)
-        {
-            _loadedSave = CreateDefaultSave();
-        }
-        else
-        {
-            _loadedSave = data;
-        }
-
-    }
-    public void UpdateSaveData(string newLevel)
+    public void UpdateSaveData(SceneContainer newLevel)
     {
         if (!_loadedSave.OpenedLevels.Contains(newLevel))
         {
             _loadedSave.OpenedLevels.Add(newLevel);
-            Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
+            Extensions.SavesSerializer.SaveDataXML(_loadedSave, _savepath);
         }
     }
     public void UpdateSaveData(ItemsStringsSave data)
     {
         _loadedSave.PlayerItems = data;
-        Extensions.SaveLoad.SaveDataXML(_loadedSave, _savepath);
+        Extensions.SavesSerializer.SaveDataXML(_loadedSave, _savepath);
     }
 
-    private SerializedSaveData CreateDefaultSave()
+    private GameSave CreateDefaultSave()
     {
 
         ItemsStringsSave items = new ItemsStringsSave();
@@ -80,20 +71,25 @@ public class DataManager : MonoBehaviour
             items.Inventory.Add(i.ID);
         }
 
-        SerializedSaveData save = new SerializedSaveData(
-            new List<string>
-            { Constants.Configs.c_FirstLevelID },
-              items
-            );
-        Extensions.SaveLoad.SaveDataXML(save, _savepath);
+        var lvs = GameManager.Instance.GetDefaultGameLevels;
+        var list = new List<string>();
+        foreach (var l in lvs)
+        {
+            list.Add(l.ID);
+        }
 
-        return save;
+        SerializedSaveData save = new SerializedSaveData(list,items);
+        Extensions.SavesSerializer.SaveDataXML(save, _savepath);
+
+        return new GameSave(save);
+
     }
 
 
     public void OnNewGame()
     {
-        CreateDefaultSave();
+        _loadedSave = CreateDefaultSave ();
+        _serializer.
     }
     #endregion
 
@@ -224,7 +220,7 @@ public class DataManager : MonoBehaviour
 
     #endregion
 
-
+    #region prefs
     public void SetPlayerPref(string pref, object value)
     {
         if (value is float)
@@ -240,4 +236,6 @@ public class DataManager : MonoBehaviour
             PlayerPrefs.SetString(pref, (string)value);
         }
     }
+
+    #endregion
 }

@@ -28,7 +28,7 @@ namespace Arcatech.Items
                 weap.PrefabCollisionEvent += OnWeapTriggerEvent;
             }
         }
-        public override bool TryUseItem()
+        public virtual bool TryUseItem()
         {
             bool ok = _currentCD <= 0;
             if (ok)

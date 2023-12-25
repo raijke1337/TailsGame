@@ -1,4 +1,5 @@
 using Arcatech.Managers;
+using Arcatech.Scenes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -23,11 +24,11 @@ namespace Arcatech.UI
             Assert.IsNotNull(_buttonPrefab);
 #endif
             var save = DataManager.Instance.GetSaveData;
-            List<LevelData> _lvls = new List<LevelData>();
+            List<SceneContainer> _lvls = new List<SceneContainer>();
             foreach (var l in save.OpenedLevels)
             {
                 var lv = GameManager.Instance.GetLevelData(l);
-                if (lv != null && lv.Type == LevelType.Game)
+                if (lv != null && lv.LevelType == LevelType.Game)
                 {
                     _lvls.Add(lv);
                 }
@@ -51,10 +52,9 @@ namespace Arcatech.UI
             }
         }
 
-        private void OnLevelSelected(LevelButtonComp data)
+        public void OnLevelSelected(SceneContainer data)
         {
-
-            GameManager.Instance.RequestLevelLoad(data.LevelData.LevelID);
+            GameManager.Instance.RequestLevelLoad(data.ID);
         }
         public void OnBack()
         {

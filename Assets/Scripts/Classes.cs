@@ -1,4 +1,5 @@
 using Arcatech.Items;
+using Arcatech.Scenes;
 using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
@@ -10,27 +11,7 @@ namespace Arcatech
 {
 
     #region saves
-    [XmlRoot("GameSave"), Serializable]
-    public class SerializedSaveData
-    {
-        public List<string> OpenedLevels;
-        public ItemsStringsSave PlayerItems;
 
-        public SerializedSaveData(List<string> levels, ItemsStringsSave items)
-        {
-            OpenedLevels = new List<string>();
-            foreach (var l in levels)
-            {
-                if (!OpenedLevels.Contains(l)) OpenedLevels.Add(l);
-            }
-            PlayerItems = items;
-        }
-        public SerializedSaveData()
-        {
-            OpenedLevels = new List<string>();
-        }
-
-    }
 
     #endregion
 
@@ -41,8 +22,7 @@ namespace Arcatech
         {
             public const string c_AllConfigsPath = "/Resources/Configurations/";
             public const string c_SavesPath = "/Saves/Save.xml";
-            public const string c_LevelsPath = "/Resources/Configurations/LevelCards";
-            public const string c_FirstLevelID = "debug";
+            public const string c_LevelsPath = "/Resources/Levels";
         }
         public static class Objects
         {
@@ -277,30 +257,5 @@ namespace Arcatech
     }
 
     #endregion
-    #region levels
 
-    [Serializable]
-    public class LevelData
-    {
-        public string LevelID;
-        public int SceneLoaderIndex;
-        public string NextLevelID;
-        [Space]
-        public string LevelNameShort;
-        public string DescriptionContainer;
-        public LevelType Type;
-        public AudioClip Music;
-
-        public LevelData(LevelCardSO data)
-        {
-            LevelID = data.ID;
-            SceneLoaderIndex = data.SceneLoaderIndex;
-            LevelNameShort = data.LevelNameShort;
-            DescriptionContainer = data.TextContainerID;
-            Type = data.LevelType;
-            NextLevelID = data.nextID;
-            Music = data.Music;
-        }
-    }
-    #endregion
 }

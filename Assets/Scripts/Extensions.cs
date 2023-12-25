@@ -8,42 +8,7 @@ namespace Arcatech
 {
     public static class Extensions
     {
-        #region XML
 
-        public static class SaveLoad
-        {
-            public static void SaveDataXML(SerializedSaveData data, string savepath)
-            {
-                XmlSerializer ser = new XmlSerializer(typeof(SerializedSaveData));
-                FileStream fs = new FileStream(savepath, FileMode.Create);
-                ser.Serialize(fs, data);
-                fs.Close();
-                AssetDatabase.Refresh();
-            }
-            public static SerializedSaveData LoadSaveDataFromXML(string savepath)
-            {
-                try
-                {
-                    XmlSerializer ser = new XmlSerializer(typeof(SerializedSaveData));
-                    FileStream fs = new FileStream(savepath, FileMode.Open);
-                    SerializedSaveData data = (SerializedSaveData)ser.Deserialize(fs);
-                    fs.Close();
-
-                    AssetDatabase.Refresh();
-                    return data;
-                }
-                catch
-                {
-                    Debug.Log("Save file not found, creating new");
-                    return null;
-                }
-
-            }
-
-        }
-
-
-        #endregion
 
         #region tiles
 

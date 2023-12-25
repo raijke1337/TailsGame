@@ -25,7 +25,7 @@ namespace Arcatech.Units.Inputs
         {
             base.StartController();
 
-            if (GameManager.Instance.GetCurrentLevelData.Type != LevelType.Game) return;
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
 
 
             _adj ??= new IsoCamAdjust();

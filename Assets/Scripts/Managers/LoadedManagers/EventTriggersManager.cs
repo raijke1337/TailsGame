@@ -73,7 +73,7 @@ namespace Arcatech.Managers
             }
             if (tr is LevelCompleteTrigger comp)
             {
-                GameManager.Instance.OnLevelComplete();
+                GameManager.Instance.OnLevelCompleteTrigger(comp.NextLevel);
             }
         }
 

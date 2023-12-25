@@ -113,7 +113,17 @@ namespace Arcatech.Units
             }
             else
             {
-                bool ok = _equipment[type].TryUseItem();
+                bool ok;
+                switch (type)
+                {
+                    case EquipItemType.RangedWeap:
+                        var ranged = _equipment[type] as RangedWeaponItem;
+                        ok = ranged.TryUseItem();
+                        break;
+                    default:
+                        ok = (_equipment[type] as WeaponItem) .TryUseItem();
+                        break;
+                }
                 if (ok)
                 {
                     EffectEventCallback(new EffectRequestPackage(_equipment[type].Effects, EffectMoment.OnStart, _equipment[type].GetInstantiatedPrefab().transform));
