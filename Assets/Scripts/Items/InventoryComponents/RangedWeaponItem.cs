@@ -71,7 +71,7 @@ namespace Arcatech.Items
             _rangedBusy = true;
             while (shots > shotsDone)
             {
-                Debug.Log("Pew");
+                //Debug.Log("Pew");
                 PlacedProjectileEvent(Config.Projectile.GetProjectile(Owner));
                 shotsDone++;
                 _currentAmmo--;

@@ -1,12 +1,15 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Decision/AllyFound")]
-public class AllyFoundDecision : Decision
+namespace Arcatech.AI
 {
-    public override bool Decide(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Decision/Ally    ")]
+    public class AllyFoundDecision : Decision
     {
-        if (controller.FocusUnit == null) return false;
-        return controller.FocusUnit.Side == controller.StateMachineUnit.Side;
+        public override bool Decide(StateMachine controller)
+        {
+            if (controller.FocusUnit == null) return false;
+            return controller.FocusUnit.Side == controller.StateMachineUnit.Side;
+        }
     }
-}
 
+}

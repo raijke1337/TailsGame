@@ -54,7 +54,7 @@ namespace Arcatech.Units
         public virtual void OnUnitSpottedPlayer()
         {
             // nothing here
-            Debug.Log($"{GetFullName} saw player");
+            //Debug.Log($"{GetFullName} saw player");
         }
 
 

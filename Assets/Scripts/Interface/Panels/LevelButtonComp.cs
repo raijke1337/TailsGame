@@ -1,3 +1,4 @@
+using Arcatech.Managers;
 using Arcatech.Scenes;
 using TMPro;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Arcatech.UI
                 return _rect.sizeDelta;
             }
         }
-        public SceneContainer LevelData
+        public SceneContainer LevelData // set for instantiated buttons
         {
             get
             {
@@ -30,10 +31,17 @@ namespace Arcatech.UI
                 _data = value;
             }
         }
-
+        private void OnEnable() // used for default keys
+        {
+            if (_data != null)
+            {
+                _text = GetComponentInChildren<TextMeshProUGUI>();
+                _text.text = _data.Description.Title;
+            }
+        }
         public void ClickedEventCall()
         {
-            OnButtonClick?.Invoke(_data);
+            GameManager.Instance.RequestLoadSceneFromContainer(_data);
         }
 
     }

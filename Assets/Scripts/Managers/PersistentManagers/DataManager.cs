@@ -2,12 +2,12 @@ using Arcatech;
 using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Scenes;
+using Arcatech.Units;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Extensions = Arcatech.Extensions;
 
 public class DataManager : MonoBehaviour
 {
@@ -25,10 +25,59 @@ public class DataManager : MonoBehaviour
     }
     #endregion
 
+    #region level containers
+
+    private List<SceneContainer> _allLevels;
+    private void RefreshSceneContainers()
+    {
+        if (_allLevels == null)
+        {
+            _allLevels = new List<SceneContainer>();
+            foreach (var l in GetAssetsOfType<SceneContainer>(Constants.Configs.c_LevelsPath))
+            {
+                _allLevels.Add(l);
+            }
+        }
+    }
+    public SceneContainer GetSceneContainer(string ID)
+    {
+        RefreshSceneContainers();
+        try
+        {
+            return _allLevels.First(t => t.ID == ID);
+        }
+        catch
+        {
+            Debug.LogWarning($"Scene container with ID {ID} not found");
+            return null;
+        }
+    }
+    public SceneContainer GetSceneContainer(int index)
+    {
+        RefreshSceneContainers();
+        try
+        {
+            return _allLevels.First(t => t.SceneLoaderIndex == index);
+        }
+        catch
+        {
+            Debug.LogWarning($"Scene container with loader index {index} not found");
+            return null;
+        }
+    }
+
+    #endregion
 
 
     #region saves
-
+    public bool IsFreshSave
+    {
+        get
+        {
+            var s = GetSaveData; // just refrseh
+            return s.OpenedLevels.Count == 0;
+        }
+    }
     private SavesSerializer _serializer;
 
     private GameSave _loadedSave;
@@ -36,30 +85,38 @@ public class DataManager : MonoBehaviour
     {
         get
         {
-            if (_loadedSave == null && _serializer.TryLoadSaveData(out var s))
+            RefreshSceneContainers();
+            if (_loadedSave == null)
             {
+                if (_serializer.TryLoadSerializedSave(out var s))
+                {
+                    // save available
 
+                    List<SceneContainer> unlocked = new List<SceneContainer>();
+                    foreach (string id in s.OpenedLevels)
+                    {
+                        var cont = GetSceneContainer(id);
+                        if (cont != null)
+                        {
+                            unlocked.Add(cont);
+                        }
+                    }
+
+                    _loadedSave = new GameSave(unlocked, s.PlayerItems);
+                }
+                else
+                {
+                    _loadedSave = CreateDefaultSave();
+                    _serializer.UpdateSerializedSave(_loadedSave);
+                }
             }
+            
             return _loadedSave;
         }
     }
-    public void UpdateSaveData(SceneContainer newLevel)
-    {
-        if (!_loadedSave.OpenedLevels.Contains(newLevel))
-        {
-            _loadedSave.OpenedLevels.Add(newLevel);
-            Extensions.SavesSerializer.SaveDataXML(_loadedSave, _savepath);
-        }
-    }
-    public void UpdateSaveData(ItemsStringsSave data)
-    {
-        _loadedSave.PlayerItems = data;
-        Extensions.SavesSerializer.SaveDataXML(_loadedSave, _savepath);
-    }
-
     private GameSave CreateDefaultSave()
     {
-
+        RefreshSceneContainers();
         ItemsStringsSave items = new ItemsStringsSave();
         var defcfg = GetConfigByID<UnitItemsSO>("player");
         foreach (var e in defcfg.Equipment)
@@ -70,29 +127,40 @@ public class DataManager : MonoBehaviour
         {
             items.Inventory.Add(i.ID);
         }
-
-        var lvs = GameManager.Instance.GetDefaultGameLevels;
-        var list = new List<string>();
-        foreach (var l in lvs)
+        List<SceneContainer> list = new List<SceneContainer>();
+        foreach (var cont in _allLevels)
         {
-            list.Add(l.ID);
+            if (cont.IsUnlockedByDefault && cont.LevelType == LevelType.Game) list.Add(cont);
         }
 
-        SerializedSaveData save = new SerializedSaveData(list,items);
-        Extensions.SavesSerializer.SaveDataXML(save, _savepath);
-
-        return new GameSave(save);
+        return new GameSave(list,items); 
 
     }
-
+    public void UpdateInventoryInSave(UnitInventoryComponent inv,bool writeSave = false)
+    {
+        _loadedSave.Items = inv.PackSaveData;
+        if (writeSave) _serializer.UpdateSerializedSave(_loadedSave);
+    }
+    public void AddUnlockedLevelToSave(SceneContainer lv, bool writeSave = false)
+    {
+        if (!_loadedSave.OpenedLevels.Contains(lv))
+        {
+            _loadedSave.OpenedLevels.Add(lv);
+        }
+        if (writeSave) _serializer.UpdateSerializedSave(_loadedSave);
+    }
 
     public void OnNewGame()
     {
         _loadedSave = CreateDefaultSave ();
-        _serializer.
+        _serializer.UpdateSerializedSave(_loadedSave);
     }
     #endregion
 
+    private void OnApplicationQuit()
+    {
+        _serializer.UpdateSerializedSave(_loadedSave);
+    }
 
 
     #region configs

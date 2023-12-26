@@ -141,7 +141,7 @@ namespace Arcatech.Units
         protected override void InitInventory()
         {
 
-            var savedEquips = DataManager.Instance.GetSaveData.PlayerItems;
+            var savedEquips = DataManager.Instance.GetSaveData.Items;
 
             GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
             CreateStartingEquipments(GetUnitInventory);

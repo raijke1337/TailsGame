@@ -16,7 +16,7 @@ namespace Arcatech.Managers
         [SerializeField] private TooltipComp _tooltipPrefab;
         private TooltipComp instantiatedTT;
 
-        [SerializeField] private bool _showingTooltip = false;
+       // [SerializeField] private bool _showingTooltip = false;
 
         private PlayerUnit _player;
 
@@ -110,24 +110,8 @@ namespace Arcatech.Managers
             _items.UpdateController(Time.deltaTime); // nothing here for now
             _equips.UpdateController(Time.deltaTime);
 
-            //if (instantiatedTT == null)
-            //{
-            //    instantiatedTT = Instantiate(_tooltipPrefab);
-            //    var rect = instantiatedTT.GetComponent<RectTransform>();
-            //    rect.SetParent(_tooltips.transform);
-            //}
-            //instantiatedTT.gameObject.SetActive(_showingTooltip);
-            //if (_showingTooltip)
-            //{
-            //    instantiatedTT.GetRect.anchoredPosition = Mouse.current.position.ReadValue();
-            //}
         }
 
-        private void HandleTooltipShow(InventoryItem arg1, bool arg2)
-        {
-            // _showingTooltip = arg2;
-            //instantiatedTT.SetTexts(arg1);
-        }
 
         private void OnDisable()
         {

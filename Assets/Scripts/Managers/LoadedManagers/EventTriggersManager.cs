@@ -63,7 +63,7 @@ namespace Arcatech.Managers
             }
             if (tr is LevelRewardTrigger rew)
             {
-                GameManager.Instance.OnItemPickup(rew.Content);
+               u.GetUnitInventory.AddItem(rew.Content);
                 ManageTrigger(rew, false);
 
             }
@@ -73,7 +73,7 @@ namespace Arcatech.Managers
             }
             if (tr is LevelCompleteTrigger comp)
             {
-                GameManager.Instance.OnLevelCompleteTrigger(comp.NextLevel);
+                GameManager.Instance.OnLevelCompleteTrigger(comp.UnlocksLevel);
             }
         }
 

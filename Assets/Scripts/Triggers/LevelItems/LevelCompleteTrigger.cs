@@ -5,7 +5,7 @@ namespace Arcatech.Triggers
 {
     public class LevelCompleteTrigger : BaseLevelEventTrigger
     {
-        public SceneContainer NextLevel;
+        public SceneContainer UnlocksLevel;
 
         protected override void OnEnter()
         {

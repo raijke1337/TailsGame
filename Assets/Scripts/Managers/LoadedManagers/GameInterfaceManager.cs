@@ -115,7 +115,7 @@ namespace Arcatech.Managers
         }
         public void OnRestart()
         {
-            GameManager.Instance.RequestLevelLoad(GameManager.Instance.GetCurrentLevelData.ID);
+            GameManager.Instance.RequestLoadSceneFromContainer(GameManager.Instance.GetCurrentLevelData);
         }
 
         #endregion

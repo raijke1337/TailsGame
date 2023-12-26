@@ -4,8 +4,8 @@ using UnityEngine;
 public class DoorOpensWhenEnemyDIes : MonoBehaviour
 {
     [SerializeField] private BaseUnit UnitToKill;
-    [SerializeField] private float SpeedMult = 1f;
-    [SerializeField] private float AnimationTime = 1f;
+    //[SerializeField] private float SpeedMult = 1f;
+    //[SerializeField] private float AnimationTime = 1f;
 
     private void Start()
     {

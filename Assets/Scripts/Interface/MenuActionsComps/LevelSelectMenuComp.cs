@@ -10,7 +10,7 @@ namespace Arcatech.UI
     {
         [SerializeField] RectTransform _content;
         [SerializeField] private LevelButtonComp _buttonPrefab;
-        private LevelButtonComp[] _buttons;
+        private List<LevelButtonComp> _buttons;
 
         private void Start()
         {
@@ -23,45 +23,28 @@ namespace Arcatech.UI
             Assert.IsNotNull(_content);
             Assert.IsNotNull(_buttonPrefab);
 #endif
-            var save = DataManager.Instance.GetSaveData;
-            List<SceneContainer> _lvls = new List<SceneContainer>();
-            foreach (var l in save.OpenedLevels)
+            if (DataManager.Instance.IsFreshSave)
             {
-                var lv = GameManager.Instance.GetLevelData(l);
-                if (lv != null && lv.LevelType == LevelType.Game)
-                {
-                    _lvls.Add(lv);
-                }
+                this.gameObject.SetActive(false);
+                return; // button hidden because no levels available
             }
+
+            var lvs = DataManager.Instance.GetSaveData.OpenedLevels;
+
             //float vertOffs = _buttonPrefab.GetSize.y;
 
-            _buttons = new LevelButtonComp[_lvls.Count];
-
-
-            for (int i = 0; i < _lvls.Count; i++)
+            _buttons = new List<LevelButtonComp>();
+            foreach (var lv in lvs)
             {
-                var b = Instantiate(_buttonPrefab);
-                //var rect = b.GetComponent<RectTransform>();
-                b.transform.SetParent(_content, false);
-
-
-                b.LevelData = _lvls[i];
-                b.OnButtonClick += OnLevelSelected;
-
-                _buttons[i] = b;
+                if (lv.LevelType == LevelType.Game)
+                {
+                    var b = Instantiate(_buttonPrefab);
+                    b.transform.SetParent(_content, false);
+                    b.LevelData = lv;
+                    _buttons.Add(b);
+                }
             }
         }
-
-        public void OnLevelSelected(SceneContainer data)
-        {
-            GameManager.Instance.RequestLevelLoad(data.ID);
-        }
-        public void OnBack()
-        {
-            GameManager.Instance.OnReturnToMain();
-        }
-
-
     }
 
 }

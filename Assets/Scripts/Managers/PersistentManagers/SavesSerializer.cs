@@ -62,10 +62,7 @@ namespace Arcatech.Managers
         public SavesSerializer()
         {
             _path =  Application.dataPath + Constants.Configs.c_SavesPath;
-            if ( TryLoadSaveData(out var s ))
-            { 
-                _data = s;
-            }
+            _data = TryDeserializeData();
         }
 
         public bool TryLoadSerializedSave(out SerializedSaveData save)
@@ -81,7 +78,7 @@ namespace Arcatech.Managers
         }
 
 
-        internal void SaveDataXML(SerializedSaveData data)
+        private void SaveDataXML(SerializedSaveData data)
         {
             XmlSerializer ser = new XmlSerializer(typeof(SerializedSaveData));
             FileStream fs = new FileStream(_path, FileMode.Create);
@@ -89,26 +86,24 @@ namespace Arcatech.Managers
             fs.Close();
             AssetDatabase.Refresh();
         }
-        internal bool TryLoadSaveData(out SerializedSaveData data)
+        private SerializedSaveData TryDeserializeData()
         {
 
             try
             {
                 XmlSerializer ser = new XmlSerializer(typeof(SerializedSaveData));
                 FileStream fs = new FileStream(_path, FileMode.Open);
-                data = (SerializedSaveData)ser.Deserialize(fs);
+                var data = (SerializedSaveData)ser.Deserialize(fs);
                 fs.Close();
 
                 AssetDatabase.Refresh();
-                return true;
+                return data;
             }
             catch
             {
-                data = null;
-                Debug.Log("Save file not found, creating new");
-                return false;
+                Debug.Log("xml save data not found");
+                return null;
             }
-
         }
     }
 }

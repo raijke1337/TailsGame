@@ -1098,7 +1098,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7214710826446999528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Arcatech.UI.SettingsMenuComp, Assembly-CSharp
         m_MethodName: NewSetting
         m_Mode: 5
@@ -2169,7 +2169,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7214710826446999528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Arcatech.UI.SettingsMenuComp, Assembly-CSharp
         m_MethodName: NewSetting
         m_Mode: 5
@@ -3214,7 +3214,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7214710826446999528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Arcatech.UI.SettingsMenuComp, Assembly-CSharp
         m_MethodName: NewSetting
         m_Mode: 5
@@ -3767,14 +3767,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 4190454573045328351}
-        m_TargetAssemblyTypeName: Arcatech.UI.LevelSelectMenuComp, Assembly-CSharp
-        m_MethodName: OnLevelSelected
-        m_Mode: 2
+      - m_Target: {fileID: 1630084988138368169}
+        m_TargetAssemblyTypeName: Arcatech.UI.MenuPrefabControllerComp, Assembly-CSharp
+        m_MethodName: OnGallery
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 0775704f387b12b4b8ddb363dda0e343,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: Arcatech.Scenes.SceneContainer, Assembly-CSharp
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -4756,7 +4755,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2485503660939680010}
-  - component: {fileID: 7214710826446999528}
   m_Layer: 0
   m_Name: settingsMenu
   m_TagString: Untagged
@@ -4788,18 +4786,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7214710826446999528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2722555312418153322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bed74a8318abfa742868aa138b2ff6fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2748200827049486516
 GameObject:
   m_ObjectHideFlags: 0
@@ -6624,7 +6610,6 @@ GameObject:
   - component: {fileID: 785794813085270200}
   - component: {fileID: 2595071004475476644}
   - component: {fileID: 8925133344062648766}
-  - component: {fileID: 6686885159015226963}
   m_Layer: 5
   m_Name: MainMenuPanel
   m_TagString: Untagged
@@ -6691,18 +6676,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6686885159015226963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4773632932069346275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 122e506428a67084286b7dcf6d62fd82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4801691866823891774
 GameObject:
   m_ObjectHideFlags: 0
@@ -7303,18 +7276,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6686885159015226963}
-        m_TargetAssemblyTypeName: Arcatech.UI.MainMenuComp, Assembly-CSharp
-        m_MethodName: OnStartNewGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 8088974313097381211}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -7331,6 +7292,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1630084988138368169}
+        m_TargetAssemblyTypeName: Arcatech.UI.MenuPrefabControllerComp, Assembly-CSharp
+        m_MethodName: OnNew
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11250,8 +11223,9 @@ GameObject:
   - component: {fileID: 6156334552288524365}
   - component: {fileID: 8846623964500335079}
   - component: {fileID: 8739816230375572346}
+  - component: {fileID: 1630084988138368169}
   m_Layer: 5
-  m_Name: MenuCanvas New
+  m_Name: MainMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11340,6 +11314,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1630084988138368169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7104161066805370100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 416782ac7001e3b4b844b4ef9127f8b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lv: {fileID: 1504292244370246323}
+  _gallery: {fileID: 1903291131967395002}
 --- !u!1 &7187060138380098527
 GameObject:
   m_ObjectHideFlags: 0
@@ -12088,7 +12076,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7214710826446999528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Arcatech.UI.SettingsMenuComp, Assembly-CSharp
         m_MethodName: OnReset
         m_Mode: 1
@@ -12712,7 +12700,7 @@ GameObject:
   - component: {fileID: 4636895696540633982}
   - component: {fileID: 7643265340455649872}
   - component: {fileID: 6467127165100697046}
-  - component: {fileID: 4190454573045328351}
+  - component: {fileID: 1275337585575091544}
   m_Layer: 5
   m_Name: LevelSelectPanel
   m_TagString: Untagged
@@ -12779,7 +12767,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4190454573045328351
+--- !u!114 &1275337585575091544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15086,7 +15074,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7214710826446999528}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Arcatech.UI.SettingsMenuComp, Assembly-CSharp
         m_MethodName: OnSave
         m_Mode: 1
@@ -15776,7 +15764,7 @@ PrefabInstance:
     - target: {fileID: 3183237299359073252, guid: 12b9ff3ad1008ee4884f513f9f9cfbea,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000030517578
+      value: 0.00015258789
       objectReference: {fileID: 0}
     - target: {fileID: 3363568835890115008, guid: 12b9ff3ad1008ee4884f513f9f9cfbea,
         type: 3}

@@ -1,21 +1,31 @@
 //using Newtonsoft.Json;
 using Arcatech.Items;
 using Arcatech.Scenes;
+using Arcatech.UI;
 using Arcatech.Units;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 namespace Arcatech.Managers
 {
     public class GameManager : MonoBehaviour
     {
+        #region controllers
 
+        #region SingletonLogic
+
+        public static GameManager Instance;
+        private void Awake()
+        {
+            if (Instance == null)
+                Instance = this;
+            else Destroy(gameObject);
+        }
+        #endregion
         [SerializeField] private PlayerUnit PlayerPrefab;
-        [SerializeField,Tooltip("Level to use for equips change,started if requested to load a level of type GAME")] private SceneContainer EquipmentsScene;
-
+        [SerializeField] private MenuPrefabControllerComp _mainMenuPrefab;
 
         [Space,SerializeField] private LoadedManagers GameControllersPrefab;
         [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
@@ -28,40 +38,20 @@ namespace Arcatech.Managers
         public GameInterfaceManager GetGameInterfacePrefab => gameInterfaceManagerPrefab;
         public IsoCameraController GetGameCameraPrefab => gameCameraPrefab;
 
-        #region levels management
 
-
-        public SceneContainer[] GetDefaultGameLevels
-        {
-            get
-            {
-                return _levels.Values.Where(t => t.IsUnlockedByDefault == true && t.LevelType == LevelType.Game).ToArray();
-            }
-        }
-
-        public SceneContainer GetCurrentLevelData { get => _currentLevel; }
-        private SceneContainer _currentLevel;
-        public SceneContainer GetLevelData(int index) => _levels[index];
-        private Dictionary<int, SceneContainer> _levels;
-
-
-
-
-
-
-
-
-
-
-        #endregion
-
-
-
-
-        #region default
         private void OnEnable()
         {
+            _dataManager = DataManager.Instance;
             SceneManager.sceneLoaded += SwitchedScenesCleanUp;
+            _currentLevel = _mainScene;
+#if UNITY_EDITOR
+            Assert.IsNotNull(_mainScene);
+            Assert.IsNotNull(_equipsScene);
+            Assert.IsNotNull(_galleryScene);
+            Assert.IsNotNull(_newgameScene);
+            Assert.IsNotNull(_mainMenuPrefab);
+#endif
+            Instantiate(_mainMenuPrefab);
         }
 
         private void Update()
@@ -71,69 +61,96 @@ namespace Arcatech.Managers
                 _gameControllers.UpdateManagers(Time.deltaTime);
             }
         }
+
         #endregion
-        public void RequestLevelLoad(string ID)
-        {
-            LoadLevel(ID);
+
+        #region levels management
+
+        private DataManager _dataManager;
+
+
+        [Space(10f), SerializeField] private SceneContainer _mainScene;
+        [SerializeField] private SceneContainer _galleryScene;
+        [SerializeField] private SceneContainer _newgameScene;
+        [SerializeField] private SceneContainer _equipsScene;
+
+        public SceneContainer GetCurrentLevelData { get => _currentLevel; }
+        private SceneContainer _currentLevel;
+
+        private bool _equipsDone = false;
+        private SceneContainer _cachedGameLevel;
+        public void RequestLoadSceneFromContainer(SceneContainer sc)
+        {          
+
+            switch (sc.LevelType)
+            {
+                default:
+                    DoLoadScene(sc.SceneLoaderIndex);
+                    break;
+                case LevelType.Game:
+                    if (_equipsDone)
+                    {
+                        _equipsDone = false;
+                        DoLoadScene(_cachedGameLevel.SceneLoaderIndex);
+                    }
+                    else
+                    {
+                        _cachedGameLevel = sc;
+                        DoLoadScene(_equipsScene.SceneLoaderIndex);
+                    }
+
+                    break;
+            }            
         }
+
+        private void DoLoadScene(int index)
+        {
+            _currentLevel = _dataManager.GetSceneContainer(index);
+            EffectsManager.Instance.CleanUpOnSceneChange();
+            SceneManager.LoadScene(index);
+        }
+
+        #region UNITY UI
+        public void OnStartNewGameButton()
+        {
+            DataManager.Instance.OnNewGame();
+            RequestLoadSceneFromContainer(_newgameScene);
+        }
+        public void OnGalleryButton()
+        {
+            RequestLoadSceneFromContainer(_galleryScene);
+        }
+        public void OnExitButton()
+        {
+#if UNITY_EDITOR
+            EditorApplication.ExitPlaymode();
+#endif
+            Application.Quit();
+        }
+        #endregion
 
         public void OnFinishedEquips()
         {
-            var newequips = _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.PackSaveData;
-            DataManager.Instance.UpdateSaveData(newequips);
-            LoadLevel(gameLevelID, true);
-        }
+            _equipsDone = true;
+            _dataManager.UpdateInventoryInSave(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory);
 
-        private void LoadLevel(string ID, bool forceLoad = false)
-        {
-            EffectsManager.Instance.CleanUpOnSceneChange();
-            if (ID == "") { LoadLevel("main", true); } // it happens in debug on level complete - the card has no "next level" ID
-            if (forceLoad) // used in equips level 
-            {
-                _currentLevel = _levels[ID];
-                SceneManager.LoadScene(_currentLevel.SceneLoaderIndex);
-            }
-            else
-            {
-                try
-                {
-                    var typeLoad = _levels[ID].LevelType;
-                    switch (typeLoad)
-                    {
-                        case LevelType.Menu:
-                            LoadLevel("equips", true);
-                            break;
-                        case LevelType.Scene:
-                            LoadLevel(ID, true);
-                            break;
-                        case LevelType.Game:
-                            gameLevelID = ID;
-                            LoadLevel("equips", true);
-                            break;
-                    }
-                }
-                catch
-                {
-                    Debug.Log($"Something went wrong when switching to level {ID} from {_currentLevel.ID}");
-                }
-            }
+            RequestLoadSceneFromContainer(_cachedGameLevel);
         }
 
         private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
         {
             _gameControllers = Instantiate(GameControllersPrefab);
             _gameControllers.Initiate(_currentLevel);
+
+            if (arg0.buildIndex == _mainScene.SceneLoaderIndex)
+            {
+                Instantiate(_mainMenuPrefab);
+            }
+
         }
 
-        public void OnStartNewGame()
-        {
-            DataManager.Instance.OnNewGame();
-            RequestLevelLoad("intro0");
-        }
-        public void OnReturnToMain()
-        {
-            LoadLevel("main", true);
-        }
+
+        #endregion
 
 
         #region game events
@@ -143,54 +160,49 @@ namespace Arcatech.Managers
         }
 
 
-        public void OnLevelCompleteTrigger(SceneContainer completedLV)
+        public void OnLevelCompleteTrigger(SceneContainer unlock)
         {
-            gameLevelID = completedLV.ID;
-            OnFinishedEquips(); // update save data with picked up items
+            _dataManager.UpdateInventoryInSave(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory); // update save data with picked up items
+
             if (_gameControllers != null)
             {
                 _gameControllers.Stop();
             }
 
-            var next = completedLV.NextLevel;
+            if (unlock == null)
+            {
+                Debug.Log($"Level complete trigger has no next lv assigned, returning to main");
+                OnReturnToMain();
+            }
+            else
+            {
+                _dataManager.AddUnlockedLevelToSave(unlock);
+                RequestLoadSceneFromContainer(unlock);
+            }
 
-            DataManager.Instance.UpdateSaveData(completedLV);
 
-
-            LoadLevel(next.ID);
         }
 
+        public void OnReturnToMain()
+        {
+            DoLoadScene(_mainScene.SceneLoaderIndex);
+        }
 
         public void OnPlayerDead()
         {
             _gameControllers.GameInterfaceManager.GameOver();
-        }
-
-        public void OnItemPickup(Item item)
-        {
-            _gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.AddItem(item);
         }
         public void QuitGame()
         {
             Application.Quit();
 #if UNITY_EDITOR
             EditorApplication.ExitPlaymode();
-
 #endif
         }
 
         #endregion
 
-        #region SingletonLogic
 
-        public static GameManager Instance;
-        private void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            else Destroy(gameObject);
-        }
-        #endregion
     }
 
 
