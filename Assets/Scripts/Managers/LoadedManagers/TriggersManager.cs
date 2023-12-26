@@ -172,7 +172,7 @@ namespace Arcatech.Managers
             }
 
             _effects.ServeEffectsRequest(new EffectRequestPackage(config.Effects, EffectMoment.OnCollision, target.transform));
-            finaltgt.PickTriggeredEffectHandler(effect);
+            finaltgt.ApplyEffectToController(effect);
 
         }
 

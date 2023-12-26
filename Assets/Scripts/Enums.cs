@@ -70,23 +70,8 @@ public enum CursorType
     EnemyTarget,
     Item,
 }
-public enum ReferenceUnitType : byte
-{
-    Small = 0,
-    Big = 1,
-    Boss = 2,
-    Self = 253,
-    Any = 254,
-    Player = 255
-}
 
-public enum LevelEventType
-{
-    TextDisplay,
-    LevelComplete,
-    Cutscene,
-    ItemPickup
-}
+
 public enum LevelType
 {
     Menu,
@@ -112,3 +97,18 @@ public enum SkillState
     Placer,
     AoE
 }
+
+#region AI
+public enum ReferenceUnitType : byte
+{
+    Small = 0,
+    Big = 1,
+    Boss = 2,
+    Focus = 252,
+    Self = 253,
+    Any = 254,
+    Player = 255
+}
+
+
+#endregion

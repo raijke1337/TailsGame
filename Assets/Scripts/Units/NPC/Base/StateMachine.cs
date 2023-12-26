@@ -1,8 +1,9 @@
+using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-namespace Arcatech.Units.Inputs
+namespace Arcatech.AI
 {
     [Serializable]
     public class StateMachine : IStatsComponentForHandler
@@ -56,7 +57,7 @@ namespace Arcatech.Units.Inputs
             }
         }
         public BaseUnit FocusUnit { get; set; }
-
+        public BaseUnit Player { get; set; } // if it is set it means the unit is in combat
 
         private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
 
@@ -142,6 +143,7 @@ namespace Arcatech.Units.Inputs
             if (result)
             {
                 PlayerSpottedSM?.Invoke(_coll.GetComponent<PlayerUnit>());
+                Player = _coll.GetComponent<PlayerUnit>();
             }
             return result;
         }

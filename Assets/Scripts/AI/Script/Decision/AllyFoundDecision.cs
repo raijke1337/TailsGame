@@ -2,7 +2,7 @@ using Arcatech.Units.Inputs;
 using UnityEngine;
 namespace Arcatech.AI
 {
-    [CreateAssetMenu(menuName = "AIConfig/Decision/Ally    ")]
+    [CreateAssetMenu(menuName = "AIConfig/Decision/Ally")]
     public class AllyFoundDecision : Decision
     {
         public override bool Decide(StateMachine controller)

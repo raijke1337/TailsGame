@@ -73,7 +73,7 @@ namespace Arcatech.Units
             }
         }
 
-        public virtual void PickTriggeredEffectHandler(TriggeredEffect effect)
+        public virtual void ApplyEffectToController(TriggeredEffect effect)
         {
             _activeEffects.Add(effect);
         }

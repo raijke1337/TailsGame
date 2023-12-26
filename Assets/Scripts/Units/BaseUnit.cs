@@ -166,9 +166,9 @@ namespace Arcatech.Units
             _controller.IsInputsLocked = true;
             BaseUnitDiedEvent?.Invoke(this);
         }
-        public virtual void PickTriggeredEffectHandler(TriggeredEffect eff)
+        public virtual void ApplyEffectToController(TriggeredEffect eff)
         {
-            _controller.PickTriggeredEffectHandler(eff);
+            _controller.ApplyEffectToController(eff);
         }
         #endregion
         #region movement, animations

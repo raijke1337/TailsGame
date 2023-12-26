@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace Arcatech.Units.Inputs
+namespace Arcatech.AI
 {
     public abstract class Decision : ScriptableObject
     {

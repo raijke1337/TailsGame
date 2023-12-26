@@ -49,7 +49,22 @@ namespace Arcatech.Units
         protected void StunEventCallback() => StaggerHappened?.Invoke();
 
 
-
+        #region stats
+        public StatValueContainer GetContainerByStatType(TriggerChangedValue stat)
+        {
+            switch (stat)
+            {
+                case TriggerChangedValue.Health:
+                    return _statsCtrl.GetBaseStats[BaseStatType.Health];
+                case TriggerChangedValue.Shield:
+                    return _shieldCtrl.GetShieldStats[ShieldStatType.Shield];
+                case TriggerChangedValue.Combo:
+                    return _comboCtrl.GetAvailableCombo;
+                default:
+                    return null;
+            }
+        }
+        #endregion
 
         #region items
         public void AssignItems(UnitInventoryComponent items)
@@ -272,34 +287,34 @@ namespace Arcatech.Units
         #region triggers
 
         public event TriggerEvent TriggerEventRequest;
-        public void PickTriggeredEffectHandler(TriggeredEffect eff)
+        public void ApplyEffectToController(TriggeredEffect eff)
         {
             switch (eff.StatType)
             {
                 case TriggerChangedValue.Health:
                     if (!_shieldCtrl.IsReady)
                     {
-                        _statsCtrl.PickTriggeredEffectHandler(eff);
+                        _statsCtrl.ApplyEffectToController(eff);
                     }
                     else
                     {
-                        _statsCtrl.PickTriggeredEffectHandler(_shieldCtrl.ProcessHealthChange(eff));
+                        _statsCtrl.ApplyEffectToController(_shieldCtrl.ProcessHealthChange(eff));
                     }
                     break;
                 case TriggerChangedValue.Shield:
-                    _shieldCtrl.PickTriggeredEffectHandler(eff);
+                    _shieldCtrl.ApplyEffectToController(eff);
                     break;
                 case TriggerChangedValue.Combo:
-                    _comboCtrl.PickTriggeredEffectHandler(eff);
+                    _comboCtrl.ApplyEffectToController(eff);
                     break;
                 case TriggerChangedValue.MoveSpeed:
-                    _statsCtrl.PickTriggeredEffectHandler(eff);
+                    _statsCtrl.ApplyEffectToController(eff);
                     break;
                 case TriggerChangedValue.TurnSpeed:
-                    _statsCtrl.PickTriggeredEffectHandler(eff);
+                    _statsCtrl.ApplyEffectToController(eff);
                     break;
                 case TriggerChangedValue.Stagger:
-                    _stunsCtrl.PickTriggeredEffectHandler(eff);
+                    _stunsCtrl.ApplyEffectToController(eff);
                     break;
             }
         }

@@ -17,7 +17,7 @@ namespace Arcatech.Units
 #if UNITY_EDITOR
         [SerializeField] private float _currValue;
 #endif
-
+        
 
         public StunsController(BaseUnit u, string ID = "default") : base(u)
         {
