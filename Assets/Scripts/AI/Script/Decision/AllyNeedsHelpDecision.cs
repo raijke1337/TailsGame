@@ -1,11 +1,14 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Decision/AllyNeedsHelp")]
-public class AllyNeedsHelpDecision : Decision
+namespace Arcatech.AI
 {
-    public override bool Decide(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Decision/AllyNeedsHelp")]
+    public class AllyNeedsHelpDecision : Decision
     {
-        return controller.OnAllyNeedsHelp();
+        public override bool Decide(StateMachine controller)
+        {
+            return controller.OnAllyNeedsHelp();
+        }
     }
-}
 
+}

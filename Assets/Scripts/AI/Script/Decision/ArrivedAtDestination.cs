@@ -1,13 +1,16 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Decision/ArrivedAtDestination")]
-public class ArrivedAtDestination : Decision
+namespace Arcatech.AI
 {
-    public override bool Decide(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Decision/ArrivedAtDestination")]
+    public class ArrivedAtDestination : Decision
     {
-        var result = controller.CheckIsInStoppingRange();
-        if (result) controller.OnPatrolPointReached();
-        return result;
+        public override bool Decide(StateMachine controller)
+        {
+            var result = controller.CheckIsInStoppingRange();
+            if (result) controller.OnPatrolPointReached();
+            return result;
+        }
     }
-}
 
+}

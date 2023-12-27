@@ -54,6 +54,7 @@ namespace Arcatech.Items
 
         private void CheckForProjectileHit(Collider c, ProjectileComponent p)
         {
+            //Debug.Log($"projectile from {this._description.Title} hit {c.name}");
             if (c.TryGetComponent(out BaseUnit u) && u.Side != Owner.Side)
             {
                 OnWeapTriggerEvent(u,true);
@@ -72,7 +73,10 @@ namespace Arcatech.Items
             while (shots > shotsDone)
             {
                 //Debug.Log("Pew");
-                PlacedProjectileEvent(Config.Projectile.GetProjectile(Owner));
+                var trigger = Config.Projectile.GetProjectile(Owner);
+                PlacedProjectileEvent(trigger);
+                ProjectileSubs(trigger,true);
+
                 shotsDone++;
                 _currentAmmo--;
                 yield return new WaitForSeconds(UseCooldown);

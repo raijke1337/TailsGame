@@ -12,13 +12,11 @@ namespace Arcatech.Managers
         [SerializeField] private GameObject _pause;
         [SerializeField, Space] private float _selPanelDisappearTimer = 1f;
 
-        private TextsManager _texts;
         private Coroutine _cor;
 
         #region managed
         public override void Initiate()
         {
-            _texts = TextsManager.Instance;
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
@@ -101,7 +99,7 @@ namespace Arcatech.Managers
 
         public void OnPauseRequest(bool isPause)
         {
-            _pause.SetActive(true);
+            _pause.SetActive(isPause);
             GameManager.Instance.OnPlayerPaused(isPause);
         }
 

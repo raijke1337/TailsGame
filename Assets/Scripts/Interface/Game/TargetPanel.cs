@@ -25,6 +25,7 @@ namespace Arcatech.UI
 
             if (item is TargetableUnit u)
             {
+                
                 _bars.gameObject.SetActive(true);
                 _bars.LoadValues(u.GetHealthStat, DisplayValueType.Health);
             }

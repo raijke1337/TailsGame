@@ -30,6 +30,10 @@ namespace Arcatech.UI
         {
             GameManager.Instance.OnGalleryButton();
         }
+        public void OnQuitGame()
+        {
+            GameManager.Instance.OnExitButton();
+        }
         #endregion
 
     }

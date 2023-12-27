@@ -1,12 +1,15 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Action/SetFocus")]
-public class SetFocusToAction : Action
+namespace Arcatech.AI
 {
-    public ReferenceUnitType DesiredType;
-    public override void Act(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Action/SetFocus")]
+    public class SetFocusToAction : Action
     {
-        controller.OnSetFocus(DesiredType);
+        public ReferenceUnitType DesiredType;
+        public override void Act(StateMachine controller)
+        {
+            controller.OnSetFocus(DesiredType);
+        }
     }
-}
 
+}

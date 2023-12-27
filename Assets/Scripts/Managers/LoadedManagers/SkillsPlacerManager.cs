@@ -85,7 +85,7 @@ namespace Arcatech.Managers
             where = null;
             taget = null;
 
-            if ((comp.Data is DodgeSkillConfiguration d) || hit.gameObject.isStatic || //hits a wall
+            if ((comp.Data is DodgeSkillConfiguration d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
                 (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
                 (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
             {

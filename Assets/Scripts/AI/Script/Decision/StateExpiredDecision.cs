@@ -1,11 +1,14 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Decision/StateExpired")]
-public class StateExpiredDecision : Decision
+namespace Arcatech.AI
 {
-    public override bool Decide(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Decision/StateExpired")]
+    public class StateExpiredDecision : Decision
     {
-        return (controller.TimeInState >= controller.CurrentState.StateExpiryTime);
+        public override bool Decide(StateMachine controller)
+        {
+            return (controller.TimeInState >= controller.CurrentState.StateExpiryTime);
+        }
     }
-}
 
+}

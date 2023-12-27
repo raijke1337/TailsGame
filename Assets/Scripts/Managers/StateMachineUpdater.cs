@@ -1,36 +1,38 @@
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
 using System.Collections.Generic;
-
-public class StateMachineUpdater
+namespace Arcatech.AI
 {
-    private List<StateMachine> _states = new List<StateMachine>();
-    public void OnUpdate(float delta)
+    public class StateMachineUpdater
     {
-        foreach (var state in _states)
+        private List<StateMachine> _states = new List<StateMachine>();
+        public void OnUpdate(float delta)
         {
-            state.UpdateInDelta(delta);
+            foreach (var state in _states)
+            {
+                state.UpdateInDelta(delta);
+            }
         }
-    }
 
-    public void AddUnit(NPCUnit u)
-    {
-        u.GetStateMachine.SetupStatsComponent();
-        _states.Add(u.GetStateMachine);
-    }
-    public void RemoveUnit(NPCUnit u)
-    {
-        u.GetStateMachine.StopStatsComponent();
-        _states.Remove(u.GetStateMachine);
-    }
+        public void AddUnit(NPCUnit u)
+        {
+            u.GetStateMachine.SetupStatsComponent();
+            _states.Add(u.GetStateMachine);
+        }
+        public void RemoveUnit(NPCUnit u)
+        {
+            u.GetStateMachine.StopStatsComponent();
+            _states.Remove(u.GetStateMachine);
+        }
 
 
-    public StateMachineUpdater(List<StateMachine> states)
-    {
-        _states = states;
-    }
-    public StateMachineUpdater()
-    {
-        _states = new List<StateMachine>();
+        public StateMachineUpdater(List<StateMachine> states)
+        {
+            _states = states;
+        }
+        public StateMachineUpdater()
+        {
+            _states = new List<StateMachine>();
+        }
     }
 }

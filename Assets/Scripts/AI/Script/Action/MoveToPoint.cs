@@ -1,14 +1,17 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Point")]
-public class MoveToPoint : Action
+namespace Arcatech.AI
 {
-    public override void Act(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Point")]
+    public class MoveToPoint : Action
     {
-        //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false;
+        public override void Act(StateMachine controller)
+        {
+            //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false;
 
-        controller.NMAgent.SetDestination(controller.PatrolPoints[controller.CurrentPatrolPointIndex].position);
-        controller.NMAgent.Resume();
+            controller.NMAgent.SetDestination(controller.PatrolPoints[controller.CurrentPatrolPointIndex].position);
+            controller.NMAgent.Resume();
+        }
     }
-}
 
+}

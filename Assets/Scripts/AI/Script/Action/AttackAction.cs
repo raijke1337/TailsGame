@@ -1,13 +1,16 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Action/Attack")]
-public class AttackAction : Action
+namespace Arcatech.AI
 {
-    public CombatActionType CombatActionType;
-    public override void Act(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Action/Attack")]
+    public class AttackAction : Action
     {
-        controller.OnAttackRequest(CombatActionType);
+        public CombatActionType CombatActionType;
+        public override void Act(StateMachine controller)
+        {
+            controller.OnAttackRequest(CombatActionType);
+        }
+
     }
 
 }
-

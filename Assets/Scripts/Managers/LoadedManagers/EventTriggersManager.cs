@@ -1,3 +1,4 @@
+using Arcatech.Puzzles;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Arcatech.Managers
         {
             if (triggers != null) triggers.Clear();
             triggers = new List<BaseLevelEventTrigger>();
+
             _ui = GameManager.Instance.GetGameControllers.GameInterfaceManager;
             _trigs = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
 
@@ -75,8 +77,57 @@ namespace Arcatech.Managers
             {
                 GameManager.Instance.OnLevelCompleteTrigger(comp.UnlocksLevel);
             }
+            if (tr is CheckItemTrigger item)
+            {
+                if (u.GetUnitInventory.HasItem(item.RequiredItem))
+                {
+                    item.DoPositiveAction();
+                }
+            }
+            if (tr is CheckPuzzleTrigger puzzle)
+            {
+
+                HandlePuzzles(puzzle, isEnter);
+            }
         }
 
+
+        #region puzzles
+        private CheckPuzzleTrigger _currentPuzzleTrigger;
+        private BasePuzzleComponent _currentPuzzleWindow;
+
+        private void HandlePuzzles(CheckPuzzleTrigger tr,bool enter)
+        {
+            if (tr.IsSolved) return;
+            if (enter)
+            {
+                _currentPuzzleTrigger = tr;
+                _currentPuzzleWindow = Instantiate(tr.PuzzlePrefab, _ui.transform);
+                _currentPuzzleWindow.PuzzleResult += OnPuzzleResult;
+                _ui.OnPauseRequest(true);
+            }
+            else
+            {
+                _currentPuzzleTrigger = null;
+                _currentPuzzleWindow = null;
+            }
+        }
+        private void OnPuzzleResult(bool ok)
+        {
+            _currentPuzzleWindow.PuzzleResult -= OnPuzzleResult;
+            _ui.OnPauseRequest(false);
+            Destroy(_currentPuzzleWindow.gameObject);
+            if (ok)
+            {
+                _currentPuzzleTrigger.DoPositiveAction();
+            }
+            else
+            {
+                _currentPuzzleTrigger.DoNegativeAction();
+            }
+        }
+
+        #endregion
 
     }
 }

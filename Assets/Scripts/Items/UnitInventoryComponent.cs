@@ -49,7 +49,10 @@ namespace Arcatech.Units
 
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
-
+        public bool HasItem(Item search)
+        {
+            return (_equips.Values.Any(t=>t.ID==search.ID) || _items.Any(t=>t.ID==search.ID));
+        }
 
 
 

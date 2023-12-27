@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8102464926349693800}
   - component: {fileID: 8102464926349693803}
   - component: {fileID: 8102464926349693802}
-  - component: {fileID: 8102464925495723800}
   - component: {fileID: 8102464925495723806}
   - component: {fileID: 3960432742461820630}
   - component: {fileID: 8102464925495723807}
@@ -52,8 +51,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01595255644ee754495b8772add0bd68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentShape: {fileID: 0}
-  CursorsSetName: default
+  _cursors:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
+        type: 3}
+    - Key: 1
+      Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
+        type: 3}
+    - Key: 2
+      Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
+        type: 3}
+    - Key: 3
+      Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
+        type: 3}
+  _fonts:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 11400000, guid: 2d1094862de91164ca168a654d4e1fd5, type: 2}
+    - Key: 1
+      Value: {fileID: 11400000, guid: 34a4a0c89db9414489be1315c76bc9f1, type: 2}
+    - Key: 2
+      Value: {fileID: 11400000, guid: c5421d755213ec9489b14c2688ce2231, type: 2}
 --- !u!114 &8102464926349693803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,18 +129,6 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
---- !u!114 &8102464925495723800
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8102464926349693799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99995d66f8bdd8a4b9818a0a503fe344, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8102464925495723806
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -29,11 +29,16 @@ namespace Arcatech.UI
                         _valueContainer.ValueChangedEvent -= OnUpdatedValue;
                     }
                     _valueContainer = value;
+                    _fill.fillAmount = 1f;
+
+
                     _fill.fillAmount = Container.GetCurrent / Container.GetMax;
 
                     _valueContainer.ValueChangedEvent += OnUpdatedValue;
 
                     _text.text = value.ToString();
+                    _text.font = GameUIManager.Instance.GetFont(FontType.Title);
+                    
 
                 }
             }

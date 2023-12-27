@@ -1,13 +1,16 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-[CreateAssetMenu(menuName = "AIConfig/Action/Switch Range by desired combat action")]
-
-public class SwitchRangeByActionTypeAction : Action
+namespace Arcatech.AI
 {
-    public CombatActionType DesiredType;
-    public override void Act(StateMachine controller)
-    {
-        controller.OnSwapRanges(DesiredType);
-    }
-}
+    [CreateAssetMenu(menuName = "AIConfig/Action/Switch Range by desired combat action")]
 
+    public class SwitchRangeByActionTypeAction : Action
+    {
+        public CombatActionType DesiredType;
+        public override void Act(StateMachine controller)
+        {
+            controller.OnSwapRanges(DesiredType);
+        }
+    }
+
+}

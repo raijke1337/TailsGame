@@ -223,7 +223,7 @@ namespace Arcatech.Managers
 
         private void ProjectileHit(Collider col, ProjectileComponent proj)
         {
-            if (col.gameObject.isStatic)
+            if (col.gameObject.CompareTag("StaticItem"))
             {
                 proj.StopProjectile(col.transform);
                 return;

@@ -1,14 +1,17 @@
 using Arcatech.Units.Inputs;
 using UnityEngine;
-
-[CreateAssetMenu(menuName = "AIConfig/Action/UpdateRotation")]
-public class UpdateRotation : Action
+namespace Arcatech.AI
 {
-    public override void Act(StateMachine controller)
+
+    [CreateAssetMenu(menuName = "AIConfig/Action/UpdateRotation")]
+    public class UpdateRotation : Action
     {
-        //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false;
+        public override void Act(StateMachine controller)
+        {
+            //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false;
 
-        controller.OnRotateRequest();
+            controller.OnRotateRequest();
+        }
     }
-}
 
+}

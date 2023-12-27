@@ -62,7 +62,7 @@ public enum TriggerChangedValue : byte
     Stagger = 50
 }
 
-
+#region interface
 public enum CursorType
 {
     Menu,
@@ -70,7 +70,23 @@ public enum CursorType
     EnemyTarget,
     Item,
 }
+public enum DisplayValueType : byte
+{
+    Health = 0,
+    Shield = 1,
+    Combo = 2
+}
 
+public enum FontType
+{
+    Text,
+    Button,
+    Title
+}
+
+
+
+#endregion
 
 public enum LevelType
 {
@@ -79,12 +95,7 @@ public enum LevelType
     Game
 }
 
-public enum DisplayValueType : byte
-{
-    Health = 0,
-    Shield = 1,
-    Combo = 2
-}
+
 public enum EffectMoment
 {
     OnStart,

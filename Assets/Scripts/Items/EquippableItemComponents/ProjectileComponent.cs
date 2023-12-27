@@ -46,6 +46,7 @@ namespace Arcatech.Items
 
         protected void OnTriggerEnter(Collider other)
         {
+            //Debug.Log($"projectile {this.name} hit {other.name}");
             ProjectileEnteredTriggerEvent?.Invoke(other, this);
         }
 

@@ -1,12 +1,14 @@
 ﻿using Arcatech.Units.Inputs;
 using UnityEngine;
-
-[CreateAssetMenu(menuName = "AIConfig/Action/AggroOnPlayer")]
-internal class AggroOnPlayerAction : Action
+namespace Arcatech.AI
 {
-    public override void Act(StateMachine controller)
+    [CreateAssetMenu(menuName = "AIConfig/Action/AggroOnPlayer")]
+    internal class AggroOnPlayerAction : Action
     {
-        controller.OnAggroRequest();
+        public override void Act(StateMachine controller)
+        {
+            controller.OnAggroRequest();
+        }
     }
-}
 
+}
