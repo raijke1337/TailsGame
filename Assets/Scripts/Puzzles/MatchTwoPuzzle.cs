@@ -1,4 +1,5 @@
 using Arcatech.UI;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -18,6 +19,7 @@ namespace Arcatech.Puzzles
 
         protected Dictionary<Pair<IconTileComp>, Sprite> _pairs;
         protected float _time;
+        
 
         protected override void OnEnable()
         {base.OnEnable();
@@ -43,7 +45,9 @@ namespace Arcatech.Puzzles
             int total = _settings.Pairs * 2;
             for (int i = 0; i <total; i++)
             {
-                _unassignedTiles.Add(Instantiate(_tilePrefab,_gamePanel));
+                var t = Instantiate(_tilePrefab, _gamePanel);
+                t.name += $"number {i}";
+                _unassignedTiles.Add(t);
             }
 
             for (int x = 1; x <= _settings.Pairs; x++)
@@ -58,12 +62,15 @@ namespace Arcatech.Puzzles
                 _pairs[new Pair<IconTileComp>(random1, random2)] = randomPic;
 
                 random1.ClickedEvent += TileClicked;
+                random2.ClickedEvent += TileClicked;
             }
         }
 
         protected IconTileComp _selectedTile;
         protected void TileClicked(IconTileComp c)
         {
+            if (PuzzleBusy) return;
+
             var pair = _pairs.Keys.First(t => t.Contains(c));
             c.SetSprite(_pairs[pair]);
 
@@ -83,8 +90,9 @@ namespace Arcatech.Puzzles
                 }
                 if (!match)
                 {
-                    _selectedTile.Clear();
-                    c.Clear();
+                    PuzzleBusy = true;
+                    StartCoroutine(ClearTiles(_selectedTile, _settings.TimeToShow));
+                    StartCoroutine(ClearTiles(c, _settings.TimeToShow));
                     _selectedTile = null;
                 }
                 else
@@ -110,6 +118,12 @@ namespace Arcatech.Puzzles
             if (_time <= 0) ResultCallback(false);
         }
 
+        protected IEnumerator ClearTiles(IconTileComp tile, float time)
+        {
+            yield return new WaitForSeconds(time);
+            tile.Clear();
+            PuzzleBusy = false;
+        }
 
     }
 }

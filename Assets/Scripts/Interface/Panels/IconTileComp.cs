@@ -34,7 +34,6 @@ namespace Arcatech.UI
 
         protected virtual void CallbackClick(PointerEventData data)
         {
-            Debug.Log("Click: " + this);
             ClickedEvent?.Invoke(this);
         }
         protected virtual void CallbackEnter(PointerEventData data)
