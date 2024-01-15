@@ -104,6 +104,9 @@ namespace Arcatech.Managers
                 _currentPuzzleTrigger = tr;
                 _currentPuzzleWindow = Instantiate(tr.PuzzlePrefab, _ui.transform);
                 _currentPuzzleWindow.PuzzleResult += OnPuzzleResult;
+
+
+
                 _ui.OnPauseRequest(true);
             }
             else

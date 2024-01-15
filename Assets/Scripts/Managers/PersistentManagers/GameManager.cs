@@ -43,15 +43,24 @@ namespace Arcatech.Managers
         {
             _dataManager = DataManager.Instance;
             SceneManager.sceneLoaded += SwitchedScenesCleanUp;
-            _currentLevel = _mainScene;
 #if UNITY_EDITOR
             Assert.IsNotNull(_mainScene);
             Assert.IsNotNull(_equipsScene);
             Assert.IsNotNull(_galleryScene);
             Assert.IsNotNull(_newgameScene);
             Assert.IsNotNull(_mainMenuPrefab);
+
+            // for quicker load into debug level 
+
 #endif
-            Instantiate(_mainMenuPrefab);
+            int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+            _currentLevel = _dataManager.GetSceneContainer(sceneIndex);
+
+
+            if (_currentLevel == _mainScene)
+            {
+                Instantiate(_mainMenuPrefab);
+            }
         }
 
         private void Update()

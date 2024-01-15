@@ -12,5 +12,10 @@ namespace Arcatech.Puzzles
         {
             ResultCallback(ok);
         }
+
+        protected override void SetUpPuzzle()
+        {
+            
+        }
     }
 }

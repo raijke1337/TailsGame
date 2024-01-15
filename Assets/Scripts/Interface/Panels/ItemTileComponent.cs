@@ -5,16 +5,11 @@ using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    public class ItemTileComponent : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
+    public class ItemTileComponent : IconTileComp
     {
         public event SimpleEventsHandler<InventoryItem> ItemClickedEvent;
-        public event SimpleEventsHandler<InventoryItem, bool> ItemTooltipEvent;
-
-        [SerializeField] private Image _itemImg;
-        [SerializeField] private Sprite DefaultImg;
-        [SerializeField] private InventoryItem _item;
-
-
+        public event SimpleEventsHandler<InventoryItem, bool> ItemTooltipEvent; 
+        private InventoryItem _item;
         public InventoryItem Item
         {
             get
@@ -22,38 +17,39 @@ namespace Arcatech.UI
             set
             {
                 _item = value;
-                OnItemSet(_item);
+                SetItemIcon(_item);
             }
         }
-        public void Clear()
+
+
+        private void SetItemIcon(InventoryItem content)
+        {
+            if (content == null) Clear();
+            else SetSprite(content.ItemIcon);
+        }
+
+
+        public override void Clear()
         {
             Item = null;
-            OnItemSet(null);
+            base.Clear();
         }
 
 
-        public RectTransform GetRekt => GetComponent<RectTransform>();
-
-        public void OnPointerClick(PointerEventData eventData)
+        protected override void CallbackClick(PointerEventData data)
         {
-            //Debug.Log("Clicked");
+
             ItemClickedEvent?.Invoke(Item);
         }
-
-        public void OnPointerEnter(PointerEventData eventData)
+        protected override void CallbackEnter(PointerEventData data)
         {
             ItemTooltipEvent?.Invoke(Item, true);
         }
-
-        public void OnPointerExit(PointerEventData eventData)
+        protected override void CallbackExit(PointerEventData data)
         {
             ItemTooltipEvent?.Invoke(Item, false);
         }
-        private void OnItemSet(InventoryItem content)
-        {
-            if (content == null) _itemImg.sprite = DefaultImg;
-            else _itemImg.sprite = content.ItemIcon;
-        }
+
     }
 
 }

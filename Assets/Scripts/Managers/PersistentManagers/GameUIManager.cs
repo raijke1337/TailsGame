@@ -23,6 +23,7 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField] private SerializedDictionary<CursorType, Texture2D> _cursors;
     [SerializeField] private SerializedDictionary<FontType, TMP_FontAsset> _fonts;
+    [SerializeField] private List<Sprite>  _match2Pictures;
 
 #if UNITY_EDITOR
     private void OnEnable()
@@ -30,6 +31,8 @@ public class GameUIManager : MonoBehaviour
         Assert.IsNotNull(_cursors);
         Assert.IsTrue(_cursors.Count > 0);
         Assert.IsNotNull(_fonts);
+        Assert.IsTrue(_fonts.Count > 0);        
+        Assert.IsNotNull(_match2Pictures);
         Assert.IsTrue(_fonts.Count > 0);
     }
 #endif
@@ -44,7 +47,9 @@ public class GameUIManager : MonoBehaviour
         Cursor.visible = true;
     }
     public TMP_FontAsset GetFont(FontType t) => _fonts[t];
-   
+    public List<Sprite> GetMatch2Sprites => _match2Pictures;
+
+
 
 }
 
