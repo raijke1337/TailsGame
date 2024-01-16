@@ -5,9 +5,14 @@ using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Arcatech.Units
 {
+    /// <summary>
+    /// Only use to hold dodge stats from the equipped item and show its model
+    /// </summary>
+
     [Serializable]
     public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
 
@@ -16,14 +21,11 @@ namespace Arcatech.Units
         {
 
         }
-
-
         Dictionary<DodgeStatType, StatValueContainer> _stats;
         public IReadOnlyDictionary<DodgeStatType, StatValueContainer> GetDodgeStats { get { return _stats; } }
-        public int GetDodgeCharges() => _stats != null ? (int)_stats[DodgeStatType.Charges].GetCurrent : 0;
 
-        private Queue<Timer> _timerQueue = new Queue<Timer>();
-        private EquipmentItem _booster;
+
+        
 
         #region conditional
 
@@ -71,16 +73,23 @@ namespace Arcatech.Units
 
         public override void UpdateInDelta(float deltaTime)
         {
-            foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
+            //foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
             base.UpdateInDelta(deltaTime);
         }
 
         #endregion
 
-        #region dodging
+        #region ctrl
+
+        private Queue<Timer> _timerQueue = new Queue<Timer>();
+        private EquipmentItem _booster;
+
         public bool IsDodgePossibleCheck()
         {
-            if (_stats == null) return false;
+            // Debug.Log($"Check dodge in dodge ctrl, {_stats[DodgeStatType.Charges]} charges ");
+            if (!IsReady) return false;
+
+
             if (_stats[DodgeStatType.Charges].GetCurrent == 0f) return false;
             else
             {
@@ -89,7 +98,7 @@ namespace Arcatech.Units
                 _timerQueue.Enqueue(t);
                 t.TimeUp += T_TimeUp;
 
-                EffectEventCallback(new EffectRequestPackage(_booster.Effects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
+               // EffectEventCallback(new EffectRequestPackage(_booster.Effects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
 
                 return true;
             }

@@ -148,12 +148,10 @@ namespace Arcatech.Units.Inputs
         {
             if (IsInputsLocked || MoveDirectionFromInputs == Vector3.zero) return;
             //can't dash from standing
-            //if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
-            if (_dodgeCtrl.IsDodgePossibleCheck())
+            if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
             {
-                //_comboCtrl.UseCombo(sk.Data.Cost);
-                //SkillSpawnEventCallback(sk);
-                CombatActionSuccessCallback(CombatActionType.Dodge);
+                SkillSpawnEventCallback(sk);      
+                // the dodge skill component triggers the boost input method (lmoa)
             }
 
             // this is the old dash, non-skill

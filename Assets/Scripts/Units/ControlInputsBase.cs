@@ -30,6 +30,7 @@ namespace Arcatech.Units
         protected BaseStatsController _statsCtrl;
         protected WeaponController _weaponCtrl;
         protected DodgeController _dodgeCtrl;
+        // implement dodges through skill controller instead
         protected ShieldController _shieldCtrl;
         protected SkillsController _skillCtrl;
         protected ComboController _comboCtrl;
@@ -97,10 +98,6 @@ namespace Arcatech.Units
                         _dodgeCtrl.LoadItem(item, out removed);
                         break;
                 }
-                //if (removed != null)
-                //{
-                //    _skillCtrl.LoadItemSkill(removed, false);  // since skill ctrl has a dict skill will simply be repalced
-                //}
             }
 
             if (_skillCtrl != null) // null in scenes
@@ -388,6 +385,7 @@ namespace Arcatech.Units
         {
             if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
             {
+                Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\nDodge cancelled.");
                 IsInputsLocked = false;
                 StopCoroutine(_dodgeCor);
             }

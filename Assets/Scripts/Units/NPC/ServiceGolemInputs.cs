@@ -16,7 +16,7 @@ public class ServiceGolemInputs : InputsNPC
                 base.Fsm_AgressiveActionRequestSM(type);
                 break;
             case CombatActionType.Dodge:
-                if (inRange == false && _stateMachine.TimeInState >= _stateMachine.CurrentState.StateExpiryTime && _dodgeCtrl.IsDodgePossibleCheck())
+                if (inRange == false && _stateMachine.TimeInState >= _stateMachine.CurrentState.StateExpiryTime && _dodgeCtrl.IsReady) // maybe TODO
                     CombatActionSuccessCallback(CombatActionType.Dodge);
                 break;
             case CombatActionType.MeleeSpecialQ:

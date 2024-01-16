@@ -3,6 +3,8 @@ using Arcatech.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+
 namespace Arcatech.Units
 {
     [Serializable]
@@ -17,13 +19,8 @@ namespace Arcatech.Units
             Empties = ie;
         }
 
-
-
-
         // this is used in game for skill requests
         private Dictionary<CombatActionType, SkillObjectForControls> _skills;
-        //        private Dictionary<CombatActionType, ProjectileSettingsPackage> _projSkillsData;
-
 
         public void LoadItemSkill(EquipmentItem item)
         {
@@ -62,6 +59,12 @@ namespace Arcatech.Units
                 switch (type)
                 {
                     case CombatActionType.Dodge:
+                       // Debug.Log($"Checking dodge in skills crtl"); 
+                        if (Owner.GetInputs().GetDodgeController.IsDodgePossibleCheck())
+                        {
+                            result = usedSkill.GetInstantiatedSkillCollider;
+                            return true;
+                        }
                         break;
                     default:
                         if (CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false;

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: dodge_base
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: d1fab18a739ed224ebed8e8fa56a17c2, type: 2}
-  Cooldown: 0
+  Cooldown: 5
   Cost: 0
-  SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
+  SkillObject: {fileID: 2949065724703813724, guid: 2f077da106b3b5544ad7ddd25a18be41,
     type: 3}
   PlacerRadius: 0.1
   AoERadius: 0.1
@@ -32,7 +32,13 @@ MonoBehaviour:
           - {fileID: 8300000, guid: 881ec96694f1a456094b9a2da21ea901, type: 3}
           Loudness: 1
     Effects:
-      _serializedList: []
+      _serializedList:
+      - Key: 0
+        Value:
+          Effects:
+          - {fileID: 7407110167235851954, guid: 0c2509361b13505428ce788b7f846686, type: 3}
+          _scale: 1
+          Duration: 0
   DodgeSkillStats:
     _serializedList:
     - Key: 0

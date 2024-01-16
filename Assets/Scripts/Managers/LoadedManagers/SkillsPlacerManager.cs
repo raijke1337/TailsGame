@@ -36,6 +36,12 @@ namespace Arcatech.Managers
         {
 
             effectsManager.ServeEffectsRequest(new EffectRequestPackage(comp.Data.Effects, EffectMoment.OnStart, where));
+
+            if (comp is BoosterSkillInstanceComponent bs)
+            {
+                source.GetInputs().PerformDodging();
+            }
+
             if (comp.Data is ProjectileSkillSO pr)
             {
                 //placer.TimeToLive = comp.GetProjectileData.Settings.TimeToLive;

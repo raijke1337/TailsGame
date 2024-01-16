@@ -105,6 +105,7 @@ namespace Arcatech.Managers
 
         public void GameOver()
         {
+            GameManager.Instance.OnPlayerPaused(true);
             _ded.SetActive(true);
         }
         public void ToMain()

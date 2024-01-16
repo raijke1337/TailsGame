@@ -51,7 +51,7 @@ namespace Arcatech.Skills
 
             if (cfg is DodgeSkillConfiguration dodge)
             {
-                Debug.Log($"TODO dodge skill setting {dodge}");
+               // Debug.Log($"TODO dodge skill setting {dodge}");
             }
             if (cfg is ProjectileSkillSO projectile)
             {

@@ -27,6 +27,7 @@ public class DoorOpensWhenUnitDies : MonoBehaviour
         {
             progress += Time.deltaTime;
             transform.position = Vector3.Lerp(start, end, progress);
+            yield return null;
         }
         yield return null;
     }

@@ -82,7 +82,10 @@ namespace Arcatech.Units
                     // idle for scene menu
                     break;
                 case LevelType.Game:
-                    _animator.SetLayerWeight(3, 0);
+                    if (this is PlayerUnit)
+                    {
+                        _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
+                    }
                     ControllerEventsBinds(true);
                     break;
             }
