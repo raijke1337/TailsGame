@@ -6,10 +6,10 @@ using System.Linq;
 using UnityEngine;
 namespace Arcatech.Managers
 {
-    [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(BoxCollider))]
     public class RoomController : LoadedManagerBase
     {
-        private Collider _detectionArea;
+        private BoxCollider _detectionArea;
         private PlayerUnit _player;
         private List<NPCUnit> _npcUnits = new List<NPCUnit>();
 
@@ -19,7 +19,7 @@ namespace Arcatech.Managers
         #region managed
         public override void Initiate()
         {
-            _detectionArea = GetComponent<Collider>();
+            _detectionArea = GetComponent<BoxCollider>();
             _detectionArea.enabled = true;
             _detectionArea.isTrigger = true;
             StartCoroutine(DelayDetection());
@@ -130,7 +130,15 @@ namespace Arcatech.Managers
         }
 
         #endregion
+#if UNITY_EDITOR
 
+        private void OnDrawGizmos()
+        {
+            _detectionArea = GetComponent<BoxCollider>();
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireCube(transform.position, _detectionArea.size);
+        }
+#endif
 
     }
 

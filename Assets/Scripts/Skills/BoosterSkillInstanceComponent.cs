@@ -8,7 +8,10 @@ namespace Arcatech.Skills
         // stage 1 placer = find unit
         // move for x 
         // stage 2 effect = check wall collisions
-
+        private void Start()
+        {
+            Destroy(gameObject,0.1f); // placeholder
+        }
 
     }
 }

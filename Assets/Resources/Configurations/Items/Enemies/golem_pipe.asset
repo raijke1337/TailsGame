@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
+  m_Name: golem_pipe
+  m_EditorClassIdentifier: 
+  ID: golem_pipe
+  Description: {fileID: 11400000, guid: 651bf2ad032fca948ac69c5454331656, type: 2}
+  ItemType: 1
+  Item: {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824, type: 3}
+  Skill: {fileID: 0}
+  Effects:
+    Sounds:
+      _serializedList:
+      - Key: 0
+        Value:
+          Sounds:
+          - {fileID: 8300000, guid: 9252e8fa39c35424aadec395c7fb01e6, type: 3}
+          - {fileID: 8300000, guid: 8fa2049eeb1c54f3789c757d43a98731, type: 3}
+          - {fileID: 8300000, guid: 881ec96694f1a456094b9a2da21ea901, type: 3}
+          Loudness: 0
+    Effects:
+      _serializedList: []
+  WeaponCooldown: 0.5
+  WeaponHitTriggers:
+  - {fileID: 11400000, guid: a16d54ce3c1181047b22659dfc2cdaf6, type: 2}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2475950228492178812}
   - component: {fileID: 3344337374990509815}
   - component: {fileID: 7610393910110688925}
-  - component: {fileID: 8430126053927803465}
+  - component: {fileID: 3540841347693007592}
   m_Layer: 0
   m_Name: trap
   m_TagString: Untagged
@@ -4935,7 +4935,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &8430126053927803465
+--- !u!114 &3540841347693007592
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4944,8 +4944,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 6618501001797631612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4576d274f70943841aa5bd731b925574, type: 3}
+  m_Script: {fileID: 11500000, guid: a591dcb79e2e5e44bb2edf50c69c67b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EventType: 0
-  ContentIDString: 
+  Triggers:
+  - {fileID: 11400000, guid: ce00a9741016e1d46b647fca63c60e90, type: 2}

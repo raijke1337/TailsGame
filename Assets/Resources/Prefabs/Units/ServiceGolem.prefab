@@ -1193,34 +1193,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsInputsLocked: 0
   Empties:
-    MeleeWeaponEmpty: {fileID: 2150525947285082323}
-    RangedWeaponEmpty: {fileID: 8547798715958816986}
-    SheathedWeaponEmpty: {fileID: 1682865259246156782}
-    SkillsEmpty: {fileID: 1682865259246156782}
-    OthersEmpty: {fileID: 1682865259246156782}
-  _statsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _weaponCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _dodgeCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _shieldCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _skillCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _comboCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _stunsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-    isGracePeriod: 0
-    _currValue: 0
+    ItemPositions:
+      _serializedList:
+      - Key: 0
+        Value: {fileID: 0}
+      - Key: 1
+        Value: {fileID: 2150525947285082323}
+      - Key: 2
+        Value: {fileID: 8547798715958816986}
+      - Key: 3
+        Value: {fileID: 0}
+      - Key: 4
+        Value: {fileID: 1682865259246156782}
+      - Key: 5
+        Value: {fileID: 0}
+      - Key: 6
+        Value: {fileID: 0}
+      - Key: 255
+        Value: {fileID: 0}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
   DebugEnabled: 0
   patrolPoints: []
@@ -1232,6 +1222,7 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+  EnemyStats: {fileID: 11400000, guid: 7dd8bf0d697ef2441931b130b1c2f299, type: 2}
 --- !u!136 &491683572243449218
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1306,11 +1297,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StatsID: 
-  Side: 0
-  UnitSounds:
-    SoundsDict:
-      _serializedList: []
+  Side: 1
+  StatsConfig: {fileID: 11400000, guid: b68375f69c060204787f2c01560a8781, type: 2}
+  _defaultItems: {fileID: 11400000, guid: 1710305839a70bd4fbeccb329f572691, type: 2}
 --- !u!114 &7250393868015656704
 MonoBehaviour:
   m_ObjectHideFlags: 0
