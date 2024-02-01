@@ -9,9 +9,6 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    /// <summary>
-    /// Only use to hold dodge stats from the equipped item and show its model
-    /// </summary>
 
     [Serializable]
     public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
