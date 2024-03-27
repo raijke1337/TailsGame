@@ -1,3 +1,4 @@
+using Arcatech.Triggers.Items;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,25 +8,17 @@ namespace Arcatech.Triggers
     {
         [SerializeField] private Transform _top;
         [SerializeField] private Transform _itemSpot;
-        [SerializeField] private Vector3 _desiredRotation = new Vector3(90f, 0, 0);
+        [SerializeField] private ControlledItem _movingPart;
 
         protected override void OnEnter()
         {
             base.OnEnter();
-            StartCoroutine(ChestOpen());
+            _movingPart.DoControlAction(true);
+        }
+        protected override void OnExit()
+        {
+            base.OnExit();
         }
 
-        protected IEnumerator ChestOpen()
-        {
-            float progress = 0f;
-            while (_top.eulerAngles.x <= _desiredRotation.x)
-            {
-                _top.eulerAngles = Vector3.Lerp(_top.eulerAngles, _desiredRotation, progress);
-                progress += Time.deltaTime;
-                yield return null;
-            }
-            Destroy(gameObject);
-            yield return null;
-        }
     }
 }
