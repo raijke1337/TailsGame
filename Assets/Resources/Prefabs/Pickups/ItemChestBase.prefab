@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _desiredChangeLocalPosition: {x: 0, y: 0, z: 0}
-  _desiredChangeLocalEulers: {x: 0, y: 0, z: 0}
-  _movementTime: 0
+  _desiredChangeLocalEulers: {x: -120, y: 0, z: 0}
+  _movementTime: 1
 --- !u!1 &507715377319538356
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,8 +258,8 @@ MonoBehaviour:
   Content: {fileID: 0}
   Effect: {fileID: 0}
   _top: {fileID: 505502852851476854}
-  _itemSpot: {fileID: 0}
-  _desiredRotation: {x: 90, y: 0, z: 0}
+  _itemSpot: {fileID: 2926623765783260179}
+  _movingPart: {fileID: 1348918858896148205}
 --- !u!1 &3261053995821328903
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +285,7 @@ Transform:
   m_GameObject: {fileID: 3261053995821328903}
   serializedVersion: 2
   m_LocalRotation: {x: -0.6532817, y: -0.27059832, z: -0.27059808, w: 0.65328115}
-  m_LocalPosition: {x: 0, y: 0.074, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -13,10 +13,15 @@ MonoBehaviour:
   m_Name: instagib
   m_EditorClassIdentifier: 
   ID: instagib
-  StatID: 0
-  InitialValue: 999
+  ChangedValueType: 0
+  InitialValue: -999
   RepeatedValue: 0
   RepeatApplicationDelay: 0
   TotalDuration: 0
   Icon: {fileID: 0}
-  SourceType: 1
+  TargetType: 0
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList: []

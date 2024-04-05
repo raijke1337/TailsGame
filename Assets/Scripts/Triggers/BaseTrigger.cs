@@ -1,4 +1,5 @@
 using Arcatech.Units;
+using UnityEditorInternal;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
@@ -8,6 +9,7 @@ namespace Arcatech.Triggers
 
 
         #region trigger
+        [SerializeField] protected bool forceTrigger = true;
 
         public event SimpleTriggerEvent TriggerHitUnitEvent;
         protected void TriggerCallback(BaseUnit tgt, bool entering)
@@ -22,7 +24,10 @@ namespace Arcatech.Triggers
         protected virtual void Start()
         {
             Collider = GetComponent<Collider>();
-            Collider.isTrigger = true;
+            if (forceTrigger)
+            {
+                Collider.isTrigger = true;
+            }
         }
 
         protected abstract void OnTriggerEnter(Collider other);
