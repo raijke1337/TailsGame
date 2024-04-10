@@ -19,6 +19,11 @@ namespace Arcatech.Units.Inputs
         public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
         public bool IsInMeleeCombo = false;
 
+        // used to adjust the raycast plane for vertical movement
+        private float lastY;
+
+
+
         #region managedctrl
 
         public override void StartController()
@@ -49,6 +54,7 @@ namespace Arcatech.Units.Inputs
             transform.LookAt(transform.forward);
 
             _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
+            lastY = Unit.transform.position.y;
         }
 
         private void Pause_performed(CallbackContext obj)
@@ -180,6 +186,15 @@ namespace Arcatech.Units.Inputs
             Vector3 AD = _adj.Isoright * input.x;
             Vector3 WS = _adj.Isoforward * input.y;
             MoveDirectionFromInputs = AD + WS;
+
+            float currY = Unit.transform.position.y;
+            if (lastY != currY)
+            {
+                float delta = lastY - currY;
+                lastY = Unit.transform.position.y;
+                _aim.OnVerticalAdjust(delta);
+            }
+
         }
         private void RotateToAim()
         {

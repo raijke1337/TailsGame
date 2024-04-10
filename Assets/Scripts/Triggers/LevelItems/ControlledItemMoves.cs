@@ -1,19 +1,13 @@
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem.XR.Haptics;
 
 namespace Arcatech.Triggers.Items
 {
-    public enum ControlledItemState : byte
-    {
-        None,
-        Closed,
-        Opening,
-        Open,
-        Closing   
-    }
+
 
     public class ControlledItemMoves : ControlledItem
     {
@@ -22,61 +16,79 @@ namespace Arcatech.Triggers.Items
         [SerializeField] protected Vector3 _desiredChangeLocalEulers;
         [SerializeField] protected float _movementTime;
 
-        private Transform _closedTr;
-        private Transform _openTr;
-        private ControlledItemState _state;
-        private ControlledItemState _desiredState;
+        private float lerpKoef;
 
-        private void OnEnable()
+        private Vector3 _negPos;
+        private Vector3 _negEulers;
+        private Vector3 _posPos;
+        private Vector3 _posEulers;
+
+        private bool isBusy = false;
+
+
+        protected override void InitiateValues()
         {
-            _closedTr = transform;
-            _openTr = _closedTr;
-            _openTr.localPosition += _desiredChangeLocalPosition;
-            _openTr.localEulerAngles += _desiredChangeLocalEulers;
-            _state = ControlledItemState.Closed;
-            _desiredState = ControlledItemState.Closed;
+            _negPos = transform.localPosition;
+            _negEulers = transform.localEulerAngles;
+            _posPos = _negPos + _desiredChangeLocalPosition;
+            _posEulers = _negEulers + _desiredChangeLocalEulers;
 
+
+            lerpKoef = 1 / _movementTime;
         }
-        public override void DoControlAction(bool isP)
-        {
-            if (isP) _desiredState = ControlledItemState.Open;
-            else _desiredState = ControlledItemState.Closed;
-        }
 
-        private void Update()
+        protected override void OnPerformChangeState(ControlledItemState desired)
         {
-            if (_state != _desiredState)
+            if (isBusy) return;
+            switch (desired)
             {
-                switch (_desiredState)
-                {
-                    case ControlledItemState.Closed:
-                        _state = ControlledItemState.Closing;
-                        if (PerformMovement(_closedTr)) _state = ControlledItemState.Closed;
-                        break;
-                    case ControlledItemState.Open:
-                        _state = ControlledItemState.Opening;
-                        if (PerformMovement(_openTr)) _state = ControlledItemState.Open;
-                        break;
-                        default:
-                        Debug.Log(this.name + " has a broken action script");
-                        break;
-                }
+                // todo maybe make this a state machine instead
+                case ControlledItemState.Negative:
+                    isBusy = true;
+                    StartCoroutine(Move(false));
+                    break;
+
+                case ControlledItemState.Positive:
+
+                    isBusy = true;
+                    StartCoroutine(Move(true)); break;
+                default:
+                    break;
+
             }
         }
-        protected bool PerformMovement(Transform finalState)
+
+        protected IEnumerator Move(bool isPositive)
         {
-            if (finalState == transform)
+            float progress = 0;
+
+            if (isPositive)
             {
-                return true;
+                while (progress < 1)
+                {
+                    _currentState = ControlledItemState.NegativeToPositive;
+                    progress += 1 / _movementTime * Time.deltaTime;
+                    transform.localEulerAngles = Vector3.Lerp(_negEulers, _posEulers, progress);
+                    yield return null;
+                }
+                isBusy = false;
+                _currentState = ControlledItemState.Positive;
+                yield return null;
             }
             else
             {
-                transform.localPosition += Vector3.Lerp(transform.localPosition, finalState.localPosition, Time.deltaTime);
-                transform.localEulerAngles += Vector3.Lerp(transform.localEulerAngles, finalState.eulerAngles, Time.deltaTime);
-                return false;
+                while (progress < 1)
+                {
+                    _currentState = ControlledItemState.PositiveToNegative;
+                    progress += 1 / _movementTime * Time.deltaTime;
+                    transform.localEulerAngles = Vector3.Lerp(_posEulers, _negEulers, progress);
+                    yield return null;
+                }
+                isBusy = false;
+                _currentState = ControlledItemState.Negative;
+                yield return null;
             }
+
         }
-
-
     }
 }

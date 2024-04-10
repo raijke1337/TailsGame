@@ -1,6 +1,9 @@
 using Arcatech.UI;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Scripting.APIUpdating;
+
 namespace Arcatech.Units.Inputs
 {
     public class AimingComponent : ManagedControllerBase
@@ -19,6 +22,7 @@ namespace Arcatech.Units.Inputs
         public override void StartController()
         {
             _plane = new Plane(Vector3.down, _vertOffset);
+
             _mousePos = transform.forward;
             _camera = Camera.main;
         }
@@ -53,6 +57,12 @@ namespace Arcatech.Units.Inputs
         }
 
         #endregion
+        public void OnVerticalAdjust(float playerMove)
+        {
+            _plane.Translate(new Vector3(0,playerMove,0));
+#if UNITY_EDITOR
+            //Debug.Log($"Moved raycast by {playerMove}");
+#endif
+        }
     }
-
 }

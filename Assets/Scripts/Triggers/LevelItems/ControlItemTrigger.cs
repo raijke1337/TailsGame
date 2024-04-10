@@ -4,16 +4,23 @@ namespace Arcatech.Triggers
 {
     public abstract class ControlItemTrigger : BaseLevelEventTrigger
     {
-        public ControlledItem ControlledObject;
+        public ControlledItem[] ControlledObject;
 
 
         public virtual void DoPositiveAction()
         {
-            ControlledObject.DoControlAction(true);
+            foreach (var i in ControlledObject)
+            {
+                i.ChangeItemState(ControlledItemState.Positive);
+            }
+            
         }
         public virtual void DoNegativeAction()
         {
-            ControlledObject.DoControlAction(false);
+            foreach (var i in ControlledObject)
+            {
+                i.ChangeItemState(ControlledItemState.Negative);
+            }
         }
 
     }

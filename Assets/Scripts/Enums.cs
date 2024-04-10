@@ -123,3 +123,11 @@ public enum ReferenceUnitType : byte
 
 
 #endregion
+public enum ControlledItemState : byte
+{
+    None,
+    Negative,
+    NegativeToPositive,
+    Positive,
+    PositiveToNegative,
+}

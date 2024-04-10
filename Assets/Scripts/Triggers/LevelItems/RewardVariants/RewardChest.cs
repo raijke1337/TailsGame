@@ -13,11 +13,12 @@ namespace Arcatech.Triggers
         protected override void OnEnter()
         {
             base.OnEnter();
-            _movingPart.DoControlAction(true);
+            _movingPart.ChangeItemState(ControlledItemState.Positive);
         }
         protected override void OnExit()
         {
             base.OnExit();
+            _movingPart.ChangeItemState(ControlledItemState.Negative);
         }
 
     }
