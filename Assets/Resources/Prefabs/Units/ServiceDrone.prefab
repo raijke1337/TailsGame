@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2103638163925825030}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.625, z: 1.625}
+  m_LocalPosition: {x: 0, y: 1.625, z: 0.123}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 5001899029921475707}
   - component: {fileID: 2655914433986873063}
   - component: {fileID: 9030934597805238917}
+  - component: {fileID: 452390181295620255}
   m_Layer: 0
   m_Name: ServiceDrone
   m_TagString: Enemy
@@ -258,34 +259,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsInputsLocked: 1
   Empties:
-    MeleeWeaponEmpty: {fileID: 2945348626853354528}
-    RangedWeaponEmpty: {fileID: 2945348626853354528}
-    SheathedWeaponEmpty: {fileID: 2945348626853354528}
-    SkillsEmpty: {fileID: 2945348626853354528}
-    OthersEmpty: {fileID: 2945348626853354528}
-  _statsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _weaponCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _dodgeCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _shieldCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _skillCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _comboCtrl:
-    debugTime: 0
-    debugEnabled: 0
-  _stunsCtrl:
-    debugTime: 0
-    debugEnabled: 0
-    isGracePeriod: 0
-    _currValue: 0
+    ItemPositions:
+      _serializedList:
+      - Key: 2
+        Value: {fileID: 2945348626853354528}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
   DebugEnabled: 0
   patrolPoints: []
@@ -297,6 +274,7 @@ MonoBehaviour:
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
     Debugging: 0
+  EnemyStats: {fileID: 11400000, guid: 9e88941baccb1024489bb118e859a665, type: 2}
 --- !u!114 &9030934597805238917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,3 +287,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1ead3ed2d4d426428fcf53f962ff604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &452390181295620255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7922160222947965966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Side: 1
+  StatsConfig: {fileID: 11400000, guid: 329ae83e60faa214ba10edde27a2a355, type: 2}
+  _defaultItems: {fileID: 11400000, guid: ca45ad7f630f0234394c2a718366c576, type: 2}

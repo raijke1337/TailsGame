@@ -2,11 +2,9 @@
 using Arcatech.Effects;
 using Arcatech.Skills;
 using Arcatech.Triggers;
-using Arcatech.UI;
 using Arcatech.Units;
 using AYellowpaper.SerializedCollections;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech
 {
@@ -35,24 +33,32 @@ namespace Arcatech
 
     #region structs 
 
+
+    [Serializable]
+    public class ItemEmpties
+    {
+        public SerializedDictionary<EquipItemType, Transform> ItemPositions;
+    }
+    #endregion
+
     #region puzzle stuff
     [Serializable]
     public class Match2Settings
     {
-        [SerializeField,Range(1,6)]public int Pairs;
+        [SerializeField, Range(1, 6)] public int Pairs;
         [SerializeField, Range(10, 60)] public float TimeToSolve;
         [SerializeField, Range(0.1f, 5)] public float TimeToShow;
     }
     public struct Pair<T>
     {
-        public Pair (T i1, T i2)
+        public Pair(T i1, T i2)
         {
             Item1 = i1; Item2 = i2;
         }
         public T Item1 { get; }
         public T Item2 { get; }
 
-        public bool Matching (T i1, T i2)
+        public bool Matching(T i1, T i2)
         {
             return (Item1.Equals(i1) && Item2.Equals(i2)) || (Item1.Equals(i2) && Item2.Equals(i1));
         }
@@ -63,14 +69,6 @@ namespace Arcatech
     }
 
     #endregion
-    [Serializable]
-    public class ItemEmpties
-    {
-        public SerializedDictionary<EquipItemType, Transform> ItemPositions;
-    }
-    #endregion
-
-
 
 
     #region interfaces
@@ -116,16 +114,37 @@ namespace Arcatech
     {
         event SimpleEventsHandler<IExpires> SkillComponentExpiredEvent;
     }
-    //public interface ISkill : IHasID, IAppliesTriggers, IExpires, IHasGameObject
-    //{
-    //    void OnUse();
-    //    void OnUpdate(float delta);
-    //}
 
     public interface INeedsEmpties
     { ItemEmpties Empties { get; } }
+
+
+
+
 
     #endregion
 
 
 }
+#region AI interfaces  TODO
+
+namespace Arcatech.AI
+{ 
+    public interface ITargetPoint
+    {
+        public float AssessDistanceTo(Vector3 position);
+
+    }
+    public interface ITargetUnit
+    { 
+        public bool IsEnemy { get; }
+        public float GetHealthPercent { get; }
+        public bool IsApproaching { get; }
+    
+    }
+
+
+
+}
+
+    #endregion

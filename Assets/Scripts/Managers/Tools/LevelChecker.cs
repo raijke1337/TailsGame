@@ -29,12 +29,9 @@ public class LevelChecker : MonoBehaviour
         }
 
 
-        foreach (var flooritem in list.Where(t => t.name.Contains("Floor")))
+        foreach (var flooritem in list.Where(t => t.name.Contains("Floor")||t.CompareTag("Ground")))
         {
-            if (!flooritem.CompareTag("Ground"))
-            {
-                _floorFix.Add(flooritem);
-            }
+            _floorFix.Add(flooritem);
         }
         foreach (var item in list)
         {

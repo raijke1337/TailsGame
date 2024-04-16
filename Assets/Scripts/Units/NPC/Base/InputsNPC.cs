@@ -35,7 +35,6 @@ namespace Arcatech.Units.Inputs
 
         #endregion
         #region managed
-
         public override void StartController()
         {
             base.StartController();

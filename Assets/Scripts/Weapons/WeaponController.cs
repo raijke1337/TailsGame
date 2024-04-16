@@ -28,22 +28,39 @@ namespace Arcatech.Units
 
         protected override void InstantiateItem(EquipmentItem i)
         {
-            switch (i.ItemType)
+            if (Owner is PlayerUnit p)
             {
-                case EquipItemType.MeleeWeap:
-                    Sheathe(i.ItemType);
-                    break;
-                case EquipItemType.RangedWeap:
-                    Equip(i.ItemType);
-                    break;
+                switch (i.ItemType)
+                {
+                    case EquipItemType.MeleeWeap:
+                        Sheathe(i.ItemType);
+                        break;
+                    case EquipItemType.RangedWeap:
+                        Equip(i.ItemType);
+                        break;
+                }
             }
+            if (Owner is NPCUnit n)
+            {
+                switch (i.ItemType)
+                {
+                    case EquipItemType.MeleeWeap:
+                        Equip(i.ItemType);
+                        break;
+                    case EquipItemType.RangedWeap:
+                        Equip(i.ItemType);
+                        break;
+                }
+            }
+
         }
         public override EquipmentItem RemoveItem(EquipItemType type)
         {
             var e = _equipment[type];
             _equipment.Remove(type);
 
-            IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) || (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
+            IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) ||
+                (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
 
 
             return e;
