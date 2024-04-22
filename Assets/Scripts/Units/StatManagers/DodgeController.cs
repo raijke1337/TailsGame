@@ -29,7 +29,7 @@ namespace Arcatech.Units
         protected override void FinishItemConfig(EquipmentItem item)
         {
 
-            DodgeSkillConfiguration cfg = (DodgeSkillConfiguration)item.Skill;
+            DodgeSkillConfigurationDictionarySO cfg = (DodgeSkillConfigurationDictionarySO)item.Skill;
 
             if (cfg == null)
             {

@@ -180,6 +180,8 @@ namespace Arcatech.Units
             InventoryItem ret;
             if (cfg is Equip e)
             {
+                ret = new EquipmentItem(e, _owner);
+
                 if (cfg is Weapon w)
                 {
                     if (cfg is RangedWeapon r)
@@ -191,15 +193,17 @@ namespace Arcatech.Units
                         ret = new WeaponItem(w, _owner);
                     }
                 }
-                else
+                if (cfg is Booster b)
                 {
-                    ret = new EquipmentItem(e, _owner);
-                }    
+                    ret = new BoosterItem(b,_owner);
+                }
             }
             else
             {
                 ret =  new InventoryItem(cfg, _owner);
             }
+
+            Debug.Log($"{ret.ID} config as {ret.GetType()}");
 
             return ret;
             //cringe but it should work

@@ -23,6 +23,11 @@ namespace Arcatech.Skills
             {
                 var item = GameObject.Instantiate(_settings.SkillObject);
                 item.Data = _settings;
+                if (item is BoosterSkillInstanceComponent bb)
+                {
+                    bb.Data = _settings as DodgeSkillConfigurationDictionarySO;
+                }
+
                 item.Owner = Owner;
 
                 return item;
@@ -46,16 +51,26 @@ namespace Arcatech.Skills
         public SkillObjectForControls(SkillControlSettingsSO cfg, BaseUnit owner)
         {
             Owner = owner;
-            _settings = cfg;
+
+            if (cfg is DodgeSkillConfigurationDictionarySO dcfg)
+            {
+                foreach (var v in dcfg.DodgeSkillStats.Values)
+                {
+                    v.Setup();
+                }
+                _settings = dcfg;
+            }
+            else
+            {
+                _settings = cfg;
+            }
+            
             CurrentCooldown = 0;
 
-            if (cfg is DodgeSkillConfiguration dodge)
-            {
-               // Debug.Log($"TODO dodge skill setting {dodge}");
-            }
-            if (cfg is ProjectileSkillSO projectile)
+            if (cfg is ProjectileSkillConfigurationPackSO projectile)
             {
                 GetProjectileData = projectile.SkillProjectile;
+                Debug.Log($"Projectile skill data set for {cfg.Description.Title}");
             }
         }
 

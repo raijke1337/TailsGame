@@ -202,47 +202,7 @@ namespace Arcatech.Units.Inputs
         //attack action logic is here
         protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
         {
-            bool success;
-
-            switch (type)
-            {
-                case CombatActionType.Melee:
-                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
-                    if (success) CombatActionSuccessCallback(type);
-                    break;
-                case CombatActionType.Ranged:
-                    success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap);
-                    if (success) CombatActionSuccessCallback(type);
-                    break;
-                case CombatActionType.Dodge:
-                    if (_skillCtrl.TryUseSkill(type,999, out var sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-                case CombatActionType.MeleeSpecialQ:
-                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-                case CombatActionType.RangedSpecialE:
-                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-                case CombatActionType.ShieldSpecialR:
-                    if (_skillCtrl.TryUseSkill(type, 999, out sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-            }
+            DoCombatAction(type);
         }
 
         protected virtual void RotateToSelectedUnit()

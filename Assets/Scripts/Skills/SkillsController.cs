@@ -3,7 +3,6 @@ using Arcatech.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -59,10 +58,10 @@ namespace Arcatech.Units
                 switch (type)
                 {
                     case CombatActionType.Dodge:
-                       // Debug.Log($"Checking dodge in skills crtl"); 
                         if (Owner.GetInputs().GetDodgeController.IsDodgePossibleCheck())
                         {
-                            result = usedSkill.GetInstantiatedSkillCollider;
+                            result = usedSkill.GetInstantiatedSkillCollider as BoosterSkillInstanceComponent;
+                            
                             return true;
                         }
                         break;

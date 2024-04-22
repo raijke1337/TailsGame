@@ -1039,6 +1039,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServiceDrone (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3851,6 +3856,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CrawlerMech
       objectReference: {fileID: 0}
+    - target: {fileID: 5255978924601524911, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5255978925863820056, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4624,6 +4634,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServiceDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4867,7 +4882,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   forceTrigger: 1
   ControlledObject:
-  - {fileID: 0}
+  - {fileID: 1554566672}
   PuzzlePrefab: {fileID: -7356610018460317253, guid: 24b8abbda81360049b5f0847478a4d74,
     type: 3}
 --- !u!114 &549332879
@@ -8289,6 +8304,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CrawlerMech (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5255978924601524911, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5255978925863820056, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8785,6 +8805,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ServiceDrone (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12771,6 +12796,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServiceDrone (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13734,6 +13764,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CrawlerMech (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5255978924601524911, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5255978925863820056, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
         type: 3}
@@ -15356,7 +15391,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1461504648163160, guid: 79298396da72aeb4a9dbe792d38ccf1f, type: 3}
       propertyPath: m_Name
-      value: Deck_Door_02_snaps002
+      value: door_puzzle
       objectReference: {fileID: 0}
     - target: {fileID: 1461504648163160, guid: 79298396da72aeb4a9dbe792d38ccf1f, type: 3}
       propertyPath: m_TagString
@@ -17226,8 +17261,8 @@ Transform:
   m_Children:
   - {fileID: 402989962}
   - {fileID: 300888040}
-  - {fileID: 1963677749}
   - {fileID: 1288244820}
+  - {fileID: 1963677749}
   - {fileID: 1315694060}
   - {fileID: 869010170}
   - {fileID: 2146082966}
@@ -18090,6 +18125,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ServiceDrone (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20352,6 +20392,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServiceGolem
       objectReference: {fileID: 0}
+    - target: {fileID: 6282177902539391458, guid: 1f63b76980513de44ae1dac2eb65745d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6285385037620678454, guid: 1f63b76980513de44ae1dac2eb65745d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -20921,6 +20966,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServiceDrone (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7922160222947965966, guid: 835d66ae3e5904046a45cd8d37902e68,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21347,6 +21397,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CrawlerMech (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5255978924601524911, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5255978925863820056, guid: c6d76a6cda1b42544a9b2ebc92c9132d,
         type: 3}

@@ -9,27 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b607bbfc1a5dd647ab4ac0c73784711, type: 3}
-  m_Name: basicBooster
+  m_Script: {fileID: 11500000, guid: d49b34969b02c34479b5d5f23d99d5f7, type: 3}
+  m_Name: booster_base
   m_EditorClassIdentifier: 
   ID: booster_base
   Description: {fileID: 11400000, guid: dcd0031a70aa8da46a9e67e55b5913f3, type: 2}
   ItemType: 4
-  Skill: {fileID: 11400000, guid: cb37095c933aad34da650c3826a3d3ec, type: 2}
   Item: {fileID: 2980722090164582330, guid: f1aa1a5e7e757844d9f774dc883ddbdc, type: 3}
+  Skill: {fileID: 11400000, guid: cb37095c933aad34da650c3826a3d3ec, type: 2}
   Effects:
     Sounds:
       _serializedList:
       - Key: 0
         Value:
           Sounds:
-          - {fileID: 8300000, guid: 0bd05763df902854a80475577a26666a, type: 3}
-          Loudness: 0.52
+          - {fileID: 8300000, guid: 9252e8fa39c35424aadec395c7fb01e6, type: 3}
+          Loudness: 0.45
     Effects:
-      _serializedList:
-      - Key: 0
-        Value:
-          Effects:
-          - {fileID: 7407110167235851954, guid: 0c2509361b13505428ce788b7f846686, type: 3}
-          _scale: 0.464
-          Duration: 0
+      _serializedList: []

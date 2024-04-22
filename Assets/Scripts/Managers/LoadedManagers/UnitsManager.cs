@@ -114,7 +114,7 @@ namespace Arcatech.Managers
             if (isEnable)
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-                u.SkillRequestSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
+                u.SkillRequestFromInputsSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
                 u.BaseControllerEffectEvent += ForwardEffectsRequest;
                 u.UnitTriggerRequestEvent += ForwardTriggerRequest;
                 u.UnitPlacedProjectileEvent += ForwardProjectileRequest;
@@ -126,7 +126,7 @@ namespace Arcatech.Managers
             {
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
 
-                u.SkillRequestSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
+                u.SkillRequestFromInputsSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
                 u.BaseControllerEffectEvent -= ForwardEffectsRequest;
                 u.UnitTriggerRequestEvent -= ForwardTriggerRequest;
                 u.UnitPlacedProjectileEvent -= ForwardProjectileRequest;

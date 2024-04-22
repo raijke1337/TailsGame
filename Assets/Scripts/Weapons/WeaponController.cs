@@ -138,7 +138,9 @@ namespace Arcatech.Units
                         ok = ranged.TryUseItem();
                         break;
                     default:
-                        ok = (_equipment[type] as WeaponItem) .TryUseItem();
+                       var weap = (_equipment[type] as WeaponItem);
+                        ok = weap.TryUseItem();
+
                         break;
                 }
                 if (ok)

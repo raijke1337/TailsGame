@@ -10,7 +10,7 @@ namespace Arcatech.Items
     public class EquipmentItem : InventoryItem
     {
 
-        public SkillControlSettingsSO Skill { get; }
+        public SkillControlSettingsSO Skill { get; protected set; }
         public EffectsCollection Effects { get; }
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;

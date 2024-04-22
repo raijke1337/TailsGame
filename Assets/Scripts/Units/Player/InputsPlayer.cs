@@ -17,7 +17,7 @@ namespace Arcatech.Units.Inputs
         public ComboController GetComboController => _comboCtrl;
 
         public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
-        public bool IsInMeleeCombo = false;
+
 
         // used to adjust the raycast plane for vertical movement
         private float lastY;
@@ -104,68 +104,42 @@ namespace Arcatech.Units.Inputs
         }
 
 
-        #region controller checks
+        #region combat actions
 
         protected void RangedAttack_performed(CallbackContext obj)
         {
-            if (IsInputsLocked) return;
-            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap))
-                CombatActionSuccessCallback(CombatActionType.Ranged);
-
+            DoCombatAction(CombatActionType.Ranged);
         }
         protected void MeleeAttack_performed(CallbackContext obj)
         {
-            if (IsInputsLocked && !IsInMeleeCombo) return;
-            if (_weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap))
-                CombatActionSuccessCallback(CombatActionType.Melee);
-
-        }
-        protected void SkillR_performed(CallbackContext obj)
-        {
-            if (IsInputsLocked) return;
-            if (_skillCtrl.TryUseSkill(CombatActionType.ShieldSpecialR, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
-            {
-                _comboCtrl.UseCombo(sk.Data.Cost);
-                SkillSpawnEventCallback(sk);
-                CombatActionSuccessCallback(CombatActionType.ShieldSpecialR);
-            }
-        }
-        protected void SkillQ_performed(CallbackContext obj)
-        {
-            if (IsInputsLocked) return;
-            if (_skillCtrl.TryUseSkill(CombatActionType.MeleeSpecialQ, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
-            {
-                _comboCtrl.UseCombo(sk.Data.Cost);
-                SkillSpawnEventCallback(sk);
-                CombatActionSuccessCallback(CombatActionType.MeleeSpecialQ);
-            }
-        }
-        protected void SkillE_performed(CallbackContext obj)
-        {
-            if (IsInputsLocked) return;
-            if (_skillCtrl.TryUseSkill(CombatActionType.RangedSpecialE, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
-            {
-                _comboCtrl.UseCombo(sk.Data.Cost);
-                SkillSpawnEventCallback(sk);
-                CombatActionSuccessCallback(CombatActionType.RangedSpecialE);
-            }
+            DoCombatAction(CombatActionType.Melee);
         }
         private void Dash_performed(CallbackContext obj)
         {
-            if (IsInputsLocked || MoveDirectionFromInputs == Vector3.zero) return;
+            if (MoveDirectionFromInputs == Vector3.zero) return;
             //can't dash from standing
-            if (_skillCtrl.TryUseSkill(CombatActionType.Dodge, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
-            {
-                SkillSpawnEventCallback(sk);      
-                // the dodge skill component triggers the boost input method (lmoa)
-            }
+            DoCombatAction(CombatActionType.Dodge);
 
             // this is the old dash, non-skill
+            // basically this part was moved to skill controller
             //if (_dodgeCtrl.IsDodgePossibleCheck())
             //{
             //    CombatActionSuccessCallback(CombatActionType.Dodge);
             //}
         }
+        protected void SkillR_performed(CallbackContext obj)
+        {
+            DoCombatAction(CombatActionType.ShieldSpecialR);
+        }
+        protected void SkillQ_performed(CallbackContext obj)
+        {
+            DoCombatAction(CombatActionType.MeleeSpecialQ);
+        }
+        protected void SkillE_performed(CallbackContext obj)
+        {
+            DoCombatAction(CombatActionType.RangedSpecialE);
+        }
+
         #endregion
 
 

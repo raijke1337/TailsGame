@@ -37,11 +37,7 @@ namespace Arcatech.Units
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
-
-
-
-
-        public event SkillRequestedEvent SkillRequestSuccessEvent;
+        public event SkillRequestedEvent SkillRequestFromInputsSuccessEvent;
 
 
         #region equipments
@@ -157,7 +153,7 @@ namespace Arcatech.Units
 
         protected void OnInputsCreateSkill(SkillComponent data, BaseUnit source, Transform where)
         {
-            SkillRequestSuccessEvent?.Invoke(data, source, where);
+            SkillRequestFromInputsSuccessEvent?.Invoke(data, source, where);
         }
 
         #endregion
@@ -221,7 +217,7 @@ namespace Arcatech.Units
                     break;
                 case CombatActionType.Dodge:
                     _animator.SetTrigger("Dodge");
-                    _controller.PerformDodging(); //old Dodge.
+                   // _controller.PerformDodging(); //old Dodge.
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.MeleeSpecialQ:
