@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
-    public class TriggeredEffect : ICloneable
+    public class TriggeredEffect
     {
         public string ID; // used to load info
         public TriggerChangedValue StatType; // used to pick changed stat
@@ -12,6 +12,10 @@ namespace Arcatech.Triggers
         public float TotalDuration;
         public Sprite Icon;
         public TriggerTargetType Target;
+        public float TotalValue { get
+            {
+                return InitialValue + (((TotalDuration - RepeatApplicationDelay) / RepeatApplicationDelay) * RepeatedValue);
+            } }
 
 
         public float CurrentRepeatTimer; // used by stats controller to do ticks
@@ -28,10 +32,7 @@ namespace Arcatech.Triggers
             CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType;
         }
 
-        public object Clone()
-        {
-            return new TriggeredEffect(ID, StatType, InitialValue, RepeatedValue, RepeatApplicationDelay, TotalDuration, Icon);
-        }
+
     }
 
 }

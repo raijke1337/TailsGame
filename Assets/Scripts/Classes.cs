@@ -132,6 +132,7 @@ namespace Arcatech
             ValueChangedEvent?.Invoke(_current, _last);
         }
 
+
         public void Setup()
         {
             _current = _start;

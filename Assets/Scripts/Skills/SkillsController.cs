@@ -3,6 +3,7 @@ using Arcatech.Skills;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Arcatech.Units
 {
@@ -27,7 +28,19 @@ namespace Arcatech.Units
 
             if (_skills == null) _skills = new Dictionary<CombatActionType, SkillObjectForControls>();
 
-            SkillObjectForControls control = new SkillObjectForControls(item.Skill, Owner);
+            var cfg = item.Skill;
+            SkillObjectForControls control = new SkillObjectForControls(cfg, Owner);
+
+            if (cfg is ProjectileSkillConfigurationSO pcfg)
+            {
+                control = new ProjectileSkillObjectForControls(pcfg, Owner);
+            }
+            if (cfg is DodgeSkillConfigurationSO dcfg)
+            {
+                control = new DodgeSkillObjectForControls(dcfg, Owner);
+            }
+
+            
             IsReady = true;
             switch (item.ItemType)
             {
@@ -50,42 +63,40 @@ namespace Arcatech.Units
 
 
 
-        public bool TryUseSkill(CombatActionType type, float CurrentCombo, out SkillComponent result)
+        public bool TryUseSkill(CombatActionType type, ComboController comboctrl, out SkillComponent result)
         {
             result = null;
-            if (_skills.TryGetValue(type, out var usedSkill))
+            if (_skills.TryGetValue(type, out var usedSkill)) // check if a skill of TYPE is available
             {
-                switch (type)
+                if (usedSkill.TryUseSkill(out var ef)) // not on cd
                 {
-                    case CombatActionType.Dodge:
-                        if (Owner.GetInputs().GetDodgeController.IsDodgePossibleCheck())
+                    if (comboctrl.GetComboContainer.GetCurrent >= ef.InitialValue) // enough combo to use
+                    {
+                        comboctrl.ApplyEffectToController(ef);
+                        result = usedSkill.ProduceSkillObject;
+
+                        switch (type)
                         {
-                            result = usedSkill.GetInstantiatedSkillCollider as BoosterSkillInstanceComponent;
-                            
-                            return true;
+                            case CombatActionType.MeleeSpecialQ:
+                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
+                                break;
+                            case CombatActionType.RangedSpecialE:
+                                SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
+                                break;
                         }
-                        break;
-                    default:
-                        if (CurrentCombo < usedSkill.Cost || !usedSkill.TryUse()) return false;
-                        else
-                        {
-                            result = usedSkill.GetInstantiatedSkillCollider;
-                            switch (type)
-                            {
-                                case CombatActionType.MeleeSpecialQ:
-                                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.MeleeWeap);
-                                    break;
-                                case CombatActionType.RangedSpecialE:
-                                    SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
-                                    break;
-                            }
-                            return true;
-                        }
+                        return true;
+                    }
                 }
             }
-
             return false;
         }
+
+
+
+        public SkillObjectForControls GetControlData(CombatActionType t) => _skills[t];
+        public SkillObjectForControls[] GetControlData() => _skills.Values.ToArray();
+        public override string GetUIText { get => ""; } // cooldowns are tracked in skill control datas
+
 
         public override void UpdateInDelta(float deltaTime)
         {
@@ -97,11 +108,5 @@ namespace Arcatech.Units
             }
         }
 
-        public SkillObjectForControls GetControlData(CombatActionType t) => _skills[t];
-        public SkillObjectForControls[] GetControlData() => _skills.Values.ToArray();
-
     }
-
-
-
 }

@@ -16,8 +16,6 @@ namespace Arcatech.Units
         #region public
         protected Dictionary<EquipItemType, EquipmentItem> _equipment = new Dictionary<EquipItemType, EquipmentItem>();
 
-        //public virtual EquipmentItem[] GetCurrentEquipped { get => _equipment.Values.ToArray(); }
-
         public void LoadItem(EquipmentItem item, out EquipmentItem removing)
         {
 

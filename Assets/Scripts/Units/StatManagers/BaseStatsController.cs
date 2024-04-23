@@ -12,7 +12,7 @@ namespace Arcatech.Units
         public SerializedDictionary<BaseStatType, StatValueContainer> GetBaseStats { get; private set; }
         public event SimpleEventsHandler UnitDiedEvent;
         public string GetDisplayName { get; }
-
+        public override string GetUIText { get => GetDisplayName; }
 
         #region ihandler
         public override void SetupStatsComponent()

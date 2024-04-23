@@ -3,98 +3,107 @@ using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem.Utilities;
 
 namespace Arcatech.Skills
 {
-    #region skill configs
 
     [Serializable]
     public class SkillObjectForControls
     {
-        // skill controller data
-        public BaseUnit Owner { get; }
-        public float CurrentCooldown { get; protected set; }
-
-        // end
-        public SkillComponent GetInstantiatedSkillCollider
-        {
-            get
-            {
-                var item = GameObject.Instantiate(_settings.SkillObject);
-                item.Data = _settings;
-                if (item is BoosterSkillInstanceComponent bb)
-                {
-                    bb.Data = _settings as DodgeSkillConfigurationDictionarySO;
-                }
-
-                item.Owner = Owner;
-
-                return item;
-            }
-        }
-
-        // from stored cfg
-        private SkillControlSettingsSO _settings;
-
-        public TextContainerSO Description { get => _settings.Description; }
-        public BaseStatTriggerConfig[] Triggers { get => _settings.Triggers; }
-        public EffectsCollection Effects { get => _settings.Effects; }
-        public int Cost { get => _settings.Cost; }
-        public float PlacerRadius { get => _settings.PlacerRadius; }
-        public float EffectRadius { get => _settings.AoERadius; }
-        public ProjectileConfiguration GetProjectileData
-        { get; private set; }
-
-        // end
-
         public SkillObjectForControls(SkillControlSettingsSO cfg, BaseUnit owner)
         {
             Owner = owner;
-
-            if (cfg is DodgeSkillConfigurationDictionarySO dcfg)
-            {
-                foreach (var v in dcfg.DodgeSkillStats.Values)
-                {
-                    v.Setup();
-                }
-                _settings = dcfg;
-            }
-            else
-            {
-                _settings = cfg;
-            }
-            
-            CurrentCooldown = 0;
-
-            if (cfg is ProjectileSkillConfigurationPackSO projectile)
-            {
-                GetProjectileData = projectile.SkillProjectile;
-                Debug.Log($"Projectile skill data set for {cfg.Description.Title}");
-            }
-        }
-
-        public virtual bool TryUse()
-        {
-            bool ok = CurrentCooldown <= 0;
-            if (ok)
-            {
-                CurrentCooldown = _settings.Cooldown;
-            }
-
-            return ok;
+            _settings = cfg;
+            _cdTimers = new Queue<Timer>();
         }
         public virtual void UpdateInDelta(float time)
         {
-            if (CurrentCooldown > 0)
+            foreach (var timer in _cdTimers.ToList())
             {
-                CurrentCooldown -= time;
+                timer.TimerTick(time);
             }
+        }
+
+        #region public
+        public BaseUnit Owner { get; }
+        public TextContainerSO Description { get => _settings.Description; }
+        public BaseStatTriggerConfig[] Triggers { get => _settings.Triggers; }
+        public EffectsCollection Effects { get => _settings.Effects; }
+
+        public float PlacerRadius { get => _settings.PlacerRadius; }
+        public float EffectRadius { get => _settings.AoERadius; }
+        // end
+
+
+        public bool TryUseSkill (out TriggeredEffect cost)
+        {
+            cost = new TriggeredEffect(_settings.ComboCostTrigger);
+            return (_cdTimers.Count < _settings.Charges);
+        }
+        public virtual SkillComponent ProduceSkillObject { get
+        {
+                UsedSkillTImer();
+            var skillGameobject = GameObject.Instantiate(_settings.SkillObject);
+            skillGameobject.Data = _settings;
+            if (skillGameobject is BoosterSkillInstanceComponent bb)
+            {
+                bb.Data = _settings as DodgeSkillConfigurationSO;
+            }
+
+            skillGameobject.Owner = Owner;
+            return skillGameobject;
+        }
+
+        }
+        #endregion
+        #region cd
+        // from stored cfg
+        private readonly SkillControlSettingsSO _settings;
+        private Queue<Timer> _cdTimers;
+        private void UsedSkillTImer()
+        {
+            var t = new Timer(_settings.ChargeRestore);
+            _cdTimers.Enqueue(t);
+            t.TimeUp += T_TimeUp;
+        }
+
+        private void T_TimeUp(Timer arg)
+        {
+            _cdTimers.Dequeue();
+            arg.TimeUp -= T_TimeUp;
+        }
+        #endregion
+
+        #region UI
+
+        #endregion
+    }
+
+    public class DodgeSkillObjectForControls : SkillObjectForControls
+    {
+
+        // this logic was in dodge controller 
+        public DodgeSettingsPackage GetDodgeData { get; }
+        public DodgeSkillObjectForControls(DodgeSkillConfigurationSO cfg, BaseUnit owner) : base(cfg, owner)
+        {
+            GetDodgeData = cfg.DodgeSettings;
+        }
+
+    }
+    public class ProjectileSkillObjectForControls : SkillObjectForControls
+    {
+        public ProjectileConfiguration GetProjectileData
+        { get; }
+        public ProjectileSkillObjectForControls(ProjectileSkillConfigurationSO cfg, BaseUnit owner) : base(cfg, owner)
+        {
+            GetProjectileData = cfg.SkillProjectile;
         }
     }
 
-
-    #endregion
 
 
 }

@@ -31,7 +31,7 @@ namespace Arcatech.AI
                     Debug.Log($"{controller.StateMachineUnit.GetFullName} tried to assess unit type {CheckedUnit}, which is NYI");
                     return false;
             }
-            var cont = ch.GetInputs().GetContainerByStatType(CheckedStat);
+            var cont = ch.GetInputs().AssessStat(CheckedStat);
 
             if (cont == null)
             {

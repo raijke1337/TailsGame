@@ -161,15 +161,7 @@ namespace Arcatech.Units
 
         #region managed 
 
-        public override void UpdateInDelta(float deltaTime)
-        {
-            base.UpdateInDelta(deltaTime);
 
-            if (debugEnabled && currentTimer > debugTime)
-            {
-                Debug.Log($"Breakpoint");
-            }
-        }
 
         public override void StopStatsComponent()
         {
@@ -177,7 +169,7 @@ namespace Arcatech.Units
         }
 
         #endregion
-
+        public override string GetUIText { get => ($""); } // unused because in UI skill cd is displayed
 
     }
 

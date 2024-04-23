@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: hammer_spin
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: e3445028487b0e64abf8b359bd19a21e, type: 2}
-  Cooldown: 10
-  Cost: 0
+  Charges: 2
+  ChargeRestore: 3
+  ComboCostTrigger: {fileID: 11400000, guid: 1a1e3c57deb5bdb43a6842ab2bf4e492, type: 2}
   SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
   PlacerRadius: 3

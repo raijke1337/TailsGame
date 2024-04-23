@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: spiderExplode
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: f76873752b832624e826769bf34586af, type: 2}
-  Cooldown: 20
-  Cost: 0
+  Charges: 1
+  ChargeRestore: 7
+  ComboCostTrigger: {fileID: 11400000, guid: 5fe4d06fd5db48f41be12e022390ff01, type: 2}
   SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
   PlacerRadius: 1

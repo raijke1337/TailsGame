@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: shield_heal
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: b2015d538ff3bbc45b9027b43cb21caa, type: 2}
-  Cooldown: 20
-  Cost: 0
+  Charges: 1
+  ChargeRestore: 10
+  ComboCostTrigger: {fileID: 11400000, guid: 080c8010b98feed43b781bb98caa2f01, type: 2}
   SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
   PlacerRadius: 0.5

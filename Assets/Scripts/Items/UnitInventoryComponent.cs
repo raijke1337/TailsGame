@@ -203,7 +203,7 @@ namespace Arcatech.Units
                 ret =  new InventoryItem(cfg, _owner);
             }
 
-            Debug.Log($"{ret.ID} config as {ret.GetType()}");
+            //Debug.Log($"{ret.ID} config as {ret.GetType()}");
 
             return ret;
             //cringe but it should work

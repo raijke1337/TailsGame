@@ -1,46 +1,37 @@
 
+using Arcatech.Skills;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    [RequireComponent(typeof(TextMeshProUGUI), typeof(Image))]
     public class IconContainerUIScript : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private Image _image;
+        public SkillObjectForControls LoadedSkill { get => _skill; set
+            {
+#if UNITY_EDITOR
+                Assert.IsNotNull(value);
+                Assert.IsNotNull(_timerFill);
+                Assert.IsNotNull(_icon);
+                Assert.IsNotNull(_text);
+#endif
 
-        public Image Image
-        {
-            get
-            {
-                return _image;
-            }
-            set
-            {
-                if (_image == null) _image = GetComponent<Image>();
-                _image.sprite = value.sprite;
+
             }
         }
-        public string Text
+        private SkillObjectForControls _skill;        
+        [SerializeField] private Image[] _timerFill;
+        [SerializeField] private Image _icon;
+        [SerializeField] private TextMeshProUGUI _text;
+
+
+
+        public void UpdateInDelta(float delta)
         {
-            get
-            {
-                if (_text == null)
-                {
-                    _text = GetComponent<TextMeshProUGUI>();
-                }
-                return _text.text;
-            }
-            set
-            {
-                if (_text == null)
-                {
-                    _text = GetComponent<TextMeshProUGUI>();
-                }
-                _text.text = value;
-            }
+
         }
+
     }
 }

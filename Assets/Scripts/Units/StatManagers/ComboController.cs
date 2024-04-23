@@ -1,5 +1,6 @@
 using Arcatech.Triggers;
 using System;
+using TMPro;
 
 namespace Arcatech.Units
 {
@@ -12,8 +13,6 @@ namespace Arcatech.Units
         protected float Degen;
         protected float Timeout;
         private float _currentTimeout = 0f;
-        public StatValueContainer GetAvailableCombo { get => _container; }
-
 
         public ComboController(BaseUnit owner) : base(owner)
         {
@@ -34,16 +33,14 @@ namespace Arcatech.Units
 
         #region gameplay
 
-        public bool UseCombo(float value)
-        {
-            bool result = _container.GetCurrent >= value;
-            if (result) _container.ChangeCurrent(-value);
-            return result;
-        }
+        #endregion
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
             return _container;
         }
+        #region UI
+        public override string GetUIText { get => ($"{_container.GetCurrent} / {_container.GetMax}"); }
+        public StatValueContainer GetComboContainer => _container;
 
         #endregion
 

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: crossbow_special
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: b43a51dbb2cccb44cb6344888bb599aa, type: 2}
-  Cooldown: 5
-  Cost: 0
+  Charges: 1
+  ChargeRestore: 5
+  ComboCostTrigger: {fileID: 11400000, guid: 3a1e8870eab5d3f4c985081dffc945a1, type: 2}
   SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
     type: 3}
   PlacerRadius: 1

@@ -8,23 +8,14 @@ namespace Arcatech.UI
 
         [SerializeField] private IconContainerUIScript _iconPrefab;
 
-        private Dictionary<SkillObjectForControls, IconContainerUIScript> _dict;
+        private List<IconContainerUIScript> _icons;
 
         public void TrackSkillIcon(SkillObjectForControls skill)
         {
             var icon = Instantiate(_iconPrefab, transform);
-            _dict ??= new Dictionary<SkillObjectForControls, IconContainerUIScript>();
-            _dict[skill] = icon;
-            icon.Image.sprite = skill.Description.Picture;
-        }
-
-        public void UntrackSkillIcon(SkillObjectForControls o)
-        {
-            if (_dict != null && _dict.TryGetValue(o, out var icon))
-            {
-                Destroy(_dict[o]);
-                _dict.Remove(o);
-            }
+            _icons ??= new List<IconContainerUIScript>();
+            _icons.Add(icon);
+            icon.LoadedSkill = skill;
         }
 
 
@@ -34,19 +25,15 @@ namespace Arcatech.UI
             {
                 Debug.LogError($"Set icon prefab in {this}!");
             }
-            if (_dict == null)
-            {
-                _dict = new Dictionary<SkillObjectForControls, IconContainerUIScript>();
-            }
         }
 
 
         public override void UpdateController(float delta)
         {
 
-            foreach (var item in _dict.Keys)
+            foreach (var item in _icons)
             {
-                _dict[item].Text = Mathf.RoundToInt(item.CurrentCooldown).ToString();
+                item.UpdateInDelta(delta);
             }
         }
 

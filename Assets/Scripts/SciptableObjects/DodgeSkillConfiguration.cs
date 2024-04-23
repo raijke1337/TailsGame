@@ -1,12 +1,22 @@
 
 using AYellowpaper.SerializedCollections;
+using System;
 using UnityEngine;
 namespace Arcatech.Skills
 {
     [CreateAssetMenu(fileName = "New Dodge Skill Config", menuName = "Skills/Dodge Skill")]
-    public class DodgeSkillConfigurationDictionarySO : SkillControlSettingsSO
+    public class DodgeSkillConfigurationSO : SkillControlSettingsSO
     {
-        [Space] public SerializedDictionary<DodgeStatType, StatValueContainer> DodgeSkillStats;
+        // [Space] public SerializedDictionary<DodgeStatType, StatValueContainer> DodgeSkillStats;
+       [SerializeField] public DodgeSettingsPackage DodgeSettings;
+
+    }
+
+
+    [Serializable] public struct DodgeSettingsPackage
+    {
+        [Range(0,10)] public int Range;
+        [Range(0, 10)] public float Speed;
     }
 
 }

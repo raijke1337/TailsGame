@@ -42,7 +42,7 @@ namespace Arcatech.Managers
                 source.GetInputs().StartDodgeMovement(bs);
             }
 
-            if (comp.Data is ProjectileSkillConfigurationPackSO pr)
+            if (comp.Data is ProjectileSkillConfigurationSO pr)
             {
                 //placer.TimeToLive = comp.GetProjectileData.Settings.TimeToLive;
                 var ppp = triggers.ServeProjectileRequest(pr.SkillProjectile, source); // proejctile skill
@@ -91,7 +91,7 @@ namespace Arcatech.Managers
             where = null;
             taget = null;
 
-            if ((comp.Data is DodgeSkillConfigurationDictionarySO d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
+            if ((comp.Data is DodgeSkillConfigurationSO d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
                 (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
                 (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
             {

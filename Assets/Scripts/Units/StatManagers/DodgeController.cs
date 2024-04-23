@@ -13,14 +13,12 @@ namespace Arcatech.Units
     [Serializable]
     public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
 
-    {
+    { // ALL LOGIC FOR TIMERS ETC MOVED TO DODGE SKILL CTRL OBJECT (Skill controller)
         public DodgeController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
 
         }
-        Dictionary<DodgeStatType, StatValueContainer> _stats;
-        public IReadOnlyDictionary<DodgeStatType, StatValueContainer> GetDodgeStats { get { return _stats; } }
-
+       //Dictionary<DodgeStatType, StatValueContainer> _stats;
 
         
 
@@ -29,27 +27,14 @@ namespace Arcatech.Units
         protected override void FinishItemConfig(EquipmentItem item)
         {
 
-            DodgeSkillConfigurationDictionarySO cfg = (DodgeSkillConfigurationDictionarySO)item.Skill;
+            DodgeSkillConfigurationSO cfg = (DodgeSkillConfigurationSO)item.Skill;
 
             if (cfg == null)
             {
                 IsReady = false;
                 // throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
-            else
-            {
-                _stats = new Dictionary<DodgeStatType, StatValueContainer>();
 
-
-                foreach (var c in cfg.DodgeSkillStats)
-                {
-                    _stats[c.Key] = new StatValueContainer(c.Value);
-                }
-                foreach (var st in _stats.Values)
-                {
-                    st.Setup();
-                }
-            }
             _booster = _equipment[EquipItemType.Booster];
         }
         protected override void InstantiateItem(EquipmentItem i)
@@ -78,39 +63,46 @@ namespace Arcatech.Units
 
         #region ctrl
 
-        private Queue<Timer> _timerQueue = new Queue<Timer>();
+        //private Queue<Timer> _timerQueue = new Queue<Timer>();
         private EquipmentItem _booster;
 
-        public bool IsDodgePossibleCheck()
+        public override string GetUIText
         {
-            // Debug.Log($"Check dodge in dodge ctrl, {_stats[DodgeStatType.Charges]} charges ");
-            if (!IsReady) return false;
-
-
-            if (_stats[DodgeStatType.Charges].GetCurrent == 0f) return false;
-            else
-            {
-                _stats[DodgeStatType.Charges].ChangeCurrent(-1);
-                var t = new Timer(_booster.Skill.Cooldown);
-                _timerQueue.Enqueue(t);
-                t.TimeUp += T_TimeUp;
-
-               // EffectEventCallback(new EffectRequestPackage(_booster.Effects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
-
-                return true;
-            }
+            get => "";
         }
+        
 
-        private void T_TimeUp(Timer arg)
-        {
-            _timerQueue.Dequeue();
-            _stats[DodgeStatType.Charges].ChangeCurrent(1);
-        }
+        //public bool IsDodgePossibleCheck()
+        //{
+        //    Debug.Log($"Check dodge in dodge ctrl, {_stats[DodgeStatType.Charges]} charges ");
+        //    if (!IsReady) return false;
+
+
+        //    if (_stats[DodgeStatType.Charges].GetCurrent == 0f) return false;
+        //    else
+        //    {
+        //        _stats[DodgeStatType.Charges].ChangeCurrent(-1);
+        //        var t = new Timer(_booster.Skill.Cooldown);
+        //        _timerQueue.Enqueue(t);
+        //        t.TimeUp += T_TimeUp;
+
+        //       // EffectEventCallback(new EffectRequestPackage(_booster.Effects, EffectMoment.OnStart, _booster.GetInstantiatedPrefab().transform));
+
+        //        return true;
+        //    }
+        //}
+
+        //private void T_TimeUp(Timer arg)
+        //{
+        //    _timerQueue.Dequeue();
+        //    _stats[DodgeStatType.Charges].ChangeCurrent(1);
+        //    arg.TimeUp -= T_TimeUp; 
+        //}
 
 
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
-            return _stats[DodgeStatType.Charges];
+            return null ;
         }
 
 

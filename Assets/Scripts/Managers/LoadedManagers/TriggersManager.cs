@@ -226,6 +226,7 @@ namespace Arcatech.Managers
             Debug.Log($"Projectile {proj} hit {col}");
             if (col.gameObject.CompareTag("StaticItem"))
             {
+                
                 proj.StopProjectile(col.transform);
                 return;
             }

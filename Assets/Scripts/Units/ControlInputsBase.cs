@@ -29,8 +29,7 @@ namespace Arcatech.Units
 
         protected BaseStatsController _statsCtrl;
         protected WeaponController _weaponCtrl;
-        protected DodgeController _dodgeCtrl;
-        // implement dodges through skill controller instead
+        protected DodgeController _dodgeCtrl; // checks timer, the actual dodge is a skill
         protected ShieldController _shieldCtrl;
         protected SkillsController _skillCtrl;
         protected ComboController _comboCtrl;
@@ -48,8 +47,8 @@ namespace Arcatech.Units
         protected void StunEventCallback() => StaggerHappened?.Invoke();
 
 
-        #region stats
-        public StatValueContainer GetContainerByStatType(TriggerChangedValue stat)
+        #region ai
+        public StatValueContainer AssessStat(TriggerChangedValue stat)
         {
             switch (stat)
             {
@@ -58,7 +57,7 @@ namespace Arcatech.Units
                 case TriggerChangedValue.Shield:
                     return _shieldCtrl.GetShieldStats[ShieldStatType.Shield];
                 case TriggerChangedValue.Combo:
-                    return _comboCtrl.GetAvailableCombo;
+                    return _comboCtrl.GetComboContainer;
                 default:
                     return null;
             }
@@ -375,53 +374,53 @@ namespace Arcatech.Units
 
         protected virtual void DoCombatAction (CombatActionType type)
         {
-            bool success = true;
+            bool canAct = true;
             
 
             if (IsInputsLocked)
             {
                 Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
-                success = false;
+                canAct = false;
             }
             switch (type)
             {
                 case CombatActionType.Melee:
-                    if (success && !IsInMeleeCombo)
+                    if (canAct)
                     {
-                        success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
-                        if (success) CombatActionSuccessCallback(type);
+                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
+                        if (canAct) CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.Ranged:
-                    if (success)
+                    if (canAct)
                     {
-                        success = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap);
-                        if (success) CombatActionSuccessCallback(type);
+                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap);
+                        if (canAct) CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.Dodge:
-                    if (success && _skillCtrl.TryUseSkill(type, _comboCtrl.GetAvailableCombo.GetCurrent, out var sk))
+                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out var sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.MeleeSpecialQ:
-                    if (success && _skillCtrl.TryUseSkill(type, _comboCtrl.GetAvailableCombo.GetCurrent, out sk))
+                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.RangedSpecialE:
-                    if (_skillCtrl.TryUseSkill(type, _comboCtrl.GetAvailableCombo.GetCurrent, out sk))
+                    if (_skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.ShieldSpecialR:
-                    if (_skillCtrl.TryUseSkill(type, _comboCtrl.GetAvailableCombo.GetCurrent, out sk))
+                    if (_skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
@@ -446,18 +445,18 @@ namespace Arcatech.Units
         private Coroutine _dodgeCor;
         private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
         {
-            var st = bs.Data as DodgeSkillConfigurationDictionarySO;
-            var stats = st.DodgeSkillStats;
+            var st = bs.Data as DodgeSkillConfigurationSO;
+            var stats = st.DodgeSettings;
 
             IsInputsLocked = true;
 
             Vector3 start = transform.position;
-            Vector3 end = start + GetMoveDirection * stats[DodgeStatType.Range].GetCurrent;
+            Vector3 end = start + GetMoveDirection * stats.Range;
 
             float p = 0f;
             while (p <= 1f)
             {
-                p += Time.deltaTime * stats[DodgeStatType.Speed].GetCurrent;
+                p += Time.deltaTime * stats.Speed;
                 transform.position = Vector3.Lerp(start, end, p);
                 yield return null;
             }
@@ -473,6 +472,7 @@ namespace Arcatech.Units
                 Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
                 IsInputsLocked = false;
                 StopCoroutine(_dodgeCor);
+                _dodgeCor = null;
             }
         }
 

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: dodge_base
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: d1fab18a739ed224ebed8e8fa56a17c2, type: 2}
-  Cooldown: 5
-  Cost: 0
+  Charges: 2
+  ChargeRestore: 4
+  ComboCostTrigger: {fileID: 11400000, guid: 5fe4d06fd5db48f41be12e022390ff01, type: 2}
   SkillObject: {fileID: 2949065724703813724, guid: 2f077da106b3b5544ad7ddd25a18be41,
     type: 3}
   PlacerRadius: 0.1
@@ -39,20 +40,6 @@ MonoBehaviour:
           - {fileID: 7407110167235851954, guid: 0c2509361b13505428ce788b7f846686, type: 3}
           _scale: 1
           Duration: 0
-  DodgeSkillStats:
-    _serializedList:
-    - Key: 0
-      Value:
-        _start: 1
-        _max: 1
-        _min: 0
-    - Key: 1
-      Value:
-        _start: 5
-        _max: 5
-        _min: 0
-    - Key: 2
-      Value:
-        _start: 2
-        _max: 2
-        _min: 0
+  DodgeSettings:
+    Range: 6
+    Speed: 2.5

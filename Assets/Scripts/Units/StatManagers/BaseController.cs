@@ -14,6 +14,7 @@ namespace Arcatech.Units
         public BaseUnit Owner { get; }
 
         private bool _isReady = false;
+        public abstract string GetUIText { get; }
 
         public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
 
@@ -72,10 +73,16 @@ namespace Arcatech.Units
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <returns>if result is negative</returns>
         public virtual void ApplyEffectToController(TriggeredEffect effect)
         {
+
             _activeEffects.Add(effect);
+
         }
 
         protected virtual StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
@@ -83,28 +90,12 @@ namespace Arcatech.Units
             Debug.LogWarning($"{this} was requested to select a StatValueContainer by effect {effect}, and nothing happened");
             return null;
         }
-        #region debug
-
-
-        protected float currentTimer = 0;
-        [SerializeField] protected float debugTime;
-        [SerializeField] protected bool debugEnabled;
-
-        #endregion
 
 
         #region managed
         public virtual void UpdateInDelta(float deltaTime)
         {
-            if (debugEnabled)
-            {
-                currentTimer += deltaTime;
-                if (currentTimer > debugTime)
-                {
-                    Debug.Log($"{this} on {Owner.name} ready: {IsReady}");
-                    currentTimer = 0;
-                }
-            }
+
 
             if (!IsReady) return;
             HandleEffects(deltaTime);

@@ -40,7 +40,7 @@ namespace Arcatech.UI
 
             HPc = _player.GetStats[BaseStatType.Health];
             _bars.LoadValues(HPc, DisplayValueType.Health);
-            HEc = _combo.GetAvailableCombo;
+            HEc = _combo.GetComboContainer;
             _bars.LoadValues(HEc, DisplayValueType.Combo);
 
             if (_shield.IsReady)

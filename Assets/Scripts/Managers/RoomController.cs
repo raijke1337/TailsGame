@@ -16,6 +16,9 @@ namespace Arcatech.Managers
         private StateMachineUpdater _FSMupdater;
         public SimpleEventsHandler<NPCUnit> UnitFound;
 
+
+        [SerializeField] private bool _drawDebug;
+
         #region managed
         public override void Initiate()
         {
@@ -134,9 +137,12 @@ namespace Arcatech.Managers
 
         private void OnDrawGizmos()
         {
-            _detectionArea = GetComponent<BoxCollider>();
-            Gizmos.color = Color.white;
-            Gizmos.DrawWireCube(transform.position, _detectionArea.size);
+            if (_drawDebug)
+            {
+                _detectionArea = GetComponent<BoxCollider>();
+                Gizmos.color = Color.white;
+                Gizmos.DrawWireCube(transform.position, _detectionArea.size);
+            }
         }
 #endif
 

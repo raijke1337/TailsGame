@@ -37,6 +37,7 @@ namespace Arcatech.Items
         {
             // stuck if hits a static or has no penetration
             _data.ProjectileSpeed = 0;
+            _data.ProjectilePenetration = 0;
             transform.SetParent(parent, true);
         }
 

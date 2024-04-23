@@ -12,7 +12,6 @@ namespace Arcatech.Items
 
         public ProjectileComponent GetProjectile(BaseUnit owner)
         {
-
             var c = Instantiate(ProjectilePrefab);
             c.Setup(Settings, owner);
             return c;

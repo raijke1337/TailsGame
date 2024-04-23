@@ -29,12 +29,12 @@ public enum EquipItemType
     Modifier,
     Other = 255
 }
-public enum DodgeStatType
-{
-    Charges,
-    Range,
-    Speed
-}
+//public enum DodgeStatType
+//{
+//    Charges,
+//    Range,
+//    Speed
+//}
 
 public enum CombatActionType
 {
@@ -59,7 +59,8 @@ public enum TriggerChangedValue : byte
     Combo = 20,
     MoveSpeed = 30,
     TurnSpeed = 40,
-    Stagger = 50
+    Stagger = 50,
+    DodgeCharge = 60,
 }
 
 #region interface

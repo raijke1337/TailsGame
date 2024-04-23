@@ -12,6 +12,8 @@ namespace Arcatech
 
         public void SetText(TextContainerSO cont)
         {
+            if (cont == null) return;
+
             _title.text = cont.Title;
             _title.font = GameUIManager.Instance.GetFont(FontType.Title);
             _text.text = cont.GetFormattedText;

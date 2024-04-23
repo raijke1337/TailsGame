@@ -8,7 +8,7 @@ namespace Arcatech.Units
     [Serializable]
     public class ShieldController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
     {
-        public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
+      //  public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
         private Dictionary<ShieldStatType, StatValueContainer> _stats;
 
 
@@ -82,6 +82,13 @@ namespace Arcatech.Units
         {
             return _stats[ShieldStatType.Shield];
         }
+
+        public override string GetUIText { get => ($"{_stats[ShieldStatType.Shield].GetCurrent} / {_stats[ShieldStatType.Shield].GetMax}"); }
+
+
+        #region AI
+        public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
+        #endregion
     }
 
 }
