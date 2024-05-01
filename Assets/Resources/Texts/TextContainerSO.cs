@@ -1,18 +1,13 @@
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "New Description Cointainer", menuName = "Description Container")]
-public class TextContainerSO : ScriptableObject
+namespace Arcatech.Texts
 {
-    public Sprite Picture;
-    public string Title;
-    public string Text;
-
-    public string GetFormattedText
+    [CreateAssetMenu(fileName = "New Simple Description", menuName = "Description/Simple")]
+    public class TextContainerSO : ScriptableObject
     {
-        get
-        {
-            return Text;
-        }
-    }
-}
 
+        public string Title;
+        public string Text;
+
+    }
+
+}

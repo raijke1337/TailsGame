@@ -2,25 +2,13 @@ using Arcatech.Items;
 using Arcatech.UI;
 using Arcatech.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
+
 namespace Arcatech.Managers
 {
     public class EquipsLevelController : MonoBehaviour
     {
-        //private SerializedSaveData saveData;
-
-        [SerializeField] private InventoryItemsHolder _items;
-        [SerializeField] private EquipsPanel _equips;
-        [SerializeField] private GameObject _weaponsMessage;
-
-        [SerializeField] private Canvas _tooltips;
-        [SerializeField] private TooltipComp _tooltipPrefab;
-        private TooltipComp instantiatedTT;
-
-       // [SerializeField] private bool _showingTooltip = false;
-
-        private PlayerUnit _player;
-
-
+        #region UI buttons
         public void OnDone()
         {
             if (_player.IsArmed)
@@ -29,7 +17,9 @@ namespace Arcatech.Managers
             }
             else
             {
-                _weaponsMessage.SetActive(true);
+                Debug.LogError("Can't start level without weapons equipped, TODO");
+
+                //_weaponsMessage.SetActive(true);
             }
 
         }
@@ -38,87 +28,33 @@ namespace Arcatech.Managers
             GameManager.Instance.OnReturnToMain();
         }
 
+        #endregion
+
+
+
+        private PlayerUnit _player;
+
+        [SerializeField] private EquipmentsMenuContainerScript _menuContainer;
+
+        private void OnValidate()
+        {
+            _menuContainer = GetComponentInChildren<EquipmentsMenuContainerScript>();
+        }
 
         private void OnEnable()
         {
+            Assert.IsNotNull(_menuContainer,"Add menu container component to a child");
+
+
             _player = FindObjectOfType<PlayerUnit>();
             if (_player == null)
             {
                 Debug.LogError($"Player unit not found!");
             }
             _player.InitiateUnit();
-
-            if (_items == null | _equips == null)
-            {
-                Debug.LogError("Set panels for " + gameObject.name);
-                return;
-            }
-            //saveData = DataManager.Instance.GetSaveData;
-            // load items from player instaed
-            // 
-            _items.StartController();
-            _equips.StartController();
-
-            foreach (var i in _player.GetUnitInventory.GetCurrentEquips)
-            {
-                var tile = _equips.AddTileContent(i);
-                tile.ItemClickedEvent += OnEquipmentTileClicked;
-            }
-            foreach (var e in _player.GetUnitInventory.GetCurrentInventory)
-            {
-                var tile = _items.AddTileContent(e);
-                tile.ItemClickedEvent += OnInventoryTileClicked;
-            }
-
+            _menuContainer.InitialInventoryDisplay(_player.GetUnitInventory);
 
         }
-
-        private void OnInventoryTileClicked(InventoryItem arg)
-        {
-
-            if (arg is not EquipmentItem) return; // unequippable items
-
-
-            ItemTileComponent tile = _items.RemoveTileContent(arg);
-            tile.ItemClickedEvent -= OnInventoryTileClicked;
-
-
-            // this just swaps subs for swithcing between windows
-            var equipTile = _equips.AddTileContent(tile.Item);
-            equipTile.ItemClickedEvent += OnEquipmentTileClicked;
-            // make the 
-
-
-            // TODO null here for some reason
-
-            _player.GetUnitInventory.RemoveItem(arg);
-
-            _player.GetUnitInventory.EquipItem(arg as EquipmentItem);
-        }
-
-        private void OnEquipmentTileClicked(InventoryItem arg)
-        {
-            // Debug.Log("Clicked callback - equipment");
-            _equips.RemoveTileContent(arg).ItemClickedEvent -= OnEquipmentTileClicked;
-            _items.AddTileContent(arg).ItemClickedEvent += OnInventoryTileClicked;
-
-            _player.GetUnitInventory.MoveItemToInventory(_player.GetUnitInventory.UnequipItem(arg.ItemType));
-        }
-
-        private void Update()
-        {
-            _items.UpdateController(Time.deltaTime); // nothing here for now
-            _equips.UpdateController(Time.deltaTime);
-
-        }
-
-
-        private void OnDisable()
-        {
-            _items.StopController();
-            _equips.StopController();
-        }
-
 
 
     }

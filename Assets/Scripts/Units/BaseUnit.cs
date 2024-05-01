@@ -48,8 +48,7 @@ namespace Arcatech.Units
         protected void CreateStartingEquipments(UnitInventoryComponent item) // equipment can't be changed mid-level so it's no problem here that this is run once
         {
             UpdateComponents();
-
-            _controller.AssignItems(item);
+            _controller.AssignDefaultItems(item);
         }
         public bool IsArmed
         {

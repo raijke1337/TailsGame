@@ -65,9 +65,9 @@ namespace Arcatech.Units
         #endregion
 
         #region items
-        public void AssignItems(UnitInventoryComponent items)
+        public void AssignDefaultItems(UnitInventoryComponent items)
         {
-            items.EquipmentChangedEvent += OnEquipmentChangedEvent;
+            items.InventoryUpdateEvent += CheckEquipsOnInventoryUpdate;
             var skillsItems = new List<EquipmentItem>();
 
             foreach (var item in items.GetCurrentEquips)
@@ -103,67 +103,44 @@ namespace Arcatech.Units
                 {
                     _skillCtrl.LoadItemSkill(item);
                 }
-            }
-
+            }            
         }
 
-        private void OnEquipmentChangedEvent(InventoryItem item, bool isAdded)
+        private void CheckEquipsOnInventoryUpdate(UnitInventoryComponent inve, SerializedUnitInventory inv)
         {
-            string removed = string.Empty;
-            // Debug.Log($"Testing if on equipchange is called twice");
-            // it isnt
+            _weaponCtrl.TryRemoveItem(EquipItemType.MeleeWeap, out _);
+            _weaponCtrl.TryRemoveItem(EquipItemType.RangedWeap, out _);
+            _dodgeCtrl.TryRemoveItem(EquipItemType.Booster, out _);
+            _shieldCtrl.TryRemoveItem(EquipItemType.Shield, out _);
+            // TODO // 
 
-            if (item is EquipmentItem eq) // just in case
+
+            foreach (EquipmentItem e in inve.GetCurrentEquips)
             {
-                if (isAdded)
+                switch (e.ItemType)
                 {
-                    switch (eq.ItemType)
-                    {
-                        default:
-                            Debug.Log($"{this} had a trigger for {item} adding: {isAdded} and nothing happened");
-                            break;
-                        case (EquipItemType.MeleeWeap):
-                            _weaponCtrl.LoadItem(eq, out _);
-                            break;
-                        case (EquipItemType.RangedWeap):
-                            _weaponCtrl.LoadItem(eq, out _);
-                            break;
-                        case (EquipItemType.Shield):
-                            _shieldCtrl.LoadItem(eq, out _);
-                            break;
-                        case (EquipItemType.Booster):
-                            _dodgeCtrl.LoadItem(eq, out _);
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (eq.ItemType)
-                    {
-
-                        default:
-                            Debug.Log($"{this} had a trigger for {item} adding: {isAdded} and nothing happened");
-                            break;
-                        case (EquipItemType.MeleeWeap):
-                            _weaponCtrl.RemoveItem(eq.ItemType);
-                            break;
-                        case (EquipItemType.RangedWeap):
-                            _weaponCtrl.RemoveItem(eq.ItemType);
-                            break;
-                        case (EquipItemType.Shield):
-                            _shieldCtrl.RemoveItem(eq.ItemType);
-                            break;
-                        case (EquipItemType.Booster):
-                            _dodgeCtrl.RemoveItem(eq.ItemType);
-                            break;
-                    }
-                }
-                if (_skillCtrl != null) // null in scenes
-                {
-                    _skillCtrl.LoadItemSkill(eq);
+                    default:
+                        Debug.Log($"No equipment logic for equipement {e}, type {e.ItemType}");
+                        break;
+                    case (EquipItemType.MeleeWeap):                        
+                        _weaponCtrl.LoadItem(e, out _);
+                        break;
+                    case (EquipItemType.RangedWeap):
+                        _weaponCtrl.LoadItem(e, out _);
+                        break;
+                    case (EquipItemType.Shield):
+                        _shieldCtrl.LoadItem(e, out _);
+                        break;
+                    case (EquipItemType.Booster):
+                        _dodgeCtrl.LoadItem(e, out _);
+                        break;
                 }
             }
+
+
+
         }
+
 
 
         #endregion
@@ -186,6 +163,9 @@ namespace Arcatech.Units
         }
         public override void StartController()
         {
+#if UNITY_EDITOR
+            if (GameManager.Instance == null) return;
+#endif
             switch (GameManager.Instance.GetCurrentLevelData.LevelType)
             {
                 case LevelType.Menu:
@@ -377,7 +357,7 @@ namespace Arcatech.Units
             bool canAct = true;
             
 
-            if (IsInputsLocked)
+            if (IsInputsLocked && !IsInMeleeCombo)
             {
                 Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
                 canAct = false;
@@ -385,7 +365,7 @@ namespace Arcatech.Units
             switch (type)
             {
                 case CombatActionType.Melee:
-                    if (canAct)
+                    if (canAct || IsInMeleeCombo)
                     {
                         canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
                         if (canAct) CombatActionSuccessCallback(type);

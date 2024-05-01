@@ -1,10 +1,11 @@
+using Arcatech.Texts;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
     public class LevelTextTrigger : BaseLevelEventTrigger
     {
-        [SerializeField] private TextContainerSO _text;
-        public TextContainerSO Text
+        [SerializeField] private ExtendedTextContainerSO _text;
+        public ExtendedTextContainerSO Text
         {
             get
             {
@@ -13,6 +14,7 @@ namespace Arcatech.Triggers
             set
             {
                 _text = value;
+                
             }
         }
 

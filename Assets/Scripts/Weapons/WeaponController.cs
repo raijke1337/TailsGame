@@ -54,16 +54,17 @@ namespace Arcatech.Units
             }
 
         }
-        public override EquipmentItem RemoveItem(EquipItemType type)
+        public override bool TryRemoveItem(EquipItemType type, out EquipmentItem removed)
         {
-            var e = _equipment[type];
-            _equipment.Remove(type);
 
-            IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) ||
-                (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
+            var re = base.TryRemoveItem(type,out removed);
+            if (re)
+            {
+                IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) ||
+                    (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
+            }
 
-
-            return e;
+            return re;
         }
 
         protected bool Equip(EquipItemType type)

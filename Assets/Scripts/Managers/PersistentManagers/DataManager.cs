@@ -117,7 +117,7 @@ public class DataManager : MonoBehaviour
     private GameSave CreateDefaultSave()
     {
         RefreshSceneContainers();
-        ItemsStringsSave items = new ItemsStringsSave();
+        SerializedUnitInventory items = new SerializedUnitInventory();
         var defcfg = GetConfigByID<UnitItemsSO>("player");
         foreach (var e in defcfg.Equipment)
         {

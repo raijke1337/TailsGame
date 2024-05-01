@@ -61,8 +61,8 @@ namespace Arcatech.Puzzles
 
                 _pairs[new Pair<IconTileComp>(random1, random2)] = randomPic;
 
-                random1.ClickedEvent += TileClicked;
-                random2.ClickedEvent += TileClicked;
+                random1.IconClickedEvent += TileClicked;
+                random2.IconClickedEvent += TileClicked;
             }
         }
 
@@ -97,8 +97,8 @@ namespace Arcatech.Puzzles
                 }
                 else
                 {
-                    _selectedTile.ClickedEvent -= TileClicked;
-                    c.ClickedEvent -= TileClicked;
+                    _selectedTile.IconClickedEvent -= TileClicked;
+                    c.IconClickedEvent -= TileClicked;
                     _pairs.Remove(pair);
                     _selectedTile = null;
                     if (_pairs.Count == 0)

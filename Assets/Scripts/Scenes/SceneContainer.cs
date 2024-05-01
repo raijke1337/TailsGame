@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Arcatech.Texts;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

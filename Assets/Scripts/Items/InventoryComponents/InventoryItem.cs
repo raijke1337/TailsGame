@@ -1,18 +1,20 @@
+using Arcatech.Texts;
 using Arcatech.Units;
+using System;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
     // coin, upgrade, key etc... NYI
+    [Serializable]
     public class InventoryItem
     {
         public string ID;
         public Sprite ItemIcon { get => _description.Picture; }
-        public string GetDisplayName => _description.Title;
-        public string GetDescription => _description.GetFormattedText;
+        public ExtendedTextContainerSO GetDescription => _description;
 
         public EquipItemType ItemType { get; }
-        protected TextContainerSO _description;
+        protected ExtendedTextContainerSO _description;
         public BaseUnit Owner;
 
 

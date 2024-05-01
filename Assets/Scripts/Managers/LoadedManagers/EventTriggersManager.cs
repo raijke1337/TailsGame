@@ -65,7 +65,7 @@ namespace Arcatech.Managers
             }
             if (tr is LevelRewardTrigger rew)
             {
-               u.GetUnitInventory.AddItem(rew.Content);
+               u.GetUnitInventory.PickedUpItem(rew.Content);
                 ManageTrigger(rew, false);
 
             }

@@ -42,6 +42,8 @@ namespace Arcatech
         public static class Texts
         {
             public const string c_TextsPath = "/Resources/Texts/";
+            public const string c_WeaponsDesc = "Assets/Resources/Texts/Descriptions/Weapons/";
+            public const string c_SkillsDesc = "Assets/Resources/Texts/Descriptions/Skills/";
         }
         public static class StateMachineData
         {

@@ -15,12 +15,6 @@ namespace Arcatech.Managers
         public IsoCameraController CameraController { get; private set; }
 
 
-
-
-
-
-
-
         private LoadedManagerBase[] _managers;
 
         private SceneContainer _lvl;

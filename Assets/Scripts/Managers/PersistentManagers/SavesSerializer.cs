@@ -12,7 +12,7 @@ namespace Arcatech.Managers
     public class SerializedSaveData
     {
         public List<string> OpenedLevels;
-        public ItemsStringsSave PlayerItems;
+        public SerializedUnitInventory PlayerItems;
 
         public SerializedSaveData(GameSave save)
         {
@@ -33,8 +33,8 @@ namespace Arcatech.Managers
     public class GameSave
     {
         public List<SceneContainer> OpenedLevels;
-        public ItemsStringsSave Items;
-        public GameSave(List<SceneContainer> lvs, ItemsStringsSave items)
+        public SerializedUnitInventory Items;
+        public GameSave(List<SceneContainer> lvs, SerializedUnitInventory items)
         {
             OpenedLevels = lvs; 
             Items = items;
@@ -43,11 +43,11 @@ namespace Arcatech.Managers
     }
 
     [Serializable]
-    public class ItemsStringsSave
+    public class SerializedUnitInventory
     {
         public List<string> Equips;
         public List<string> Inventory;
-        public ItemsStringsSave()
+        public SerializedUnitInventory()
         {
             Equips = new List<string>();
             Inventory = new List<string>();

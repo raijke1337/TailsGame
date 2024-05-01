@@ -17,12 +17,19 @@ namespace Arcatech.UI
                 Assert.IsNotNull(_icon);
                 Assert.IsNotNull(_text);
 #endif
+                _skill = value;
+
+
+                _timerFill.fillAmount = 1;
+                _timerFill.enabled = false;
+                _icon.sprite = _skill.Description.Picture;
+                _text.text = _skill.GetTextForUI;
 
 
             }
         }
         private SkillObjectForControls _skill;        
-        [SerializeField] private Image[] _timerFill;
+        [SerializeField] private Image _timerFill;
         [SerializeField] private Image _icon;
         [SerializeField] private TextMeshProUGUI _text;
 
@@ -30,8 +37,18 @@ namespace Arcatech.UI
 
         public void UpdateInDelta(float delta)
         {
-
+            _text.text = _skill.GetTextForUI;
+            if (_skill.GetTextForUI == "0")
+            {
+                _timerFill.enabled = true;
+            }
+            else
+            {
+                _timerFill.enabled = false;
+            }
         }
 
     }
+
+
 }

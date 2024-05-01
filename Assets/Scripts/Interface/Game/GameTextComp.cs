@@ -1,3 +1,4 @@
+using Arcatech.Texts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ namespace Arcatech
 
             _title.text = cont.Title;
             _title.font = GameUIManager.Instance.GetFont(FontType.Title);
-            _text.text = cont.GetFormattedText;
+            _text.text = cont.Text;
             _text.font = GameUIManager.Instance.GetFont(FontType.Text);
            // _picture.sprite = cont.Picture;
         }

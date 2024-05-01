@@ -1,3 +1,4 @@
+using Arcatech.Texts;
 using Arcatech.UI;
 using System.Collections;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        public void UpdateGameText(TextContainerSO text, bool isShown)
+        public void UpdateGameText(ExtendedTextContainerSO text, bool isShown)
         {
             if (isShown)
             {

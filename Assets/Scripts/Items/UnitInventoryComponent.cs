@@ -11,25 +11,17 @@ namespace Arcatech.Units
     [Serializable]
     public class UnitInventoryComponent
     {
-        /// <summary>
-        /// item, isadded
-        /// </summary>
-        public event SimpleEventsHandler<InventoryItem, bool> EquipmentChangedEvent;
-        public event SimpleEventsHandler<InventoryItem, bool> InventoryChangedEvent;
-
+        private BaseUnit _owner;
         private Dictionary<EquipItemType, EquipmentItem> _equips;
         private List<InventoryItem> _items;
         private List<InventoryItem> _drops;
-
-        private BaseUnit _owner;
-
-
-        public ItemsStringsSave PackSaveData // used by player unit
+        
+        public SerializedUnitInventory PackSaveData // used by game manager to save data
         {
             get
             {
 
-                ItemsStringsSave cont = new ItemsStringsSave();
+                SerializedUnitInventory cont = new SerializedUnitInventory();
                 foreach (var e in _equips.Values)
                 {
                     cont.Equips.Add(e.ID);
@@ -49,21 +41,17 @@ namespace Arcatech.Units
 
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
+
+        public event SimpleEventsHandler<UnitInventoryComponent,SerializedUnitInventory> InventoryUpdateEvent;
+        protected void CallBackUpdateEvent() => InventoryUpdateEvent?.Invoke(this, PackSaveData);
+
+        #region used by level events 
+
         public bool HasItem(Item search)
         {
             return (_equips.Values.Any(t=>t.ID==search.ID) || _items.Any(t=>t.ID==search.ID));
         }
-
-
-
-        public void EquipItem(EquipmentItem e)
-        {
-            _equips[e.ItemType] = e;
-            e.Owner = _owner;
-            e.OnEquip();
-            EquipmentChangedEvent?.Invoke(e, true);
-        }
-        public void AddItem(Item i)
+        public void PickedUpItem(Item i)
         {
             if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
@@ -74,83 +62,48 @@ namespace Arcatech.Units
             {
                 var res = ProduceItem(i);
                 _items.Add(res);
-                InventoryChangedEvent?.Invoke(res, true);
+                CallBackUpdateEvent();
             }
         }
-        public void MoveItemToInventory(InventoryItem item)
+
+        #endregion
+
+        #region equipments level
+
+        public void HandleSwapButton (InventoryItem i)
         {
-            _items.Add(item);
-            InventoryChangedEvent?.Invoke(item, true);
+            if (i is EquipmentItem eq)
+            {
+                if (GetCurrentEquips.Contains(eq))
+                {
+                    MoveToInventory(eq);
+                }
+                else
+                {
+                    MoveToEquips(eq);
+                }
+            }
         }
-        public InventoryItem RemoveItem(string ID)
+
+        private void MoveToEquips(EquipmentItem i)
         {
-            InventoryItem ret = null;
-            try
-            {
-                var i = _items.First(t => t.ID == ID);
-                _items.Remove(i);
-                ret = i;
-                InventoryChangedEvent?.Invoke(ret, false);
-
-                return ret;
-            }
-            catch
-            {
-                return ret;
-            }
+            _items.Remove(i);
+            _equips[i.ItemType] = i;
         }
-
-        public bool RemoveItem(InventoryItem item)
+        private void MoveToInventory(EquipmentItem i)
         {
-            bool ret = false;
-            if (_items.Contains(item))
-            {
-                _items.Remove(item);
-                ret = true;
-            }
-            return ret;
+            _equips.Remove(i.ItemType);
+            _items.Add(i);
         }
-
-        public EquipmentItem UnequipItem(string ID)
+        // to choose the text for the context button
+        public bool IsItemEquipped(EquipmentItem equip)
         {
-            EquipmentItem ret = null;
-            try
-            {
-                var i = _equips.Values.First(t => t.ID == ID);
-                _items.Remove(i);
-                ret = i;
-
-                ret.OnUnequip();
-
-                InventoryChangedEvent?.Invoke(ret, false);
-                return ret;
-            }
-            catch
-            {
-                return ret;
-            }
+            return (_equips.TryGetValue(equip.ItemType, out var eq));
         }
-        public EquipmentItem UnequipItem(EquipItemType type)
-        {
-            EquipmentItem ret = null;
-            try
-            {
-                var i = _equips[type];
-                _equips.Remove(type);
+
+        #endregion
 
 
-
-                ret = i;
-                ret.OnUnequip();
-                InventoryChangedEvent?.Invoke(ret, false);
-
-                return ret;
-            }
-            catch
-            {
-                return ret;
-            }
-        }
 
         // for default inventory setup from config SOs
         public UnitInventoryComponent(UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
@@ -211,7 +164,7 @@ namespace Arcatech.Units
 
 
         // for player laod from save
-        public UnitInventoryComponent(ItemsStringsSave strings, BaseUnit owner)
+        public UnitInventoryComponent(SerializedUnitInventory strings, BaseUnit owner)
         {
             _owner = owner;
 

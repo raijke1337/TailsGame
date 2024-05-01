@@ -1,6 +1,7 @@
 
 using Arcatech.Effects;
 using Arcatech.Skills;
+using Arcatech.Texts;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using AYellowpaper.SerializedCollections;

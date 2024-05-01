@@ -1,4 +1,5 @@
 ﻿using Arcatech.Effects;
+using Arcatech.Texts;
 using Arcatech.Triggers;
 using UnityEngine;
 namespace Arcatech.Skills
@@ -7,7 +8,7 @@ namespace Arcatech.Skills
     public class SkillControlSettingsSO : ScriptableObject
     {
 
-        public TextContainerSO Description;
+        public ExtendedTextContainerSO Description;
         [Space, Range(1, 10)] public int Charges;
         [Range(1, 10)] public int ChargeRestore;
         [Space] public BaseStatTriggerConfig ComboCostTrigger;

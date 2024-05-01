@@ -35,17 +35,23 @@ namespace Arcatech.Units
            
             StateChangeCallback(IsReady, this);
         }
-        public virtual EquipmentItem RemoveItem(EquipItemType type)
+        public virtual bool TryRemoveItem(EquipItemType type, out EquipmentItem removed)
         {
-            var e = _equipment[type];
-            _equipment.Remove(type);
-            if (e is WeaponItem w)
+            bool success = false;
+            removed = null;
+            if (_equipment.ContainsKey(type))
             {
-                w.PrefabTriggerHitSomething -= TriggerEventCallback;
+                removed = _equipment[type];
+                _equipment.Remove(type);
+                IsReady = false;
+                if (removed is WeaponItem w)
+                {
+                    w.PrefabTriggerHitSomething -= TriggerEventCallback;
+                }
+                success = true;
             }
 
-            IsReady = false;
-            return e;
+            return success;
         }
 
         #endregion
@@ -59,7 +65,7 @@ namespace Arcatech.Units
             if (_equipment.TryGetValue(item.ItemType, out EquipmentItem val))
             {
                 replacing = val;
-                RemoveItem(replacing.ItemType);
+                TryRemoveItem(replacing.ItemType, out replacing);
             }
             IsReady = true;
             var i = _equipment[item.ItemType] = item;

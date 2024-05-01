@@ -1,5 +1,6 @@
 ﻿using Arcatech.Effects;
 using Arcatech.Items;
+using Arcatech.Texts;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
@@ -30,7 +31,7 @@ namespace Arcatech.Skills
 
         #region public
         public BaseUnit Owner { get; }
-        public TextContainerSO Description { get => _settings.Description; }
+        public ExtendedTextContainerSO Description { get => _settings.Description; }
         public BaseStatTriggerConfig[] Triggers { get => _settings.Triggers; }
         public EffectsCollection Effects { get => _settings.Effects; }
 
@@ -79,6 +80,14 @@ namespace Arcatech.Skills
         #endregion
 
         #region UI
+
+        public string GetTextForUI
+        {
+            get
+            {
+                return (_settings.Charges - _cdTimers.Count).ToString();
+            }
+        }
 
         #endregion
     }
