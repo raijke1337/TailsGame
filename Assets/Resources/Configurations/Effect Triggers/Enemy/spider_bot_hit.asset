@@ -13,10 +13,18 @@ MonoBehaviour:
   m_Name: spider_bot_hit
   m_EditorClassIdentifier: 
   ID: spider_bot_hit
-  StatID: 0
+  ChangedValueType: 0
   InitialValue: -40
   RepeatedValue: -10
   RepeatApplicationDelay: 1
   TotalDuration: 3
   Icon: {fileID: 21300000, guid: 5aa0d71d789c93a468898d8acfcf2a09, type: 3}
-  SourceType: 1
+  TargetType: 0
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList:
+      - Key: 2
+        Value:
+        - {fileID: 2427786012956944606, guid: e615c950183dfd84295bee49037c8181, type: 3}

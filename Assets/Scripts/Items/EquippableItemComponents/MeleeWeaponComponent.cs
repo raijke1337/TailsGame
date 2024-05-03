@@ -19,10 +19,7 @@ namespace Arcatech.Items
             _triggers[0].ToggleCollider(enable);
         }
 
-        public override void OnItemUse()
-        {
-            //whoosh
-        }
+
     }
 
 }

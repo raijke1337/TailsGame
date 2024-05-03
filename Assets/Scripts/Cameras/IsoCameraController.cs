@@ -23,7 +23,7 @@ namespace Arcatech.Managers
         public override void RunUpdate(float delta)
         {
             _desiredPos = _target.transform.forward + _target.transform.position;
-            transform.position = Vector3.Slerp(transform.position, _desiredPos + _offset, Time.deltaTime);
+            transform.position = Vector3.Slerp(transform.position, _desiredPos + _offset, Time.deltaTime*2);
             //Ray ray = new Ray(_camera.transform.position, transform.forward);
             //if (Physics.Raycast(ray, out var hit))
             //{

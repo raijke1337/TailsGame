@@ -13,10 +13,18 @@ MonoBehaviour:
   m_Name: drone_shot
   m_EditorClassIdentifier: 
   ID: drone_shot
-  StatID: 0
+  ChangedValueType: 0
   InitialValue: -10
   RepeatedValue: 0
   RepeatApplicationDelay: 0
   TotalDuration: 0
   Icon: {fileID: 0}
   TargetType: 0
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList:
+      - Key: 2
+        Value:
+        - {fileID: 2427786012956944606, guid: e615c950183dfd84295bee49037c8181, type: 3}

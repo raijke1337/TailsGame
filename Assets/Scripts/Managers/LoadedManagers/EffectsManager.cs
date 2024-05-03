@@ -30,36 +30,37 @@ namespace Arcatech.Managers
 
         public void ServeEffectsRequest(EffectRequestPackage pack)
         {
-            var place = pack.Place;
 
-            if (pack.Collection.Sounds.TryGetValue(pack.Type, out var c) && c.Sounds.Length > 0)
+
+            if (pack.Sound != null)
             {
-                PlaceSound(c.Sounds[Random.Range(0, c.Sounds.Length - 1)], c.Loudness, place);
+                PlaceSound(pack.Sound,pack.Place);
+                Debug.Log($"Serving effect request {pack.Sound} at {pack.Place}");
             }
-            if (pack.Collection.Effects.TryGetValue(pack.Type, out var cont) && cont.Effects.Length > 0)
+            if (pack.Effect != null)
             {
-                PlaceParticle(cont.Effects[Random.Range(0, cont.Effects.Length - 1)], cont.Scale, place, cont.Duration);
+                Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
+                PlaceParticle(pack.Effect,pack.Place,pack.Parent);
             }
         }
 
 
-        private void PlaceSound(AudioClip clip, float volumeMult, Transform place)
+        private void PlaceSound(AudioClip clip, Transform place)
         {
             var s = Instantiate(_audioPrefab, place.position, Quaternion.identity, transform);
             s.clip = clip;
-            s.volume *= volumeMult;
+            //s.volume *= SoundMixerManager.Instance.GetSFXVolume;
+
             s.Play();
 
             Destroy(s.gameObject, s.clip.length);
         }
-        private void PlaceParticle(CFXR_Effect eff, Vector3 scale, Transform place, float time)
+        private void PlaceParticle(CFXR_Effect eff, Transform place, Transform parent = null)
         {
             var p = Instantiate(eff, place.position, place.rotation);
-            p.transform.localScale = scale;
-            if (time != 0) // 0 means it will play once and disappear
+            if (parent != null)
             {
-                p.Animate(time);
-
+                p.transform.SetParent(parent, true);
             }
         }
 

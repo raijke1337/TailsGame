@@ -1,5 +1,7 @@
-﻿using Arcatech.Units;
+﻿using Arcatech.Triggers;
+using Arcatech.Units;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Arcatech.Items
@@ -8,8 +10,7 @@ namespace Arcatech.Items
     {
         protected RangedWeaponConfig Config;
         protected int _currentAmmo;
-        protected bool _rangedBusy = false;
-        
+        protected bool _rangedBusy = false;       
         
         public SimpleEventsHandler<ProjectileComponent> PlacedProjectileEvent;
 
@@ -30,19 +31,25 @@ namespace Arcatech.Items
             }
             else
             {
-                _instantiated.OnItemUse();
                 _instantiated.StartCoroutine(DoShooting(Config.ShotsPerUse));
                 return true;
             }
 
+
         }
 
+        private Dictionary<ProjectileComponent, List<TriggeredEffect>> _shotPorjectilesDict = new Dictionary<ProjectileComponent, List<TriggeredEffect>>();
 
         protected void ProjectileSubs(ProjectileComponent p, bool isSub)
         {
             if (isSub)
             {
                 p.ProjectileEnteredTriggerEvent += CheckForProjectileHit;
+                _shotPorjectilesDict.Add(p, new List<TriggeredEffect>());
+                foreach (var cfg in _storedTriggerSettings)
+                {
+                    _shotPorjectilesDict[p].Add(new TriggeredEffect(cfg));
+                }
                 p.ProjectileExpiredEvent += (t) => ProjectileSubs(t, false);
             }
             else
@@ -54,9 +61,9 @@ namespace Arcatech.Items
 
         private void CheckForProjectileHit(Collider c, ProjectileComponent p)
         {
-            //Debug.Log($"projectile from {this._description.Title} hit {c.name}");
             if (c.TryGetComponent(out BaseUnit u) && u.Side != Owner.Side)
             {
+                _currentUseEffects = _shotPorjectilesDict[p];
                 OnWeapTriggerEvent(u,true);
             }
         }
@@ -72,10 +79,11 @@ namespace Arcatech.Items
             _rangedBusy = true;
             while (shots > shotsDone)
             {
-                //Debug.Log("Pew");
-                var trigger = Config.Projectile.GetProjectile(Owner);
-                PlacedProjectileEvent(trigger);
-                ProjectileSubs(trigger,true);
+                var shot = GameObject.Instantiate(Config.Projectile.ProjectilePrefab);
+                shot.Setup(Config.Projectile, Owner);
+
+                PlacedProjectileEvent(shot);
+                ProjectileSubs(shot,true);
 
                 shotsDone++;
                 _currentAmmo--;

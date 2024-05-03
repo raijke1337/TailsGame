@@ -9,10 +9,7 @@ namespace Arcatech.Items
             
         }
 
-        public override void OnItemUse()
-        {
 
-        }
 
 
 

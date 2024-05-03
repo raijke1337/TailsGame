@@ -20,6 +20,12 @@ public class SoundMixerManager : MonoBehaviour
         _mixer.SetFloat("VolMusic", level);
     }
 
+    public float GetSFXVolume { get
+        {
+            _mixer.GetFloat("VolFX", out float f);
+            return f;
+        }
+    }
     // todo save to playerprefs
 
 }

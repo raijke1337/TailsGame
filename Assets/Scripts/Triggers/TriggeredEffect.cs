@@ -1,3 +1,4 @@
+using Arcatech.Effects;
 using System;
 using UnityEngine;
 namespace Arcatech.Triggers
@@ -17,6 +18,8 @@ namespace Arcatech.Triggers
                 return InitialValue + (((TotalDuration - RepeatApplicationDelay) / RepeatApplicationDelay) * RepeatedValue);
             } }
 
+        public EffectsCollection GetEffects { get; }
+
 
         public float CurrentRepeatTimer; // used by stats controller to do ticks
         public bool InitialDone = false; // is initial value applied
@@ -26,10 +29,10 @@ namespace Arcatech.Triggers
             ID = id; StatType = type; InitialValue = init; RepeatedValue = repeat; RepeatApplicationDelay = repeatDelay; TotalDuration = totalDuration; Icon = icon;
             CurrentRepeatTimer = RepeatApplicationDelay;
         }
-        public TriggeredEffect(BaseStatTriggerConfig config)
+        public TriggeredEffect(SerializedStatTriggerConfig config)
         {
             ID = config.ID; StatType = config.ChangedValueType; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
-            CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType;
+            CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType; GetEffects = new EffectsCollection(config.Effects);
         }
 
 

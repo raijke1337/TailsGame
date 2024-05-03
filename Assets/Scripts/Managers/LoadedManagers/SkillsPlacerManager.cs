@@ -32,68 +32,76 @@ namespace Arcatech.Managers
         #endregion
 
 
-        public void ServeSkillRequest(SkillComponent comp, BaseUnit source, Transform where)
+        public void ServeSkillRequest(SkillProjectileComponent comp, BaseUnit source, Transform where)
         {
+            Debug.Log($"Request for {comp.name} from {comp.Owner} at {where.position}");
+            // receive the same proj as projectiles manager but do the specific handling
 
-            effectsManager.ServeEffectsRequest(new EffectRequestPackage(comp.Data.Effects, EffectMoment.OnStart, where));
+            effectsManager.ServeEffectsRequest(new EffectRequestPackage
+                (comp.GetEffects.GetRandomSound(EffectMoment.OnStart),
+                comp.GetEffects.GetRandomEffect(EffectMoment.OnStart),
+                null, where));
 
             if (comp is BoosterSkillInstanceComponent bs)
             {
                 source.GetInputs().StartDodgeMovement(bs);
             }
+            
 
-            if (comp.Data is ProjectileSkillConfigurationSO pr)
-            {
-                //placer.TimeToLive = comp.GetProjectileData.Settings.TimeToLive;
-                var ppp = triggers.ServeProjectileRequest(pr.SkillProjectile, source); // proejctile skill
-                comp.transform.SetParent(ppp.transform, false);
-            }
-            else
-            {
-                comp.transform.SetPositionAndRotation(where.position, source.transform.rotation);
-            }
+
+            // here we already get the projectile gameobject with everything set up...
+
 
             comp.TriggerEnterEvent += (t, t2) => HandleSkillTriggerEvent(t, t2, comp);
             comp.SkillDestroyedEvent += HandleSkillDestructionEvent;
 
+            Debug.Log($"Register skill {comp.name} from {comp.Owner}");
         }
 
-        private void HandleSkillTriggerEvent(Collider col, SkillState state, SkillComponent comp)
+        private void HandleSkillTriggerEvent(Collider col, SkillState state, SkillProjectileComponent comp)
         {
             if (CheckAreaCollision(col, comp, out var w, out var t) && t != null)
             {
+                Debug.Log($"Skill {comp.name} from {comp.Owner} tirgger event:\n{state}, by {col}");
+
                 switch (state)
                 {
                     case SkillState.Placer:
-                        effectsManager.ServeEffectsRequest(new EffectRequestPackage(comp.Data.Effects, EffectMoment.OnCollision, w));
-                        //Debug.Log($"{comp.Data.Description.Title} activated by {t}");
+                        effectsManager.ServeEffectsRequest(new EffectRequestPackage
+    (comp.GetEffects.GetRandomSound(EffectMoment.OnCollision),
+    comp.GetEffects.GetRandomEffect(EffectMoment.OnCollision),
+    null, col.transform));
+
                         comp.AdvanceStage();
                         break;
                     case SkillState.AoE:
-                        foreach (var ef in comp.Data.Triggers)
+                        foreach (var ef in comp.GetEffectCfgs)
                         {
-                            triggers.ServeTriggerApplication(ef, comp.Owner, t, true);
+                            triggers.ServeTriggerApplication(new Triggers.TriggeredEffect(ef), comp.Owner, t, true);
                         }
+
                         //if (t!=null) Debug.Log($"{comp.Data.Description.Title} has hit {t}");
                         break;
                 }
             }
         }
-        private void HandleSkillDestructionEvent(SkillComponent c)
+        private void HandleSkillDestructionEvent(SkillProjectileComponent c)
         {
+
+            Debug.Log($"Unegister skill {c.name} from {c.Owner}");
             c.SkillDestroyedEvent -= HandleSkillDestructionEvent;
             c.TriggerEnterEvent -= (t, t2) => HandleSkillTriggerEvent(t, t2, c);
         }
 
 
-        private bool CheckAreaCollision(Collider hit, SkillComponent comp, out Transform where, out BaseUnit taget)
+        private bool CheckAreaCollision(Collider hit, SkillProjectileComponent comp, out Transform where, out BaseUnit taget)
         {
             where = null;
             taget = null;
 
-            if ((comp.Data is DodgeSkillConfigurationSO d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
+            if ((comp is BoosterSkillInstanceComponent d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
                 (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
-                (comp.Data.Triggers.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
+                (comp.GetEffectCfgs.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
             {
                 where = hit.transform;
                 return true;

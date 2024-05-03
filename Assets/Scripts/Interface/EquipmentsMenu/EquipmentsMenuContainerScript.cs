@@ -115,6 +115,10 @@ namespace Arcatech.UI
         public void UI_OnUpdateButtonClick()
         {
             _playerInventory.HandleSwapButton(_selectedItem);
+            _itemTooltipPanel.gameObject.SetActive(false);
+            _skillTooltipPanel.gameObject.SetActive(false);
+            _swapItemsButton.gameObject.SetActive(false);
+
             UpdateInventoryDisplay();
         }
 

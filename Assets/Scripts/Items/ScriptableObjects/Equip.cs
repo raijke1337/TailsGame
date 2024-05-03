@@ -10,8 +10,8 @@ namespace Arcatech.Items
     {
 
         public BaseEquippableItemComponent Item;
-        public SkillControlSettingsSO Skill;
-        public EffectsCollection Effects;
+        public SerizalizedSkillConfiguration Skill;
+        public SerializedEffectsCollection Effects;
 
     }
 }

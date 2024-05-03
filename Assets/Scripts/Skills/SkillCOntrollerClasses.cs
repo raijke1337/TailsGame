@@ -15,11 +15,15 @@ namespace Arcatech.Skills
     [Serializable]
     public class SkillObjectForControls
     {
-        public SkillObjectForControls(SkillControlSettingsSO cfg, BaseUnit owner)
+        public SkillObjectForControls(SerizalizedSkillConfiguration cfg, BaseUnit owner)
         {
             Owner = owner;
             _settings = cfg;
             _cdTimers = new Queue<Timer>();
+            Transform p = null;
+            owner.GetEmpties.ItemPositions.TryGetValue(cfg.SpawnPlace,out p);
+
+            _effects = new EffectsCollection(cfg.Effects, p);
         }
         public virtual void UpdateInDelta(float time)
         {
@@ -32,12 +36,16 @@ namespace Arcatech.Skills
         #region public
         public BaseUnit Owner { get; }
         public ExtendedTextContainerSO Description { get => _settings.Description; }
-        public BaseStatTriggerConfig[] Triggers { get => _settings.Triggers; }
-        public EffectsCollection Effects { get => _settings.Effects; }
+        public SerializedStatTriggerConfig[] Triggers { get => _settings.Triggers; }
+
+        private EffectsCollection _effects;
+        public EffectsCollection Effects { get => _effects; }
 
         public float PlacerRadius { get => _settings.PlacerRadius; }
         public float EffectRadius { get => _settings.AoERadius; }
         // end
+
+
 
 
         public bool TryUseSkill (out TriggeredEffect cost)
@@ -45,17 +53,21 @@ namespace Arcatech.Skills
             cost = new TriggeredEffect(_settings.ComboCostTrigger);
             return (_cdTimers.Count < _settings.Charges);
         }
-        public virtual SkillComponent ProduceSkillObject { get
+        public virtual SkillProjectileComponent UseSkill { get
         {
+
                 UsedSkillTImer();
-            var skillGameobject = GameObject.Instantiate(_settings.SkillObject);
-            skillGameobject.Data = _settings;
+            var skillGameobject = GameObject.Instantiate(_settings.SkillProjectileConfig.ProjectilePrefab) as SkillProjectileComponent;
+
+                skillGameobject.Setup(_settings,Owner);
+
+
             if (skillGameobject is BoosterSkillInstanceComponent bb)
             {
-                bb.Data = _settings as DodgeSkillConfigurationSO;
+                bb.InitializeDodgeSettings((_settings as DodgeSkillConfigurationSO));
             }
 
-            skillGameobject.Owner = Owner;
+
             return skillGameobject;
         }
 
@@ -63,7 +75,7 @@ namespace Arcatech.Skills
         #endregion
         #region cd
         // from stored cfg
-        private readonly SkillControlSettingsSO _settings;
+        private readonly SerizalizedSkillConfiguration _settings;
         private Queue<Timer> _cdTimers;
         private void UsedSkillTImer()
         {
@@ -103,15 +115,15 @@ namespace Arcatech.Skills
         }
 
     }
-    public class ProjectileSkillObjectForControls : SkillObjectForControls
-    {
-        public ProjectileConfiguration GetProjectileData
-        { get; }
-        public ProjectileSkillObjectForControls(ProjectileSkillConfigurationSO cfg, BaseUnit owner) : base(cfg, owner)
-        {
-            GetProjectileData = cfg.SkillProjectile;
-        }
-    }
+    //public class ProjectileSkillObjectForControls : SkillObjectForControls
+    //{
+    //    public SerializedProjectileConfiguration GetProjectileData
+    //    { get; }
+    //    public ProjectileSkillObjectForControls(ProjectileSkillConfigurationSO cfg, BaseUnit owner) : base(cfg, owner)
+    //    {
+    //        GetProjectileData = cfg.SkillProjectile;
+    //    }
+    //}
 
 
 

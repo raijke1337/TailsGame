@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d4ded5403effe4d8820d0d57a052d9, type: 3}
+  m_Name: skill_dodge
+  m_EditorClassIdentifier: 
+  Description: {fileID: 11400000, guid: e569cb1da3b4dc249a1e866ae3e23404, type: 2}
+  SpawnPlace: 4
+  Charges: 2
+  ChargeRestore: 4
+  ComboCostTrigger: {fileID: 11400000, guid: 5fe4d06fd5db48f41be12e022390ff01, type: 2}
+  SkillProjectileConfig: {fileID: 11400000, guid: 6bc5e1229da75174281da2284dcca96c,
+    type: 2}
+  PlacerRadius: 0.1
+  AoERadius: 0.1
+  AoETime: 0.01
+  Triggers: []
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList: []
+  DodgeSettings:
+    Range: 5
+    Speed: 2.5

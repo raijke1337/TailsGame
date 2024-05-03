@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: spiderExplode
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: cbe29d41a93a7e04289af16abe6de8d8, type: 2}
+  SpawnPlace: 1
   Charges: 1
   ChargeRestore: 7
   ComboCostTrigger: {fileID: 11400000, guid: 5fe4d06fd5db48f41be12e022390ff01, type: 2}
-  SkillObject: {fileID: 764709074864151581, guid: d1081e30cd192844aa20c46257b388bb,
-    type: 3}
+  SkillProjectileConfig: {fileID: 11400000, guid: 54d82b392cbeb794cb390438c5cc3783,
+    type: 2}
   PlacerRadius: 1
   AoERadius: 3
   AoETime: 0
@@ -26,17 +27,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f920254c1e2a24849af8fa6de4621bb5, type: 2}
   Effects:
     Sounds:
-      _serializedList:
-      - Key: 0
-        Value:
-          Sounds:
-          - {fileID: 8300000, guid: 1fd31868d68903d4f9e2c4a3b7ef98f3, type: 3}
-          Loudness: 1
+      _serializedList: []
     Effects:
-      _serializedList:
-      - Key: 0
-        Value:
-          Effects:
-          - {fileID: 2883620193154939874, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
-          _scale: 1
-          Duration: 0
+      _serializedList: []

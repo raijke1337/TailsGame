@@ -251,7 +251,7 @@ namespace Arcatech
     public class RangedWeaponConfig
     {
 
-        public ProjectileConfiguration Projectile;
+        public SerializedProjectileConfiguration Projectile;
 
         [Space,SerializeField, Range(1, 20), Tooltip("How projectiles will be spawned until reload is started")] public int Ammo;
         [SerializeField, Range(1, 12), Tooltip("How many projectiles are created per each use")] public int ShotsPerUse;

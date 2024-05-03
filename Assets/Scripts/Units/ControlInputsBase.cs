@@ -43,9 +43,9 @@ namespace Arcatech.Units
 
 
         public event SimpleEventsHandler StaggerHappened;
-
+        public event SimpleEventsHandler ShieldBreakHappened;
         protected void StunEventCallback() => StaggerHappened?.Invoke();
-
+        protected virtual void ShieldBreakEventCallback() => ShieldBreakHappened?.Invoke();
 
         #region ai
         public StatValueContainer AssessStat(TriggerChangedValue stat)
@@ -108,6 +108,10 @@ namespace Arcatech.Units
 
         private void CheckEquipsOnInventoryUpdate(UnitInventoryComponent inve, SerializedUnitInventory inv)
         {
+            if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game) return; // something was picked up and no need to refresh invenotry
+            // yikes
+
+
             _weaponCtrl.TryRemoveItem(EquipItemType.MeleeWeap, out _);
             _weaponCtrl.TryRemoveItem(EquipItemType.RangedWeap, out _);
             _dodgeCtrl.TryRemoveItem(EquipItemType.Booster, out _);
@@ -228,23 +232,31 @@ namespace Arcatech.Units
         {
             if (isStart)
             {
+                if (ctrl is ShieldController s)
+                {
+                    s.ShieldBrokenEvent += ShieldBreakEventCallback;
+                }
                 ctrl.BaseControllerEffectEvent += EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
-                ctrl.SpawnProjectileEvent += ProjectileEventCallBack;
-
+                ctrl.ProjectileWasSpawnedEvent += ProjectileEventCallBack;
 
             }
             else
             {
                 ctrl.BaseControllerEffectEvent -= EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent -= TriggerEventCallBack;
-                ctrl.SpawnProjectileEvent -= ProjectileEventCallBack;
+                ctrl.ProjectileWasSpawnedEvent -= ProjectileEventCallBack;
+
+                if (ctrl is ShieldController s)
+                {
+                    s.ShieldBrokenEvent -= ShieldBreakEventCallback;
+                }
             }
         }
 
-        private void ProjectileEventCallBack(ProjectileComponent arg)
+        private void ProjectileEventCallBack(ProjectileComponent prefab)
         {
-            SpawnProjectileEvent?.Invoke(arg);
+            SpawnProjectileEvent?.Invoke(prefab);
         }
         #endregion
 
@@ -293,8 +305,8 @@ namespace Arcatech.Units
             }
         }
 
-
-        protected void TriggerEventCallBack(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg)
+        // this needs to be updated to get unique triggeredeffects from each use of item
+        protected void TriggerEventCallBack(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
         {
             TriggerEventRequest?.Invoke(target, source, isEnter, cfg);
         }
@@ -313,9 +325,11 @@ namespace Arcatech.Units
 
 
         #region skill requests manager
-        protected void SkillSpawnEventCallback(SkillComponent data)
+        protected void SkillSpawnEventCallback(SkillProjectileComponent data)
         {
-            SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[EquipItemType.RangedWeap]);
+
+            SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[data.GetProjectileSettings.SpawnPlace]);
+
         }
 
         public event SkillRequestedEvent SkillSpawnEvent;
@@ -425,8 +439,7 @@ namespace Arcatech.Units
         private Coroutine _dodgeCor;
         private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
         {
-            var st = bs.Data as DodgeSkillConfigurationSO;
-            var stats = st.DodgeSettings;
+            var stats = bs.GetDodgeSettings;
 
             IsInputsLocked = true;
 
@@ -457,6 +470,8 @@ namespace Arcatech.Units
         }
 
         #endregion
+
+
 
     }
 

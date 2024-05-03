@@ -6,9 +6,9 @@ namespace Arcatech.Units
     public class PlayerUnit : BaseUnit
     {
         private InputsPlayer _playerController;
-        //private VisualsController _visualController;
-        //private float[] _visualStagesHP;
         protected Camera _faceCam;
+
+
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
         #region managed
@@ -53,8 +53,6 @@ namespace Arcatech.Units
         {
             base.UpdateComponents();
             if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-            //  if (_visualController == null) _visualController = GetComponent<VisualsController>();
-            //_visualController.Empties = _controller.GetEmpties;
         }
 
         protected override void ControllerEventsBinds(bool isEnable)
@@ -65,12 +63,15 @@ namespace Arcatech.Units
             {
                 _playerController = _controller as InputsPlayer;
                 _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
+                _playerController.ShieldBreakHappened += HandleShieldBreakEvent;
             }
             else
             {
                 _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
+                _playerController.ShieldBreakHappened -= HandleShieldBreakEvent;
             }
         }
+
 
 
         #region animator and movement
@@ -84,18 +85,6 @@ namespace Arcatech.Units
         private void PlayerMovement(Vector3 desiredDir, float delta)
         {
             if (_controller.IsInputsLocked) return;
-            // DO NOT FIX WHAT ISNT BROKEN //
-
-            //if (desiredDir == Vector3.zero)
-            //{
-            //    if (currVelocity.sqrMagnitude < 0.1f) currVelocity = Vector3.zero;
-            //    else currVelocity = Vector3.Lerp(currVelocity, Vector3.zero, Time.deltaTime * massDamp);
-            //}
-            //else currVelocity = desiredDir;
-            //transform.position += GetStats()[StatType.MoveSpeed].GetCurrent() * Time.deltaTime * currVelocity;
-            // too slide-y
-
-            // also good enough
             transform.position += delta * desiredDir
                 * GetStats[BaseStatType.MoveSpeed].GetCurrent;
         }
@@ -129,10 +118,7 @@ namespace Arcatech.Units
             _playerController.IsInMeleeCombo = false;
         }
 
-        //private void ChangeVisualStage(float value, float prevvalue)
-        //{
 
-        //}
 
         #endregion
 
@@ -146,6 +132,15 @@ namespace Arcatech.Units
             GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
             CreateStartingEquipments(GetUnitInventory);
         }
+        #endregion
+
+
+        #region visual
+        private void HandleShieldBreakEvent()
+        {
+            Debug.Log($"Inputs report shield break event");
+        }
+
         #endregion
 
     }

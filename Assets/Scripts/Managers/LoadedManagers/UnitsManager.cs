@@ -1,6 +1,7 @@
 using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Skills;
+using Arcatech.Triggers;
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
 using System.Collections.Generic;
@@ -28,6 +29,10 @@ namespace Arcatech.Managers
             set
             {
                 _player.GetInputs<InputsPlayer>().IsInputsLocked = value;
+                foreach (var unit in _allUnits)
+                {
+                    unit.GetInputs().IsInputsLocked = value;
+                }
                 _paused = value;
             }
         }
@@ -84,6 +89,8 @@ namespace Arcatech.Managers
 
         public override void RunUpdate(float delta)
         {
+            if (_paused) return;
+
             foreach (var u in _allUnits)
             {
                 u.RunUpdate(delta);
@@ -115,7 +122,7 @@ namespace Arcatech.Managers
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
                 u.SkillRequestFromInputsSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
-                u.BaseControllerEffectEvent += ForwardEffectsRequest;
+                u.BaseControllerEffectEvent += (t) => ForwardEffectsRequest(t,u);
                 u.UnitTriggerRequestEvent += ForwardTriggerRequest;
                 u.UnitPlacedProjectileEvent += ForwardProjectileRequest;
 
@@ -127,7 +134,7 @@ namespace Arcatech.Managers
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
 
                 u.SkillRequestFromInputsSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
-                u.BaseControllerEffectEvent -= ForwardEffectsRequest;
+                u.BaseControllerEffectEvent -= (t) => ForwardEffectsRequest(t,u);
                 u.UnitTriggerRequestEvent -= ForwardTriggerRequest;
                 u.UnitPlacedProjectileEvent -= ForwardProjectileRequest;
 
@@ -138,24 +145,24 @@ namespace Arcatech.Managers
 
         private void ForwardProjectileRequest(ProjectileComponent arg, BaseUnit owner)
         {
-            // Debug.Log($"{owner} placed projectile {arg}");
-            _trigger.ServeProjectileRequest(arg, owner);
+           // Debug.Log($"{owner} placed projectile {arg}");
+            _trigger.RegisterExistingProjectile(arg);
         }
 
-        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, Triggers.BaseStatTriggerConfig cfg)
+        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
         {
             //Debug.Log($"{source.GetFullName} trigger request {cfg.name}");
             _trigger.ServeTriggerApplication(cfg, source, target, isEnter);
         }
 
-        private void ForwardEffectsRequest(EffectRequestPackage pack)
+        private void ForwardEffectsRequest(EffectRequestPackage pack,BaseUnit owner)
         {
-            // Debug.Log($"Effect {pack.Type} requested at {pack.Place.position}");
+            //Debug.Log($"{owner.GetFullName} sent a request to place effects: {pack}");
             _effects.ServeEffectsRequest(pack);
         }
-        private void ForwardSkillRequests(SkillComponent cfg, BaseUnit user, Transform place)
+        private void ForwardSkillRequests(SkillProjectileComponent cfg, BaseUnit user, Transform place)
         {
-            //Debug.Log($"{user.GetFullName} skill request {cfg.Description.Title}");
+           // Debug.Log($"{user.GetFullName} skill request {cfg.name}");
             _skills.ServeSkillRequest(cfg, user, place);
         }
 
@@ -181,6 +188,8 @@ namespace Arcatech.Managers
                 }
                 GameManager.Instance.OnPlayerDead();
             }
+
+            //Destroy(unit.gameObject, Constants.Combat.c_RemainsDisappearTimer);
         }
     }
 

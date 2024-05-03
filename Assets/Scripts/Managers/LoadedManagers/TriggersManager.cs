@@ -63,22 +63,23 @@ namespace Arcatech.Managers
            // Debug.Log($"{this} received a call from {lv} : {target} is entering the zone: {isEnter}");
         }
 
-        public void ServeTriggerApplication(BaseStatTriggerConfig cfg, BaseUnit source, BaseUnit target, bool IsEnter)
+
+        // here we need a check to prevent repeat applications so individual instances are accepted instead
+
+        public void ServeTriggerApplication(TriggeredEffect triggerEffect, BaseUnit source, BaseUnit target, bool IsEnter)
         {
-            //Debug.Log($"Applying trigger {cfg.ID} from {source} to {target}");
-            if (IsEnter) ApplyTriggerEffect(cfg, target, source);
+            if (IsEnter) ApplyTriggerEffect(triggerEffect, target, source);
         }
 
-
-        private void ApplyTriggerEffect(BaseStatTriggerConfig config, BaseUnit target, BaseUnit source)
+        private Dictionary<TriggeredEffect, List<BaseUnit>> _hitTargetsPerEffect = new Dictionary<TriggeredEffect, List<BaseUnit>>();
+        private void ApplyTriggerEffect(TriggeredEffect effect, BaseUnit target, BaseUnit source)
         {
-            TriggeredEffect effect = new TriggeredEffect(config);
             BaseUnit finaltgt = null;
 
             if (source is null)
             {
                 // static trigger (trap, health pack etc)
-                switch (config.TargetType)
+                switch (effect.Target)
                 {
                     case TriggerTargetType.TargetsEnemies:
                         if (target is PlayerUnit player)
@@ -96,7 +97,7 @@ namespace Arcatech.Managers
 
             if (source is NPCUnit)
             {
-                switch (config.TargetType)
+                switch (effect.Target)
                 {
                     case TriggerTargetType.TargetsEnemies:
                         if (target is PlayerUnit player)
@@ -120,7 +121,7 @@ namespace Arcatech.Managers
             }
             if (source is PlayerUnit)
             {
-                switch (config.TargetType)
+                switch (effect.Target)
                 {
                     case TriggerTargetType.TargetsEnemies:
                         if (target is NPCUnit enemy)
@@ -141,7 +142,7 @@ namespace Arcatech.Managers
             }
             if (!(source is PlayerUnit) && !(source is NPCUnit)) // traps , could keep null maybe? dont like it
             {
-                switch (config.TargetType)
+                switch (effect.Target)
                 {
                     case TriggerTargetType.TargetsEnemies:
                         if (target is PlayerUnit player)
@@ -171,51 +172,86 @@ namespace Arcatech.Managers
                 return;
             }
 
-            _effects.ServeEffectsRequest(new EffectRequestPackage(config.Effects, EffectMoment.OnCollision, target.transform));
-            finaltgt.ApplyEffectToController(effect);
+            // new part to check for repeat applications 
+            if (_hitTargetsPerEffect.TryGetValue(effect, out var hit))
+            {
+                if (hit.Contains(finaltgt))
+                {
+                    Debug.Log($"trigger {effect.ID} already applied to {finaltgt.name}, skipping");
+                    return; // 
+                }
+                else
+                {
+                    hit.Add(finaltgt);                    
+                    finaltgt.ApplyEffectToController(effect);
+                    Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
 
+                    HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
+                }
+            }
+            else
+            {
+                _hitTargetsPerEffect[effect] = new List<BaseUnit>();
+                _hitTargetsPerEffect[effect].Add(finaltgt); 
+                finaltgt.ApplyEffectToController(effect);
+                Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
+
+                HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
+            }
         }
 
         // statics are found manually an others are served from unit manager
 
         #endregion
 
+        #region forward to effects mng
+        private void HandleEffectsFromTrigger (TriggeredEffect e, EffectMoment when, Transform where)
+        {
+            var pack = new EffectRequestPackage(e.GetEffects.GetRandomSound(when), e.GetEffects.GetRandomEffect(when), null, where);
+            _effects.ServeEffectsRequest(pack);
+        }
+
+        #endregion
 
 
         #region projectiles
 
         private List<ProjectileComponent> _projectiles = new List<ProjectileComponent>();
 
-        public void ServeProjectileRequest(ProjectileComponent proj, BaseUnit owner) // spawn from weapon, setup done by weapon
+
+        public void RegisterExistingProjectile (ProjectileComponent p)
         {
             if (_projectiles == null)
             {
                 _projectiles = new List<ProjectileComponent>();
             }
-            proj.transform.SetPositionAndRotation(owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.position,
-                owner.GetEmpties.ItemPositions[EquipItemType.RangedWeap].transform.rotation);
+            _projectiles.Add(p);
 
-            proj.transform.forward = owner.transform.forward;
+            p.ProjectileEnteredTriggerEvent += ProjectileHit;
+            p.ProjectileExpiredEvent += ProjectileExpired;
 
-            _projectiles.Add(proj);
-            ProjectileSubs(proj);
+            PositionProjectile(p);
+
+
+
+            Debug.Log($"{p} was registered and is set up properly: {p.IsSetup}");
         }
-        public ProjectileComponent ServeProjectileRequest(ProjectileConfiguration proj, BaseUnit owner) // spawn from skills manager , needed to set the location correctly
+
+        private void PositionProjectile (ProjectileComponent spawned)
         {
-            var p = proj.GetProjectile(owner);
-            ServeProjectileRequest(p, owner);   
-            return p;
+            var Owner = spawned.Owner;
+
+            spawned.transform.SetPositionAndRotation(Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.position,
+                Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.rotation);
+
+            spawned.transform.forward = Owner.transform.forward;
         }
 
 
-        private void ProjectileSubs(ProjectileComponent comp)
-        {
-            comp.ProjectileEnteredTriggerEvent += ProjectileHit;
-            comp.ProjectileExpiredEvent += ProjectileExpired;
-        }
 
         private void ProjectileExpired(ProjectileComponent arg)
         {
+           // Debug.Log($"{arg} reported expiry");
             arg.ProjectileEnteredTriggerEvent -= ProjectileHit;
             arg.ProjectileExpiredEvent -= ProjectileExpired;
             _projectiles.Remove(arg);
@@ -223,7 +259,7 @@ namespace Arcatech.Managers
 
         private void ProjectileHit(Collider col, ProjectileComponent proj)
         {
-            Debug.Log($"Projectile {proj} hit {col}");
+          //  Debug.Log($"Projectile {proj} hit {col}");
             if (col.gameObject.CompareTag("StaticItem"))
             {
                 

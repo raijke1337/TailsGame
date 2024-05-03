@@ -10,12 +10,14 @@ namespace Arcatech.Items
     public class WeaponItem : EquipmentItem
     {
 
-        protected List<BaseStatTriggerConfig>  WeaponHitEffects;
+        protected List<SerializedStatTriggerConfig>  _storedTriggerSettings;
+        protected List<TriggeredEffect> _currentUseEffects;
+
         protected readonly float UseCooldown;
         protected float _currentCD;
         public WeaponItem(Weapon cfg, BaseUnit ow) : base(cfg, ow)
         {
-            WeaponHitEffects = new List<BaseStatTriggerConfig>(cfg.WeaponHitTriggers);
+            _storedTriggerSettings = new List<SerializedStatTriggerConfig>(cfg.WeaponHitTriggers);
             UseCooldown = cfg.WeaponCooldown;
             _currentCD = 0;
         }
@@ -27,14 +29,24 @@ namespace Arcatech.Items
             {
                 weap.PrefabCollisionEvent += OnWeapTriggerEvent;
             }
+            _currentUseEffects = new List<TriggeredEffect>();
+            foreach (var cfg in _storedTriggerSettings)
+            {
+                _currentUseEffects.Add(new TriggeredEffect(cfg));
+            }
         }
         public virtual bool TryUseItem()
-        {
+        { // ranged has ist own logic
             bool ok = _currentCD <= 0;
             if (ok)
             {
+                //Debug.LogWarning($"Try use item in {this}, created new effect triggers");
+                _currentUseEffects = new List<TriggeredEffect>();
+                foreach (var cfg in _storedTriggerSettings)
+                {
+                    _currentUseEffects.Add(new TriggeredEffect(cfg));
+                }
                 _currentCD = UseCooldown;
-                _instantiated.OnItemUse();
             }
             return ok;
         }
@@ -47,12 +59,17 @@ namespace Arcatech.Items
         }
 
 
+
+
         public event TriggerEvent PrefabTriggerHitSomething;
+
+
+
         protected void OnWeapTriggerEvent(BaseUnit target, bool isEnter)
         {            
-            if (isEnter)
+            if (isEnter && target != Owner)            
             {
-                foreach (var ef in WeaponHitEffects)
+                foreach (var ef in _currentUseEffects)
                 {
                     PrefabTriggerHitSomething?.Invoke(target, Owner, isEnter, ef);
                 }

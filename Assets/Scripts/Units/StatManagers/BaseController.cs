@@ -114,20 +114,23 @@ namespace Arcatech.Units
 
         #endregion
 
-        #region triggers from weapons and /skills (todo)/
+        #region triggers from weapons and /skills 
 
         public event TriggerEvent BaseControllerTriggerEvent;
-        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg) => BaseControllerTriggerEvent?.Invoke(target, source, isEnter, cfg);
-
+        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
+        {
+            //Debug.Log($"Weapon trigger event: hit {target.name} from {source.name}");
+            BaseControllerTriggerEvent?.Invoke(target, source, isEnter, cfg);
+        }
         #endregion
 
         #region projectile spawn
 
-        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
+        public event SimpleEventsHandler<ProjectileComponent> ProjectileWasSpawnedEvent;
 
         protected void SpawnProjectileCallBack(ProjectileComponent proj)
         {
-            SpawnProjectileEvent?.Invoke(proj);
+            ProjectileWasSpawnedEvent?.Invoke(proj);
         }
 
         #endregion

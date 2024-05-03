@@ -10,8 +10,8 @@ namespace Arcatech.Items
     public class EquipmentItem : InventoryItem
     {
 
-        public SkillControlSettingsSO Skill { get; protected set; }
-        public EffectsCollection Effects { get; }
+        public SerizalizedSkillConfiguration Skill { get; protected set; }
+        public EffectsCollection Effects { get; private set; }
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
 
@@ -24,7 +24,7 @@ namespace Arcatech.Items
             {
                 Skill = e.Skill;
                 _prefab = e.Item;
-                Effects = e.Effects;
+                Effects = new EffectsCollection(e.Effects);
             }
         }
 
@@ -34,6 +34,8 @@ namespace Arcatech.Items
             if (_instantiated == null)
             {
                 GenerateObject();
+
+                Effects.ParentTransform=_instantiated.transform;
             }
             if (!_instantiated.gameObject.activeSelf)
             {
@@ -47,10 +49,6 @@ namespace Arcatech.Items
             _instantiated.Owner = Owner;
 
         }
-
-
-
-
         public void SetItemEmpty(Transform parent)
         {
             if (_instantiated == null)
@@ -59,10 +57,24 @@ namespace Arcatech.Items
             }
             _instantiated.transform.SetParent(parent, false);
         }
+
+
         public void OnEquip()
         {
             if (_instantiated != null) _instantiated.gameObject.SetActive(true);
-
+            else
+            {
+                GenerateObject();
+            }
+        }        
+        public void OnEquip(Transform parent)
+        {
+            if (_instantiated != null) _instantiated.gameObject.SetActive(true);
+            else
+            {
+                GenerateObject();
+            }
+            _instantiated?.transform.SetParent(parent, false);
         }
         public void OnUnequip()
         {

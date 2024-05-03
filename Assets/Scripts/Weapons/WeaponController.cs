@@ -146,7 +146,9 @@ namespace Arcatech.Units
                 }
                 if (ok)
                 {
-                    EffectEventCallback(new EffectRequestPackage(_equipment[type].Effects, EffectMoment.OnStart, _equipment[type].GetInstantiatedPrefab().transform));
+                    EffectEventCallback(new EffectRequestPackage(_equipment[type].Effects.GetRandomSound(EffectMoment.OnStart), _equipment[type].Effects.GetRandomEffect(EffectMoment.OnStart),
+                        null,
+                        _equipment[type].GetInstantiatedPrefab().transform));
                     SwitchWeapon(type);
                 }
                 return ok;

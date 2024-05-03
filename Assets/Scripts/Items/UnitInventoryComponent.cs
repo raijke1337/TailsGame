@@ -15,7 +15,9 @@ namespace Arcatech.Units
         private Dictionary<EquipItemType, EquipmentItem> _equips;
         private List<InventoryItem> _items;
         private List<InventoryItem> _drops;
-        
+
+        private ItemEmpties _empties;
+
         public SerializedUnitInventory PackSaveData // used by game manager to save data
         {
             get
@@ -80,20 +82,32 @@ namespace Arcatech.Units
                 }
                 else
                 {
-                    MoveToEquips(eq);
+                    MoveToEquipped(eq);
                 }
             }
-        }
 
-        private void MoveToEquips(EquipmentItem i)
+
+        }
+        public void MoveToSheathed(EquipmentItem i)
         {
+
+        }
+        private void MoveToEquipped(EquipmentItem i)
+        {
+            if (_equips.TryGetValue(i.ItemType, out var equippedAlready))
+            {
+                MoveToInventory(equippedAlready);
+            }
             _items.Remove(i);
             _equips[i.ItemType] = i;
+
+            i.OnEquip(_empties.ItemPositions[i.ItemType]);
         }
         private void MoveToInventory(EquipmentItem i)
         {
             _equips.Remove(i.ItemType);
             _items.Add(i);
+            i.OnUnequip();
         }
         // to choose the text for the context button
         public bool IsItemEquipped(EquipmentItem equip)
@@ -167,6 +181,7 @@ namespace Arcatech.Units
         public UnitInventoryComponent(SerializedUnitInventory strings, BaseUnit owner)
         {
             _owner = owner;
+            _empties = owner.GetEmpties;
 
             _equips = new Dictionary<EquipItemType, EquipmentItem>();
             _items = new List<InventoryItem>();

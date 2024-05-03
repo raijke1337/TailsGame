@@ -5,16 +5,19 @@ using static UnityEngine.InputSystem.InputAction;
 
 namespace Arcatech.Units.Inputs
 {
-    [RequireComponent(typeof(AimingComponent))]
+    [RequireComponent(typeof(AimingComponent),typeof(CostumesControllerComponent))]
     public class InputsPlayer : ControlInputsBase
     {
         private PlayerControls _controls;
 
         private IsoCamAdjust _adj;
         private AimingComponent _aim;
+        private CostumesControllerComponent _costume;
+
 
         private GameInterfaceManager _gameInterfaceManager;
         public ComboController GetComboController => _comboCtrl;
+        public CostumesControllerComponent GetCostumesController => _costume;
 
         public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
 
@@ -28,6 +31,7 @@ namespace Arcatech.Units.Inputs
 
         public override void StartController()
         {
+
             base.StartController();
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
@@ -37,9 +41,14 @@ namespace Arcatech.Units.Inputs
 
             _controls = new PlayerControls();
             _controls.Game.Enable();
+
             _aim = GetComponent<AimingComponent>();
             _aim.StartController();
             _aim.SelectionUpdatedEvent += OnSelectedUpdate;
+
+            _costume = GetComponent<CostumesControllerComponent>();
+            _costume.StartController();
+
             _controls.Game.Dash.performed += Dash_performed;
             _controls.Game.SkillE.performed += SkillE_performed;
             _controls.Game.SkillQ.performed += SkillQ_performed;
@@ -70,6 +79,8 @@ namespace Arcatech.Units.Inputs
             base.UpdateController(delta);
             if (IsInputsLocked || _aim == null) return; // set during dodges and attack motions
             _aim.UpdateController(delta);
+            _costume.UpdateController(delta);
+
             CalculateMovement();
             RotateToAim();
         }
@@ -79,6 +90,8 @@ namespace Arcatech.Units.Inputs
             base.StopController();
             _controls.Game.Disable();
             _aim.StopController();
+            _costume.StopController();
+
             _controls.Game.Dash.performed -= Dash_performed;
             _controls.Game.SkillE.performed -= SkillE_performed;
             _controls.Game.SkillQ.performed -= SkillQ_performed;
@@ -117,15 +130,7 @@ namespace Arcatech.Units.Inputs
         private void Dash_performed(CallbackContext obj)
         {
             if (MoveDirectionFromInputs == Vector3.zero) return;
-            //can't dash from standing
             DoCombatAction(CombatActionType.Dodge);
-
-            // this is the old dash, non-skill
-            // basically this part was moved to skill controller
-            //if (_dodgeCtrl.IsDodgePossibleCheck())
-            //{
-            //    CombatActionSuccessCallback(CombatActionType.Dodge);
-            //}
         }
         protected void SkillR_performed(CallbackContext obj)
         {
@@ -142,7 +147,7 @@ namespace Arcatech.Units.Inputs
 
         #endregion
 
-
+        #region movement
         private void CalculateMovement()
         {
 
@@ -183,6 +188,9 @@ namespace Arcatech.Units.Inputs
             base.LerpRotateToTarget(looktarget, delta);
             // TODO Detect rotation to play animations
         }
+        #endregion
+
+        #region gizmo
 
         private void OnDrawGizmos()
         {
@@ -194,6 +202,10 @@ namespace Arcatech.Units.Inputs
 
         }
 
+
+        #endregion
+
+
         private void OnSelectedUpdate(bool isSelect, BaseTargetableItem item)
         {
             _gameInterfaceManager.OnPlayerSelectedTargetable(item, isSelect);
@@ -203,6 +215,12 @@ namespace Arcatech.Units.Inputs
         public override ReferenceUnitType GetUnitType()
         {
             return ReferenceUnitType.Player;
+        }
+
+        protected override void ShieldBreakEventCallback()
+        {
+            _costume.OnBreak();
+            base.ShieldBreakEventCallback();
         }
 
     }

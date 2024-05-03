@@ -150,7 +150,7 @@ namespace Arcatech.Units
         }
 
 
-        protected void OnInputsCreateSkill(SkillComponent data, BaseUnit source, Transform where)
+        protected void OnInputsCreateSkill(SkillProjectileComponent data, BaseUnit source, Transform where)
         {
             SkillRequestFromInputsSuccessEvent?.Invoke(data, source, where);
         }
@@ -162,6 +162,7 @@ namespace Arcatech.Units
         {
             _animator.SetTrigger("Death");
             _controller.IsInputsLocked = true;
+            GetCollider.enabled = false;
             BaseUnitDiedEvent?.Invoke(this);
         }
         public virtual void ApplyEffectToController(TriggeredEffect eff)
@@ -255,7 +256,7 @@ namespace Arcatech.Units
 
         #region trigger events
         public event TriggerEvent UnitTriggerRequestEvent;
-        protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, BaseStatTriggerConfig cfg)
+        protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, TriggeredEffect cfg)
         {
             UnitTriggerRequestEvent?.Invoke(tg, src, ent, cfg);
         }

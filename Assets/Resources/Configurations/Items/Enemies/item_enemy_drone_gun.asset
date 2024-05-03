@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b117a74a6b9915a42b2992f60878ea55, type: 3}
+  m_Name: item_enemy_drone_gun
+  m_EditorClassIdentifier: 
+  ID: dronegun
+  Description: {fileID: 11400000, guid: d182ad7fe6f71c24ca935ac7d8f1d366, type: 2}
+  ItemType: 2
+  Item: {fileID: 619754833450251262, guid: 250c6690b13f55d419d054628bb3e24a, type: 3}
+  Skill: {fileID: 11400000, guid: 430823da09604be44afb1760ea86ea04, type: 2}
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList: []
+  WeaponCooldown: 1
+  WeaponHitTriggers:
+  - {fileID: 11400000, guid: 8a780d4d5e17cc04285d20465c666c8d, type: 2}
+  RangedConfig:
+    Projectile: {fileID: 11400000, guid: bc65607299ad8ea499ddf8d84d2b0cc7, type: 2}
+    Ammo: 1
+    ShotsPerUse: 2
+    Reload: 2
+    Spread: 1

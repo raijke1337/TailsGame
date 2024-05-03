@@ -50,7 +50,7 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        public void UpdateGameText(ExtendedTextContainerSO text, bool isShown)
+        public void UpdateGameText(TextContainerSO text, bool isShown)
         {
             if (isShown)
             {

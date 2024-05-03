@@ -8,18 +8,25 @@ namespace Arcatech.Items
 
         #region managed
 
+        public bool IsSetup { get; protected set; } = false;
         public BaseUnit Owner { get; set; }
-        private ProjectileSettingsPackage _data;
-        public void Setup(ProjectileSettingsPackage set, BaseUnit owner)
+        private ProjectileSettingsPackage _projData;
+        public EquipItemType SpawnPlace { get; protected set; }
+
+        public ProjectileSettingsPackage GetProjectileSettings => _projData;
+
+        public virtual void Setup(SerializedProjectileConfiguration set, BaseUnit owner)
         {
-            _data = new ProjectileSettingsPackage() { ProjectilePenetration = set.ProjectilePenetration, ProjectileSpeed = set.ProjectileSpeed, TimeToLive = set.TimeToLive };
+            _projData = new ProjectileSettingsPackage(set);
             Owner = owner;
+            IsSetup = true;
+            SpawnPlace = set.SpawnPlace;
         }
         public void UpdateInDelta(float deltaTime)
         {
-            transform.position += _data.ProjectileSpeed * deltaTime * transform.forward;
-            _data.TimeToLive -= deltaTime;
-            if (_data.TimeToLive <= 0)
+            transform.position += _projData.ProjectileSpeed * deltaTime * transform.forward;
+            _projData.TimeToLive -= deltaTime;
+            if (_projData.TimeToLive <= 0)
             {
                 Destroy(gameObject);
             }
@@ -29,15 +36,15 @@ namespace Arcatech.Items
         #region controls
         public int Decrement(int times)
         {
-            _data.ProjectilePenetration -= times;
-            return _data.ProjectilePenetration;
+            _projData.ProjectilePenetration -= times;
+            return _projData.ProjectilePenetration;
         }
 
         public void StopProjectile(Transform parent)
         {
             // stuck if hits a static or has no penetration
-            _data.ProjectileSpeed = 0;
-            _data.ProjectilePenetration = 0;
+            _projData.ProjectileSpeed = 0;
+            _projData.ProjectilePenetration = 0;
             transform.SetParent(parent, true);
         }
 
@@ -53,9 +60,10 @@ namespace Arcatech.Items
 
 
 
-        private void OnDestroy()
+        public virtual void OnDestroy()
         {
             ProjectileExpiredEvent?.Invoke(this);
+
         }
 
         public event SimpleEventsHandler<Collider, ProjectileComponent> ProjectileEnteredTriggerEvent;

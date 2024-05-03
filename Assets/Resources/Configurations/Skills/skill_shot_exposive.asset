@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83aad102a44ceec42a80ff29b1f9a9de, type: 3}
+  m_Name: skill_shot_exposive
+  m_EditorClassIdentifier: 
+  Description: {fileID: 11400000, guid: 56a1635c45af08148969591c4ecc162a, type: 2}
+  SpawnPlace: 2
+  Charges: 1
+  ChargeRestore: 5
+  ComboCostTrigger: {fileID: 11400000, guid: 3a1e8870eab5d3f4c985081dffc945a1, type: 2}
+  SkillProjectileConfig: {fileID: 11400000, guid: 41f50b15f8e253649aa5f282d608a3b0,
+    type: 2}
+  PlacerRadius: 0.1
+  AoERadius: 4
+  AoETime: 0.1
+  Triggers:
+  - {fileID: 11400000, guid: 2bfca0ce346ef194cbf4fe56602fff3a, type: 2}
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList:
+      - Key: 0
+        Value:
+        - {fileID: 4021103657954561941, guid: c02a418a0c7268747831aac8a967a01e, type: 3}

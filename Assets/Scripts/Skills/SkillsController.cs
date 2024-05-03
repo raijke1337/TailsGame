@@ -31,10 +31,6 @@ namespace Arcatech.Units
             var cfg = item.Skill;
             SkillObjectForControls control = new SkillObjectForControls(cfg, Owner);
 
-            if (cfg is ProjectileSkillConfigurationSO pcfg)
-            {
-                control = new ProjectileSkillObjectForControls(pcfg, Owner);
-            }
             if (cfg is DodgeSkillConfigurationSO dcfg)
             {
                 control = new DodgeSkillObjectForControls(dcfg, Owner);
@@ -63,17 +59,17 @@ namespace Arcatech.Units
 
 
 
-        public bool TryUseSkill(CombatActionType type, ComboController comboctrl, out SkillComponent result)
+        public bool TryUseSkill(CombatActionType type, ComboController comboctrl, out SkillProjectileComponent result)
         {
             result = null;
             if (_skills.TryGetValue(type, out var usedSkill)) // check if a skill of TYPE is available
             {
-                if (usedSkill.TryUseSkill(out var ef)) // not on cd
+                if (usedSkill.TryUseSkill(out var ef)) // not on cd, produces the combo cost trigger
                 {
-                    if (comboctrl.GetComboContainer.GetCurrent >= ef.InitialValue) // enough combo to use
+                    if (comboctrl.GetComboContainer.GetCurrent >= -ef.InitialValue) // enough combo to use, - neg because it is -15 in cfg
                     {
                         comboctrl.ApplyEffectToController(ef);
-                        result = usedSkill.ProduceSkillObject;
+                        result = usedSkill.UseSkill;
 
                         switch (type)
                         {
@@ -84,6 +80,10 @@ namespace Arcatech.Units
                                 SwitchAnimationLayersEvent?.Invoke(EquipItemType.RangedWeap);
                                 break;
                         }
+                        SpawnProjectileCallBack(result);
+                        result.transform.position = Owner.GetEmpties.ItemPositions[result.SpawnPlace].position;
+                        result.transform.forward = Owner.transform.forward;
+
                         return true;
                     }
                 }

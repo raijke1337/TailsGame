@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Arcatech.Skills
 {
     [CreateAssetMenu(fileName = "New Dodge Skill Config", menuName = "Skills/Dodge Skill")]
-    public class DodgeSkillConfigurationSO : SkillControlSettingsSO
+    public class DodgeSkillConfigurationSO : SerizalizedSkillConfiguration
     {
         // [Space] public SerializedDictionary<DodgeStatType, StatValueContainer> DodgeSkillStats;
        [SerializeField] public DodgeSettingsPackage DodgeSettings;
@@ -17,6 +17,12 @@ namespace Arcatech.Skills
     {
         [Range(0,10)] public int Range;
         [Range(0, 10)] public float Speed;
+
+        public DodgeSettingsPackage(DodgeSkillConfigurationSO cfg)
+        {
+            Range = cfg.DodgeSettings.Range; Speed = cfg.DodgeSettings.Speed;
+        }
+
     }
 
 }

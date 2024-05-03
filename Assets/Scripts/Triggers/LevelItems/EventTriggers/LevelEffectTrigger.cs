@@ -4,7 +4,7 @@ namespace Arcatech.Triggers
 {
     public class LevelEffectTrigger : BaseLevelEventTrigger
     {
-        public BaseStatTriggerConfig[] Triggers;
+        public SerializedStatTriggerConfig[] Triggers;
 
         protected override void OnEnter()
         {

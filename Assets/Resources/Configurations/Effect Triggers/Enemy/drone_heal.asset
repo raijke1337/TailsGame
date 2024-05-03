@@ -13,10 +13,18 @@ MonoBehaviour:
   m_Name: drone_heal
   m_EditorClassIdentifier: 
   ID: drone_heal
-  StatID: 0
+  ChangedValueType: 0
   InitialValue: 5
   RepeatedValue: 3
   RepeatApplicationDelay: 1
   TotalDuration: 15
   Icon: {fileID: 0}
   TargetType: 2
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList:
+      - Key: 2
+        Value:
+        - {fileID: 5861905151455563100, guid: f864a04b52e00a042a9582ffe0f79a94, type: 3}

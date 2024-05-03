@@ -5,6 +5,7 @@ using Arcatech.Texts;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using AYellowpaper.SerializedCollections;
+using CartoonFX;
 using System;
 using UnityEngine;
 namespace Arcatech
@@ -25,11 +26,11 @@ namespace Arcatech
     public delegate void StateMachineEvent<T>(T arg);
 
 
-    public delegate void SkillRequestedEvent(SkillComponent data, BaseUnit source, Transform where);
+    public delegate void SkillRequestedEvent(SkillProjectileComponent data, BaseUnit source, Transform where);
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
 
     public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
-    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, BaseStatTriggerConfig cfg);
+    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect eff);
     #endregion
 
     #region structs 
@@ -148,4 +149,20 @@ namespace Arcatech.AI
 
 }
 
-    #endregion
+#endregion
+
+namespace Arcatech.Effects
+{
+    public struct EffectRequestPackage
+    {
+        public AudioClip Sound { get; }
+        public CFXR_Effect Effect { get; }
+        public Transform Parent { get; }
+        public Transform Place { get; }
+        public EffectRequestPackage(AudioClip s, CFXR_Effect e, Transform p, Transform w)
+        {
+            Sound = s; Effect = e; Parent = p; Place = w;
+        }
+
+    }
+}

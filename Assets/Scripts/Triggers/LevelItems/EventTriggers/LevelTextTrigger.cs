@@ -4,8 +4,8 @@ namespace Arcatech.Triggers
 {
     public class LevelTextTrigger : BaseLevelEventTrigger
     {
-        [SerializeField] private ExtendedTextContainerSO _text;
-        public ExtendedTextContainerSO Text
+        [SerializeField] private TextContainerSO _text;
+        public TextContainerSO Text
         {
             get
             {

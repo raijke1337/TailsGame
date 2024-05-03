@@ -83,7 +83,7 @@ namespace Arcatech.Managers
                 if (dist < range)
                 {
                     u.ForceCombat();
-                    Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attacked, range {dist}");
+                    //Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attacked, range {dist}");
                 }
             }
 

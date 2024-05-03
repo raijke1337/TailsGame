@@ -2,6 +2,7 @@ using Arcatech.Items;
 using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -10,7 +11,7 @@ namespace Arcatech.Units
     {
       //  public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
         private Dictionary<ShieldStatType, StatValueContainer> _stats;
-
+        public event SimpleEventsHandler ShieldBrokenEvent;
 
         #region conditional
         public ShieldController(ItemEmpties em, BaseUnit ow) : base(em, ow)
@@ -45,7 +46,6 @@ namespace Arcatech.Units
         #endregion
 
 
-
         #region managed
 
         public override void UpdateInDelta(float deltaTime)
@@ -59,21 +59,41 @@ namespace Arcatech.Units
 
 
         #endregion
-        public TriggeredEffect ProcessHealthChange(TriggeredEffect effect)
+        public TriggeredEffect ProcessHealthChange(in TriggeredEffect effect)
         {
             if (effect.InitialValue >= 0f)
             {
                 return effect; // heal effect
             }
-            else // MASSIVE TODO HERE btw
+            else 
             {
-                var adjDmg = effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
-                effect.InitialValue -= adjDmg;
-                var AdjRep = effect.RepeatedValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
-                effect.RepeatedValue -= AdjRep;
+                float currentSh = _stats[ShieldStatType.Shield].GetCurrent;
+                float toAbsorbInitAdj = -effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
+                // positive & positive
 
-                TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, adjDmg, AdjRep, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
+
+                if (toAbsorbInitAdj <= currentSh)
+                {
+                    effect.RepeatedValue = 0;
+                    effect.InitialValue += toAbsorbInitAdj; // neg += positive 
+                }
+
+                if (toAbsorbInitAdj  > currentSh)
+                {
+                    float remains = toAbsorbInitAdj - currentSh; // positive
+                    toAbsorbInitAdj = currentSh;
+
+                    effect.InitialValue = -remains;
+                    ShieldBrokenEvent?.Invoke();
+
+                }
+
+
+                TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, -toAbsorbInitAdj, 0, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
                 _activeEffects.Add(_shieldAbsord);
+
+
+
                 return effect;
             }
         }
