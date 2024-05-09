@@ -10,7 +10,7 @@ namespace Arcatech.Scenes
     {
         public int SceneLoaderIndex;
         public LevelType LevelType;
-        public TextContainerSO Description;
+        public SimpleText Description;
         public AudioClip Music;
         public bool IsUnlockedByDefault;
         //public SceneContainer NextLevel;

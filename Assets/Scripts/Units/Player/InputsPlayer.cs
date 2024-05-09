@@ -70,7 +70,7 @@ namespace Arcatech.Units.Inputs
         {
             if (_gameInterfaceManager == null) return; // weirdstuff happening here as it's called from NULL TODO
 
-            _gameInterfaceManager.OnPauseRequest(true);
+            _gameInterfaceManager.OnPauseRequesShowPanelAndPause(true);
 
         }
 

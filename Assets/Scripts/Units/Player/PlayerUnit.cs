@@ -1,3 +1,4 @@
+using Arcatech.Texts;
 using Arcatech.Units.Inputs;
 using System.Linq;
 using UnityEngine;
@@ -8,30 +9,25 @@ namespace Arcatech.Units
         private InputsPlayer _playerController;
         protected Camera _faceCam;
 
+        [SerializeField] RuntimeAnimatorController GameplayAnimator;
+        [SerializeField] RuntimeAnimatorController SceneAnimator;
+
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
         #region managed
         public override void InitiateUnit()
         {
-            base.InitiateUnit();
             UpdateComponents();
+
+            _animator.runtimeAnimatorController = GameplayAnimator;
+            base.InitiateUnit();
 
             ToggleCamera(true);
 
-            //var stats = _controller.GetStatsController;
+            if (!IsArmed) 
+                _animator.runtimeAnimatorController=SceneAnimator;
 
-            //float maxHP = stats.GetBaseStats[BaseStatType.Health].GetMax;
-            // stats.GetBaseStats[BaseStatType.Health].ValueChangedEvent += ChangeVisualStage;
-
-            // int stages = _visualController.StagesTotal;
-            //_visualStagesHP = new float[stages];
-            //var coef = maxHP / stages;
-            //for (int i = 0; i < stages; i++)
-            //{
-            //  _visualStagesHP[i] = maxHP;
-            //  maxHP -= coef;
-            //}
         }
         public override void RunUpdate(float delta)
         {
@@ -76,10 +72,6 @@ namespace Arcatech.Units
 
         #region animator and movement
 
-
-
-        //private Vector3 currVelocity;
-        //[SerializeField,Tooltip("How quickly the inertia of movement fades")] private float massDamp = 3f;
 
 
         private void PlayerMovement(Vector3 desiredDir, float delta)
@@ -140,6 +132,11 @@ namespace Arcatech.Units
         {
             Debug.Log($"Inputs report shield break event");
         }
+        public void PlayerIsTalking(DialoguePart d)
+        {
+            Debug.Log($"Dialogue window is shown by player panel script, dialogue is: {d.Mood}");
+        }
+        
 
         #endregion
 

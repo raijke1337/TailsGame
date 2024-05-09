@@ -16,9 +16,11 @@ namespace Arcatech.Triggers.Items
             switch (desired)
             { 
                 case ControlledItemState.Negative:
-                    
-                    _light.color = _negColor; break;
+                    CallbackEvent(ControlledItemState.Negative);
+                    _light.color = _negColor; 
+                    break;
                 case ControlledItemState.Positive:
+                    CallbackEvent(ControlledItemState.Positive);
                     _light.color = _posColor;
                     break;
                 default:

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8683421478712600779}
   - component: {fileID: 130849766236291306}
   - component: {fileID: 5840699993806875995}
+  - component: {fileID: 5298086996488447690}
   m_Layer: 0
   m_Name: floorIsLava
   m_TagString: Untagged
@@ -75,5 +76,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a591dcb79e2e5e44bb2edf50c69c67b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forceTrigger: 1
+  DestroyOnExit: 0
+  DestroyOnEnter: 0
   Triggers:
   - {fileID: 11400000, guid: ceb3f6d4e02019542ab90e872e2c66a5, type: 2}
+--- !u!114 &5298086996488447690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6505258568815080220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Size: {x: 4, y: 3, z: 4}
+  m_Center: {x: 0, y: 1, z: 0}
+  m_Area: 1
+  m_AffectedAgents: ffffffff

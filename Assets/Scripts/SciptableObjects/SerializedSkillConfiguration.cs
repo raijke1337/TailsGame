@@ -9,7 +9,7 @@ namespace Arcatech.Skills
     public class SerizalizedSkillConfiguration : ScriptableObject
     {
 
-        public ExtendedTextContainerSO Description;
+        public ExtendedText Description;
         public EquipItemType SpawnPlace;
         [Space, Range(1, 10)] public int Charges;
         [Range(1, 10)] public int ChargeRestore;

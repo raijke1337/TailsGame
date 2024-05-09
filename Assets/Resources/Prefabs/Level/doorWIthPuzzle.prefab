@@ -196,6 +196,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 23452428756662670, guid: 8b1040fedd8c3484ba95a29f1f562955,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1d2cbf17d90a3884f8f0c10cd230f809, type: 2}
     m_RemovedComponents:
     - {fileID: 64039323594180402, guid: 8b1040fedd8c3484ba95a29f1f562955, type: 3}
     m_RemovedGameObjects: []
@@ -249,7 +254,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4057256, y: 1.311408, z: 1.8809063}
+  m_Size: {x: 0.76, y: 1.5, z: 0.78}
   m_Center: {x: -0.0056039095, y: 0.718204, z: -0.52997506}
 --- !u!4 &1591228286940849157 stripped
 Transform:
@@ -317,6 +322,11 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 23486310792794668, guid: d84d9aca57d04ea4d96509c40be8b8b4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1d2cbf17d90a3884f8f0c10cd230f809, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

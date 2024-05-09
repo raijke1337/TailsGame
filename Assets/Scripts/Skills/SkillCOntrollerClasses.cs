@@ -35,7 +35,7 @@ namespace Arcatech.Skills
 
         #region public
         public BaseUnit Owner { get; }
-        public ExtendedTextContainerSO Description { get => _settings.Description; }
+        public ExtendedText Description { get => _settings.Description; }
         public SerializedStatTriggerConfig[] Triggers { get => _settings.Triggers; }
 
         private EffectsCollection _effects;

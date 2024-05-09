@@ -74,11 +74,11 @@ namespace Arcatech.Units
                     _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
                     break;
                 case LevelType.Menu:
-                    // idle for scene menu
+                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
                     break;
                 case LevelType.Game:
                     if (this is PlayerUnit)
-                    {
+                    {                        
                         _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
                     }
                     ControllerEventsBinds(true);
@@ -118,7 +118,6 @@ namespace Arcatech.Units
             if (_animator == null) _animator = GetComponent<Animator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
             if (_controller == null) _controller = GetComponent<ControlInputsBase>();
-            // if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
         }
 
 

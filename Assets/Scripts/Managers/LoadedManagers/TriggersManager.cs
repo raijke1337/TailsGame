@@ -23,9 +23,12 @@ namespace Arcatech.Managers
         {
             //UpdateDatas();
             var staticTriggers = FindObjectsOfType<BaseLevelEventTrigger>(); // find triggers on level
+            Debug.Log($"Found {staticTriggers.Length} triggers on level");
 
             foreach (var t in staticTriggers)
             {
+
+                //Debug.Log($"Add {t.name}");
                 t.TriggerHitUnitEvent += (ta, tb) => HandleStaticTrigger(ta, tb, t);
                 _staticT.Add(t);
             }
@@ -60,6 +63,13 @@ namespace Arcatech.Managers
 
         private void HandleStaticTrigger(BaseUnit target, bool isEnter, BaseLevelEventTrigger lv)
         {
+            if (lv is LevelEffectTrigger eff && target is PlayerUnit) // case : trap or health up
+            {
+                foreach (var config in eff.Triggers)
+                {
+                    ServeTriggerApplication(new TriggeredEffect (config),null, target, isEnter);
+                }            
+            }
            // Debug.Log($"{this} received a call from {lv} : {target} is entering the zone: {isEnter}");
         }
 
@@ -177,14 +187,14 @@ namespace Arcatech.Managers
             {
                 if (hit.Contains(finaltgt))
                 {
-                    Debug.Log($"trigger {effect.ID} already applied to {finaltgt.name}, skipping");
+                    //Debug.Log($"trigger {effect.ID} already applied to {finaltgt.name}, skipping");
                     return; // 
                 }
                 else
                 {
                     hit.Add(finaltgt);                    
                     finaltgt.ApplyEffectToController(effect);
-                    Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
+                    //Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
 
                     HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
                 }
@@ -194,7 +204,7 @@ namespace Arcatech.Managers
                 _hitTargetsPerEffect[effect] = new List<BaseUnit>();
                 _hitTargetsPerEffect[effect].Add(finaltgt); 
                 finaltgt.ApplyEffectToController(effect);
-                Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
+               // Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
 
                 HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
             }
@@ -234,7 +244,7 @@ namespace Arcatech.Managers
 
 
 
-            Debug.Log($"{p} was registered and is set up properly: {p.IsSetup}");
+            //Debug.Log($"{p} was registered and is set up properly: {p.IsSetup}");
         }
 
         private void PositionProjectile (ProjectileComponent spawned)

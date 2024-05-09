@@ -11,10 +11,10 @@ namespace Arcatech.Items
     {
         public string ID;
         public Sprite ItemIcon { get => _description.Picture; }
-        public ExtendedTextContainerSO GetDescription => _description;
+        public ExtendedText GetDescription => _description;
 
         public EquipItemType ItemType { get; }
-        protected ExtendedTextContainerSO _description;
+        protected ExtendedText _description;
         public BaseUnit Owner;
 
 

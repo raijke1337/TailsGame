@@ -14,13 +14,16 @@ namespace Arcatech.Units.Inputs
 
         public SimpleEventsHandler<bool, BaseTargetableItem> SelectionUpdatedEvent;
 
-        [Tooltip("Vertical offset for raycast plane"), SerializeField] private float _vertOffset = 0.1f;
+        // [Tooltip("Vertical offset for raycast plane"), SerializeField] 
+        private float _vertOffset;
         public Vector3 GetLookPoint => _mousePos; // used by inputs to rotate towards crosshair
 
 
         #region managed
         public override void StartController()
         {
+            _vertOffset = transform.position.y;
+
             _plane = new Plane(Vector3.down, _vertOffset);
 
             _mousePos = transform.forward;

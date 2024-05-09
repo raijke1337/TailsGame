@@ -2,8 +2,6 @@ using Arcatech;
 using Arcatech.Items;
 using Arcatech.Skills;
 using Arcatech.Texts;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,7 +25,7 @@ public class CreateDescriptionsForItems : MonoBehaviour
                 //{
                 //    s.name = sk_prefix + s.name;
                 //}                
-                ExtendedTextContainerSO asset = ScriptableObject.CreateInstance<ExtendedTextContainerSO>();
+                ExtendedText asset = ScriptableObject.CreateInstance<ExtendedText>();
                 string name = descriptionFileTitle;
                 AssetDatabase.CreateAsset(asset, Constants.Texts.c_SkillsDesc+name);
 
@@ -45,7 +43,7 @@ public class CreateDescriptionsForItems : MonoBehaviour
                 //{
                 //    s.name = i_prefix + s.name;
                 //}
-                ExtendedTextContainerSO asset = ScriptableObject.CreateInstance<ExtendedTextContainerSO>();
+                ExtendedText asset = ScriptableObject.CreateInstance<ExtendedText>();
                 string name = descriptionFileTitle;
                 AssetDatabase.CreateAsset(asset, Constants.Texts.c_WeaponsDesc + name);
 

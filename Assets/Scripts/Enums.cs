@@ -29,12 +29,6 @@ public enum EquipItemType
     Modifier,
     Other = 255
 }
-//public enum DodgeStatType
-//{
-//    Charges,
-//    Range,
-//    Speed
-//}
 
 public enum CombatActionType
 {
@@ -132,3 +126,11 @@ public enum ControlledItemState : byte
     Positive,
     PositiveToNegative,
 }
+
+public enum FaceExpression : byte
+{
+    None,
+    Happy,
+    Angry
+}
+

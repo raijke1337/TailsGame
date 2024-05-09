@@ -7,7 +7,7 @@ namespace Arcatech.Items
     [Serializable, CreateAssetMenu(fileName = "New Backpack Item", menuName = "Items/Backpack Item")]
     public class Item : ScriptableObjectID
     {
-        public ExtendedTextContainerSO Description;
+        public ExtendedText Description;
         public EquipItemType ItemType;
     }
 }

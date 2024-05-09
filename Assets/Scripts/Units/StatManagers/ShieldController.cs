@@ -54,6 +54,7 @@ namespace Arcatech.Units
             if (_equipment.TryGetValue(EquipItemType.Shield, out var s))
             {
                 s.DoUpdates(deltaTime);
+                _stats[ShieldStatType.Shield].ChangeCurrent(_stats[ShieldStatType.ShieldRegen].GetCurrent * _stats[ShieldStatType.ShieldRegenMultiplier].GetCurrent* deltaTime);
             }
         }
 

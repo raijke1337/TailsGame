@@ -4,8 +4,8 @@ namespace Arcatech.Triggers
 {
     public class LevelTextTrigger : BaseLevelEventTrigger
     {
-        [SerializeField] private TextContainerSO _text;
-        public TextContainerSO Text
+        [SerializeField] private DialoguePart _text;
+        public DialoguePart Text
         {
             get
             {

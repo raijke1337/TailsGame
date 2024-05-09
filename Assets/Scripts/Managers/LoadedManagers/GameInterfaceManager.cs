@@ -25,6 +25,7 @@ namespace Arcatech.Managers
                 _player.StartController();
                 _tgt.IsNeeded = false;
                 _text.gameObject.SetActive(false);
+                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
 
             }
@@ -38,6 +39,8 @@ namespace Arcatech.Managers
 
         }
 
+
+
         public override void RunUpdate(float delta)
         {
             _player.UpdateController(delta);
@@ -50,19 +53,29 @@ namespace Arcatech.Managers
         }
         #endregion
 
-        public void UpdateGameText(TextContainerSO text, bool isShown)
+
+        #region game dialogues and texts
+
+
+        public void UpdateGameText(DialoguePart text, bool isShown)
         {
-            if (isShown)
-            {
-                _text.gameObject.SetActive(true);
-                _text.SetText(text);
-            }
-            else
-            {
-                _text.gameObject.SetActive(false);
-            }
+            _player.LoadedDialogue(text,isShown);
+            _text.gameObject.SetActive(true);
+            _text.CurrentDialogue = text;
+            GameManager.Instance.OnPlayerPaused(true);
+        }
+        private void OnDialogueCompletedInTextWindow()
+        {
+            GameManager.Instance.OnPlayerPaused(false);
+            _text.gameObject.SetActive(false);
         }
 
+
+
+
+        #endregion
+
+        #region target panel
         public void OnPlayerSelectedTargetable(BaseTargetableItem item, bool show)
         {
             if (show)
@@ -82,8 +95,6 @@ namespace Arcatech.Managers
                 _cor = StartCoroutine(HidePanel(_tgt));
             }
         }
-
-
         private float paneltimer;
         private IEnumerator HidePanel(PanelWithBarGeneric item)
         {
@@ -95,10 +106,10 @@ namespace Arcatech.Managers
             item.IsNeeded = false;
             yield return null;
         }
-
+        #endregion
         #region menus
 
-        public void OnPauseRequest(bool isPause)
+        public void OnPauseRequesShowPanelAndPause(bool isPause)
         {
             _pause.SetActive(isPause);
             GameManager.Instance.OnPlayerPaused(isPause);

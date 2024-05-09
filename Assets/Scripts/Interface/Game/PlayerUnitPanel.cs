@@ -1,4 +1,5 @@
 using Arcatech.Managers;
+using Arcatech.Texts;
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
 using System.Collections.Generic;
@@ -46,6 +47,7 @@ namespace Arcatech.UI
             if (_shield.IsReady)
             {
                 SHc = _shield.GetShieldStats[ShieldStatType.Shield];
+
                 _bars.LoadValues(SHc, DisplayValueType.Shield);
             }
             if (_skills.IsReady)
@@ -70,6 +72,16 @@ namespace Arcatech.UI
             _bars.StopController();
             _icons.StopController();
         }
+
+        public void LoadedDialogue(DialoguePart d, bool isShown)
+        {
+            if (isShown)
+            {
+                _player.PlayerIsTalking(d);
+            }
+
+        }
+
     }
 
 }

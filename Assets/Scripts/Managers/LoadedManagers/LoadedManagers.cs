@@ -9,7 +9,7 @@ namespace Arcatech.Managers
     {
         public SkillsPlacerManager SkillsPlacerManager { get; private set; }
         public TriggersManager TriggersProjectilesManager { get; private set; }
-        public EventTriggersManager EventTriggersManager { get; private set; }
+        public LevelManager LevelManager { get; private set; }
         public UnitsManager UnitsManager { get; private set; }
         public GameInterfaceManager GameInterfaceManager { get; private set; }
         public IsoCameraController CameraController { get; private set; }
@@ -24,7 +24,7 @@ namespace Arcatech.Managers
             _lvl = lv;
 
 
-            EventTriggersManager = GetComponent<EventTriggersManager>(); // for texts and event triggers
+            LevelManager = GetComponent<LevelManager>(); // for texts and event triggers
 
             UnitsManager = GetComponent<UnitsManager>();
 
@@ -38,16 +38,16 @@ namespace Arcatech.Managers
 
                 _managers = new LoadedManagerBase[6];
 
-                _managers[0] = TriggersProjectilesManager;
-                _managers[1] = EventTriggersManager;
-                _managers[2] = UnitsManager;
+                _managers[0] = LevelManager; // init level blocks 
+                _managers[1] = TriggersProjectilesManager; // load spawned and pre-placed triggers
+                _managers[2] = UnitsManager; // load spawned  units
                 _managers[3] = SkillsPlacerManager;
                 _managers[4] = GameInterfaceManager;
                 _managers[5] = CameraController;
             }
             else
             {
-                _managers = new LoadedManagerBase[3] { EventTriggersManager, UnitsManager, GameInterfaceManager };
+                _managers = new LoadedManagerBase[3] { LevelManager, UnitsManager, GameInterfaceManager };
             }
             foreach (var m in _managers)
             {

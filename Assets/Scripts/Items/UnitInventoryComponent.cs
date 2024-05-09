@@ -57,14 +57,16 @@ namespace Arcatech.Units
         {
             if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
-                Debug.LogWarning($"Not added item {i} to {_owner} because it is already owned");
+                Debug.Log($"Not added item {i} to {_owner} because it is already owned");
                 return; // supposed to prevent duplication 
             }
             else
             {
+
                 var res = ProduceItem(i);
                 _items.Add(res);
                 CallBackUpdateEvent();
+                Debug.Log($"Added item {i} to {_owner}");
             }
         }
 

@@ -62,6 +62,7 @@ namespace Arcatech.Units
         public bool TryUseSkill(CombatActionType type, ComboController comboctrl, out SkillProjectileComponent result)
         {
             result = null;
+            if (_skills == null) return false;
             if (_skills.TryGetValue(type, out var usedSkill)) // check if a skill of TYPE is available
             {
                 if (usedSkill.TryUseSkill(out var ef)) // not on cd, produces the combo cost trigger

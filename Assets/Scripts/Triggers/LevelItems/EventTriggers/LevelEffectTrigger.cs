@@ -8,12 +8,12 @@ namespace Arcatech.Triggers
 
         protected override void OnEnter()
         {
-            Debug.Log($"{this} enter {Triggers[0]}");
+           // Debug.Log($"{this} enter {Triggers[0]}");
         }
 
         protected override void OnExit()
         {
-            Debug.Log($"{this} exit");
+            //Debug.Log($"{this} exit");
         }
     }
 }

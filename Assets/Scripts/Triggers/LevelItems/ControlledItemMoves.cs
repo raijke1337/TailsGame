@@ -67,12 +67,15 @@ namespace Arcatech.Triggers.Items
                 while (progress < 1)
                 {
                     _currentState = ControlledItemState.NegativeToPositive;
+                    CallbackEvent(ControlledItemState.NegativeToPositive);
                     progress += 1 / _movementTime * Time.deltaTime;
-                    transform.localEulerAngles = Vector3.Lerp(_negEulers, _posEulers, progress);
+                    transform.localPosition = Vector3.Lerp(_negPos, _posPos, progress);
+                    transform.localEulerAngles = Vector3.Lerp(_negEulers, _posEulers,progress);
                     yield return null;
                 }
                 isBusy = false;
                 _currentState = ControlledItemState.Positive;
+                CallbackEvent(ControlledItemState.Positive);
                 yield return null;
             }
             else
@@ -80,11 +83,14 @@ namespace Arcatech.Triggers.Items
                 while (progress < 1)
                 {
                     _currentState = ControlledItemState.PositiveToNegative;
+                    CallbackEvent(ControlledItemState.PositiveToNegative);
                     progress += 1 / _movementTime * Time.deltaTime;
+                    transform.localPosition = Vector3.Lerp(_posPos, _negPos, progress);
                     transform.localEulerAngles = Vector3.Lerp(_posEulers, _negEulers, progress);
                     yield return null;
                 }
                 isBusy = false;
+                CallbackEvent(ControlledItemState.Negative);
                 _currentState = ControlledItemState.Negative;
                 yield return null;
             }

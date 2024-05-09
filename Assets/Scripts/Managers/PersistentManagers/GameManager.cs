@@ -48,6 +48,7 @@ namespace Arcatech.Managers
             Assert.IsNotNull(_equipsScene);
             Assert.IsNotNull(_galleryScene);
             Assert.IsNotNull(_newgameScene);
+            Assert.IsNotNull(_noEquipsLevel);
             Assert.IsNotNull(_mainMenuPrefab);
 
             // for quicker load into debug level 
@@ -81,6 +82,7 @@ namespace Arcatech.Managers
         [Space(10f), SerializeField] private SceneContainer _mainScene;
         [SerializeField] private SceneContainer _galleryScene;
         [SerializeField] private SceneContainer _newgameScene;
+        [SerializeField] private SceneContainer _noEquipsLevel; // tutorial
         [SerializeField] private SceneContainer _equipsScene;
 
         public SceneContainer GetCurrentLevelData { get => _currentLevel; }
@@ -90,13 +92,19 @@ namespace Arcatech.Managers
         private SceneContainer _cachedGameLevel;
         public void RequestLoadSceneFromContainer(SceneContainer sc)
         {          
-
             switch (sc.LevelType)
             {
                 default:
                     DoLoadScene(sc.SceneLoaderIndex);
                     break;
-                case LevelType.Game:
+                case LevelType.Game:                  
+                    if (sc == _noEquipsLevel)
+                    {
+                        _cachedGameLevel = sc;
+                        DoLoadScene(_noEquipsLevel.SceneLoaderIndex);
+                        break;
+                    }// override default equips menu
+
                     if (_equipsDone)
                     {
                         _equipsDone = false;
@@ -114,7 +122,10 @@ namespace Arcatech.Managers
 
         private void DoLoadScene(int index)
         {
+            Debug.Log($"Loading scene index {index} - {SceneManager.GetSceneByBuildIndex(index).name}\nCurrent level is: {SceneManager.GetActiveScene().name}");
+
             _currentLevel = _dataManager.GetSceneContainer(index);
+
             EffectsManager.Instance.CleanUpOnSceneChange();
             SceneManager.LoadScene(index);
         }
@@ -159,6 +170,8 @@ namespace Arcatech.Managers
         }
 
 
+
+
         #endregion
 
 
@@ -194,11 +207,19 @@ namespace Arcatech.Managers
 
         public void OnReturnToMain()
         {
+            if (_gameControllers != null)
+            {
+                _gameControllers.Stop();
+            }
             DoLoadScene(_mainScene.SceneLoaderIndex);
         }
 
         public void OnPlayerDead()
         {
+            if (_gameControllers != null)
+            {
+                _gameControllers.Stop();
+            }
             _gameControllers.GameInterfaceManager.GameOver();
         }
         public void QuitGame()

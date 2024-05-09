@@ -14,7 +14,7 @@ namespace Arcatech.UI
         [SerializeField] private TextMeshProUGUI _flavor;
         [SerializeField] private Image _icon;
 
-        [Space, SerializeField] private ExtendedTextContainerSO _debugDesc;
+        [Space, SerializeField] private ExtendedText _debugDesc;
         [ProButton]
         private void LoadDebugItem()
         {
@@ -23,8 +23,8 @@ namespace Arcatech.UI
 
 
 
-        private ExtendedTextContainerSO _info;
-        public ExtendedTextContainerSO Texts
+        private ExtendedText _info;
+        public ExtendedText Texts
             {
             get
             {

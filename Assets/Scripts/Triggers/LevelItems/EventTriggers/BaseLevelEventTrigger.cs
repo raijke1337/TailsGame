@@ -4,6 +4,8 @@ namespace Arcatech.Triggers
 {
     public abstract class BaseLevelEventTrigger : BaseTrigger
     {
+        [SerializeField] protected bool DestroyOnExit = false;
+        [SerializeField] protected bool DestroyOnEnter = false;
         protected override void Start()
         {
             base.Start();
@@ -16,7 +18,12 @@ namespace Arcatech.Triggers
             {
                 TriggerCallback(p, true);
                 OnEnter();
+                if (DestroyOnEnter)
+                {
+                    gameObject.SetActive(false);
+                }
             }
+
         }
         protected override void OnTriggerExit(Collider other)
         {
@@ -24,6 +31,10 @@ namespace Arcatech.Triggers
             {
                 TriggerCallback(p, false);
                 OnExit();
+            }
+            if (DestroyOnExit)
+            {
+                gameObject.SetActive(false);
             }
         }
         protected abstract void OnEnter();

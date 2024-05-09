@@ -30,7 +30,7 @@ namespace Arcatech.UI
 
         public override void UpdateController(float delta)
         {
-
+            if (_icons == null) return; // camp level new game
             foreach (var item in _icons)
             {
                 item.UpdateInDelta(delta);
