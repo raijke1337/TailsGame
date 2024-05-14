@@ -12,6 +12,7 @@ namespace Arcatech.Units.Inputs
 
         private IsoCamAdjust _adj;
         private AimingComponent _aim;
+        public AimingComponent Aiming => _aim;
         private CostumesControllerComponent _costume;
 
 
@@ -33,13 +34,14 @@ namespace Arcatech.Units.Inputs
         {
 
             base.StartController();
+            _controls = new PlayerControls();
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
 
 
             _adj ??= new IsoCamAdjust();
 
-            _controls = new PlayerControls();
+
             _controls.Game.Enable();
 
             _aim = GetComponent<AimingComponent>();
@@ -56,6 +58,7 @@ namespace Arcatech.Units.Inputs
             _controls.Game.MainAttack.performed += MeleeAttack_performed;
             _controls.Game.SpecialAttack.performed += RangedAttack_performed;
             _controls.Game.Pause.performed += Pause_performed;
+            _controls.Game.Jump.performed += Jump_performed;
 
             _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
@@ -65,6 +68,8 @@ namespace Arcatech.Units.Inputs
             _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
             lastY = Unit.transform.position.y;
         }
+
+
 
         private void Pause_performed(CallbackContext obj)
         {
@@ -89,6 +94,9 @@ namespace Arcatech.Units.Inputs
         {
             base.StopController();
             _controls.Game.Disable();
+
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
+            // not init for non game levels
             _aim.StopController();
             _costume.StopController();
 
@@ -100,6 +108,7 @@ namespace Arcatech.Units.Inputs
             _controls.Game.SpecialAttack.performed -= RangedAttack_performed;
             _aim.SelectionUpdatedEvent -= OnSelectedUpdate;
             _controls.Game.Pause.performed -= Pause_performed;
+            _controls.Game.Jump.performed -= Jump_performed;
 
             _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
             _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
@@ -143,6 +152,10 @@ namespace Arcatech.Units.Inputs
         protected void SkillE_performed(CallbackContext obj)
         {
             DoCombatAction(CombatActionType.RangedSpecialE);
+        }
+        private void Jump_performed(CallbackContext obj)
+        {
+            DoJumpAction();
         }
 
         #endregion

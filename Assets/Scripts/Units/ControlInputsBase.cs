@@ -3,6 +3,7 @@ using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
+using Arcatech.Units.Inputs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -146,7 +147,6 @@ namespace Arcatech.Units
         }
 
 
-
         #endregion
 
 
@@ -177,8 +177,11 @@ namespace Arcatech.Units
                     break;
                 case LevelType.Scene:
                     Initialize(false);
-                    MoveDirectionFromInputs = InputDirectionOverride;
-                    break;
+                    if (this is InputsPlayer p)
+                    {
+                        MoveDirectionFromInputs = InputDirectionOverride; // placeholder moved into condition because it stopped npcs from working in scenes
+                    }
+                        break;
                 case LevelType.Game:
                     Initialize(true);
                     break;
@@ -188,9 +191,16 @@ namespace Arcatech.Units
         {
             foreach (var ctrl in _controllers)
             {
-                ctrl.StopStatsComponent();
+                if (ctrl.IsReady)
+                {
+                    ctrl.StopStatsComponent();
+
+                    ControllerSubs(ctrl, false);
+                }
+            }
+            if (_stunsCtrl != null) // also TODO issue in scenes
+            {
                 _stunsCtrl.StunHappenedEvent -= StunEventCallback;
-                ControllerSubs(ctrl, false);
             }
         }
 
@@ -338,8 +348,6 @@ namespace Arcatech.Units
 
         #region movement
 
-
-
         public void ToggleBusyControls_AnimationEvent(int state)
         {
             IsInputsLocked = state != 0;
@@ -356,7 +364,12 @@ namespace Arcatech.Units
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
                 delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
         }
-
+        public event SimpleEventsHandler JumpCalledEvent;
+        protected virtual void DoJumpAction()
+        {
+            if (!IsInputsLocked)
+            JumpCalledEvent?.Invoke();
+        }
 
         #endregion
 
@@ -373,7 +386,7 @@ namespace Arcatech.Units
 
             if (IsInputsLocked && !IsInMeleeCombo)
             {
-                Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
+                //Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
                 canAct = false;
             }
             switch (type)
@@ -428,7 +441,6 @@ namespace Arcatech.Units
 
 
         #region dodging
-
 
         public void StartDodgeMovement(BoosterSkillInstanceComponent bs)
         {

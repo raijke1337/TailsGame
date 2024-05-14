@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: 7915152148623449437, guid: ac41e832a007510458a13af789b7638e, type: 3}
   PossibleDecors: []
   _chance: 1
+  _rotates: 0
 --- !u!1 &1741943280437489185
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,12 +61,12 @@ GameObject:
   m_Component:
   - component: {fileID: 11880535235142307}
   m_Layer: 0
-  m_Name: Reference 5x5
+  m_Name: 7.5x7.5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &11880535235142307
 Transform:
   m_ObjectHideFlags: 0
@@ -76,7 +77,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.5, y: 0, z: -2.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5866699482392254481}
@@ -144,7 +145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4930c6ffa5b9b9f4098249a43abf8506, type: 2}
+  - {fileID: 2100000, guid: b705b36c0a031c74bb375ee73b5ecce3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

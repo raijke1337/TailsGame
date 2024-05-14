@@ -45,17 +45,23 @@ namespace Arcatech
                 if (CurrentDialogue.Character.Pictures.TryGetValue(CurrentDialogue.Mood, out var p))
                 {
                     _speakerPicture.sprite = p;
-                }
+                }               
 
-                foreach (var o in value.Options)
+                if (value.Options.Count > 0)
                 {
-                    if (_buttons == null) _buttons = new List<DialogueDecisionButtonComp>();
-                    var b = Instantiate(ButtonPrefab, ButtonPrefabParent);
-                    _buttons.Add(b);
-                    b.CurrentText = o.Key;
-                    b.OptionClickedEvent += B_OptionClickedEvent;
+                    foreach (var o in value.Options)
+                    {
+                        if (_buttons == null) _buttons = new List<DialogueDecisionButtonComp>();
+                        var b = Instantiate(ButtonPrefab, ButtonPrefabParent);
+                        _buttons.Add(b);
+                        b.CurrentText = o.Key;
+                        b.OptionClickedEvent += B_OptionClickedEvent;
+                    }
                 }
+                else
+                {
 
+                }
             }
         }
 

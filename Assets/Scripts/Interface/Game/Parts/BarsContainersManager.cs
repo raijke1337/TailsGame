@@ -14,16 +14,9 @@ namespace Arcatech.UI
             Assert.IsNotNull(cont, $"Loading null into {this}");
             switch (type)
             {
-                case DisplayValueType.Health:
-                    _barsDict[type].Container = cont;
-                    break;
-                case DisplayValueType.Shield:
-                    _barsDict[type].Container = cont;
-                    break;
-                case DisplayValueType.Combo:
-                    _barsDict[type].Container = cont;
-                    break;
                 default:
+                    _barsDict[type].Container = cont;
+                    _barsDict[type].gameObject.SetActive(true);
                     break;
             }
         }
@@ -44,7 +37,10 @@ namespace Arcatech.UI
 
         public override void StartController()
         {
-
+            foreach (var bar in _barsDict.Values)
+            {
+                bar.gameObject.SetActive(false);
+            }
         }
     }
 }

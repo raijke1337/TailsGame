@@ -68,21 +68,22 @@ namespace Arcatech.Units
             _controller.SetUnit(this);
             _controller.StartController();
             InitInventory();
-            switch (GameManager.Instance.GetCurrentLevelData.LevelType)
+            if (this is PlayerUnit p)
             {
-                case LevelType.Scene:
-                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                    break;
-                case LevelType.Menu:
-                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                    break;
-                case LevelType.Game:
-                    if (this is PlayerUnit)
-                    {                        
+                switch (GameManager.Instance.GetCurrentLevelData.LevelType)
+                {
+
+                    case LevelType.Scene:
+                        _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
+                        break;
+                    case LevelType.Menu:
+                        _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
+                        break;
+                    case LevelType.Game:
                         _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
-                    }
-                    ControllerEventsBinds(true);
-                    break;
+                        ControllerEventsBinds(true);
+                        break;
+                }
             }
 
             //Debug.Log($"Initiated {GetFullName}");
@@ -102,6 +103,12 @@ namespace Arcatech.Units
                 Debug.LogWarning($"Unit {this} was not initialized!");
                 return;
             }
+            if (_groundCollider != null)
+            {
+                _controller.IsInputsLocked = _groundCollider.IsAirborne; // lock inputs during jump
+            }
+
+
             AnimateMovement();
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             _controller.UpdateController(delta);
@@ -128,13 +135,12 @@ namespace Arcatech.Units
                 _controller.GetStatsController.UnitDiedEvent += OnDeath;
                 _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened += AnimateStagger;
-
                 _controller.SkillSpawnEvent += OnInputsCreateSkill;
                 _controller.EffectEventRequest += EffectEventCallback;
-
                 _controller.TriggerEventRequest += TriggerEventCallback;
-
                 _controller.SpawnProjectileEvent += PlaceProjectileCallback;
+                _controller.JumpCalledEvent += AnimateJump;
+
             }
             else
             {
@@ -147,7 +153,6 @@ namespace Arcatech.Units
                 _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
             }
         }
-
 
         protected void OnInputsCreateSkill(SkillProjectileComponent data, BaseUnit source, Transform where)
         {
@@ -186,6 +191,21 @@ namespace Arcatech.Units
                 CalcAnimVector(movement);
             }
         }
+
+
+        [SerializeField] float _debugJumpForceMult;
+        [SerializeField] private GroundDetectorPlatformCollider _groundCollider;
+        private void AnimateJump()
+        {
+            if (!_groundCollider.IsAirborne)
+            {
+                _rigidbody.AddForce((_rigidbody.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
+                _groundCollider.IsAirborne = true;
+                _animator.SetTrigger("JumpStart");
+            }            
+        }
+
+
         //  calculates the vector which is used to set values in animator
         protected void CalcAnimVector(Vector3 vector)
         {

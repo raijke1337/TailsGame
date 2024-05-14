@@ -10,12 +10,8 @@ namespace Arcatech.Managers
     public class TriggersManager : LoadedManagerBase
     {
         private List<BaseLevelEventTrigger> _staticT = new List<BaseLevelEventTrigger>();
-        //private List<BaseStatTriggerConfig> _list = new List<BaseStatTriggerConfig>();
-
 
         protected EffectsManager _effects;
-
-
 
 
         #region LoadedManager
@@ -54,8 +50,6 @@ namespace Arcatech.Managers
             }
 
             var _skillsMan = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
-            //_skillsMan.ProjectileSkillCreatedEvent -= NewProjectile;
-            // _skillsMan.SkillAreaPlacedEvent -= RegisterTrigger;
         }
         #endregion
 

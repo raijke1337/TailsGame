@@ -22,10 +22,12 @@ public class WaterScript : MonoBehaviour
 
     private IEnumerator MoveToDesired()
     {
-        Debug.Log("Water to desired");
+        float t = 0;
+
         while (transform.localPosition != _desiredPosition)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition,_desiredPosition,Time.deltaTime*_speedMult);
+            transform.localPosition = Vector3.Lerp(transform.localPosition,_desiredPosition,t);
+            t+= Time.deltaTime * _speedMult;
             yield return null;
         }
         StartCoroutine(MoveBack());
@@ -33,10 +35,11 @@ public class WaterScript : MonoBehaviour
     }
     private IEnumerator MoveBack()
     {
-        Debug.Log("Water back");
+        float t = 0;
         while (transform.localPosition != _startPosition)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, _startPosition, Time.deltaTime * _speedMult);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, _startPosition, t);
+            t += Time.deltaTime * _speedMult;
             yield return null;
         }
         StartCoroutine(MoveToDesired());

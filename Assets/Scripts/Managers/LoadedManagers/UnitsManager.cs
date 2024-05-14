@@ -58,7 +58,11 @@ namespace Arcatech.Managers
                 Debug.Log($"No player found in scene {this}");
                 return;
             }
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return; // used only for player actions overrides ie scene, intro etc
+           // if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return; // commented because I want unit mvmnt in scenes through their behavior system
+           
+           // and units won't init if they aren't in a room
+           // used only for player actions overrides ie scene, intro etc
+           // it breaks the visual item display in equips menu however.
 
             _allUnits.Add(_player);
             FinalUnitInit(_player, true);

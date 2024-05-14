@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 2427215869165501266}
   - component: {fileID: 3168606139831218734}
   - component: {fileID: 5477118012027846498}
+  - component: {fileID: 1267342982569242253}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -822,6 +823,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e07e63b09fbe22408cd9b2ce0a8da22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1267342982569242253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2427215869165501264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54048055d41e2f49a5bb7e2c0c9ed97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _target: {fileID: 0}
+  _targetAimOffset: {x: 0, y: 1, z: 0}
+  _cam: {fileID: 0}
+  _targetFadedAlpha: 0.33
+  _keepShadows: 1
+  _fadeSpeed: 1
+  _objectsBlockingView: []
 --- !u!1 &2427215869172704918
 GameObject:
   m_ObjectHideFlags: 0

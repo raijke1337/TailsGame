@@ -59,7 +59,7 @@ namespace Arcatech.Managers
             if (other.CompareTag("Enemy"))
             {
                 var unit = other.GetComponent<NPCUnit>();
-                //Debug.Log($"Added unit {unit} by {this}");
+               // Debug.Log($"Added unit {unit} by {this}");
                 UnitFound?.Invoke(unit);
                 unit.SetUnitRoom(this);
                 unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;

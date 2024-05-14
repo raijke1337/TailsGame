@@ -9,6 +9,7 @@ namespace Arcatech.Level
         [SerializeField,Tooltip("1 will spawn")] protected List<LevelBlockDecorPrefabComponent> ObligatoryDecors;
         [Space,SerializeField,Tooltip ("1 may spawn")] protected List<LevelBlockDecorPrefabComponent> PossibleDecors;
         [SerializeField, Range(0f, 1f), Tooltip("Chance of spawning a 'Possible' decor")] protected float _chance;
+        [SerializeField,Tooltip("Decor Rotates on spawn")] protected bool _rotates;
 
         protected float[] _yRotations;
 
@@ -22,16 +23,19 @@ namespace Arcatech.Level
 
             var y = _yRotations[Random.Range(0, _yRotations.Length)];
 
+            if (_rotates)
+            {
+                transform.localEulerAngles = new Vector3(0, y, 0);
+            }
+
             _loadedDecors = new List<LevelBlockDecorPrefabComponent>();
 
             if (ObligatoryDecors != null && ObligatoryDecors.Count > 0)
             {
 
-                y = _yRotations[Random.Range(0, _yRotations.Length)];
                 var prefab = ObligatoryDecors[Random.Range(0, ObligatoryDecors.Count)];
                 var s = Instantiate(prefab, transform);
                 s.transform.SetPositionAndRotation(transform.position, transform.rotation);
-                s.transform.localEulerAngles += new Vector3(0, y, 0);
 
                 _loadedDecors.Add(s);
 
@@ -43,12 +47,9 @@ namespace Arcatech.Level
                 bool place = (Random.Range(0, 1) < _chance);
                 if (place)
                 {
-                    y = _yRotations[Random.Range(0, _yRotations.Length)];
                     var prefab = PossibleDecors[Random.Range(0, PossibleDecors.Count)];
                     var s = Instantiate(prefab, transform);
                     s.transform.SetPositionAndRotation(transform.position, transform.rotation);
-
-                    s.transform.localEulerAngles += new Vector3(0, y, 0);
 
                     _loadedDecors.Add(s);
 

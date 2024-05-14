@@ -34,6 +34,7 @@ namespace Arcatech.Managers
                 _player.IsNeeded = false;
                 _tgt.IsNeeded = false;
                 _text.gameObject.SetActive(false);
+                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow; // dialogues also hap[pen in scene levels
                 _ded.SetActive(false);
             }
 
@@ -59,10 +60,24 @@ namespace Arcatech.Managers
 
         public void UpdateGameText(DialoguePart text, bool isShown)
         {
-            _player.LoadedDialogue(text,isShown);
-            _text.gameObject.SetActive(true);
-            _text.CurrentDialogue = text;
-            GameManager.Instance.OnPlayerPaused(true);
+
+            if (isShown)
+            {
+                _player.LoadedDialogue(text, isShown);
+                _text.gameObject.SetActive(isShown);
+                _text.CurrentDialogue = text;
+                if (text.Options.Count > 0)
+                {
+                    GameManager.Instance.OnPlayerPaused(true);
+                }
+            }    
+            else
+            {
+                _player.LoadedDialogue(text, isShown);
+                _text.gameObject.SetActive(isShown);
+                GameManager.Instance.OnPlayerPaused(false);
+            }
+
         }
         private void OnDialogueCompletedInTextWindow()
         {

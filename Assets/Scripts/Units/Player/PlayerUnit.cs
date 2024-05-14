@@ -38,6 +38,7 @@ namespace Arcatech.Units
             }
             else
             {
+                if (_playerController == null) return;
                 PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
             }
 
@@ -55,14 +56,17 @@ namespace Arcatech.Units
         {
             base.ControllerEventsBinds(isEnable);
 
+            
             if (isEnable)
             {
                 _playerController = _controller as InputsPlayer;
                 _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
                 _playerController.ShieldBreakHappened += HandleShieldBreakEvent;
             }
-            else
+            else if (_playerController != null) // issue in scenes
             {
+
+                
                 _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
                 _playerController.ShieldBreakHappened -= HandleShieldBreakEvent;
             }

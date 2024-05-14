@@ -13,6 +13,8 @@ namespace Arcatech.Units.Inputs
         private Vector3 _mousePos;
 
         public SimpleEventsHandler<bool, BaseTargetableItem> SelectionUpdatedEvent;
+        [Header("Do not modify")]
+        [SerializeField] private BaseTargetableItem _aimedObject;
 
         // [Tooltip("Vertical offset for raycast plane"), SerializeField] 
         private float _vertOffset;
@@ -46,6 +48,7 @@ namespace Arcatech.Units.Inputs
             {
                 if (hit.collider.gameObject.TryGetComponent<BaseTargetableItem>(out var item))
                 {
+                    _aimedObject = item;
                     _mousePos = hit.collider.transform.position; // aim at the center of the target
                     SelectionUpdatedEvent?.Invoke(true, item);
                 }
@@ -63,9 +66,6 @@ namespace Arcatech.Units.Inputs
         public void OnVerticalAdjust(float playerMove)
         {
             _plane.Translate(new Vector3(0,playerMove,0));
-#if UNITY_EDITOR
-            //Debug.Log($"Moved raycast by {playerMove}");
-#endif
         }
     }
 }

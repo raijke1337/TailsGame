@@ -60,14 +60,10 @@ namespace Arcatech.Managers
 
         public void UpdateManagers(float delta)
         {
-
-            if (_lvl.LevelType == LevelType.Game)
+            foreach (var m in _managers)
             {
-                foreach (var m in _managers)
-                {
-                    if (m != null)
-                        m.RunUpdate(delta);
-                }
+                if (m != null)
+                    m.RunUpdate(delta);
             }
 
         }

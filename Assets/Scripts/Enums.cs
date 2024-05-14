@@ -129,8 +129,10 @@ public enum ControlledItemState : byte
 
 public enum FaceExpression : byte
 {
-    None,
+    Neutral,
     Happy,
-    Angry
+    Angry,
+    Action,
+    Bothered
 }
 

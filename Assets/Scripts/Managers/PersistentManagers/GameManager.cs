@@ -66,7 +66,7 @@ namespace Arcatech.Managers
 
         private void Update()
         {
-            if (_currentLevel != null && _currentLevel.LevelType == LevelType.Game && _gameControllers != null)
+            if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
             {
                 _gameControllers.UpdateManagers(Time.deltaTime);
             }
@@ -178,6 +178,14 @@ namespace Arcatech.Managers
         #region game events
         public void OnPlayerPaused(bool isPausing)
         {
+            //if (isPausing)
+            //{
+            //    Time.timeScale = 0;
+            //}
+            //else
+            //{
+            //    Time.timeScale = 1;
+            //}
             _gameControllers.UnitsManager.GameplayPaused = isPausing; // shoukld stop player inputs
         }
 

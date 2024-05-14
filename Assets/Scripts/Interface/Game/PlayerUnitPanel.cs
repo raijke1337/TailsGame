@@ -75,8 +75,9 @@ namespace Arcatech.UI
 
         public void LoadedDialogue(DialoguePart d, bool isShown)
         {
-            if (isShown)
+            if (isShown && _player != null)
             {
+                // null in scene levels
                 _player.PlayerIsTalking(d);
             }
 
