@@ -107,11 +107,12 @@ namespace Arcatech.Units
             }            
         }
 
-        private void CheckEquipsOnInventoryUpdate(UnitInventoryComponent inve, SerializedUnitInventory inv)
+        private void CheckEquipsOnInventoryUpdate(UnitInventoryComponent inve)
         {
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game) return; // something was picked up and no need to refresh invenotry
             // yikes
 
+            Debug.Log($"Inventory update in {Unit}");
 
             _weaponCtrl.TryRemoveItem(EquipItemType.MeleeWeap, out _);
             _weaponCtrl.TryRemoveItem(EquipItemType.RangedWeap, out _);
@@ -141,9 +142,6 @@ namespace Arcatech.Units
                         break;
                 }
             }
-
-
-
         }
 
 

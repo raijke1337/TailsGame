@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5676131199936752870}
   - component: {fileID: 7915152148623449437}
+  - component: {fileID: 3797847693920073019}
   m_Layer: 0
   m_Name: Floor_HoleInTheFloor
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,6 +56,28 @@ MonoBehaviour:
   - {fileID: 3664917582530598981, guid: e11da847aa2a7454ebe84b22529415d3, type: 3}
   _chance: 0.5
   _rotates: 0
+--- !u!64 &3797847693920073019
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5079529335026866614}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1001 &523786585262593713
 PrefabInstance:
   m_ObjectHideFlags: 0

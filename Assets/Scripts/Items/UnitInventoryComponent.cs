@@ -18,34 +18,13 @@ namespace Arcatech.Units
 
         private ItemEmpties _empties;
 
-        public SerializedUnitInventory PackSaveData // used by game manager to save data
-        {
-            get
-            {
 
-                SerializedUnitInventory cont = new SerializedUnitInventory();
-                foreach (var e in _equips.Values)
-                {
-                    cont.Equips.Add(e.ID);
-                }
-                foreach (var e in _items)
-                {
-                    cont.Inventory.Add(e.ID);
-                }
-                foreach (var d in _drops)
-                {
-                    // NYI player should not drop anything
-                }
-
-                return cont;
-            }
-        }
 
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
 
-        public event SimpleEventsHandler<UnitInventoryComponent,SerializedUnitInventory> InventoryUpdateEvent;
-        protected void CallBackUpdateEvent() => InventoryUpdateEvent?.Invoke(this, PackSaveData);
+        public event SimpleEventsHandler<UnitInventoryComponent> InventoryUpdateEvent;
+        protected void CallBackUpdateEvent() => InventoryUpdateEvent?.Invoke(this);
 
         #region used by level events 
 
@@ -53,20 +32,28 @@ namespace Arcatech.Units
         {
             return (_equips.Values.Any(t=>t.ID==search.ID) || _items.Any(t=>t.ID==search.ID));
         }
-        public void PickedUpItem(Item i)
+        public void PickedUpItem(Item i,bool wantEquip)
         {
             if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
-                Debug.Log($"Not added item {i} to {_owner} because it is already owned");
+               // Debug.Log($"Not added item {i} to {_owner} because it is already owned");
                 return; // supposed to prevent duplication 
             }
             else
             {
-
                 var res = ProduceItem(i);
-                _items.Add(res);
+                //_items.Add(res);
+
+                if (wantEquip && res is EquipmentItem e)
+                {
+                    MoveToEquipped(e);
+                }
+                else
+                {
+                    MoveToInventory(res);
+                }
+                //Debug.Log($"Added item {i} to {_owner}");
                 CallBackUpdateEvent();
-                Debug.Log($"Added item {i} to {_owner}");
             }
         }
 
@@ -105,11 +92,17 @@ namespace Arcatech.Units
 
             i.OnEquip(_empties.ItemPositions[i.ItemType]);
         }
-        private void MoveToInventory(EquipmentItem i)
+        private void MoveToInventory(InventoryItem i)
         {
-            _equips.Remove(i.ItemType);
+            if (_equips.ContainsKey(i.ItemType))
+            {
+                _equips.Remove(i.ItemType);
+            }
             _items.Add(i);
-            i.OnUnequip();
+            if (i is EquipmentItem eq)
+            {
+                eq.OnUnequip();
+            }
         }
         // to choose the text for the context button
         public bool IsItemEquipped(EquipmentItem equip)
@@ -142,8 +135,9 @@ namespace Arcatech.Units
             {
                 _drops.Add(ProduceItem(i));
             }
-        }
 
+            _empties = owner.GetEmpties;
+        }
         private InventoryItem ProduceItem(Item cfg)
         {
             InventoryItem ret;
@@ -177,31 +171,6 @@ namespace Arcatech.Units
             return ret;
             //cringe but it should work
         }
-
-
-        // for player laod from save
-        public UnitInventoryComponent(SerializedUnitInventory strings, BaseUnit owner)
-        {
-            _owner = owner;
-            _empties = owner.GetEmpties;
-
-            _equips = new Dictionary<EquipItemType, EquipmentItem>();
-            _items = new List<InventoryItem>();
-            _drops = new List<InventoryItem>();
-
-            foreach (var e in strings.Equips)
-            {
-                var item = DataManager.Instance.GetConfigByID<Equip>(e);
-                _equips[item.ItemType] = ProduceItem(item) as EquipmentItem;
-            }
-
-            foreach (var i in strings.Inventory)
-            {
-                var item = DataManager.Instance.GetConfigByID<Item>(i);
-                _items.Add(ProduceItem(item));
-            }
-        }
-
 
     }
 }

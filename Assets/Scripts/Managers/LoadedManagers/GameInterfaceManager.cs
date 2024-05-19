@@ -93,22 +93,23 @@ namespace Arcatech.Managers
         #region target panel
         public void OnPlayerSelectedTargetable(BaseTargetableItem item, bool show)
         {
-            if (show)
-            {
-                if (_cor != null)
-                {
-                    StopAllCoroutines();
-                }
+            // comm ented because I dont like the panel
+            //if (show)
+            //{
+            //    if (_cor != null)
+            //    {
+            //        StopAllCoroutines();
+            //    }
 
-                paneltimer = _selPanelDisappearTimer;
-                _tgt.IsNeeded = true;
-                _tgt.AssignItem(item);
-            }
-            if (!show)
-            {
-                paneltimer = _selPanelDisappearTimer;
-                _cor = StartCoroutine(HidePanel(_tgt));
-            }
+            //    paneltimer = _selPanelDisappearTimer;
+            //    _tgt.IsNeeded = true;
+            //    _tgt.AssignItem(item);
+            //}
+            //if (!show)
+            //{
+            //    paneltimer = _selPanelDisappearTimer;
+            //    _cor = StartCoroutine(HidePanel(_tgt));
+            //}
         }
         private float paneltimer;
         private IEnumerator HidePanel(PanelWithBarGeneric item)

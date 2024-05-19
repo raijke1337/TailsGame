@@ -152,7 +152,7 @@ namespace Arcatech.Managers
         public void OnFinishedEquips()
         {
             _equipsDone = true;
-            _dataManager.UpdateInventoryInSave(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory);
+            _dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory);
 
             RequestLoadSceneFromContainer(_cachedGameLevel);
         }
@@ -192,7 +192,7 @@ namespace Arcatech.Managers
 
         public void OnLevelCompleteTrigger(SceneContainer unlock)
         {
-            _dataManager.UpdateInventoryInSave(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory); // update save data with picked up items
+            _dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory); // update save data with picked up items
 
             if (_gameControllers != null)
             {

@@ -14,7 +14,7 @@ namespace Arcatech.Units
             set
             {
                 _ai = value;
-                Debug.Log($"airborne: {value}");
+                //Debug.Log($"airborne: {value}");
             }
         }
                 
@@ -27,7 +27,7 @@ namespace Arcatech.Units
 
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"Trigger enter {other}");
+            //Debug.Log($"Trigger enter {other}");
             if (!other.gameObject.CompareTag("Player"))
             {
                 IsAirborne = false;

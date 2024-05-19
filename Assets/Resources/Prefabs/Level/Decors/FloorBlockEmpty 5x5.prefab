@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3258238756394481026}
   - component: {fileID: 3861277056846191469}
+  - component: {fileID: -1589032494213553382}
   m_Layer: 0
   m_Name: FloorBlockEmpty 5x5
   m_TagString: Ground
@@ -51,6 +52,33 @@ MonoBehaviour:
   PossibleDecors: []
   _chance: 1
   _rotates: 0
+--- !u!54 &-1589032494213553382
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408456156326768647}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1741943280437489185
 GameObject:
   m_ObjectHideFlags: 0

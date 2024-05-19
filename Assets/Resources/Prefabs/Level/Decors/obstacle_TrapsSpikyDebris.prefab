@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5424068824498641215}
   - component: {fileID: 8263253580144278775}
   - component: {fileID: 8286136731101600053}
+  - component: {fileID: -3624575204008783918}
   m_Layer: 0
   m_Name: obstacle_TrapsSpikyDebris
   m_TagString: Untagged
@@ -54,6 +55,7 @@ MonoBehaviour:
   ObligatoryDecors: []
   PossibleDecors: []
   _chance: 0
+  _rotates: 0
 --- !u!65 &8263253580144278775
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -92,6 +94,33 @@ MonoBehaviour:
   DestroyOnEnter: 0
   Triggers:
   - {fileID: 11400000, guid: 96ee40e95dde7e34e974c90d705c29ee, type: 2}
+--- !u!54 &-3624575204008783918
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999465238978178815}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &719155677264132904
 PrefabInstance:
   m_ObjectHideFlags: 0

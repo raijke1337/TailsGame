@@ -35,11 +35,11 @@ namespace Arcatech.Managers
             if (pack.Sound != null)
             {
                 PlaceSound(pack.Sound,pack.Place);
-                Debug.Log($"Serving effect request {pack.Sound} at {pack.Place}");
+              //  Debug.Log($"Serving effect request {pack.Sound} at {pack.Place}");
             }
             if (pack.Effect != null)
             {
-                Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
+                //Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
                 PlaceParticle(pack.Effect,pack.Place,pack.Parent);
             }
         }

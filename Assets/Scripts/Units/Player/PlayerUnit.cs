@@ -1,3 +1,4 @@
+using Arcatech.Managers;
 using Arcatech.Texts;
 using Arcatech.Units.Inputs;
 using System.Linq;
@@ -122,8 +123,7 @@ namespace Arcatech.Units
 
         protected override void InitInventory()
         {
-
-            var savedEquips = DataManager.Instance.GetSaveData.Items;
+            var savedEquips = DataManager.Instance.GetCurrentPlayerItems;
 
             GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
             CreateStartingEquipments(GetUnitInventory);

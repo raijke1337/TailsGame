@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
 <GameSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <OpenedLevels>
+  <IsNewGame>false</IsNewGame>
+  <OpenedLevelIDs>
     <string>game1-1</string>
-  </OpenedLevels>
+    <string>game1-2</string>
+  </OpenedLevelIDs>
   <PlayerItems>
-    <Equips />
+    <Equips>
+      <string>booster_base</string>
+      <string>hammer_base</string>
+    </Equips>
     <Inventory />
   </PlayerItems>
 </GameSave>

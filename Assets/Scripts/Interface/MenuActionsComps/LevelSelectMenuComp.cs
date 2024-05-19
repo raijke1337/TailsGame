@@ -23,7 +23,7 @@ namespace Arcatech.UI
             Assert.IsNotNull(_buttonPrefab);
 #endif
 
-            var lvs = DataManager.Instance.GetSaveData.OpenedLevels;
+            var lvs = DataManager.Instance.GetAvailableLevels;
 
 
             _buttons = new List<LevelButtonComp>();

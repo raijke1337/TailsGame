@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
+  m_Name: item_hammer_base
+  m_EditorClassIdentifier: 
+  ID: hammer_base
+  Description: {fileID: 11400000, guid: b590a6e0a6bf74d46bb59accddbe389b, type: 2}
+  ItemType: 1
+  Item: {fileID: 5188941293757656330, guid: 51161367717f82f488065e8932e4c042, type: 3}
+  Skill: {fileID: 11400000, guid: 8dd1834734bb08c45bfe56e7d3f23668, type: 2}
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList: []
+  WeaponCooldown: 0.1
+  WeaponHitTriggers:
+  - {fileID: 11400000, guid: e4e5f4df65e19e94db47014bb1dc698c, type: 2}
+  - {fileID: 11400000, guid: d13e365eeab07bc45b326eeba35eb6de, type: 2}
+  - {fileID: 11400000, guid: 0601de821c01a284d843ca693b7f28c3, type: 2}
