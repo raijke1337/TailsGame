@@ -8,17 +8,29 @@ namespace Arcatech.Scenes.Cameras
     public class FaceCameraTargetComponent : MonoBehaviour
     {
         public Transform TargetBone;
-        [Range(0.1f,3f)]public float LerpSpeed;
+        [Range(0.01f,3f)]public float FollowSpeed;
+        private Vector3 velo;
 
         private void OnEnable()
         {
             Assert.IsNotNull(TargetBone);
-            transform.SetLocalPositionAndRotation(transform.position, transform.rotation);
+            transform.SetParent(null);
+            
+            transform.position = TargetBone.position;
+            transform.forward = TargetBone.forward;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            transform.position = Vector3.Lerp(transform.position, TargetBone.position, LerpSpeed*Time.deltaTime);
+            transform.position = Vector3.SmoothDamp(transform.position,TargetBone.position, ref velo, FollowSpeed);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(TargetBone.position, 0.2f);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, 0.1f);
         }
     }
 }

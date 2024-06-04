@@ -8,17 +8,23 @@ namespace Arcatech.Scenes.Cameras
     public class FaceCameraCOntrroller : MonoBehaviour
     {
         public FaceCameraTargetComponent Target;
-        public Vector3 DesiredOffset;
+        public float DesiredOffset;
 
         private void OnEnable()
         {
             Assert.IsNotNull(Target);
-            transform.position = Target.transform.position + DesiredOffset;
+
+        }
+        private void FixedUpdate()
+        {
             transform.LookAt(Target.transform.position);
         }
-        private void Update()
+
+        private void OnDrawGizmos()
         {
-            
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position, Vector3.one);
+            Gizmos.DrawLine(transform.position, Target.transform.position) ;
         }
     }
 }
