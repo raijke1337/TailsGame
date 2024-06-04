@@ -1,9 +1,10 @@
 using Arcatech.Level;
+using Arcatech.Managers;
 using Arcatech.Units.Inputs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Arcatech.Managers
+namespace Arcatech.Scenes.Cameras
 {
     [RequireComponent(typeof(Camera))]
     public class IsoCameraController : LoadedManagerBase

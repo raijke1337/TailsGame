@@ -1,5 +1,6 @@
 
 using Arcatech.Scenes;
+using Arcatech.Scenes.Cameras;
 using UnityEngine;
 using UnityEngine.Assertions;
 

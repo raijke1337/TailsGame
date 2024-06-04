@@ -1,24 +1,26 @@
 using UnityEngine;
 
-
-public class IsoCamAdjust
+namespace Arcatech.Scenes.Cameras
 {
-    public Vector3 Isoforward;
-    public Vector3 Isoright;
-
-    private void AdjustDirections()
+    public class IsoCamAdjust
     {
-        Isoforward = Camera.main.transform.forward;
-        Isoforward.y = 0;
-        Isoforward = Vector3.Normalize(Isoforward);
-        Isoright = Quaternion.Euler(new Vector3(0, 90, 0)) * Isoforward;
+        public Vector3 Isoforward;
+        public Vector3 Isoright;
+
+        private void AdjustDirections()
+        {
+            Isoforward = Camera.main.transform.forward;
+            Isoforward.y = 0;
+            Isoforward = Vector3.Normalize(Isoforward);
+            Isoright = Quaternion.Euler(new Vector3(0, 90, 0)) * Isoforward;
+        }
+
+        public IsoCamAdjust()
+        {
+            AdjustDirections();
+        }
     }
 
-    public IsoCamAdjust()
-    {
-        AdjustDirections();
-    }
+
+
 }
-
-
-
