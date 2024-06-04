@@ -1336,12 +1336,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac12d42b979b14469a9d834e2af2dcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tgt: {fileID: 385486366848949986}
-  _player: {fileID: 7231808905868361078}
+  _tgtPan: {fileID: 385486366848949986}
+  _playerPan: {fileID: 7231808905868361078}
   _text: {fileID: 6879086628279146904}
   _ded: {fileID: 193156173760365114}
   _pause: {fileID: 3410537698330099390}
-  _selPanelDisappearTimer: 3
 --- !u!1 &6280600764298236618
 GameObject:
   m_ObjectHideFlags: 0
@@ -4086,12 +4085,12 @@ PrefabInstance:
     - target: {fileID: 5263314192225369765, guid: 995ad422893aa9f46aa2a615e9d1ae68,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -365.53943
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5263314192225369765, guid: 995ad422893aa9f46aa2a615e9d1ae68,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -491
+      value: -393
       objectReference: {fileID: 0}
     - target: {fileID: 5263314192225369765, guid: 995ad422893aa9f46aa2a615e9d1ae68,
         type: 3}

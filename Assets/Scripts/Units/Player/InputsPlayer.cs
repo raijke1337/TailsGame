@@ -82,7 +82,7 @@ namespace Arcatech.Units.Inputs
         public override void UpdateController(float delta)
         {
             base.UpdateController(delta);
-            if (IsInputsLocked || _aim == null) return; // set during dodges and attack motions
+            if ( _aim == null) return;
             _aim.UpdateController(delta);
             _costume.UpdateController(delta);
 
@@ -121,7 +121,7 @@ namespace Arcatech.Units.Inputs
 
         private void SwitchAnimatorLayer(EquipItemType type)
         {
-            if (IsInputsLocked) return;
+            if (LockInputs) return;
             ChangeLayerEvent?.Invoke(type);
         }
 
@@ -164,7 +164,7 @@ namespace Arcatech.Units.Inputs
         private void CalculateMovement()
         {
 
-            if (IsInputsLocked) return;
+            if (LockInputs) return;
             Vector2 input;
             if (InputDirectionOverride != Vector3.zero)
             {

@@ -15,8 +15,6 @@ namespace Arcatech.Units
 
     public abstract class BaseUnit : MonoBehaviour, ITakesTriggers, IHasEffects
     {
-
-
         protected Animator _animator;
         protected Rigidbody _rigidbody;
         public Collider GetCollider { get; private set; }
@@ -34,6 +32,25 @@ namespace Arcatech.Units
         {
             return _controller;
         }
+
+        private bool _locked = false;
+        public bool LockUnit
+        {
+            get
+            {
+                return _locked;
+            }
+            set
+            {
+                _locked = value;
+                GetInputs().LockInputs = value;
+                if (value)
+                {
+                    AnimateMovement(); // to reset the movement anim
+                }
+            }
+        }
+
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
@@ -105,7 +122,7 @@ namespace Arcatech.Units
             }
             if (_groundCollider != null)
             {
-                _controller.IsInputsLocked = _groundCollider.IsAirborne; // lock inputs during jump
+                _controller.LockInputs = _groundCollider.IsAirborne; // lock inputs during jump
             }
 
 
@@ -165,7 +182,7 @@ namespace Arcatech.Units
         protected virtual void OnDeath()
         {
             _animator.SetTrigger("Death");
-            _controller.IsInputsLocked = true;
+            _controller.LockInputs = true;
             GetCollider.enabled = false;
             BaseUnitDiedEvent?.Invoke(this);
         }
@@ -298,7 +315,7 @@ namespace Arcatech.Units
         }
         #endregion
 
-
+        
 
 
     }

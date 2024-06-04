@@ -10,7 +10,7 @@ namespace Arcatech
     public class GameTextComp : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _speakerTitle;
-        [SerializeField] private Image _speakerPicture;
+        //[SerializeField] private Image _speakerPicture;
 
 
         [Space,SerializeField] private TextMeshProUGUI _mainText;
@@ -44,7 +44,7 @@ namespace Arcatech
 
                 if (CurrentDialogue.Character.Pictures.TryGetValue(CurrentDialogue.Mood, out var p))
                 {
-                    _speakerPicture.sprite = p;
+                   // _speakerPicture.sprite = p;
                 }               
 
                 if (value.Options.Count > 0)

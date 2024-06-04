@@ -6,14 +6,12 @@ namespace Arcatech.Managers
 {
     public class GameInterfaceManager : LoadedManagerBase
     {
-        [SerializeField] private TargetPanel _tgt;
-        [SerializeField] private PlayerUnitPanel _player;
+        [SerializeField] private TargetPanel _tgtPan;
+        [SerializeField] private PlayerUnitPanel _playerPan;
         [SerializeField] private GameTextComp _text;
         [SerializeField] private GameObject _ded;
         [SerializeField] private GameObject _pause;
-        [SerializeField, Space] private float _selPanelDisappearTimer = 1f;
 
-        private Coroutine _cor;
 
         #region managed
         public override void Initiate()
@@ -21,9 +19,9 @@ namespace Arcatech.Managers
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
-                _player.IsNeeded = true;
-                _player.StartController();
-                _tgt.IsNeeded = false;
+                _playerPan.IsNeeded = true;
+                _playerPan.StartController();
+                _tgtPan.IsNeeded = false;
                 _text.gameObject.SetActive(false);
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
@@ -31,8 +29,8 @@ namespace Arcatech.Managers
             }
             else
             {
-                _player.IsNeeded = false;
-                _tgt.IsNeeded = false;
+                _playerPan.IsNeeded = false;
+                _tgtPan.IsNeeded = false;
                 _text.gameObject.SetActive(false);
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow; // dialogues also hap[pen in scene levels
                 _ded.SetActive(false);
@@ -44,13 +42,13 @@ namespace Arcatech.Managers
 
         public override void RunUpdate(float delta)
         {
-            _player.UpdateController(delta);
-            if (_tgt.IsNeeded) _tgt.UpdateController(delta);
+            _playerPan.UpdateController(delta);
+            if (_tgtPan.IsNeeded) _tgtPan.UpdateController(delta);
         }
 
         public override void Stop()
         {
-            _player.StopController();
+            _playerPan.StopController();
         }
         #endregion
 
@@ -63,7 +61,7 @@ namespace Arcatech.Managers
 
             if (isShown)
             {
-                _player.LoadedDialogue(text, isShown);
+                _playerPan.LoadedDialogue(text, isShown);
                 _text.gameObject.SetActive(isShown);
                 _text.CurrentDialogue = text;
                 if (text.Options.Count > 0)
@@ -73,7 +71,7 @@ namespace Arcatech.Managers
             }    
             else
             {
-                _player.LoadedDialogue(text, isShown);
+                _playerPan.LoadedDialogue(text, isShown);
                 _text.gameObject.SetActive(isShown);
                 GameManager.Instance.OnPlayerPaused(false);
             }

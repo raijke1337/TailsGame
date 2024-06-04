@@ -59,7 +59,7 @@ namespace Arcatech.Units.Inputs
         public override void UpdateController(float delta)
         {
             base.UpdateController(delta);
-            if (_stateMachine == null || IsInputsLocked) return;
+            if (_stateMachine == null ) return;
             CurrentState = _stateMachine.CurrentState;
             MoveDirectionFromInputs = _stateMachine.CurrentVelocity;
 

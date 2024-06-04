@@ -28,10 +28,10 @@ namespace Arcatech.Managers
             get => _paused;
             set
             {
-                _player.GetInputs<InputsPlayer>().IsInputsLocked = value;
+                _player.LockUnit = value;
                 foreach (var unit in _allUnits)
                 {
-                    unit.GetInputs().IsInputsLocked = value;
+                    unit.LockUnit = value;
                 }
                 _paused = value;
             }

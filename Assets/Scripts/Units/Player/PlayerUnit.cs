@@ -81,7 +81,7 @@ namespace Arcatech.Units
 
         private void PlayerMovement(Vector3 desiredDir, float delta)
         {
-            if (_controller.IsInputsLocked) return;
+            if (_controller.LockInputs) return;
             transform.position += delta * desiredDir
                 * GetStats[BaseStatType.MoveSpeed].GetCurrent;
         }

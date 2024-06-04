@@ -15,8 +15,23 @@ namespace Arcatech.Units
         protected BaseUnit Unit;
 
         public abstract ReferenceUnitType GetUnitType();
-
-        [SerializeField] public bool IsInputsLocked; // todo ?
+        private bool _inputsLocked;
+        [SerializeField] public bool LockInputs
+        {
+            get 
+            { 
+                return _inputsLocked; 
+            }
+            set 
+            { 
+                _inputsLocked = value; 
+                if (_inputsLocked)
+                {
+                    Debug.Log($"Lock inputs in {Unit.GetFullName}");
+                    MoveDirectionFromInputs = Vector3.zero;
+                }
+            }
+        }// todo ?
 
 
         protected List<BaseController> _controllers = new List<BaseController>();
@@ -156,6 +171,7 @@ namespace Arcatech.Units
         #region ManagedController
         public override void UpdateController(float delta)
         {
+            if (LockInputs) return; 
             lastDelta = delta;
             foreach (BaseController ctrl in _controllers)
             {
@@ -225,7 +241,7 @@ namespace Arcatech.Units
                 _controllers.Add(_comboCtrl);
                 _controllers.Add(_stunsCtrl);
 
-                IsInputsLocked = false;
+                LockInputs = false;
                 _stunsCtrl.StunHappenedEvent += StunEventCallback;
             }
 
@@ -348,7 +364,7 @@ namespace Arcatech.Units
 
         public void ToggleBusyControls_AnimationEvent(int state)
         {
-            IsInputsLocked = state != 0;
+            LockInputs = state != 0;
         }
 
         public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
@@ -365,7 +381,7 @@ namespace Arcatech.Units
         public event SimpleEventsHandler JumpCalledEvent;
         protected virtual void DoJumpAction()
         {
-            if (!IsInputsLocked)
+            if (!LockInputs)
             JumpCalledEvent?.Invoke();
         }
 
@@ -382,7 +398,7 @@ namespace Arcatech.Units
             bool canAct = true;
             
 
-            if (IsInputsLocked && !IsInMeleeCombo)
+            if (LockInputs && !IsInMeleeCombo)
             {
                 //Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
                 canAct = false;
@@ -451,7 +467,7 @@ namespace Arcatech.Units
         {
             var stats = bs.GetDodgeSettings;
 
-            IsInputsLocked = true;
+            LockInputs = true;
 
             Vector3 start = transform.position;
             Vector3 end = start + GetMoveDirection * stats.Range;
@@ -463,7 +479,7 @@ namespace Arcatech.Units
                 transform.position = Vector3.Lerp(start, end, p);
                 yield return null;
             }
-            IsInputsLocked = false;
+            LockInputs = false;
             yield return null;
         }
         // stop the dodge like this
@@ -473,7 +489,7 @@ namespace Arcatech.Units
             if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
             {
                 Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
-                IsInputsLocked = false;
+                LockInputs = false;
                 StopCoroutine(_dodgeCor);
                 _dodgeCor = null;
             }
