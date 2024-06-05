@@ -12,6 +12,7 @@ namespace Arcatech.Level
 
         private void Start()
         {
+            if (Unit == null) return;
             Unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
         }
 

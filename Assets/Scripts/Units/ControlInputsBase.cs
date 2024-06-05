@@ -14,7 +14,6 @@ namespace Arcatech.Units
     {
         protected BaseUnit Unit;
 
-        public abstract ReferenceUnitType GetUnitType();
         private bool _inputsLocked;
         [SerializeField] public bool LockInputs
         {
@@ -23,12 +22,18 @@ namespace Arcatech.Units
                 return _inputsLocked; 
             }
             set 
-            { 
+            {
+                if (_inputsLocked == value) return;
+
                 _inputsLocked = value; 
                 if (_inputsLocked)
                 {
-                    Debug.Log($"Lock inputs in {Unit.GetFullName}");
+                    if(DebugMessage) Debug.Log($"Lock inputs in {Unit.GetFullName}");
                     MoveDirectionFromInputs = Vector3.zero;
+                }
+                else
+                {
+                    if (DebugMessage)  Debug.Log($"Unlock inputs in {Unit.GetFullName}");
                 }
             }
         }// todo ?
@@ -60,8 +65,14 @@ namespace Arcatech.Units
 
         public event SimpleEventsHandler StaggerHappened;
         public event SimpleEventsHandler ShieldBreakHappened;
+        public event SimpleEventsHandler<float> DamageHappened;
+        public event SimpleEventsHandler DeathHappened;
         protected void StunEventCallback() => StaggerHappened?.Invoke();
         protected virtual void ShieldBreakEventCallback() => ShieldBreakHappened?.Invoke();
+
+
+
+
 
         #region ai
         public StatValueContainer AssessStat(TriggerChangedValue stat)
@@ -260,6 +271,11 @@ namespace Arcatech.Units
                 {
                     s.ShieldBrokenEvent += ShieldBreakEventCallback;
                 }
+                if (ctrl is BaseStatsController st)
+                {
+                    st.UnitDiedEvent += OnDeathEvent;
+                    st.UnitTookDamageEvent += OnDamageEvent;
+                }
                 ctrl.BaseControllerEffectEvent += EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
                 ctrl.ProjectileWasSpawnedEvent += ProjectileEventCallBack;
@@ -275,8 +291,15 @@ namespace Arcatech.Units
                 {
                     s.ShieldBrokenEvent -= ShieldBreakEventCallback;
                 }
+                if (ctrl is BaseStatsController st)
+                {
+                    st.UnitDiedEvent -= OnDeathEvent;
+                    st.UnitTookDamageEvent -= OnDamageEvent;
+                }
             }
         }
+
+
 
         private void ProjectileEventCallBack(ProjectileComponent prefab)
         {
@@ -400,7 +423,6 @@ namespace Arcatech.Units
 
             if (LockInputs && !IsInMeleeCombo)
             {
-                //Debug.Log($"{Unit} tried to do action {type} but has inputs locked");
                 canAct = false;
             }
             switch (type)
@@ -458,7 +480,7 @@ namespace Arcatech.Units
 
         public void StartDodgeMovement(BoosterSkillInstanceComponent bs)
         {
-            Debug.Log($"Start dodge for unit: {Unit}");
+            if (DebugMessage) Debug.Log($"Start dodge for unit: {Unit}");
             _dodgeCor = StartCoroutine(DodgingMovement(bs));
         }
 
@@ -488,7 +510,7 @@ namespace Arcatech.Units
         {
             if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
             {
-                Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
+                if (DebugMessage) Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
                 LockInputs = false;
                 StopCoroutine(_dodgeCor);
                 _dodgeCor = null;
@@ -497,7 +519,17 @@ namespace Arcatech.Units
 
         #endregion
 
+        #region health
+        private void OnDamageEvent(float arg)
+        {
+            DamageHappened?.Invoke(arg);
+        }
 
+        private void OnDeathEvent()
+        {
+            DeathHappened?.Invoke();
+        }
+        #endregion
 
     }
 

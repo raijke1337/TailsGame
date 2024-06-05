@@ -3,6 +3,7 @@ namespace Arcatech.Managers
 {
     public abstract class LoadedManagerBase : MonoBehaviour
     {
+        [SerializeField] protected bool ShowDebug;
         public abstract void Initiate();
         public abstract void RunUpdate(float delta);
         public abstract void Stop();

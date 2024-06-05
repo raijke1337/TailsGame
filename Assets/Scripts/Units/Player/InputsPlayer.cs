@@ -225,12 +225,6 @@ namespace Arcatech.Units.Inputs
             _gameInterfaceManager.OnPlayerSelectedTargetable(item, isSelect);
         }
 
-
-        public override ReferenceUnitType GetUnitType()
-        {
-            return ReferenceUnitType.Player;
-        }
-
         protected override void ShieldBreakEventCallback()
         {
             _costume.OnBreak();

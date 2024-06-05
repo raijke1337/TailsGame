@@ -187,7 +187,7 @@ namespace Arcatech.Managers
             //{
             //    Time.timeScale = 1;
             //}
-            _gameControllers.UnitsManager.GameplayPaused = isPausing; // shoukld stop player inputs
+            _gameControllers.UnitsManager.UnitsLocked = isPausing; // shoukld stop player inputs
         }
 
 

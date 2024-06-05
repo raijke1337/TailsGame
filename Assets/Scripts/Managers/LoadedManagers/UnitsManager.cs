@@ -1,42 +1,48 @@
+using Arcatech.AI;
 using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
-using Arcatech.Units.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
+
 namespace Arcatech.Managers
 {
     public class UnitsManager : LoadedManagerBase
     {
-        private List<RoomController> _rooms = new List<RoomController>();
 
-        private List<NPCUnit> _npcs = new List<NPCUnit>();
         private PlayerUnit _player;
         public PlayerUnit GetPlayerUnit { get => _player; }
-        public List<NPCUnit> GetNPCs() => _npcs;
-        [SerializeField] private List<BaseUnit> _allUnits = new List<BaseUnit>();
+        private List<RoomUnitsGroup> _npcGroups;
+
 
         private EffectsManager _effects;
         private SkillsPlacerManager _skills;
         private TriggersManager _trigger;
 
-        private bool _paused;
-        public bool GameplayPaused
+        private bool _isUnitsLocked;
+        public bool UnitsLocked
         {
-            get => _paused;
+            get => _isUnitsLocked;
             set
             {
                 _player.LockUnit = value;
-                foreach (var unit in _allUnits)
+                foreach (var g in _npcGroups)
                 {
-                    unit.LockUnit = value;
+                    foreach (var n in g.GetAllUnits)
+                    {
+                        n.LockUnit =value ;
+                    }
                 }
-                _paused = value;
+                _isUnitsLocked = value;
             }
         }
 
+
+
+        #region managed
         public override void Initiate()
         {
             if (_effects == null)
@@ -55,72 +61,66 @@ namespace Arcatech.Managers
             _player = FindObjectOfType<PlayerUnit>();
             if (_player == null)
             {
-                Debug.Log($"No player found in scene {this}");
-                return;
+                if (ShowDebug) Debug.Log($"No player found in scene {this}");
             }
-           // if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return; // commented because I want unit mvmnt in scenes through their behavior system
-           
-           // and units won't init if they aren't in a room
-           // used only for player actions overrides ie scene, intro etc
-           // it breaks the visual item display in equips menu however.
-
-            _allUnits.Add(_player);
-            FinalUnitInit(_player, true);
-
-
-            _rooms.AddRange(FindObjectsOfType<RoomController>());
-            if (_rooms.Count == 0)
+            else
             {
-                Debug.LogWarning($"No rooms found! Create some collider boxes with Room Controller");
+                SetupUnit(_player, true);
             }
 
-            foreach (var room in _rooms)
+            var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
+            if (_rooms.Length == 0)
             {
-                room.UnitFound += AddNPCToList;
-                room.Initiate();
+                if (ShowDebug) Debug.LogWarning($"No rooms with enemies found");
+            }
+            else
+            {
+                _npcGroups = new List<RoomUnitsGroup>();
+                foreach (var room in _rooms)
+                {
+                    var g = new RoomUnitsGroup(room.GetAllUnitsInRoom);
+                    _npcGroups.Add(g);
+                    g.SpawnRoom = room;
+
+                    foreach (var unit in g.GetAllUnits)
+                    {
+                        SetupUnit(unit, true);
+                    }
+                }
             }
 
         }
-
-        private void AddNPCToList(NPCUnit n)
-        {
-            _npcs.Add(n);
-            _allUnits.Add(n);
-            FinalUnitInit(n, true);
-            SetAIStateUnit(true, n);
-        }
-
-
         public override void RunUpdate(float delta)
         {
-            if (_paused) return;
+            if (_isUnitsLocked) return;
+            _player.RunUpdate(delta);
 
-            foreach (var u in _allUnits)
+            foreach (var g in _npcGroups)
             {
-                u.RunUpdate(delta);
-            }
-
-            foreach (var r in _rooms)
-            {
-                r.RunUpdate(delta);
+                foreach (var n in g.GetAllUnits)
+                {
+                    n.RunUpdate(delta);
+                }
             }
         }
 
         public override void Stop()
         {
-            foreach (var r in _rooms)
+            _player.DisableUnit();
+            foreach (var g in _npcGroups)
             {
-                r.UnitFound -= AddNPCToList;
-                r.Stop();
-            }
-            foreach (var u in _allUnits)
-            {
-                FinalUnitInit(u, false);
+                foreach (var n in g.GetAllUnits)
+                {
+                    n.DisableUnit();
+                }
             }
         }
+        #endregion
+
+        #region units handling
 
 
-        private void FinalUnitInit(BaseUnit u, bool isEnable)
+        private void SetupUnit(BaseUnit u, bool isEnable)
         {
             if (isEnable)
             {
@@ -147,6 +147,24 @@ namespace Arcatech.Managers
             }
         }
 
+
+        private void HandleUnitDeath(BaseUnit unit)
+        {
+            if (ShowDebug) Debug.Log($"{unit.GetFullName} died");
+                unit.DisableUnit();
+            unit.LockUnit = true;
+            
+            if (unit is PlayerUnit)
+            {
+                UnitsLocked = true;
+                GameManager.Instance.OnPlayerDead();
+            }
+
+        }
+
+        #endregion
+
+        #region unit requests
         private void ForwardProjectileRequest(ProjectileComponent arg, BaseUnit owner)
         {
            // Debug.Log($"{owner} placed projectile {arg}");
@@ -170,31 +188,8 @@ namespace Arcatech.Managers
             _skills.ServeSkillRequest(cfg, user, place);
         }
 
+        #endregion
 
-
-        private void SetAIStateUnit(bool isProcessing, NPCUnit unit)
-        {
-            unit.AiToggle(isProcessing);
-        }
-
-        private void HandleUnitDeath(BaseUnit unit)
-        {
-            unit.DisableUnit();
-            if (unit is NPCUnit)
-            {
-                SetAIStateUnit(false, unit as NPCUnit);
-            }
-            else
-            {
-                foreach (var n in _npcs)
-                {
-                    SetAIStateUnit(false, n); // to prevent activities (attacking the air etc)
-                }
-                GameManager.Instance.OnPlayerDead();
-            }
-
-            //Destroy(unit.gameObject, Constants.Combat.c_RemainsDisappearTimer);
-        }
     }
 
 }

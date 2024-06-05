@@ -13,7 +13,7 @@ namespace Arcatech.Managers
         private GameInterfaceManager _ui;
         private TriggersManager _trigs;
 
-        protected List<LevelBlockDecorPrefabComponent> _buildingBlocks;
+        protected List<LevelBlockDecorPrefabComponent> _levelBlocks;
 
         #region managed
         public override void Initiate()
@@ -24,22 +24,22 @@ namespace Arcatech.Managers
             _ui = GameManager.Instance.GetGameControllers.GameInterfaceManager;
             _trigs = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
 
-            foreach (var t in GameObject.FindObjectsOfType<BaseLevelEventTrigger>())
-            {
-                ManageTrigger(t,true);
-            }
 
-            _buildingBlocks = FindObjectsOfType<LevelBlockDecorPrefabComponent>().ToList(); // find only starting "cubes"
-            foreach (var t in _buildingBlocks)
+            _levelBlocks = FindObjectsOfType<LevelBlockDecorPrefabComponent>().ToList(); // find only starting "cubes"
+            foreach (var t in _levelBlocks)
             {
                 t.StartController();
             }
 
+            foreach (var t in GameObject.FindObjectsOfType<BaseLevelEventTrigger>())
+            {
+                ManageTrigger(t, true);
+            }
         }
 
         public override void RunUpdate(float delta)
         {
-            foreach (var t in _buildingBlocks)
+            foreach (var t in _levelBlocks)
             {
                 t.UpdateController(delta);
             }
@@ -48,7 +48,7 @@ namespace Arcatech.Managers
         public override void Stop()
         {
             foreach (var t in triggers.ToList()) { ManageTrigger(t, false); }
-            foreach (var t in _buildingBlocks)
+            foreach (var t in _levelBlocks)
             {
                 t.StopController();
             }

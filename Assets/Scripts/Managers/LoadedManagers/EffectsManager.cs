@@ -39,7 +39,7 @@ namespace Arcatech.Managers
             }
             if (pack.Effect != null)
             {
-                //Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
+                // Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
                 PlaceParticle(pack.Effect,pack.Place,pack.Parent);
             }
         }

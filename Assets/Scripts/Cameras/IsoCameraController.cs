@@ -51,8 +51,6 @@ namespace Arcatech.Scenes.Cameras
 
         public override void RunUpdate(float delta)
         {
-
-
             if (Vector3.Magnitude(_playerTarget.GetLookPoint-_playerTarget.transform.position)<= _lookDist)
             {
                 _desiredPos = _playerTarget.GetLookPoint;

@@ -12,26 +12,22 @@ namespace Arcatech.Units.Inputs
     [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
     public abstract class InputsNPC : ControlInputsBase
     {
-#if UNITY_EDITOR
-        [SerializeField, Tooltip("Show action data in console")] public bool DebugEnabled = false;
-#endif
+
 
         #region fields
 
-        public RoomController UnitRoom { get; set; }
+        public RoomUnitsGroup UnitsGroup { get; set; }
         [SerializeField] protected List<Transform> patrolPoints;
 
-        public void SwitchState(bool setting) => _stateMachine.SetAI(setting);
         [Space, SerializeField] protected State InitialState;
         [SerializeField] protected State DummyState;
         [SerializeField] protected State CurrentState;
 
         protected NavMeshAgent _navMeshAg;
         [Space, SerializeField] protected StateMachine _stateMachine;
-        public StateMachine GetFSM => _stateMachine;
 
         [SerializeField] protected EnemyStatsConfig EnemyStats;
-        public override ReferenceUnitType GetUnitType() => EnemyStats.UnitType;
+
 
         #endregion
         #region managed
@@ -60,16 +56,10 @@ namespace Arcatech.Units.Inputs
         {
             base.UpdateController(delta);
             if (_stateMachine == null ) return;
+            _stateMachine.UpdateInDelta(delta);
             CurrentState = _stateMachine.CurrentState;
             MoveDirectionFromInputs = _stateMachine.CurrentVelocity;
 
-#if UNITY_EDITOR
-            if (DebugEnabled)
-            {
-                if (UnitRoom == null) Debug.LogError($"{this} has no room assigned");
-                _stateMachine.Debugging = DebugEnabled;
-            }
-#endif
         }
 
 
@@ -159,6 +149,7 @@ namespace Arcatech.Units.Inputs
 
             if (isStart)
             {
+                _stateMachine.SetupStatsComponent();
                 _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
@@ -168,6 +159,7 @@ namespace Arcatech.Units.Inputs
             }
             else
             {
+                _stateMachine.StopStatsComponent();
                 _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
@@ -189,12 +181,11 @@ namespace Arcatech.Units.Inputs
 
         protected virtual void Fsm_AggroRequestedSM()
         {
-            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(ReferenceUnitType.Player);
+            _stateMachine.SelectedUnit = UnitsGroup.GetUnitForAI(ReferenceUnitType.Player);
         }
 
         protected virtual void Fsm_PlayerSpottedSM(PlayerUnit arg)
-        {
-            (Unit as NPCUnit).OnUnitSpottedPlayer();
+        {    
             _stateMachine.SelectedUnit = arg;
         }
 
@@ -211,7 +202,7 @@ namespace Arcatech.Units.Inputs
         }
         protected virtual void Fsm_GetFocusUnitSM(ReferenceUnitType type)
         {
-            if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitRoom.GetUnitForAI(type);
+            if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitsGroup.GetUnitForAI(type);
             else if (type == ReferenceUnitType.Self) _stateMachine.FocusUnit = Unit;
 
             if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
@@ -227,7 +218,7 @@ namespace Arcatech.Units.Inputs
 
         public void ForceCombat()
         {
-            _stateMachine.SelectedUnit = UnitRoom.GetUnitForAI(ReferenceUnitType.Player);
+            _stateMachine.SelectedUnit = UnitsGroup.GetUnitForAI(ReferenceUnitType.Player);
         }
 
         #endregion
@@ -236,7 +227,7 @@ namespace Arcatech.Units.Inputs
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (!DebugEnabled || _stateMachine == null || CurrentState == null) return;
+            if (!DebugMessage || _stateMachine == null || CurrentState == null) return;
             // state gizmos
             Gizmos.color = CurrentState.StateGizmoColor;
             Gizmos.DrawSphere(_stateMachine.EyesEmpty.position, 0.1f);

@@ -3,6 +3,7 @@ using Arcatech.Items;
 using Arcatech.Triggers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -47,9 +48,9 @@ namespace Arcatech.Units
         public virtual void HandleEffects(float deltaTime)
         {
             if (!IsReady || _activeEffects.Count == 0) return;
-            foreach (var ef in _activeEffects)
+            foreach (TriggeredEffect ef in _activeEffects)
             {
-                // actual handling
+                // actual handling\
                 StatValueContainer stat = SelectStatValueContainer(ef);
                 // start effect
                 if (!ef.InitialDone)
@@ -58,11 +59,7 @@ namespace Arcatech.Units
                     ef.InitialDone = true;
                 }
                 // remove expired or instantaneous
-                if (ef.TotalDuration <= 0f)
-                {
-                    _activeEffects.Remove(ef);
-                    return;
-                }
+
                 // handle timers    
                 ef.CurrentRepeatTimer -= deltaTime;
                 ef.TotalDuration -= deltaTime;
@@ -70,6 +67,14 @@ namespace Arcatech.Units
                 {
                     stat.ChangeCurrent(ef.RepeatedValue);
                     ef.CurrentRepeatTimer = ef.RepeatApplicationDelay;
+                }
+            }
+            foreach (var ef in _activeEffects.ToList())
+            {
+                if (ef.TotalDuration <= 0f)
+                {
+                    _activeEffects.Remove(ef);
+                    return;
                 }
             }
         }

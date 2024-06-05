@@ -19,7 +19,7 @@ namespace Arcatech.Managers
         {
             //UpdateDatas();
             var staticTriggers = FindObjectsOfType<BaseLevelEventTrigger>(); // find triggers on level
-            Debug.Log($"Found {staticTriggers.Length} triggers on level");
+            if (ShowDebug) Debug.Log($"Found {staticTriggers.Length} triggers on level");
 
             foreach (var t in staticTriggers)
             {
@@ -64,7 +64,6 @@ namespace Arcatech.Managers
                     ServeTriggerApplication(new TriggeredEffect (config),null, target, isEnter);
                 }            
             }
-           // Debug.Log($"{this} received a call from {lv} : {target} is entering the zone: {isEnter}");
         }
 
 
@@ -78,6 +77,7 @@ namespace Arcatech.Managers
         private Dictionary<TriggeredEffect, List<BaseUnit>> _hitTargetsPerEffect = new Dictionary<TriggeredEffect, List<BaseUnit>>();
         private void ApplyTriggerEffect(TriggeredEffect effect, BaseUnit target, BaseUnit source)
         {
+
             BaseUnit finaltgt = null;
 
             if (source is null)
@@ -188,7 +188,7 @@ namespace Arcatech.Managers
                 {
                     hit.Add(finaltgt);                    
                     finaltgt.ApplyEffectToController(effect);
-                    //Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
+                    if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                     HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
                 }
@@ -198,7 +198,7 @@ namespace Arcatech.Managers
                 _hitTargetsPerEffect[effect] = new List<BaseUnit>();
                 _hitTargetsPerEffect[effect].Add(finaltgt); 
                 finaltgt.ApplyEffectToController(effect);
-               // Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}");
+                if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                 HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
             }

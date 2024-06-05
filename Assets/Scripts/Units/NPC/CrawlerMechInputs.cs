@@ -11,7 +11,7 @@ public class CrawlerMechInputs : InputsNPC
 
     protected override void Fsm_AggroRequestedSM()
     {
-        _stateMachine.FocusUnit = _stateMachine.StateMachineUnit; // for self-destruct skill
+        _stateMachine.FocusUnit = _stateMachine.ControlledUnit; // for self-destruct skill
         base.Fsm_AggroRequestedSM();
     }
 

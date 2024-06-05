@@ -34,7 +34,10 @@ namespace Arcatech.Triggers
             ID = config.ID; StatType = config.ChangedValueType; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
             CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType; GetEffects = new EffectsCollection(config.Effects);
         }
-
+        public override string ToString()
+        {
+            return ($"{ID} effect start value {InitialValue} done {InitialDone}; time left {TotalDuration}");
+        }
 
     }
 

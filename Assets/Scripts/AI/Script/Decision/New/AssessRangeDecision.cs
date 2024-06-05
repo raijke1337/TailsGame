@@ -10,7 +10,7 @@ namespace Arcatech.AI
         public Vector3 CheckedPosition;
         public override bool Decide(StateMachine controller)
         {
-            return (Vector3.Distance(controller.StateMachineUnit.transform.position,CheckedPosition) <= DesiredRange);
+            return (Vector3.Distance(controller.ControlledUnit.transform.position,CheckedPosition) <= DesiredRange);
         }
     }
 }

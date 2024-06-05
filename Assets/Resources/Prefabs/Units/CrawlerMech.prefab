@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432d323bf0b9ab045b4c6b0294e2fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsInputsLocked: 0
+  DebugMessage: 0
   Empties:
     ItemPositions:
       _serializedList:
@@ -919,16 +919,15 @@ MonoBehaviour:
       - Key: 255
         Value: {fileID: 3983754378033790471}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
-  DebugEnabled: 0
+  IsInMeleeCombo: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: b0eb904fb2c8562449235464840592fb, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
   CurrentState: {fileID: 0}
   _stateMachine:
-    aiActive: 0
+    _debugStates: 0
     PatrolPoints: []
     CurrentPatrolPointIndex: 0
-    Debugging: 0
   EnemyStats: {fileID: 11400000, guid: adbc8c0730f940244a54f53fc03f85ff, type: 2}
 --- !u!114 &2960065711646976030
 MonoBehaviour:
@@ -956,7 +955,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Side: 1
   StatsConfig: {fileID: 11400000, guid: ba12167310a77ec44b989f57a32e05ea, type: 2}
+  _debugJumpForceMult: 0
+  _groundCollider: {fileID: 0}
   _defaultItems: {fileID: 11400000, guid: cb8f3e177a5d7d647bfae10227e18234, type: 2}
+  _enemyStatsConfig: {fileID: 11400000, guid: adbc8c0730f940244a54f53fc03f85ff, type: 2}
 --- !u!1 &5255978924687065453
 GameObject:
   m_ObjectHideFlags: 0

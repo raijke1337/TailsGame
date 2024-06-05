@@ -15,8 +15,6 @@ namespace Arcatech.Level
 
         private List<LevelBlockDecorPrefabComponent> _loadedDecors;
 
-
-
         public override void StartController()
         {
             _yRotations = new float[] { 0, 90, 180, 270 };

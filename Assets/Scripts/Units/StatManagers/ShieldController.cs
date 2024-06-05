@@ -62,7 +62,8 @@ namespace Arcatech.Units
 
         #endregion
         public TriggeredEffect ProcessHealthChange(in TriggeredEffect effect)
-        {
+        { // debug shield logic TODO
+
             if (effect.InitialValue >= 0f)
             {
                 return effect; // heal effect

@@ -11,7 +11,7 @@ namespace Arcatech.AI
         #region handler
         public void UpdateInDelta(float deltaTime)
         {
-            if (!aiActive) return;
+            if (ControlledUnit.LockUnit) return;
             CurrentState.UpdateState(this);
             CurrentVelocity = NMAgent.velocity;
             TimeInState += deltaTime;
@@ -20,9 +20,9 @@ namespace Arcatech.AI
         public void SetupStatsComponent()
         {
             var eyes = new GameObject("SphereCaster");
-            eyes.transform.SetPositionAndRotation(StateMachineUnit.transform.position, StateMachineUnit.transform.rotation);
+            eyes.transform.SetPositionAndRotation(ControlledUnit.transform.position, ControlledUnit.transform.rotation);
             eyes.transform.position += (Vector3.up * GetEnemyStats.LookSphereRadius); // move up to not cast at floor only
-            eyes.transform.SetParent(StateMachineUnit.transform, true);
+            eyes.transform.SetParent(ControlledUnit.transform, true);
 
             EyesEmpty = eyes.transform;
         }
@@ -36,14 +36,14 @@ namespace Arcatech.AI
         #endregion
 
 
-        [SerializeField] private bool aiActive = true;
-
+        // [SerializeField] private bool aiActive = true;
+        [SerializeField] private bool _debugStates;
         public State CurrentState { get; private set; }
         public State RemainState { get; private set; }
         public Vector3 CurrentVelocity { get; protected set; }
         public float TimeInState { get; private set; }
         public EnemyStatsConfig GetEnemyStats { get; private set; }
-        public BaseUnit StateMachineUnit { get; }
+        public BaseUnit ControlledUnit { get; }
         // set by inputs , bool for potential checks
         private bool wasSelectedUnitUpdated;
         private BaseUnit _selectedUnit;
@@ -52,6 +52,7 @@ namespace Arcatech.AI
             get { return _selectedUnit; }
             set
             {
+                Debug.Log($"{ControlledUnit.GetFullName} selected unit {value}");
                 _selectedUnit = value;
                 wasSelectedUnitUpdated = false;
             }
@@ -84,23 +85,23 @@ namespace Arcatech.AI
             GetEnemyStats = stats;
             CurrentState = init;
             RemainState = dummy;
-            StateMachineUnit = unit;
+            ControlledUnit = unit;
         }
-        public void SetAI(bool setting)
-        {
-            aiActive = setting;
-            ComponentChangedStateToEvent?.Invoke(setting, this);
+        //public void SetAI(bool setting)
+        //{
+        //    aiActive = setting;
+        //    ComponentChangedStateToEvent?.Invoke(setting, this);
 
-            if (NMAgent == null) return;
-            NMAgent.isStopped = !setting;
-        }
+        //    if (NMAgent == null) return;
+        //    NMAgent.isStopped = !setting;
+        //}
 
         public void TransitionToState(State nextState)
         {
             if (nextState != RemainState)
             {
 #if UNITY_EDITOR
-                if (Debugging) Debug.Log($"{StateMachineUnit} switched states: {CurrentState} -> {nextState}, time elapsed: {TimeInState}");
+                if (_debugStates) Debug.Log($"{ControlledUnit} switched states: {CurrentState} -> {nextState}, time elapsed: {TimeInState}");
 #endif
                 CurrentState = nextState;
                 OnExitState();
@@ -128,17 +129,7 @@ namespace Arcatech.AI
             Physics.SphereCast(EyesEmpty.position, GetEnemyStats.LookSphereRadius, EyesEmpty.forward, out var hit, GetEnemyStats.LookRange);
             if (hit.collider == null) return false;
             var _coll = hit.collider;
-#if UNITY_EDITOR
-            if (Debugging)
-            {
-                string newtxt = $"Hit {_coll}";
-                if (newtxt != sphereDebugTxt)
-                {
-                    sphereDebugTxt = newtxt;
-                    //Debug.Log(sphereDebugTxt);
-                }
-            }
-#endif
+
             var result = _coll.CompareTag("Player");
             if (result)
             {
@@ -168,15 +159,6 @@ namespace Arcatech.AI
 
         public void Ping()
         { }
-
-
-
-
-#if UNITY_EDITOR
-        [HideInInspector] public bool Debugging;
-        string sphereDebugTxt;
-#endif
-
 
     }
 }

@@ -140,7 +140,12 @@ namespace Arcatech.Units
         {
             Debug.Log($"Dialogue window is shown by player panel script, dialogue is: {d.Mood}");
         }
-        
+
+        public override ReferenceUnitType GetUnitType()
+        {
+            return ReferenceUnitType.Player;
+        }
+
 
         #endregion
 

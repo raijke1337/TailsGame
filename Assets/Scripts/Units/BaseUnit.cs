@@ -7,8 +7,6 @@ using Arcatech.Units.Stats;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
-
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase))]
@@ -24,7 +22,7 @@ namespace Arcatech.Units
         public BaseStatsConfig StatsConfig;
         public ItemEmpties GetEmpties => _controller.GetEmpties;
 
-        public ReferenceUnitType GetUnitType => _controller.GetUnitType();
+        public abstract ReferenceUnitType GetUnitType();
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStats => _controller.GetStatsController.GetBaseStats;
 
         public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
@@ -102,6 +100,7 @@ namespace Arcatech.Units
                         break;
                 }
             }
+            LockUnit = false;
 
             //Debug.Log($"Initiated {GetFullName}");
         }
@@ -149,7 +148,6 @@ namespace Arcatech.Units
         {
             if (isEnable)
             {
-                _controller.GetStatsController.UnitDiedEvent += OnDeath;
                 _controller.CombatActionSuccessEvent += (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened += AnimateStagger;
                 _controller.SkillSpawnEvent += OnInputsCreateSkill;
@@ -157,19 +155,26 @@ namespace Arcatech.Units
                 _controller.TriggerEventRequest += TriggerEventCallback;
                 _controller.SpawnProjectileEvent += PlaceProjectileCallback;
                 _controller.JumpCalledEvent += AnimateJump;
+                _controller.DeathHappened += OnDeathEvent;
+                _controller.DamageHappened += OnDamageEvent;
 
             }
             else
             {
-                _controller.GetStatsController.UnitDiedEvent -= OnDeath;
+
                 _controller.CombatActionSuccessEvent -= (t) => AnimateCombatActivity(t);
                 _controller.StaggerHappened -= AnimateStagger;
                 _controller.SkillSpawnEvent -= OnInputsCreateSkill;
                 _controller.EffectEventRequest -= EffectEventCallback;
                 _controller.TriggerEventRequest -= TriggerEventCallback;
                 _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
+                _controller.JumpCalledEvent -= AnimateJump;
+                _controller.DeathHappened -= OnDeathEvent;
+                _controller.DamageHappened -= OnDamageEvent;
             }
         }
+
+
 
         protected void OnInputsCreateSkill(SkillProjectileComponent data, BaseUnit source, Transform where)
         {
@@ -179,12 +184,31 @@ namespace Arcatech.Units
         #endregion
 
         #region stats
-        protected virtual void OnDeath()
+        protected virtual void OnDeathEvent()
         {
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"{this} died");
+            }
             _animator.SetTrigger("Death");
             _controller.LockInputs = true;
+
             GetCollider.enabled = false;
+            _rigidbody.useGravity = false;
+
             BaseUnitDiedEvent?.Invoke(this);
+
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"{name} died");
+            }
+        }
+        protected virtual void OnDamageEvent(float value)
+        {
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"{this} took {value} damage");
+            }
         }
         public virtual void ApplyEffectToController(TriggeredEffect eff)
         {

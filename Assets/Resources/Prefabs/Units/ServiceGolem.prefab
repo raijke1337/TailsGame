@@ -1191,7 +1191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81c6598b0eed0334d9c1ff7cc1d20865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsInputsLocked: 0
+  DebugMessage: 1
   Empties:
     ItemPositions:
       _serializedList:
@@ -1213,7 +1213,6 @@ MonoBehaviour:
         Value: {fileID: 0}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
   IsInMeleeCombo: 0
-  DebugEnabled: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: afbe920454ade2b4ab20de1fb1104fe9, type: 2}
   DummyState: {fileID: 11400000, guid: 7c40f0310b4ba3244a6a9e15795e9269, type: 2}
@@ -1300,7 +1299,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Side: 1
   StatsConfig: {fileID: 11400000, guid: b68375f69c060204787f2c01560a8781, type: 2}
+  _debugJumpForceMult: 0
+  _groundCollider: {fileID: 0}
   _defaultItems: {fileID: 11400000, guid: 1710305839a70bd4fbeccb329f572691, type: 2}
+  _enemyStatsConfig: {fileID: 11400000, guid: 7dd8bf0d697ef2441931b130b1c2f299, type: 2}
 --- !u!114 &7250393868015656704
 MonoBehaviour:
   m_ObjectHideFlags: 0

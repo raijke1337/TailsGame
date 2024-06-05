@@ -3,6 +3,8 @@ using Arcatech.Units.Stats;
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Linq;
+using UnityEditor.Compilation;
+using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -10,22 +12,23 @@ namespace Arcatech.Units
     public class BaseStatsController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
         public SerializedDictionary<BaseStatType, StatValueContainer> GetBaseStats { get; private set; }
-        public event SimpleEventsHandler UnitDiedEvent;
+       public event SimpleEventsHandler UnitDiedEvent;
+       public event SimpleEventsHandler<float> UnitTookDamageEvent; //value
         public string GetDisplayName { get; }
         public override string GetUIText { get => GetDisplayName; }
+
+        private StatValueContainer _healthContainer;
 
         #region ihandler
         public override void SetupStatsComponent()
         {
             foreach (var v in GetBaseStats.Values) { v.Setup(); }
+            IsReady = true;
         }
-        public override void UpdateInDelta(float deltaTime)
+        public override void StopStatsComponent()
         {
-            base.UpdateInDelta(deltaTime);
-            if (GetBaseStats[BaseStatType.Health].GetCurrent <= 0f)
-            {
-                UnitDiedEvent?.Invoke();
-            }
+            base.StopStatsComponent();
+            _healthContainer.ValueChangedEvent -= OnHealthValueChange;
         }
         #endregion
 
@@ -47,10 +50,28 @@ namespace Arcatech.Units
             }
 
             GetDisplayName = cfg.displayName;
-            IsReady = true;
+            _healthContainer = GetBaseStats[BaseStatType.Health];
+            _healthContainer.ValueChangedEvent += OnHealthValueChange;
+
+        }
+        protected void OnHealthValueChange(float current, float prev)
+        {
+            if (!IsReady) return;
+            Debug.Log($"basestatsctrl: hp change {prev} -> {current}");
+            if (prev>current)
+            {
+                UnitTookDamageEvent?.Invoke(prev - current);
+            }
+            if (current <= 0)
+            {
+                Debug.Log($"basestatsctrl: dead event in {GetDisplayName}");
+                UnitDiedEvent?.Invoke();
+            }
         }
 
 
+
+        // numbers change is all here       
         protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
         {
             StatValueContainer result = null;
@@ -70,6 +91,5 @@ namespace Arcatech.Units
             }
             return result;
         }
-
     }
 }

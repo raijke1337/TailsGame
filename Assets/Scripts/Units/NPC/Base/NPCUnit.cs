@@ -9,55 +9,33 @@ namespace Arcatech.Units
     public class NPCUnit : BaseUnit
     {
         private InputsNPC _npcController;
-
-        public StateMachine GetStateMachine { get => _npcController.GetFSM; }
-        public void SetUnitRoom(RoomController room) => _npcController.UnitRoom = room;
+        public RoomUnitsGroup UnitsGroup { get; set; }
 
         //used by room ctrl
         public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
-        //public event SimpleEventsHandler<NPCUnit> OnUnitSpottedPlayerEvent;
         [SerializeField] protected UnitItemsSO _defaultItems;
-
-
-
-
+        [SerializeField] protected EnemyStatsConfig _enemyStatsConfig;
 
         public override void InitiateUnit()
         {
             base.InitiateUnit();
+            if (_npcController == null) _npcController = _controller as InputsNPC;
             if (!CompareTag("Enemy"))
                 Debug.LogWarning($"Set enemy tag for{name}");
-
-            _controller.GetStatsController.GetBaseStats[BaseStatType.Health].ValueChangedEvent += OnOuch;
-
+            _npcController.UnitsGroup = UnitsGroup;
         }
         // used by room controller
         public void ForceCombat()
         {
             _npcController.ForceCombat();
         }
-        private void OnOuch(float curr, float prev)
-        {
-            if (curr < prev)
-            {
-                ForceCombat();
-                OnUnitAttackedEvent?.Invoke(this);
-            }
-        }
-        public void AiToggle(bool isProcessing)
-        {
-            if (_npcController == null) SetNPCInputs();
-            _npcController.SwitchState(isProcessing);
-            // todo thi is a bandaid
-        }
 
-        private void SetNPCInputs() => _npcController = _controller as InputsNPC;
-        public virtual void OnUnitSpottedPlayer()
+        protected override void OnDamageEvent(float value)
         {
-            // nothing here
-            //Debug.Log($"{GetFullName} saw player");
+            base.OnDamageEvent(value);
+            ForceCombat();
+            OnUnitAttackedEvent?.Invoke(this);
         }
-
 
         protected override void InitInventory()
         {
@@ -65,6 +43,10 @@ namespace Arcatech.Units
             CreateStartingEquipments(GetUnitInventory);
         }
 
+        public override ReferenceUnitType GetUnitType()
+        {
+            return _enemyStatsConfig.UnitType;
+        }
     }
 
 }

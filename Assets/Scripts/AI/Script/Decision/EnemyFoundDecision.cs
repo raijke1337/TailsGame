@@ -8,7 +8,7 @@ namespace Arcatech.AI
         public override bool Decide(StateMachine controller)
         {
             if (controller.SelectedUnit == null) return false;
-            return controller.SelectedUnit.Side != controller.StateMachineUnit.Side;
+            return controller.SelectedUnit.Side != controller.ControlledUnit.Side;
         }
     }
 
