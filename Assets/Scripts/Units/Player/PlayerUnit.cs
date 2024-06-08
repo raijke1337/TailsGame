@@ -10,10 +10,6 @@ namespace Arcatech.Units
         private InputsPlayer _playerController;
         protected Camera _faceCam;
 
-        //[SerializeField] RuntimeAnimatorController GameplayAnimator;
-        //[SerializeField] RuntimeAnimatorController SceneAnimator;
-
-
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
         #region managed
@@ -78,13 +74,16 @@ namespace Arcatech.Units
 
         #region animator and movement
 
-
-
         private void PlayerMovement(Vector3 desiredDir, float delta)
         {
             if (_controller.LockInputs) return;
             transform.position += delta * desiredDir
                 * GetStats[BaseStatType.MoveSpeed].GetCurrent;
+        }
+
+        protected override Vector3 CalculateCrossProd()
+        {
+            return Vector3.Cross(cachedForwardDir, _playerController.Aiming.GetLookPoint.normalized);
         }
 
         private void ChangeAnimatorLayer(EquipItemType type)

@@ -237,9 +237,11 @@ namespace Arcatech.Units
         //sets animator values 
 
         protected Vector3 cachedForwardDir;
-        protected Vector3 crossProdY;
+        protected Vector3 crossProd;
         protected Coroutine rotationChecker;
         [SerializeField] protected float _rotationCheckerDelay;
+
+        public float RotationValue { get => crossProd.y; }
 
         protected virtual void AnimateMovement()
         {
@@ -254,7 +256,7 @@ namespace Arcatech.Units
                 // rotate in place
 
 
-                _animator.SetFloat("Rotation", crossProdY.y);
+                _animator.SetFloat("Rotation", crossProd.y);
             }
             else
             {
@@ -269,14 +271,21 @@ namespace Arcatech.Units
         {
             while (true)
             {
-                crossProdY = Vector3.Cross(cachedForwardDir, transform.forward);
+                crossProd = CalculateCrossProd();
                 cachedForwardDir = transform.forward;
-
+                if (_controller.DebugMessage)
+                {
+                    Debug.Log($"Current rotation value {crossProd.y}");
+                }
                 yield return new WaitForSeconds(_rotationCheckerDelay);
             }
             yield return null;
         }
-
+        // virtual because playerunit uses aim point
+        protected virtual Vector3  CalculateCrossProd()
+        {
+            return Vector3.Cross(cachedForwardDir, transform.forward);
+        }
 
 
         [SerializeField] float _debugJumpForceMult;

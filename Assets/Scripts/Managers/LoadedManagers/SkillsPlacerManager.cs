@@ -110,7 +110,7 @@ namespace Arcatech.Managers
             where = null;
             taget = null;
 
-            if ((comp is BoosterSkillInstanceComponent d) || hit.gameObject.CompareTag("StaticItem") || //hits a wall
+            if ((comp is BoosterSkillInstanceComponent d) || hit.gameObject.CompareTag("SolidItem") || //hits a wall
                 (hit.TryGetComponent(out taget) && comp.Owner != taget) || // enemy target skills
                 (comp.GetEffectCfgs.First().TargetType == TriggerTargetType.TargetsUser && taget == comp.Owner)) // self target skills
             {

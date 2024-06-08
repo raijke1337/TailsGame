@@ -375,14 +375,17 @@ namespace Arcatech.Units
 
         public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
         protected Vector3 MoveDirectionFromInputs;
-
+        [SerializeField] protected float _minimumAngleChangeToRotate;
         protected virtual void LerpRotateToTarget(Vector3 looktarget, float delta)
         {
 
-            Vector3 relativePosition = looktarget - transform.position;
-            Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
-                delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
+            if (MoveDirectionFromInputs != Vector3.zero || Mathf.Abs(Unit.RotationValue) > _minimumAngleChangeToRotate)
+            {
+                Vector3 relativePosition = looktarget - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
+                    delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
+            }
         }
         public event SimpleEventsHandler JumpCalledEvent;
         protected virtual void DoJumpAction()

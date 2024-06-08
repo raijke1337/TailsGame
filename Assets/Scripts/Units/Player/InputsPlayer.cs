@@ -195,13 +195,6 @@ namespace Arcatech.Units.Inputs
             LerpRotateToTarget(_aim.GetLookPoint, lastDelta);
 
         }
-
-
-        protected override void LerpRotateToTarget(Vector3 looktarget, float delta) // here we also apply turning animations
-        {
-            base.LerpRotateToTarget(looktarget, delta);
-            // TODO Detect rotation to play animations
-        }
         #endregion
 
         #region gizmo
