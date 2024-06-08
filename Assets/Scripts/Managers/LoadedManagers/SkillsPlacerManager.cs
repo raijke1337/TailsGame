@@ -34,7 +34,10 @@ namespace Arcatech.Managers
 
         public void ServeSkillRequest(SkillProjectileComponent comp, BaseUnit source, Transform where)
         {
-            Debug.Log($"Request for {comp.name} from {comp.Owner} at {where.position}");
+            if (ShowDebug)
+            {
+                Debug.Log($"Request for {comp.name} from {comp.Owner} at {where.position}");
+            }
             // receive the same proj as projectiles manager but do the specific handling
 
             effectsManager.ServeEffectsRequest(new EffectRequestPackage
@@ -54,15 +57,21 @@ namespace Arcatech.Managers
 
             comp.TriggerEnterEvent += (t, t2) => HandleSkillTriggerEvent(t, t2, comp);
             comp.SkillDestroyedEvent += HandleSkillDestructionEvent;
+            if (ShowDebug)
+            {
 
-            Debug.Log($"Register skill {comp.name} from {comp.Owner}");
+                Debug.Log($"Register skill {comp.name} from {comp.Owner}");
+            }
         }
 
         private void HandleSkillTriggerEvent(Collider col, SkillState state, SkillProjectileComponent comp)
         {
             if (CheckAreaCollision(col, comp, out var w, out var t) && t != null)
             {
-                Debug.Log($"Skill {comp.name} from {comp.Owner} tirgger event:\n{state}, by {col}");
+                if (ShowDebug)
+                {
+                    Debug.Log($"Skill {comp.name} from {comp.Owner} tirgger event:\n{state}, by {col}");
+                }
 
                 switch (state)
                 {
@@ -87,8 +96,10 @@ namespace Arcatech.Managers
         }
         private void HandleSkillDestructionEvent(SkillProjectileComponent c)
         {
-
-            Debug.Log($"Unegister skill {c.name} from {c.Owner}");
+            if (ShowDebug)
+            {
+                Debug.Log($"Unegister skill {c.name} from {c.Owner}");
+            }
             c.SkillDestroyedEvent -= HandleSkillDestructionEvent;
             c.TriggerEnterEvent -= (t, t2) => HandleSkillTriggerEvent(t, t2, c);
         }

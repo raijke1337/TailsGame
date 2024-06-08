@@ -63,16 +63,40 @@ namespace Arcatech.Units
         public WeaponController GetWeaponController => _weaponCtrl;
 
 
+        #region controller events
+
+        // shared
+
+        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent; 
+        public event EffectsManagerEvent EffectEventRequest; 
+
+        // this needs to be updated to get unique triggeredeffects from each use of item
+        public event TriggerEvent TriggerEventRequest;
+        protected void TriggerEventCallBack(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
+        {
+            TriggerEventRequest?.Invoke(target, source, isEnter, cfg);
+        }
+
+        protected void EffectEventCallback(EffectRequestPackage pack) => EffectEventRequest?.Invoke(pack);
+        protected void ProjectileEventCallBack(ProjectileComponent prefab) => SpawnProjectileEvent?.Invoke(prefab);
+
+
+        //specific 
         public event SimpleEventsHandler StaggerHappened;
         public event SimpleEventsHandler ShieldBreakHappened;
         public event SimpleEventsHandler<float> DamageHappened;
-        public event SimpleEventsHandler DeathHappened;
+        public event SimpleEventsHandler ZeroHealthHappened;
+        public event SkillRequestedEvent SkillSpawnEvent;
+
         protected void StunEventCallback() => StaggerHappened?.Invoke();
         protected virtual void ShieldBreakEventCallback() => ShieldBreakHappened?.Invoke();
 
+        protected void SkillSpawnEventCallback(SkillProjectileComponent data)
+        {
+            SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[data.GetProjectileSettings.SpawnPlace]);
+        }
 
-
-
+        #endregion
 
         #region ai
         public StatValueContainer AssessStat(TriggerChangedValue stat)
@@ -223,10 +247,6 @@ namespace Arcatech.Units
                     ControllerSubs(ctrl, false);
                 }
             }
-            if (_stunsCtrl != null) // also TODO issue in scenes
-            {
-                _stunsCtrl.StunHappenedEvent -= StunEventCallback;
-            }
         }
 
         private void Initialize(bool full)
@@ -253,7 +273,7 @@ namespace Arcatech.Units
                 _controllers.Add(_stunsCtrl);
 
                 LockInputs = false;
-                _stunsCtrl.StunHappenedEvent += StunEventCallback;
+
             }
 
             foreach (var ctrl in _controllers)
@@ -263,7 +283,7 @@ namespace Arcatech.Units
             }
         }
 
-        protected void ControllerSubs(BaseController ctrl, bool isStart)
+        protected virtual void ControllerSubs(BaseController ctrl, bool isStart)
         {
             if (isStart)
             {
@@ -273,19 +293,24 @@ namespace Arcatech.Units
                 }
                 if (ctrl is BaseStatsController st)
                 {
-                    st.UnitDiedEvent += OnDeathEvent;
-                    st.UnitTookDamageEvent += OnDamageEvent;
+                    st.UnitTookDamageEvent += OnDamageTaken;
+                    st.ZeroHealthEvent += OnZeroHealth;
                 }
+                if (ctrl is StunsController stun)
+                {
+                    _stunsCtrl.StunHappenedEvent += StunEventCallback;
+                }
+
                 ctrl.BaseControllerEffectEvent += EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
-                ctrl.ProjectileWasSpawnedEvent += ProjectileEventCallBack;
+                ctrl.BaseControllerProjectileEvent += ProjectileEventCallBack;
 
             }
             else
             {
                 ctrl.BaseControllerEffectEvent -= EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent -= TriggerEventCallBack;
-                ctrl.ProjectileWasSpawnedEvent -= ProjectileEventCallBack;
+                ctrl.BaseControllerProjectileEvent -= ProjectileEventCallBack;
 
                 if (ctrl is ShieldController s)
                 {
@@ -293,33 +318,22 @@ namespace Arcatech.Units
                 }
                 if (ctrl is BaseStatsController st)
                 {
-                    st.UnitDiedEvent -= OnDeathEvent;
-                    st.UnitTookDamageEvent -= OnDamageEvent;
+                    st.UnitTookDamageEvent -= OnDamageTaken;
+                    st.ZeroHealthEvent -= OnZeroHealth;
+                }
+                if (ctrl is StunsController stun)
+                {
+                    _stunsCtrl.StunHappenedEvent -= StunEventCallback;
                 }
             }
         }
 
 
-
-        private void ProjectileEventCallBack(ProjectileComponent prefab)
-        {
-            SpawnProjectileEvent?.Invoke(prefab);
-        }
-        #endregion
-
-        #region effects manager
-
-
-        public event EffectsManagerEvent EffectEventRequest;
-        protected void EffectEventCallback(EffectRequestPackage pack)
-        {
-            EffectEventRequest?.Invoke(pack);
-        }
         #endregion
 
         #region triggers
 
-        public event TriggerEvent TriggerEventRequest;
+
         public void ApplyEffectToController(TriggeredEffect eff)
         {
             switch (eff.StatType)
@@ -352,43 +366,12 @@ namespace Arcatech.Units
             }
         }
 
-        // this needs to be updated to get unique triggeredeffects from each use of item
-        protected void TriggerEventCallBack(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
-        {
-            TriggerEventRequest?.Invoke(target, source, isEnter, cfg);
-        }
-
-        #endregion
-        #region projectiles
-
-        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
-
-        protected void SpawnProjectileCallBack(ProjectileComponent proj)
-        {
-            SpawnProjectileEvent?.Invoke(proj);
-        }
-
         #endregion
 
-
-        #region skill requests manager
-        protected void SkillSpawnEventCallback(SkillProjectileComponent data)
-        {
-
-            SkillSpawnEvent?.Invoke(data, Unit, Empties.ItemPositions[data.GetProjectileSettings.SpawnPlace]);
-
-        }
-
-        public event SkillRequestedEvent SkillSpawnEvent;
-
-        #endregion
 
         #region movement
 
-        public void ToggleBusyControls_AnimationEvent(int state)
-        {
-            LockInputs = state != 0;
-        }
+
 
         public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
         protected Vector3 MoveDirectionFromInputs;
@@ -415,15 +398,22 @@ namespace Arcatech.Units
         public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
         private void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
         public bool IsInMeleeCombo = false;
-
+        public void ToggleBusyControls_AnimationEvent(int state)
+        {
+            if (DebugMessage)
+            {
+                Debug.Log($"Animation event busy controls! {state}");
+            }
+            LockInputs = state != 0;
+        }
         protected virtual void DoCombatAction (CombatActionType type)
         {
-            bool canAct = true;
-            
+            bool canAct = true;            
 
             if (LockInputs && !IsInMeleeCombo)
             {
                 canAct = false;
+                return;
             }
             switch (type)
             {
@@ -456,14 +446,14 @@ namespace Arcatech.Units
                     }
                     break;
                 case CombatActionType.RangedSpecialE:
-                    if (_skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
+                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
                     }
                     break;
                 case CombatActionType.ShieldSpecialR:
-                    if (_skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
+                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
                     {
                         SkillSpawnEventCallback(sk);
                         CombatActionSuccessCallback(type);
@@ -488,11 +478,10 @@ namespace Arcatech.Units
         private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
         {
             var stats = bs.GetDodgeSettings;
-
-            LockInputs = true;
-
             Vector3 start = transform.position;
             Vector3 end = start + GetMoveDirection * stats.Range;
+
+            LockInputs = true;
 
             float p = 0f;
             while (p <= 1f)
@@ -518,16 +507,19 @@ namespace Arcatech.Units
         }
 
         #endregion
+        #region hp
 
-        #region health
-        private void OnDamageEvent(float arg)
+        protected virtual void OnZeroHealth()
         {
-            DamageHappened?.Invoke(arg);
+            //Debug.Log($"unit dead seen in baseinputs");
+            ZeroHealthHappened?.Invoke();
         }
 
-        private void OnDeathEvent()
+        protected virtual void OnDamageTaken(float arg)
         {
-            DeathHappened?.Invoke();
+           // Debug.Log($"hp change seen in baseinputs");
+            DamageHappened?.Invoke(arg);
+
         }
         #endregion
 

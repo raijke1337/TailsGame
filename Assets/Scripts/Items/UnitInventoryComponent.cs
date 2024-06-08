@@ -121,7 +121,6 @@ namespace Arcatech.Units
 
             _equips = new Dictionary<EquipItemType, EquipmentItem>();
             _items = new List<InventoryItem>();
-            _drops = new List<InventoryItem>();
 
             foreach (var e in cfg.Equipment)
             {
@@ -130,10 +129,6 @@ namespace Arcatech.Units
             foreach (var i in cfg.Inventory)
             {
                 _items.Add(ProduceItem(i));
-            }
-            foreach (var i in cfg.Drops)
-            {
-                _drops.Add(ProduceItem(i));
             }
 
             _empties = owner.GetEmpties;

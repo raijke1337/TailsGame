@@ -10,8 +10,8 @@ namespace Arcatech.Units
         private InputsPlayer _playerController;
         protected Camera _faceCam;
 
-        [SerializeField] RuntimeAnimatorController GameplayAnimator;
-        [SerializeField] RuntimeAnimatorController SceneAnimator;
+        //[SerializeField] RuntimeAnimatorController GameplayAnimator;
+        //[SerializeField] RuntimeAnimatorController SceneAnimator;
 
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
@@ -21,13 +21,15 @@ namespace Arcatech.Units
         {
             UpdateComponents();
 
-            _animator.runtimeAnimatorController = GameplayAnimator;
+
             base.InitiateUnit();
 
             ToggleCamera(true);
 
-            if (!IsArmed) 
-                _animator.runtimeAnimatorController=SceneAnimator;
+
+            //_animator.runtimeAnimatorController = GameplayAnimator;
+            //if (!IsArmed) 
+            //    _animator.runtimeAnimatorController=SceneAnimator;
 
         }
         public override void RunUpdate(float delta)
@@ -42,6 +44,7 @@ namespace Arcatech.Units
                 if (_playerController == null) return;
                 PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
             }
+
 
         }
 
@@ -65,9 +68,7 @@ namespace Arcatech.Units
                 _playerController.ShieldBreakHappened += HandleShieldBreakEvent;
             }
             else if (_playerController != null) // issue in scenes
-            {
-
-                
+            {                
                 _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
                 _playerController.ShieldBreakHappened -= HandleShieldBreakEvent;
             }
@@ -131,14 +132,27 @@ namespace Arcatech.Units
         #endregion
 
 
-        #region visual
+ 
         private void HandleShieldBreakEvent()
-        {
+        {if (_controller.DebugMessage)
             Debug.Log($"Inputs report shield break event");
         }
         public void PlayerIsTalking(DialoguePart d)
         {
-            Debug.Log($"Dialogue window is shown by player panel script, dialogue is: {d.Mood}");
+            if (_controller.DebugMessage)
+                Debug.Log($"Dialogue window is shown by player panel script, dialogue is: {d.Mood}");
+        }
+
+        protected override void HandleDamage(float value)
+        {
+            if (_controller.DebugMessage)
+                Debug.Log($"Player unit handle dmg event");
+        }
+
+        protected override void HandleDeath()
+        {
+            if (_controller.DebugMessage)
+                Debug.Log($"Player unit handle deatrh event");
         }
 
         public override ReferenceUnitType GetUnitType()
@@ -146,8 +160,6 @@ namespace Arcatech.Units
             return ReferenceUnitType.Player;
         }
 
-
-        #endregion
 
     }
 }

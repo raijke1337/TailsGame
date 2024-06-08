@@ -16,9 +16,12 @@ namespace Arcatech.AI
         public RoomUnitsGroup(List<NPCUnit> list)
         {
             _units = list;
-            foreach (NPCUnit unit in _units)
+            foreach (BaseUnit unit in _units)
             {
                 unit.BaseUnitDiedEvent += RemoveUnitOnDeath;
+            }
+            foreach (NPCUnit unit in _units)
+            {
                 unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
                 unit.UnitsGroup = this;
             }
@@ -26,31 +29,29 @@ namespace Arcatech.AI
 
         private void Unit_OnUnitAttackedEvent(NPCUnit arg)
         {
-            Debug.Log($"{arg} from group {SpawnRoom.name} was attacked");
+            var otherUnits = new List<NPCUnit>();
+            otherUnits.AddRange(_units);
+            otherUnits.Remove(arg);
 
-            //var otherUnits = new List<NPCUnit>();
-            //otherUnits.AddRange(_units);
-            //otherUnits.Remove(arg);
-            //var range = arg.stat
-            //foreach (var u in otherUnits)
-            //{
-            //    var dist = Vector3.Distance(arg.transform.position, u.transform.position);
-            //    if (dist < range)
-            //    {
-            //        u.ForceCombat();
-            //        //Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attacked, range {dist}");
-            //    }
-            //}
+            foreach (var u in otherUnits)
+            {
+                var inputs = u.GetInputs<InputsNPC>();
+                inputs.ForceCombat();
+                if (inputs.DebugMessage)
+                {
+                    Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attaked!");
+                }
+            }
 
         }
 
 
         private void RemoveUnitOnDeath(BaseUnit u)
-        { 
+        {
             if (u is NPCUnit unit)
             {
                 _units.Remove(unit);
-                unit.OnUnitAttackedEvent -= RemoveUnitOnDeath;
+                unit.BaseUnitDiedEvent -= RemoveUnitOnDeath;
                 unit.OnUnitAttackedEvent -= Unit_OnUnitAttackedEvent;
             }
         }

@@ -25,6 +25,8 @@ namespace Arcatech
     public delegate void StateMachineEvent();
     public delegate void StateMachineEvent<T>(T arg);
 
+    public delegate void ConditionCheckEvents (CheckConditionTrigger condition, bool currentState);
+
 
     public delegate void SkillRequestedEvent(SkillProjectileComponent data, BaseUnit source, Transform where);
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);

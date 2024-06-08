@@ -18,13 +18,6 @@ namespace Arcatech.Triggers
             }
         }
 
-        protected override void OnEnter()
-        {
-        }
-
-        protected override void OnExit()
-        {
-        }
 
     }
 }

@@ -10,5 +10,6 @@ namespace Arcatech.Items
     {
         [Tooltip("Time between uses"),Range(0.05f,1f)]public float WeaponCooldown;
         public List<SerializedStatTriggerConfig>  WeaponHitTriggers;
+        [Space] public RuntimeAnimatorController EquippedAnimations;
     }
 }

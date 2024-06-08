@@ -52,7 +52,7 @@ namespace Arcatech.AI
             get { return _selectedUnit; }
             set
             {
-                Debug.Log($"{ControlledUnit.GetFullName} selected unit {value}");
+               // Debug.Log($"{ControlledUnit.GetFullName} selected unit {value}");
                 _selectedUnit = value;
                 wasSelectedUnitUpdated = false;
             }

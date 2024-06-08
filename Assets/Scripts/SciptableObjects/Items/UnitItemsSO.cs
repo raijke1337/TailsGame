@@ -10,6 +10,5 @@ namespace Arcatech.Items
     {
         [SerializeField] public List<Equip> Equipment;
         [SerializeField, Space] public List<Item> Inventory;
-        [SerializeField, Space] public List<Item> Drops;
     }
 }

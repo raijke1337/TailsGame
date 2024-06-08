@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432d323bf0b9ab045b4c6b0294e2fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
+  DebugMessage: 1
   Empties:
     ItemPositions:
       _serializedList:
@@ -958,6 +958,9 @@ MonoBehaviour:
   _debugJumpForceMult: 0
   _groundCollider: {fileID: 0}
   _defaultItems: {fileID: 11400000, guid: cb8f3e177a5d7d647bfae10227e18234, type: 2}
+  _dropPrefab: {fileID: 5591554248188464965, guid: 9c99c0c85eb6ece4c8d1a19ffcda0e5f,
+    type: 3}
+  _drop: {fileID: 0}
   _enemyStatsConfig: {fileID: 11400000, guid: adbc8c0730f940244a54f53fc03f85ff, type: 2}
 --- !u!1 &5255978924687065453
 GameObject:

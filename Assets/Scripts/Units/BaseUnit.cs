@@ -4,6 +4,7 @@ using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units.Stats;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,7 +42,7 @@ namespace Arcatech.Units
             set
             {
                 _locked = value;
-                GetInputs().LockInputs = value;
+                _controller.LockInputs = value;
                 if (value)
                 {
                     AnimateMovement(); // to reset the movement anim
@@ -50,6 +51,7 @@ namespace Arcatech.Units
         }
 
         public string GetFullName => _controller.GetStatsController.GetDisplayName;
+        public bool IsUnitAlive { get; protected set; } = true;
 
         public event SimpleEventsHandler<BaseUnit> BaseUnitDiedEvent;
         public event SkillRequestedEvent SkillRequestFromInputsSuccessEvent;
@@ -83,32 +85,32 @@ namespace Arcatech.Units
             _controller.SetUnit(this);
             _controller.StartController();
             InitInventory();
-            if (this is PlayerUnit p)
+            cachedForwardDir = transform.forward;
+
+            switch (GameManager.Instance.GetCurrentLevelData.LevelType)
             {
-                switch (GameManager.Instance.GetCurrentLevelData.LevelType)
-                {
 
-                    case LevelType.Scene:
-                        _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                        break;
-                    case LevelType.Menu:
-                        _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                        break;
-                    case LevelType.Game:
-                        _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
-                        ControllerEventsBinds(true);
-                        break;
-                }
+                case LevelType.Scene:
+                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
+                    break;
+                case LevelType.Menu:
+                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
+                    break;
+                case LevelType.Game:
+                    _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
+                    ControllerEventsBinds(true);
+                    rotationChecker = StartCoroutine(UpdateRotations());
+                    break;
             }
-            LockUnit = false;
-
             //Debug.Log($"Initiated {GetFullName}");
+            LockUnit = false;
         }
 
         public virtual void DisableUnit()
         {
             ControllerEventsBinds(false);
             _controller.StopController();
+            StopCoroutine(rotationChecker);
         }
 
 
@@ -119,11 +121,8 @@ namespace Arcatech.Units
                 Debug.LogWarning($"Unit {this} was not initialized!");
                 return;
             }
-            if (_groundCollider != null)
-            {
-                _controller.LockInputs = _groundCollider.IsAirborne; // lock inputs during jump
-            }
 
+            if (LockUnit) return;
 
             AnimateMovement();
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
@@ -141,6 +140,7 @@ namespace Arcatech.Units
             if (_animator == null) _animator = GetComponent<Animator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
             if (_controller == null) _controller = GetComponent<ControlInputsBase>();
+            if (_groundCollider == null) _groundCollider = GetComponent<GroundDetectorPlatformCollider>();
         }
 
 
@@ -155,8 +155,14 @@ namespace Arcatech.Units
                 _controller.TriggerEventRequest += TriggerEventCallback;
                 _controller.SpawnProjectileEvent += PlaceProjectileCallback;
                 _controller.JumpCalledEvent += AnimateJump;
-                _controller.DeathHappened += OnDeathEvent;
-                _controller.DamageHappened += OnDamageEvent;
+                _controller.ZeroHealthHappened += OnInputsReportDeath;
+                _controller.DamageHappened += OnInputsReportDamage;
+
+                if (_groundCollider != null)
+                {
+                    _groundCollider.PlatfromCollidedWithTagEvent += HandleJumpLanding;
+                }
+                        
 
             }
             else
@@ -169,12 +175,27 @@ namespace Arcatech.Units
                 _controller.TriggerEventRequest -= TriggerEventCallback;
                 _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
                 _controller.JumpCalledEvent -= AnimateJump;
-                _controller.DeathHappened -= OnDeathEvent;
-                _controller.DamageHappened -= OnDamageEvent;
+                _controller.ZeroHealthHappened -= OnInputsReportDeath;
+                _controller.DamageHappened -= OnInputsReportDamage;
+
+                if (_groundCollider != null)
+                {
+                    _groundCollider.PlatfromCollidedWithTagEvent -= HandleJumpLanding;
+                }
+
             }
+
         }
 
+        private void OnInputsReportDamage(float arg)
+        {
+            HandleDamage(arg);
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($" {GetFullName} hp change {-arg}");
+            }
 
+        }
 
         protected void OnInputsCreateSkill(SkillProjectileComponent data, BaseUnit source, Transform where)
         {
@@ -184,12 +205,15 @@ namespace Arcatech.Units
         #endregion
 
         #region stats
-        protected virtual void OnDeathEvent()
+        private void OnInputsReportDeath()
         {
             if (_controller.DebugMessage)
             {
-                Debug.Log($"{this} died");
+                Debug.Log($"{GetFullName} died");
             }
+
+            HandleDeath();
+            IsUnitAlive = false;
             _animator.SetTrigger("Death");
             _controller.LockInputs = true;
 
@@ -198,18 +222,12 @@ namespace Arcatech.Units
 
             BaseUnitDiedEvent?.Invoke(this);
 
-            if (_controller.DebugMessage)
-            {
-                Debug.Log($"{name} died");
-            }
         }
-        protected virtual void OnDamageEvent(float value)
-        {
-            if (_controller.DebugMessage)
-            {
-                Debug.Log($"{this} took {value} damage");
-            }
-        }
+
+        protected abstract void HandleDamage(float value);
+        protected abstract void HandleDeath();
+
+
         public virtual void ApplyEffectToController(TriggeredEffect eff)
         {
             _controller.ApplyEffectToController(eff);
@@ -217,34 +235,80 @@ namespace Arcatech.Units
         #endregion
         #region movement, animations
         //sets animator values 
+
+        protected Vector3 cachedForwardDir;
+        protected Vector3 crossProdY;
+        protected Coroutine rotationChecker;
+        [SerializeField] protected float _rotationCheckerDelay;
+
         protected virtual void AnimateMovement()
         {
             Vector3 movement = _controller.GetMoveDirection;
+
             if (movement.x == 0f && movement.z == 0f)
             {
                 _animator.SetBool("Moving", false);
                 _animator.SetFloat("ForwardMove", 0f);
                 _animator.SetFloat("SideMove", 0f);
+
+                // rotate in place
+
+
+                _animator.SetFloat("Rotation", crossProdY.y);
             }
             else
             {
+                _animator.SetFloat("Rotation",0);
                 _animator.SetBool("Moving", true);
                 CalcAnimVector(movement);
             }
+
+
         }
+        protected IEnumerator UpdateRotations()
+        {
+            while (true)
+            {
+                crossProdY = Vector3.Cross(cachedForwardDir, transform.forward);
+                cachedForwardDir = transform.forward;
+
+                yield return new WaitForSeconds(_rotationCheckerDelay);
+            }
+            yield return null;
+        }
+
 
 
         [SerializeField] float _debugJumpForceMult;
+        protected bool IsAirborne = false;
         [SerializeField] private GroundDetectorPlatformCollider _groundCollider;
         private void AnimateJump()
         {
-            if (!_groundCollider.IsAirborne)
+            if (_controller.DebugMessage)
             {
-                _rigidbody.AddForce((_rigidbody.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
-                _groundCollider.IsAirborne = true;
-                _animator.SetTrigger("JumpStart");
-            }            
+                Debug.Log("Start jump");
+            }
+            _rigidbody.AddForce((_rigidbody.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
+            IsAirborne = true;
+            _animator.SetTrigger("JumpStart");
+            _animator.SetBool("JumpAirborne",true);
         }
+
+        private void HandleJumpLanding(string arg)
+        {
+
+            if (arg == "Ground" || arg == "SolidItem")
+            {
+                if (_controller.DebugMessage && IsAirborne)
+                {
+                    Debug.Log($"Land  jump on tag {arg}");
+                }
+                IsAirborne = false;
+                _animator.SetTrigger("JumpEnd");
+                _animator.SetBool("JumpAirborne", false);
+            }
+        }
+
 
 
         //  calculates the vector which is used to set values in animator
@@ -306,7 +370,7 @@ namespace Arcatech.Units
         protected virtual void AnimateStagger()
         {
             _animator.SetTrigger("TakeDamage");
-            Debug.Log($"{GetFullName} got stunned!");
+           // Debug.Log($"{GetFullName} got stunned!");
         }
 
 

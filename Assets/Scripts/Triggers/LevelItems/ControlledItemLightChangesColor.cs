@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 namespace Arcatech.Triggers.Items
 {
-    public class ControlledItemLightChangesColor : ControlledItem
+    public class ControlledItemLightChangesColor : ConditionControlledItem
     {
         [SerializeField] private Light _light;
         [SerializeField] private Color _negColor;

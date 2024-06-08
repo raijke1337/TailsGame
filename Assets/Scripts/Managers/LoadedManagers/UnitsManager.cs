@@ -93,11 +93,11 @@ namespace Arcatech.Managers
         public override void RunUpdate(float delta)
         {
             if (_isUnitsLocked) return;
-            _player.RunUpdate(delta);
 
+            _player.RunUpdate(delta);
             foreach (var g in _npcGroups)
             {
-                foreach (var n in g.GetAllUnits)
+                foreach (var n in g.GetAllUnits.ToArray())
                 {
                     n.RunUpdate(delta);
                 }
@@ -125,6 +125,7 @@ namespace Arcatech.Managers
             if (isEnable)
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+                
                 u.SkillRequestFromInputsSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
                 u.BaseControllerEffectEvent += (t) => ForwardEffectsRequest(t,u);
                 u.UnitTriggerRequestEvent += ForwardTriggerRequest;

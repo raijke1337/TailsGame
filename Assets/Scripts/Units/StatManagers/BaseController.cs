@@ -131,11 +131,11 @@ namespace Arcatech.Units
 
         #region projectile spawn
 
-        public event SimpleEventsHandler<ProjectileComponent> ProjectileWasSpawnedEvent;
+        public event SimpleEventsHandler<ProjectileComponent> BaseControllerProjectileEvent;
 
         protected void SpawnProjectileCallBack(ProjectileComponent proj)
         {
-            ProjectileWasSpawnedEvent?.Invoke(proj);
+            BaseControllerProjectileEvent?.Invoke(proj);
         }
 
         #endregion

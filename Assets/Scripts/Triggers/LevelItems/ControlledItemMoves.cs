@@ -9,7 +9,7 @@ namespace Arcatech.Triggers.Items
 {
 
 
-    public class ControlledItemMoves : ControlledItem
+    public class ControlledItemMoves : ConditionControlledItem
     {
 
         [SerializeField] protected Vector3 _desiredChangeLocalPosition;

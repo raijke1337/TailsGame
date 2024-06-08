@@ -1,6 +1,7 @@
 using Arcatech.AI;
 using Arcatech.Items;
 using Arcatech.Managers;
+using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
 using UnityEngine;
 namespace Arcatech.Units
@@ -14,7 +15,11 @@ namespace Arcatech.Units
         //used by room ctrl
         public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
         [SerializeField] protected UnitItemsSO _defaultItems;
-        [SerializeField] protected EnemyStatsConfig _enemyStatsConfig;
+        [SerializeField] private LevelRewardTrigger _dropPrefab;
+        [SerializeField] private Item _drop; 
+
+
+        [Space, SerializeField] protected EnemyStatsConfig _enemyStatsConfig;
 
         public override void InitiateUnit()
         {
@@ -23,18 +28,6 @@ namespace Arcatech.Units
             if (!CompareTag("Enemy"))
                 Debug.LogWarning($"Set enemy tag for{name}");
             _npcController.UnitsGroup = UnitsGroup;
-        }
-        // used by room controller
-        public void ForceCombat()
-        {
-            _npcController.ForceCombat();
-        }
-
-        protected override void OnDamageEvent(float value)
-        {
-            base.OnDamageEvent(value);
-            ForceCombat();
-            OnUnitAttackedEvent?.Invoke(this);
         }
 
         protected override void InitInventory()
@@ -46,6 +39,23 @@ namespace Arcatech.Units
         public override ReferenceUnitType GetUnitType()
         {
             return _enemyStatsConfig.UnitType;
+        }
+
+        protected override void HandleDamage(float value)
+        {
+            _npcController.ForceCombat();
+            OnUnitAttackedEvent?.Invoke(this);
+        }
+
+        protected override void HandleDeath()
+        {
+            if (_drop != null)
+            {
+                var drop = Instantiate(_dropPrefab, transform.position, transform.rotation);
+                drop.Content = _drop;
+                GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
+            }
+
         }
     }
 

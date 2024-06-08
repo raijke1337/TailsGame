@@ -1,18 +1,16 @@
 using Arcatech.Items;
+using Arcatech.Managers;
 using Arcatech.Triggers.Items;
 namespace Arcatech.Triggers
 {
 
-    public class CheckItemTrigger : ControlItemTrigger
+    public class CheckItemTrigger : CheckConditionTrigger
     {
         public Item RequiredItem;
 
-        protected override void OnEnter()
+        protected override bool CheckTheCondition()
         {
-        }
-
-        protected override void OnExit()
-        {
+            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.HasItem(RequiredItem);
         }
     }
 }

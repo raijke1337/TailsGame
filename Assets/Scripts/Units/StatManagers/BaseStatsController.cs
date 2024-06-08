@@ -12,7 +12,7 @@ namespace Arcatech.Units
     public class BaseStatsController : BaseController, IStatsComponentForHandler, ITakesTriggers
     {
         public SerializedDictionary<BaseStatType, StatValueContainer> GetBaseStats { get; private set; }
-       public event SimpleEventsHandler UnitDiedEvent;
+       public event SimpleEventsHandler ZeroHealthEvent;
        public event SimpleEventsHandler<float> UnitTookDamageEvent; //value
         public string GetDisplayName { get; }
         public override string GetUIText { get => GetDisplayName; }
@@ -57,15 +57,15 @@ namespace Arcatech.Units
         protected void OnHealthValueChange(float current, float prev)
         {
             if (!IsReady) return;
-            Debug.Log($"basestatsctrl: hp change {prev} -> {current}");
+
             if (prev>current)
             {
+                //Debug.Log($"base stats health change called");
                 UnitTookDamageEvent?.Invoke(prev - current);
             }
             if (current <= 0)
-            {
-                Debug.Log($"basestatsctrl: dead event in {GetDisplayName}");
-                UnitDiedEvent?.Invoke();
+            {                
+                ZeroHealthEvent?.Invoke();
             }
         }
 

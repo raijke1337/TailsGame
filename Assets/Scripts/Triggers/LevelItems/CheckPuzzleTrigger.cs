@@ -1,28 +1,55 @@
+using Arcatech.Managers;
 using Arcatech.Puzzles;
+using UnityEngine;
 
 namespace Arcatech.Triggers
 {
-    public class CheckPuzzleTrigger : ControlItemTrigger
+    public class CheckPuzzleTrigger : CheckConditionTrigger
     {
-        public BasePuzzleComponent PuzzlePrefab;
+        [SerializeField] protected BasePuzzleComponent PuzzlePrefab; 
+        protected BasePuzzleComponent _currentPuzzleWindow;
+        protected GameInterfaceManager _ui;
 
         public bool IsSolved { get; protected set; } = false;
-        protected override void OnEnter()
+
+
+        protected override void OnTriggerEnter(Collider other)
         {
+            if (other.CompareTag("Player"))
+            {
+                if (_ui == null)
+                {
+                    _ui = GameManager.Instance.GetGameControllers.GameInterfaceManager;
+                }
+                if (!IsSolved)
+                {
+                    _currentPuzzleWindow = Instantiate(PuzzlePrefab, _ui.transform);
+                    _currentPuzzleWindow.PuzzleResult += OnPuzzleResult;
+
+                    _ui.OnPauseRequesShowPanelAndPause(true);
+                }
+
+                base.OnTriggerEnter(other);
+            }
+        }
+        protected override void OnTriggerExit(Collider other)
+        {
+            _currentPuzzleWindow = null;
+            base.OnTriggerExit(other);
+        }
+        protected override bool CheckTheCondition()
+        {
+            return IsSolved;
         }
 
-        protected override void OnExit()
+
+
+        private void OnPuzzleResult(bool ok)
         {
-        }
-        public override void DoPositiveAction()
-        {
-            base.DoPositiveAction();
-            IsSolved = true;
-        }
-        public override void DoNegativeAction()
-        {
-            base.DoNegativeAction();
-            IsSolved = false;
+            _currentPuzzleWindow.PuzzleResult -= OnPuzzleResult;
+            _ui.OnPauseRequesShowPanelAndPause(false);
+            Destroy(_currentPuzzleWindow.gameObject);
+            IsSolved = ok;
         }
     }
 }

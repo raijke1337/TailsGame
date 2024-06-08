@@ -6,39 +6,64 @@ namespace Arcatech.Triggers
 {
     public class LevelRewardTrigger : BaseLevelEventTrigger
     {
-        public Item Content;
-        public CFXR_Effect Effect;
-        [SerializeField] private Transform _itemSpot;
+        public Item Content { get
+            {
+                return _item;
+            }
+            set
+            {
+                _item = value;
+                Start();
+            }        
+        
+        }
+
+
+
+        [SerializeField] protected Item _item;
+        [SerializeField] protected Transform _itemSpot;
+        [SerializeField] protected BaseEquippableItemComponent _genericItemDisplayPrefab;
         private BaseEquippableItemComponent _model;
 
-        protected override void OnEnter()
-        {
-            Destroy(_model.gameObject);
-            if (Effect != null)
-            {
-                Instantiate(Effect, transform);
-            }
-        }
-
-        protected override void OnExit()
+    protected override void OnTriggerExit(Collider other)
         {
             ItemIsGone();
+            base.OnTriggerExit(other);
         }
+        protected override void OnTriggerEnter(Collider other)
+        {
+            if (_item == null) return; // prevents early activation for drops
+            if (_model != null) { Destroy(_model.gameObject); }
 
+            base.OnTriggerEnter(other);
+        }
         protected virtual void ItemIsGone()
         {
-            this.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         protected override void Start()
         {
             base.Start();
-            if (Content is Equip e && _itemSpot != null)
+            Transform place;
+            if (_itemSpot != null)
             {
-                _model = Instantiate(e.Item,transform);
-                _model.transform.SetPositionAndRotation(transform.position, transform.rotation);
-
+                place = _itemSpot;
             }
+            else
+            {
+                place = transform;
+            }
+
+            if (Content is Equip e)
+            {
+                _model = Instantiate(e.Item, place);
+            }
+            else
+            {
+                _model = Instantiate(_genericItemDisplayPrefab, place);
+            }
+            _model.transform.SetPositionAndRotation(place.position, place.rotation);
         }
     }
 }

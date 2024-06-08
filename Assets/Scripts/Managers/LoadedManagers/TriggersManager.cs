@@ -57,7 +57,7 @@ namespace Arcatech.Managers
 
         private void HandleStaticTrigger(BaseUnit target, bool isEnter, BaseLevelEventTrigger lv)
         {
-            if (lv is LevelEffectTrigger eff && target is PlayerUnit) // case : trap or health up
+            if (lv is StaticEffectTrigger eff && target is PlayerUnit) // case : trap or health up
             {
                 foreach (var config in eff.Triggers)
                 {
@@ -264,7 +264,7 @@ namespace Arcatech.Managers
         private void ProjectileHit(Collider col, ProjectileComponent proj)
         {
           //  Debug.Log($"Projectile {proj} hit {col}");
-            if (col.gameObject.CompareTag("StaticItem"))
+            if (col.gameObject.CompareTag("SolidItem"))
             {
                 
                 proj.StopProjectile(col.transform);

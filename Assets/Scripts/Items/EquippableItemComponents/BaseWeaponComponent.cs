@@ -15,6 +15,7 @@ namespace Arcatech.Items
 
         protected List<WeaponTriggerComponent> _triggers;
         public event SimpleTriggerEvent PrefabCollisionEvent;
+
         protected void TriggerActivationCallback(BaseUnit target,bool isEnter)
         {
             PrefabCollisionEvent?.Invoke(target, isEnter);

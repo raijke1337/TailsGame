@@ -20,7 +20,7 @@ namespace Arcatech.Managers
         {
             if (triggers != null) triggers.Clear();
             triggers = new List<BaseLevelEventTrigger>();
-
+            
             _ui = GameManager.Instance.GetGameControllers.GameInterfaceManager;
             _trigs = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
 
@@ -55,24 +55,41 @@ namespace Arcatech.Managers
         }
         #endregion
 
+        public void RegisterNewTrigger (BaseLevelEventTrigger tr, bool registering)
+        {
+            ManageTrigger(tr, registering);
+        }
+
         private void ManageTrigger(BaseLevelEventTrigger tr,bool registering)
         {
             if (registering)
             {
                 triggers.Add(tr);
                 tr.TriggerHitUnitEvent += (u,e) => OnEventActivated(tr,u,e);
+                if (tr is CheckConditionTrigger check)
+                {
+                    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
+                }
             }
             else
             {
                 triggers.Remove(tr);
                 tr.TriggerHitUnitEvent -= (u, e) => OnEventActivated(tr, u, e);
+                if (tr is CheckConditionTrigger check)
+                {
+                    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
+                }
             }
         }
 
+        private void Check_UpdatedConditionStateEvent(CheckConditionTrigger condition, bool currentStatee)
+        {
+            Debug.Log("NYI");
+        }
 
         private void OnEventActivated(BaseLevelEventTrigger tr, BaseUnit u, bool isEnter)
         {
-            if (tr is LevelEffectTrigger ef)
+            if (tr is StaticEffectTrigger ef)
             {
                 foreach (var e in ef.Triggers)
                 {
@@ -81,72 +98,40 @@ namespace Arcatech.Managers
             }
             if (tr is LevelRewardTrigger rew)
             {
+                if (ShowDebug)
+                {
+                    Debug.Log($"Picked up {rew.Content}");
+                }
                 u.GetUnitInventory.PickedUpItem(rew.Content,true);
                 ManageTrigger(rew, false);
 
             }
             if (tr is LevelTextTrigger txt)
             {
+                if (ShowDebug)
+                {
+                    Debug.Log($"Level text trigger {txt}");
+                }
                 _ui.UpdateGameText(txt.Text, isEnter);
             }
             if (tr is LevelCompleteTrigger comp)
             {
+                if (ShowDebug)
+                {
+                    Debug.Log($"");
+                }
                 GameManager.Instance.OnLevelCompleteTrigger(comp.UnlocksLevel);
             }
-            if (tr is CheckItemTrigger item)
+
+            if (tr is CheckConditionTrigger check)
             {
-                if (u.GetUnitInventory.HasItem(item.RequiredItem))
+                bool satisfied = check.GetCondition;
+                check.UpdateControlledItems(satisfied);
+                if (ShowDebug)
                 {
-                    item.DoPositiveAction();
+                    Debug.Log($"");
                 }
             }
-            if (tr is CheckPuzzleTrigger puzzle)
-            {
-
-                HandlePuzzles(puzzle, isEnter);
-            }
         }
-
-
-        #region puzzles
-        private CheckPuzzleTrigger _currentPuzzleTrigger;
-        private BasePuzzleComponent _currentPuzzleWindow;
-
-        private void HandlePuzzles(CheckPuzzleTrigger tr,bool enter)
-        {
-            if (tr.IsSolved) return;
-            if (enter)
-            {
-                _currentPuzzleTrigger = tr;
-                _currentPuzzleWindow = Instantiate(tr.PuzzlePrefab, _ui.transform);
-                _currentPuzzleWindow.PuzzleResult += OnPuzzleResult;
-
-
-
-                _ui.OnPauseRequesShowPanelAndPause(true);
-            }
-            else
-            {
-                _currentPuzzleTrigger = null;
-                _currentPuzzleWindow = null;
-            }
-        }
-        private void OnPuzzleResult(bool ok)
-        {
-            _currentPuzzleWindow.PuzzleResult -= OnPuzzleResult;
-            _ui.OnPauseRequesShowPanelAndPause(false);
-            Destroy(_currentPuzzleWindow.gameObject);
-            if (ok)
-            {
-                _currentPuzzleTrigger.DoPositiveAction();
-            }
-            else
-            {
-                _currentPuzzleTrigger.DoNegativeAction();
-            }
-        }
-
-        #endregion
-
     }
 }

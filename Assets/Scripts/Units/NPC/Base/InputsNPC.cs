@@ -10,7 +10,7 @@ namespace Arcatech.Units.Inputs
 
 {
     [RequireComponent(typeof(NavMeshAgent), typeof(Collider), typeof(Rigidbody))]
-    public abstract class InputsNPC : ControlInputsBase
+    public class InputsNPC : ControlInputsBase
     {
 
 

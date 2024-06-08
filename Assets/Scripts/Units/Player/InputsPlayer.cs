@@ -70,7 +70,7 @@ namespace Arcatech.Units.Inputs
             lastY = Unit.transform.position.y;
         }
 
-
+        
 
         private void Pause_performed(CallbackContext obj)
         {
@@ -218,7 +218,6 @@ namespace Arcatech.Units.Inputs
 
 
         #endregion
-
 
         private void OnSelectedUpdate(bool isSelect, BaseTargetableItem item)
         {

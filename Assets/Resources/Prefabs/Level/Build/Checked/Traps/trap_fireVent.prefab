@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4817285118360882693}
   m_Layer: 0
   m_Name: trap_fireVent
-  m_TagString: Untagged
+  m_TagString: SolidItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 8
@@ -231,7 +231,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6532363894264428037, guid: c60357c46a159754eba03905357f7e16,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 693691207980753019}
   m_SourcePrefab: {fileID: 100100000, guid: c60357c46a159754eba03905357f7e16, type: 3}
 --- !u!4 &1534843148640547764 stripped
 Transform:
@@ -239,6 +243,35 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3807779676744902976}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7957980573323173701 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6532363894264428037, guid: c60357c46a159754eba03905357f7e16,
+    type: 3}
+  m_PrefabInstance: {fileID: 3807779676744902976}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &693691207980753019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7957980573323173701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1001 &8230237317300027509
 PrefabInstance:
   m_ObjectHideFlags: 0

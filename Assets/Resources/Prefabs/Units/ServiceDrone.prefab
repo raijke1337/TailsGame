@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff61813eaea6f5f4cbf0e395dfc09acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
+  DebugMessage: 1
   Empties:
     ItemPositions:
       _serializedList:
@@ -303,4 +303,7 @@ MonoBehaviour:
   _debugJumpForceMult: 0
   _groundCollider: {fileID: 0}
   _defaultItems: {fileID: 11400000, guid: ca45ad7f630f0234394c2a718366c576, type: 2}
+  _dropPrefab: {fileID: 5591554248188464965, guid: 9c99c0c85eb6ece4c8d1a19ffcda0e5f,
+    type: 3}
+  _drop: {fileID: 0}
   _enemyStatsConfig: {fileID: 11400000, guid: 9e88941baccb1024489bb118e859a665, type: 2}

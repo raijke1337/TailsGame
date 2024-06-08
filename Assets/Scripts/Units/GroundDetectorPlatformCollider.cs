@@ -7,36 +7,20 @@ namespace Arcatech.Units
     public class GroundDetectorPlatformCollider : MonoBehaviour
     {
         private BoxCollider _col;
-        private bool _ai = false;
-        public bool IsAirborne
-        {
-            get => _ai;
-            set
-            {
-                _ai = value;
-                //Debug.Log($"airborne: {value}");
-            }
-        }
-                
-                
+
+        public event SimpleEventsHandler<string> PlatfromCollidedWithTagEvent;
 
         private void Start()
         {
             _col = GetComponent<BoxCollider>();
+            //_col.isTrigger = false;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            //Debug.Log($"Trigger enter {other}");
-            if (!other.gameObject.CompareTag("Player"))
-            {
-                IsAirborne = false;
-            }
+            PlatfromCollidedWithTagEvent?.Invoke(other.tag);
         }
-        private void OnTriggerExit(Collider other)
-        {
 
-        }
 
 
     }

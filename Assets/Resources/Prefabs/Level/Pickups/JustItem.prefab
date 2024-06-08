@@ -155,9 +155,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   forceTrigger: 1
-  Content: {fileID: 0}
-  Effect: {fileID: 0}
+  DestroyOnExit: 0
+  DestroyOnEnter: 0
+  _item: {fileID: 0}
   _itemSpot: {fileID: 5953555520010190908}
+  _genericItemDisplayPrefab: {fileID: 6351493022434142726, guid: 5f3231edf4025674a839d26d1553a27e,
+    type: 3}
 --- !u!1001 &8978502387359834976
 PrefabInstance:
   m_ObjectHideFlags: 0

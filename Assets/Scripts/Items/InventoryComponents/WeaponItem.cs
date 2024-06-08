@@ -58,12 +58,7 @@ namespace Arcatech.Items
             }
         }
 
-
-
-
         public event TriggerEvent PrefabTriggerHitSomething;
-
-
 
         protected void OnWeapTriggerEvent(BaseUnit target, bool isEnter)
         {            

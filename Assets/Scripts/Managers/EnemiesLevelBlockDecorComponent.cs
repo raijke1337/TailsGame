@@ -33,6 +33,7 @@ namespace Arcatech.Managers
 
             _unitsInRoom.AddRange(GetComponentsInChildren<NPCUnit>());
             _unitsInRoom.AddRange(PlaceUnits());
+            
 
         }
 

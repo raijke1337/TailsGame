@@ -212,12 +212,10 @@ namespace Arcatech
         public string ID;
         [SerializeField] public List<Equip> Equipment;
         [SerializeField, Space] public List<Item> Inventory;
-        [SerializeField, Space] public List<Item> Drops;
         public UnitInventoryItemConfigsContainer(UnitItemsSO cfg)
         {
             Equipment = new List<Equip>(cfg.Equipment);
             Inventory = new List<Item>();
-            Drops = new List<Item>();
 
             foreach (Item i in cfg.Inventory)
             {
@@ -230,18 +228,6 @@ namespace Arcatech
                     Inventory.Add(i);
                 }
             }
-
-            foreach (Item i in cfg.Drops)
-            {
-                if (i is Equip e)
-                {
-                    Drops.Add(e);
-                }
-                else
-                {
-                    Drops.Add(i);
-                }
-            }
             ID = cfg.ID;
         }
         // used for player inventory load
@@ -249,7 +235,6 @@ namespace Arcatech
         {
             Equipment = new List<Equip>();
             Inventory = new List<Item>();
-            Drops = new List<Item>();
 
             foreach (string id in inv.Inventory)
             {
@@ -277,7 +262,6 @@ namespace Arcatech
         {
             Equipment = new List<Equip>();
             Inventory = new List<Item>();
-            Drops = new List<Item>();
 
             foreach (var item in cfg.GetCurrentInventory)
             {
