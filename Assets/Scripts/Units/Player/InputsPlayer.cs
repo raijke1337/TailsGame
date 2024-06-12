@@ -18,16 +18,10 @@ namespace Arcatech.Units.Inputs
 
 
         private GameInterfaceManager _gameInterfaceManager;
-        public ComboController GetComboController => _comboCtrl;
+        public StaminaController GetComboController => _comboCtrl;
         public CostumesControllerComponent GetCostumesController => _costume;
 
-        public event SimpleEventsHandler<EquipItemType> ChangeLayerEvent;
-
-
-        // used to adjust the raycast plane for vertical movement
-        private float lastY;
-
-
+        public event SimpleEventsHandler<RuntimeAnimatorController> ChangeLayerEvent;
 
         #region managedctrl
 
@@ -61,34 +55,21 @@ namespace Arcatech.Units.Inputs
             _controls.Game.Pause.performed += Pause_performed;
             _controls.Game.Jump.performed += Jump_performed;
 
-            _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
-            _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayer;
+            _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayerWeapon;
+            _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayerSkill;
             _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
             transform.LookAt(transform.forward);
 
             _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
-            lastY = Unit.transform.position.y;
-        }
-
-        
-
-        private void Pause_performed(CallbackContext obj)
-        {
-            if (_gameInterfaceManager == null) return; // weirdstuff happening here as it's called from NULL TODO
-
-            _gameInterfaceManager.OnPauseRequesShowPanelAndPause(true);
-
         }
 
         public override void UpdateController(float delta)
         {
+            if (_aim == null) return;
+
             base.UpdateController(delta);
-            if ( _aim == null) return;
             _aim.UpdateController(delta);
             _costume.UpdateController(delta);
-
-            CalculateMovement();
-            RotateToAim();
         }
 
         public override void StopController()
@@ -111,8 +92,8 @@ namespace Arcatech.Units.Inputs
             _controls.Game.Pause.performed -= Pause_performed;
             _controls.Game.Jump.performed -= Jump_performed;
 
-            _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
-            _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayer;
+            _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayerWeapon;
+            _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayerSkill;
             _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
 
         }
@@ -120,12 +101,25 @@ namespace Arcatech.Units.Inputs
         #endregion
 
 
-        private void SwitchAnimatorLayer(EquipItemType type)
+
+        private void SwitchAnimatorLayerSkill(EquipItemType type)
         {
             if (LockInputs) return;
-            ChangeLayerEvent?.Invoke(type);
+            ChangeLayerEvent?.Invoke(Unit.GetUnitInventory.GetEquipByType(type).AnimatorController);
         }
 
+        private void SwitchAnimatorLayerWeapon(RuntimeAnimatorController ctrl)
+        {
+            if (LockInputs) return;
+            ChangeLayerEvent?.Invoke(ctrl);
+        }
+
+        private void Pause_performed(CallbackContext obj)
+        {
+            if (_gameInterfaceManager == null) return; // weirdstuff happening here as it's called from NULL TODO
+
+            _gameInterfaceManager.OnPauseRequesShowPanelAndPause(true);
+        }
 
         #region combat actions
 
@@ -139,7 +133,7 @@ namespace Arcatech.Units.Inputs
         }
         private void Dash_performed(CallbackContext obj)
         {
-            if (MoveDirectionFromInputs == Vector3.zero) return;
+            if (_inputsMovement == Vector3.zero) return;
             DoCombatAction(CombatActionType.Dodge);
         }
         protected void SkillR_performed(CallbackContext obj)
@@ -161,42 +155,30 @@ namespace Arcatech.Units.Inputs
 
         #endregion
 
-        #region movement
-        private void CalculateMovement()
+        #region movement vars
+        protected override void SetAimDirection()
         {
-
-            if (LockInputs) return;
-            Vector2 input;
-            if (InputDirectionOverride != Vector3.zero)
-            {
-                input = InputDirectionOverride;
-            }
-            else
-            {
-                if (_controls == null) return; //shouldn happen
-                input = _controls.Game.WASD.ReadValue<Vector2>();
-            }
-            Vector3 AD = _adj.Isoright * input.x;
-            Vector3 WS = _adj.Isoforward * input.y;
-            MoveDirectionFromInputs = AD + WS;
-
-            float currY = Unit.transform.position.y;
-            if (lastY != currY)
-            {
-                float delta = lastY - currY;
-                lastY = Unit.transform.position.y;
-                _aim.OnVerticalAdjust(delta);
-            }
-
+            _inputsAiming = _aim.GetLookTarget;
         }
-        private void RotateToAim()
+        protected override void SetMoveDirection()
         {
-            if (_aim == null || InputDirectionOverride != Vector3.zero) return;
-            LerpRotateToTarget(_aim.GetLookPoint, lastDelta);
-
+            Vector2 control = _controls.Game.WASD.ReadValue<Vector2>();
+            Vector3 AD = _adj.Isoright * control.x;
+            Vector3 WS = _adj.Isoforward * control.y;
+            _inputsMovement = AD + WS;
         }
+
+        protected override void SetRotationDot()
+        {
+            _inputsDot = _aim.GetDotProduct;
+        }
+
+        protected override void SetRotationCross()
+        {
+            _inputsCross = _aim.GetRotationToTarget;
+        }
+
         #endregion
-
         #region gizmo
 
         private void OnDrawGizmos()
@@ -206,7 +188,6 @@ namespace Arcatech.Units.Inputs
 
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, transform.forward + transform.position);
-
         }
 
 
@@ -222,6 +203,7 @@ namespace Arcatech.Units.Inputs
             _costume.OnBreak();
             base.ShieldBreakEventCallback();
         }
+
 
     }
 }

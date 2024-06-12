@@ -187,7 +187,7 @@ namespace Arcatech.Managers
                 else
                 {
                     hit.Add(finaltgt);                    
-                    finaltgt.ApplyEffectToController(effect);
+                    finaltgt.ApplyEffect(effect);
                     if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                     HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
@@ -197,7 +197,7 @@ namespace Arcatech.Managers
             {
                 _hitTargetsPerEffect[effect] = new List<BaseUnit>();
                 _hitTargetsPerEffect[effect].Add(finaltgt); 
-                finaltgt.ApplyEffectToController(effect);
+                finaltgt.ApplyEffect(effect);
                 if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                 HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);

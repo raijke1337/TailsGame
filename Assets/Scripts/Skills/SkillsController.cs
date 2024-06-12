@@ -59,7 +59,7 @@ namespace Arcatech.Units
 
 
 
-        public bool TryUseSkill(CombatActionType type, ComboController comboctrl, out SkillProjectileComponent result)
+        public bool TryUseSkill(CombatActionType type, StaminaController comboctrl, out SkillProjectileComponent result)
         {
             result = null;
             if (_skills == null) return false;
@@ -69,7 +69,7 @@ namespace Arcatech.Units
                 {
                     if (comboctrl.GetComboContainer.GetCurrent >= -ef.InitialValue) // enough combo to use, - neg because it is -15 in cfg
                     {
-                        comboctrl.ApplyEffectToController(ef);
+                        comboctrl.ApplyEffect(ef);
                         result = usedSkill.UseSkill;
 
                         switch (type)

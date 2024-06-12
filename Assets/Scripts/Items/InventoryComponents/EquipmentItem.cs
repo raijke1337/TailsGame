@@ -14,9 +14,8 @@ namespace Arcatech.Items
         public EffectsCollection Effects { get; private set; }
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
-
         protected BaseEquippableItemComponent _instantiated;
-
+        public RuntimeAnimatorController AnimatorController { get; protected set; }
 
         public EquipmentItem(Item cfg, BaseUnit ow) : base(cfg, ow)
         {
@@ -25,6 +24,7 @@ namespace Arcatech.Items
                 Skill = e.Skill;
                 _prefab = e.Item;
                 Effects = new EffectsCollection(e.Effects);
+                AnimatorController = e.AnimatorController;
             }
         }
 

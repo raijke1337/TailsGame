@@ -1,6 +1,8 @@
+using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Texts;
 using Arcatech.Units.Inputs;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 namespace Arcatech.Units
@@ -16,35 +18,11 @@ namespace Arcatech.Units
         public override void InitiateUnit()
         {
             UpdateComponents();
-
-
             base.InitiateUnit();
-
             ToggleCamera(true);
 
-
-            //_animator.runtimeAnimatorController = GameplayAnimator;
-            //if (!IsArmed) 
-            //    _animator.runtimeAnimatorController=SceneAnimator;
-
         }
-        public override void RunUpdate(float delta)
-        {
-            base.RunUpdate(delta);
-            if (_controller.InputDirectionOverride != Vector3.zero) // for Scenes
-            {
-                PlayerMovement(_controller.InputDirectionOverride, delta);
-            }
-            else
-            {
-                if (_playerController == null) return;
-                PlayerMovement(_playerController.GetMoveDirection, delta); // weird ass null here sometimes
-            }
-
-
-        }
-
-        #endregion
+ 
 
         protected override void UpdateComponents()
         {
@@ -70,38 +48,63 @@ namespace Arcatech.Units
             }
         }
 
+        #endregion
+        #region inventory
 
-
-        #region animator and movement
-
-        private void PlayerMovement(Vector3 desiredDir, float delta)
+        protected override void InitInventory()
         {
-            if (_controller.LockInputs) return;
-            transform.position += delta * desiredDir
-                * GetStats[BaseStatType.MoveSpeed].GetCurrent;
+            var savedEquips = DataManager.Instance.GetCurrentPlayerItems;
+
+            GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
+            CreateStartingEquipments(GetUnitInventory);
         }
-
-        protected override Vector3 CalculateCrossProd()
+        #endregion
+        #region jump
+        protected override void StartJump()
         {
-            return Vector3.Cross(cachedForwardDir, _playerController.Aiming.GetLookPoint.normalized);
-        }
-
-        private void ChangeAnimatorLayer(EquipItemType type)
-        {
-            // 1  2 is ranged 3  is melee
-            switch (type)
+            if (_controller.DebugMessage)
             {
-                case EquipItemType.MeleeWeap:
-                    _animator.SetLayerWeight(0, 0f);
-                    _animator.SetLayerWeight(1, 0f);
-                    _animator.SetLayerWeight(2, 100f);
-                    break;
-                case EquipItemType.RangedWeap:
-                    _animator.SetLayerWeight(0, 100f);
-                    _animator.SetLayerWeight(1, 100f);
-                    _animator.SetLayerWeight(2, 0f);
-                    break;
+                Debug.Log("Start jump");
             }
+            _rigidbody.AddForce((_playerController.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
+            airTimer = StartCoroutine(AirTimeTimer());
+            _animator.SetTrigger("JumpStart");
+        }
+        private Coroutine airTimer;
+
+        private IEnumerator AirTimeTimer()
+        {
+            float time = 0;
+            while (true)
+            {
+                time += Time.deltaTime;
+                _animator.SetFloat("AirTime", time);
+                yield return null;
+            }
+        }
+
+        protected override void LandJump(string tag)
+        {
+            if ((tag == "Ground" || tag == "SolidItem") && airTimer != null)
+            {
+                if (_controller.DebugMessage)// && IsAirborne)
+                {
+                    Debug.Log($"Land  jump on tag {tag}");
+                }
+                StopCoroutine(airTimer);
+                airTimer = null;
+                _animator.SetFloat("AirTime", 0);
+                _animator.SetTrigger("JumpEnd");
+            }
+        }
+
+        #endregion
+
+        #region animator
+
+        private void ChangeAnimatorLayer(RuntimeAnimatorController animator)
+        {
+            _animator.runtimeAnimatorController = animator;
         }
 
         public void ComboWindowStart()
@@ -116,22 +119,11 @@ namespace Arcatech.Units
         }
 
 
-
-        #endregion
-
-        #region inventory
-
-        protected override void InitInventory()
+        protected override void ZeroAnimatorFloats()
         {
-            var savedEquips = DataManager.Instance.GetCurrentPlayerItems;
-
-            GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
-            CreateStartingEquipments(GetUnitInventory);
-        }
-        #endregion
-
-
- 
+            base.ZeroAnimatorFloats();
+            _animator.SetFloat("AirTime", 0);
+        } 
         private void HandleShieldBreakEvent()
         {if (_controller.DebugMessage)
             Debug.Log($"Inputs report shield break event");
@@ -144,14 +136,17 @@ namespace Arcatech.Units
 
         protected override void HandleDamage(float value)
         {
+            _animator.SetTrigger("TakeDamage");
+
             if (_controller.DebugMessage)
                 Debug.Log($"Player unit handle dmg event");
         }
 
         protected override void HandleDeath()
         {
+            _animator.SetTrigger("KnockDown");
             if (_controller.DebugMessage)
-                Debug.Log($"Player unit handle deatrh event");
+                Debug.Log($"Player unit handle death event");
         }
 
         public override ReferenceUnitType GetUnitType()
@@ -159,6 +154,14 @@ namespace Arcatech.Units
             return ReferenceUnitType.Player;
         }
 
-
+        protected override void OnItemAdd(Item i)
+        {
+            _animator.SetTrigger("ItemPickup");
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"Player picked up item {i}");
+            }
+        }
     }
+    #endregion
 }

@@ -9,8 +9,8 @@ namespace Arcatech.Scenes.Cameras
     [RequireComponent(typeof(Camera))]
     public class IsoCameraController : LoadedManagerBase
     {
-        private AimingComponent _playerTarget;
-        private Vector3 _desiredPos;
+        private AimingComponent _playerAimingComponent;
+        private Vector3 _cameraTargetPoint;
 
 
         [Header("Camera settings")]
@@ -40,30 +40,39 @@ namespace Arcatech.Scenes.Cameras
         public override void Initiate()
         {
             _camera = GetComponent<Camera>();
-            if (_playerTarget == null) _playerTarget = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInputs<InputsPlayer>().Aiming;
+            if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInputs<InputsPlayer>().Aiming;
 
             _hitsThisFrame = new RaycastHit[50];
             _cors = new Dictionary<FadingDecorComponent, Coroutine>();
-            transform.position = _playerTarget.transform.position + _desiredOffsetFromPlayer;
+            transform.position = _playerAimingComponent.transform.position + _desiredOffsetFromPlayer;
 
              //Debug.Log($"Camera initiate, target is {_playerTarget.gameObject}");
         }
 
         public override void RunUpdate(float delta)
         {
-            if (Vector3.Magnitude(_playerTarget.GetLookPoint-_playerTarget.transform.position)<= _lookDist)
+            if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
             {
-                _desiredPos = _playerTarget.GetLookPoint;
+                _cameraTargetGizmoColor = Color.green;
+                if (ShowDebug)                
+                {
+                    Debug.Log($"Switching camera target to far look");
+                }
+
+                _cameraTargetPoint = _playerAimingComponent.GetLookTarget;
             }
             else
             {
-                _desiredPos = (_playerTarget.transform.forward * _lookDist) + _playerTarget.transform.position;
+                _cameraTargetGizmoColor = Color.yellow;
+                if (ShowDebug)
+                {
+                    Debug.Log($"Switching camera target to close look");
+                }
+                _cameraTargetPoint = _playerAimingComponent.transform.position + _playerAimingComponent.GetNormalizedDirectionToTaget * _lookDist;
+
             }
 
-            //_desiredPos = (_playerTarget.transform.forward*_multFarLook) + _playerTarget.transform.position;
-
-            transform.position = Vector3.Slerp(transform.position, _desiredPos + _desiredOffsetFromPlayer, Time.deltaTime* _catchUpSpeed);
-
+            transform.position = Vector3.Slerp(transform.position, _cameraTargetPoint + _desiredOffsetFromPlayer, Time.deltaTime* _catchUpSpeed);
             SphereCastForHiding();
 
         }
@@ -78,8 +87,8 @@ namespace Arcatech.Scenes.Cameras
 
         private void SphereCastForHiding()
         {
-            Ray ray = new Ray(_camera.transform.position, _playerTarget.transform.position + _targetAimOffset);
-            float distance = (Vector3.Distance(_camera.transform.position, _playerTarget.transform.position + _targetAimOffset));
+            Ray ray = new Ray(_camera.transform.position, _playerAimingComponent.transform.position + _targetAimOffset);
+            float distance = (Vector3.Distance(_camera.transform.position, _playerAimingComponent.transform.position + _targetAimOffset));
             int hits = Physics.SphereCastNonAlloc(ray, _viewRadius, _hitsThisFrame, distance);
 
             //add relevant
@@ -276,11 +285,17 @@ namespace Arcatech.Scenes.Cameras
         #endregion
 
 
+        private Color _cameraTargetGizmoColor;
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.red;
+
             if (_camera == null) return;
-            Gizmos.DrawWireSphere(_playerTarget.transform.position, _viewRadius);
+            Gizmos.color = _cameraTargetGizmoColor;
+            Gizmos.DrawWireSphere(_cameraTargetPoint, 0.15f);
+            Gizmos.DrawWireSphere(_playerAimingComponent.GetLookTarget, 0.1f);
+            Gizmos.DrawLine(_playerAimingComponent.transform.position, 
+                _playerAimingComponent.transform.position + _playerAimingComponent.GetNormalizedDirectionToTaget);
+
         }
     }
 

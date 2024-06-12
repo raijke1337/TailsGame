@@ -29,7 +29,7 @@ namespace Arcatech.Units
                 if (_inputsLocked)
                 {
                     if(DebugMessage) Debug.Log($"Lock inputs in {Unit.GetFullName}");
-                    MoveDirectionFromInputs = Vector3.zero;
+                    _inputsMovement = Vector3.zero;
                 }
                 else
                 {
@@ -48,17 +48,18 @@ namespace Arcatech.Units
         [SerializeField] protected ItemEmpties Empties;
         public ItemEmpties GetEmpties => Empties;
 
-        protected BaseStatsController _statsCtrl;
+        protected UnitStatsController _statsCtrl;
         protected WeaponController _weaponCtrl;
         protected DodgeController _dodgeCtrl; // checks timer, the actual dodge is a skill
-        protected ShieldController _shieldCtrl;
+        protected EnergyController _shieldCtrl;
         protected SkillsController _skillCtrl;
-        protected ComboController _comboCtrl;
-        protected StunsController _stunsCtrl;
+        protected StaminaController _comboCtrl;
+        //protected StunsController _stunsCtrl;
+        // depreciated in favor of new mechanics
 
         public DodgeController GetDodgeController => _dodgeCtrl;
-        public ShieldController GetShieldController => _shieldCtrl;
-        public BaseStatsController GetStatsController => _statsCtrl;
+        public EnergyController GetShieldController => _shieldCtrl;
+        public UnitStatsController GetStatsController => _statsCtrl;
         public SkillsController GetSkillsController => _skillCtrl;
         public WeaponController GetWeaponController => _weaponCtrl;
 
@@ -105,9 +106,9 @@ namespace Arcatech.Units
             {
                 case TriggerChangedValue.Health:
                     return _statsCtrl.GetBaseStats[BaseStatType.Health];
-                case TriggerChangedValue.Shield:
+                case TriggerChangedValue.Energy:
                     return _shieldCtrl.GetShieldStats[ShieldStatType.Shield];
-                case TriggerChangedValue.Combo:
+                case TriggerChangedValue.Stamina:
                     return _comboCtrl.GetComboContainer;
                 default:
                     return null;
@@ -198,11 +199,6 @@ namespace Arcatech.Units
         #endregion
 
 
-        #region scenes
-
-        public Vector3 InputDirectionOverride = Vector3.zero;
-        #endregion
-
         #region ManagedController
         public override void UpdateController(float delta)
         {
@@ -213,6 +209,10 @@ namespace Arcatech.Units
                 if (ctrl.IsReady)
                     ctrl.UpdateInDelta(delta);
             }
+            SetMoveDirection();
+            SetAimDirection();
+            SetRotationCross();
+            SetRotationDot();
         }
         public override void StartController()
         {
@@ -226,10 +226,6 @@ namespace Arcatech.Units
                     break;
                 case LevelType.Scene:
                     Initialize(false);
-                    if (this is InputsPlayer p)
-                    {
-                        MoveDirectionFromInputs = InputDirectionOverride; // placeholder moved into condition because it stopped npcs from working in scenes
-                    }
                         break;
                 case LevelType.Game:
                     Initialize(true);
@@ -252,8 +248,8 @@ namespace Arcatech.Units
         private void Initialize(bool full)
         {
 
-            _statsCtrl = new BaseStatsController(Unit);
-            _shieldCtrl = new ShieldController(Empties, Unit);
+            _statsCtrl = new UnitStatsController(Unit);
+            _shieldCtrl = new EnergyController(Empties, Unit);
             _dodgeCtrl = new DodgeController(Empties, Unit);
             _weaponCtrl = new WeaponController(Empties, Unit);
 
@@ -264,13 +260,13 @@ namespace Arcatech.Units
 
             if (full)
             {
-                _comboCtrl = new ComboController(Unit);
-                _stunsCtrl = new StunsController(Unit);
+                _comboCtrl = new StaminaController(Unit);
+                //_stunsCtrl = new StunsController(Unit);
                 _skillCtrl = new SkillsController(Empties, Unit);
 
                 _controllers.Add(_skillCtrl);
                 _controllers.Add(_comboCtrl);
-                _controllers.Add(_stunsCtrl);
+                //_controllers.Add(_stunsCtrl);
 
                 LockInputs = false;
 
@@ -287,19 +283,19 @@ namespace Arcatech.Units
         {
             if (isStart)
             {
-                if (ctrl is ShieldController s)
+                if (ctrl is EnergyController s)
                 {
                     s.ShieldBrokenEvent += ShieldBreakEventCallback;
                 }
-                if (ctrl is BaseStatsController st)
+                if (ctrl is UnitStatsController st)
                 {
                     st.UnitTookDamageEvent += OnDamageTaken;
                     st.ZeroHealthEvent += OnZeroHealth;
                 }
-                if (ctrl is StunsController stun)
-                {
-                    _stunsCtrl.StunHappenedEvent += StunEventCallback;
-                }
+                //if (ctrl is StunsController stun)
+                //{
+                //    _stunsCtrl.StunHappenedEvent += StunEventCallback;
+                //}
 
                 ctrl.BaseControllerEffectEvent += EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
@@ -312,19 +308,19 @@ namespace Arcatech.Units
                 ctrl.BaseControllerTriggerEvent -= TriggerEventCallBack;
                 ctrl.BaseControllerProjectileEvent -= ProjectileEventCallBack;
 
-                if (ctrl is ShieldController s)
+                if (ctrl is EnergyController s)
                 {
                     s.ShieldBrokenEvent -= ShieldBreakEventCallback;
                 }
-                if (ctrl is BaseStatsController st)
+                if (ctrl is UnitStatsController st)
                 {
                     st.UnitTookDamageEvent -= OnDamageTaken;
                     st.ZeroHealthEvent -= OnZeroHealth;
                 }
-                if (ctrl is StunsController stun)
-                {
-                    _stunsCtrl.StunHappenedEvent -= StunEventCallback;
-                }
+                //if (ctrl is StunsController stun)
+                //{
+                //    _stunsCtrl.StunHappenedEvent -= StunEventCallback;
+                //}
             }
         }
 
@@ -334,59 +330,56 @@ namespace Arcatech.Units
         #region triggers
 
 
-        public void ApplyEffectToController(TriggeredEffect eff)
+        public void ApplyEffect(TriggeredEffect eff)
         {
             switch (eff.StatType)
             {
                 case TriggerChangedValue.Health:
                     if (!_shieldCtrl.IsReady)
                     {
-                        _statsCtrl.ApplyEffectToController(eff);
+                        _statsCtrl.ApplyEffect(eff);
                     }
                     else
                     {
-                        _statsCtrl.ApplyEffectToController(_shieldCtrl.ProcessHealthChange(eff));
+                        _statsCtrl.ApplyEffect(_shieldCtrl.ProcessHealthChange(eff));
                     }
                     break;
-                case TriggerChangedValue.Shield:
-                    _shieldCtrl.ApplyEffectToController(eff);
+                case TriggerChangedValue.Energy:
+                    _shieldCtrl.ApplyEffect(eff);
                     break;
-                case TriggerChangedValue.Combo:
-                    _comboCtrl.ApplyEffectToController(eff);
+                case TriggerChangedValue.Stamina:
+                    _comboCtrl.ApplyEffect(eff);
                     break;
                 case TriggerChangedValue.MoveSpeed:
-                    _statsCtrl.ApplyEffectToController(eff);
+                    _statsCtrl.ApplyEffect(eff);
                     break;
-                case TriggerChangedValue.TurnSpeed:
-                    _statsCtrl.ApplyEffectToController(eff);
-                    break;
-                case TriggerChangedValue.Stagger:
-                    _stunsCtrl.ApplyEffectToController(eff);
-                    break;
+                //case TriggerChangedValue.Stagger:
+                //    _stunsCtrl.ApplyEffect(eff);
+                //    break;
             }
         }
 
         #endregion
 
-
         #region movement
 
+        public ref Vector3 GetMoveDirection => ref _inputsMovement;
+        public ref Vector3 GetAimDirection => ref _inputsAiming;
+        public ref float GetRotationDot => ref _inputsDot;
+        public ref float GetRotationDirection => ref _inputsCross;
 
 
-        public ref Vector3 GetMoveDirection => ref MoveDirectionFromInputs;
-        protected Vector3 MoveDirectionFromInputs;
-        [SerializeField] protected float _minimumAngleChangeToRotate;
-        protected virtual void LerpRotateToTarget(Vector3 looktarget, float delta)
-        {
+        protected Vector3 _inputsMovement;
+        protected Vector3 _inputsAiming;
+        protected float _inputsDot;
+        protected float _inputsCross;
 
-            if (MoveDirectionFromInputs != Vector3.zero || Mathf.Abs(Unit.RotationValue) > _minimumAngleChangeToRotate)
-            {
-                Vector3 relativePosition = looktarget - transform.position;
-                Quaternion rotation = Quaternion.LookRotation(relativePosition, Vector3.up);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotation,
-                    delta * _statsCtrl.GetBaseStats[BaseStatType.TurnSpeed].GetCurrent);
-            }
-        }
+        protected abstract void SetMoveDirection();
+        protected abstract void SetAimDirection();
+        protected abstract void SetRotationDot();
+        protected abstract void SetRotationCross();
+
+
         public event SimpleEventsHandler JumpCalledEvent;
         protected virtual void DoJumpAction()
         {
@@ -415,7 +408,6 @@ namespace Arcatech.Units
 
             if (LockInputs && !IsInMeleeCombo)
             {
-                canAct = false;
                 return;
             }
             switch (type)
@@ -469,47 +461,52 @@ namespace Arcatech.Units
         #endregion
 
 
-        #region dodging
+        //#region dodging
 
-        public void StartDodgeMovement(BoosterSkillInstanceComponent bs)
-        {
-            if (DebugMessage) Debug.Log($"Start dodge for unit: {Unit}");
-            _dodgeCor = StartCoroutine(DodgingMovement(bs));
-        }
+        /// <summary>
+        /// Moved to UNIT for rigidbody implementation
+        /// </summary>
 
-        private Coroutine _dodgeCor;
-        private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
-        {
-            var stats = bs.GetDodgeSettings;
-            Vector3 start = transform.position;
-            Vector3 end = start + GetMoveDirection * stats.Range;
+        //public void StartDodgeMovement(BoosterSkillInstanceComponent bs)
+        //{
+        //    if (DebugMessage) Debug.Log($"Start dodge for unit: {Unit}");
+        //    _dodgeCor = StartCoroutine(DodgingMovement(bs));
+        //}
 
-            LockInputs = true;
+        //private Coroutine _dodgeCor;
+        //protected Vector3 boostVelocity;
+        //private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
+        //{
+        //    var stats = bs.GetDodgeSettings;
+        //    Vector3 start = transform.position;
+        //    Vector3 end = start + GetMoveDirection * stats.Range;
 
-            float p = 0f;
-            while (p <= 1f)
-            {
-                p += Time.deltaTime * stats.Speed;
-                transform.position = Vector3.Lerp(start, end, p);
-                yield return null;
-            }
-            LockInputs = false;
-            yield return null;
-        }
-        // stop the dodge like this
+        //    LockInputs = true;
 
-        protected void OnCollisionEnter(Collision collision)
-        {
-            if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
-            {
-                if (DebugMessage) Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
-                LockInputs = false;
-                StopCoroutine(_dodgeCor);
-                _dodgeCor = null;
-            }
-        }
+        //    float p = 0f;
+        //    while (p <= 1f)
+        //    {
+        //        p += Time.deltaTime * stats.Speed;
+        //        transform.position = Vector3.Slerp(start, end,p);
+        //        yield return null;
+        //    }
+        //    LockInputs = false;
+        //    yield return null;
+        //}
+        //// stop the dodge like this
 
-        #endregion
+        //protected void OnCollisionEnter(Collision collision)
+        //{
+        //    if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
+        //    {
+        //        if (DebugMessage) Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
+        //        LockInputs = false;
+        //        StopCoroutine(_dodgeCor);
+        //        _dodgeCor = null;
+        //    }
+        //}
+
+       // #endregion
         #region hp
 
         protected virtual void OnZeroHealth()

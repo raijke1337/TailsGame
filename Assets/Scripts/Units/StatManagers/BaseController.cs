@@ -83,11 +83,9 @@ namespace Arcatech.Units
         /// </summary>
         /// <param name="effect"></param>
         /// <returns>if result is negative</returns>
-        public virtual void ApplyEffectToController(TriggeredEffect effect)
+        public virtual void ApplyEffect(TriggeredEffect effect)
         {
-
             _activeEffects.Add(effect);
-
         }
 
         protected virtual StatValueContainer SelectStatValueContainer(TriggeredEffect effect)

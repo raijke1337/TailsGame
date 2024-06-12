@@ -49,12 +49,12 @@ public enum TriggerTargetType
 public enum TriggerChangedValue : byte
 {
     Health = 0,
-    Shield = 10,
-    Combo = 20,
+    Energy = 10,
+    Stamina = 20,
     MoveSpeed = 30,
-    TurnSpeed = 40,
-    Stagger = 50,
-    DodgeCharge = 60,
+    //TurnSpeed = 40,
+    //Stagger = 50,
+    //DodgeCharge = 60,
 }
 
 #region interface

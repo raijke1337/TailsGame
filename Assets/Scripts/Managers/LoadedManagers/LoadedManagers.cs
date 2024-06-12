@@ -35,7 +35,12 @@ namespace Arcatech.Managers
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
                 TriggersProjectilesManager = GetComponent<TriggersManager>();
-                CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
+
+                CameraController = FindObjectOfType<IsoCameraController>();
+                if (CameraController == null)
+                {
+                    CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
+                }          
 
                 _managers = new LoadedManagerBase[6];
 

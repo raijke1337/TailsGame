@@ -47,7 +47,7 @@ namespace Arcatech.Managers
 
             if (comp is BoosterSkillInstanceComponent bs)
             {
-                source.GetInputs().StartDodgeMovement(bs);
+                source.UnitDodge(bs);
             }
             
 

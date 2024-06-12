@@ -15,6 +15,8 @@ namespace Arcatech.Units
     public abstract class BaseUnit : MonoBehaviour, ITakesTriggers, IHasEffects
     {
         protected Animator _animator;
+        [SerializeField] protected RuntimeAnimatorController _baseAnimator;
+
         protected Rigidbody _rigidbody;
         public Collider GetCollider { get; private set; }
         protected ControlInputsBase _controller;
@@ -42,6 +44,7 @@ namespace Arcatech.Units
             set
             {
                 _locked = value;
+                ZeroAnimatorFloats();
                 _controller.LockInputs = value;
                 if (value)
                 {
@@ -59,8 +62,13 @@ namespace Arcatech.Units
 
         #region equipments
         public UnitInventoryComponent GetUnitInventory { get; protected set; }
-
+        public void AddItem(Item item,bool equip)
+        {
+            GetUnitInventory.PickedUpItem(item, equip);
+            OnItemAdd(item);
+        }
         protected abstract void InitInventory();
+        protected abstract void OnItemAdd(Item i);
 
         protected void CreateStartingEquipments(UnitInventoryComponent item) // equipment can't be changed mid-level so it's no problem here that this is run once
         {
@@ -85,32 +93,23 @@ namespace Arcatech.Units
             _controller.SetUnit(this);
             _controller.StartController();
             InitInventory();
-            cachedForwardDir = transform.forward;
 
-            switch (GameManager.Instance.GetCurrentLevelData.LevelType)
+            _animator.runtimeAnimatorController = _baseAnimator;
+            _animator.Play("Idle");
+
+            if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
+                ControllerEventsBinds(true); 
+                LockUnit = false;
+            }                       
 
-                case LevelType.Scene:
-                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                    break;
-                case LevelType.Menu:
-                    _animator.SetLayerWeight(_animator.GetLayerIndex("Scene"), 100f);
-                    break;
-                case LevelType.Game:
-                    _animator.SetLayerWeight(3, 0); // to prevent warnings because only relevant to player ; might be TODO
-                    ControllerEventsBinds(true);
-                    rotationChecker = StartCoroutine(UpdateRotations());
-                    break;
-            }
-            //Debug.Log($"Initiated {GetFullName}");
-            LockUnit = false;
         }
 
         public virtual void DisableUnit()
         {
             ControllerEventsBinds(false);
             _controller.StopController();
-            StopCoroutine(rotationChecker);
+            StopAllCoroutines();
         }
 
 
@@ -127,6 +126,11 @@ namespace Arcatech.Units
             AnimateMovement();
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             _controller.UpdateController(delta);
+
+            if (_controller.LockInputs) return;
+
+            UnitMovement(delta);
+            UnitRotation(delta);
         }
 
         #endregion
@@ -154,13 +158,13 @@ namespace Arcatech.Units
                 _controller.EffectEventRequest += EffectEventCallback;
                 _controller.TriggerEventRequest += TriggerEventCallback;
                 _controller.SpawnProjectileEvent += PlaceProjectileCallback;
-                _controller.JumpCalledEvent += AnimateJump;
+                _controller.JumpCalledEvent += StartJump;
                 _controller.ZeroHealthHappened += OnInputsReportDeath;
                 _controller.DamageHappened += OnInputsReportDamage;
 
                 if (_groundCollider != null)
                 {
-                    _groundCollider.PlatfromCollidedWithTagEvent += HandleJumpLanding;
+                    _groundCollider.PlatfromCollidedWithTagEvent += LandJump;
                 }
                         
 
@@ -174,13 +178,13 @@ namespace Arcatech.Units
                 _controller.EffectEventRequest -= EffectEventCallback;
                 _controller.TriggerEventRequest -= TriggerEventCallback;
                 _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
-                _controller.JumpCalledEvent -= AnimateJump;
+                _controller.JumpCalledEvent -= StartJump;
                 _controller.ZeroHealthHappened -= OnInputsReportDeath;
                 _controller.DamageHappened -= OnInputsReportDamage;
 
                 if (_groundCollider != null)
                 {
-                    _groundCollider.PlatfromCollidedWithTagEvent -= HandleJumpLanding;
+                    _groundCollider.PlatfromCollidedWithTagEvent -= LandJump;
                 }
 
             }
@@ -227,22 +231,60 @@ namespace Arcatech.Units
         protected abstract void HandleDamage(float value);
         protected abstract void HandleDeath();
 
+        protected Vector2 animVect = Vector2.zero;
+        protected abstract void StartJump();
+        protected abstract void LandJump(string tag);
 
-        public virtual void ApplyEffectToController(TriggeredEffect eff)
+
+        [SerializeField] protected float _debugJumpForceMult;
+        [SerializeField] private GroundDetectorPlatformCollider _groundCollider;
+
+        public virtual void ApplyEffect(TriggeredEffect eff)
         {
-            _controller.ApplyEffectToController(eff);
+            _controller.ApplyEffect(eff);
         }
         #endregion
         #region movement, animations
-        //sets animator values 
 
-        protected Vector3 cachedForwardDir;
-        protected Vector3 crossProd;
-        protected Coroutine rotationChecker;
-        [SerializeField] protected float _rotationCheckerDelay;
+        [Space, SerializeField, Range(1, 0)] protected float _minAngleToPlayRotation;
+        [SerializeField, Range(0, 1)] protected float _dampTime = 0.1f;
 
-        public float RotationValue { get => crossProd.y; }
+        protected virtual void UnitMovement(float delta)
+        {
+            transform.position += delta * _controller.GetMoveDirection
+                * GetStats[BaseStatType.MoveSpeed].GetCurrent;
+        }
+        protected Vector3 _sDampVel;
+        protected virtual void UnitRotation(float delta)
+        {
+            if (_controller.GetRotationDot < _minAngleToPlayRotation)
+            {
+                transform.LookAt(Vector3.SmoothDamp(transform.position,_controller.GetAimDirection, ref _sDampVel, _dampTime));
+            }
+        }
 
+        public void UnitDodge(BoosterSkillInstanceComponent bs)
+        {
+            if (LockUnit || _controller.LockInputs) return;
+            else
+            {
+                if (_controller.DebugMessage)
+                {
+                    Debug.Log($"{GetFullName} dodge action");
+                }
+                _rigidbody.AddForce(_controller.GetAimDirection * bs.GetDodgeSettings.Range*10, ForceMode.Impulse);
+            }
+        }
+
+
+        protected virtual void ZeroAnimatorFloats()
+        {
+            _animator.SetBool("Moving", false);
+            _animator.SetFloat("ForwardMove", 0f);
+            _animator.SetFloat("SideMove", 0f);
+            _animator.SetFloat("Rotation", 0);
+
+        }
         protected virtual void AnimateMovement()
         {
             Vector3 movement = _controller.GetMoveDirection;
@@ -254,88 +296,44 @@ namespace Arcatech.Units
                 _animator.SetFloat("SideMove", 0f);
 
                 // rotate in place
-
-
-                _animator.SetFloat("Rotation", crossProd.y);
+                if (_controller.GetRotationDot < _minAngleToPlayRotation)
+                {
+                    _animator.SetFloat("Rotation", _controller.GetRotationDirection);
+                }
+                else
+                {
+                    _animator.SetFloat("Rotation", 0);
+                }
             }
             else
             {
                 _animator.SetFloat("Rotation",0);
                 _animator.SetBool("Moving", true);
-                CalcAnimVector(movement);
-            }
 
+                UpdateAnimatorVector(movement);
 
-        }
-        protected IEnumerator UpdateRotations()
-        {
-            while (true)
-            {
-                crossProd = CalculateCrossProd();
-                cachedForwardDir = transform.forward;
-                if (_controller.DebugMessage)
-                {
-                    Debug.Log($"Current rotation value {crossProd.y}");
-                }
-                yield return new WaitForSeconds(_rotationCheckerDelay);
-            }
-            yield return null;
-        }
-        // virtual because playerunit uses aim point
-        protected virtual Vector3  CalculateCrossProd()
-        {
-            return Vector3.Cross(cachedForwardDir, transform.forward);
-        }
+                _animator.SetFloat("ForwardMove", animVect.y);
+                _animator.SetFloat("SideMove", animVect.x);
 
-
-        [SerializeField] float _debugJumpForceMult;
-        protected bool IsAirborne = false;
-        [SerializeField] private GroundDetectorPlatformCollider _groundCollider;
-        private void AnimateJump()
-        {
-            if (_controller.DebugMessage)
-            {
-                Debug.Log("Start jump");
-            }
-            _rigidbody.AddForce((_rigidbody.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
-            IsAirborne = true;
-            _animator.SetTrigger("JumpStart");
-            _animator.SetBool("JumpAirborne",true);
-        }
-
-        private void HandleJumpLanding(string arg)
-        {
-
-            if (arg == "Ground" || arg == "SolidItem")
-            {
-                if (_controller.DebugMessage && IsAirborne)
-                {
-                    Debug.Log($"Land  jump on tag {arg}");
-                }
-                IsAirborne = false;
-                _animator.SetTrigger("JumpEnd");
-                _animator.SetBool("JumpAirborne", false);
             }
         }
-
-
 
         //  calculates the vector which is used to set values in animator
-        protected void CalcAnimVector(Vector3 vector)
+        protected void UpdateAnimatorVector(Vector3 movement)
         {
             var playerFwd = transform.forward;
             var playerRght = transform.right;
-            vector.y = 0;
-            vector.Normalize();
+            movement.y = 0;
+            movement.Normalize();
             // Dot product of two vectors determines how much they are pointing in the same direction.
             // If the vectors are normalized (transform.forward and right are)
             // then the value will be between -1 and +1.
-            var x = Vector3.Dot(playerRght, vector);
-            var z = Vector3.Dot(playerFwd, vector);
-
-            _animator.SetFloat("ForwardMove", z);
-            _animator.SetFloat("SideMove", x);
+            var x = Vector3.Dot(playerRght, movement);
+            var z = Vector3.Dot(playerFwd, movement);
+            animVect.x = x;
+            animVect.y = z;
         }
+
 
         protected virtual void AnimateCombatActivity(CombatActionType type)
         {
@@ -354,15 +352,15 @@ namespace Arcatech.Units
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.MeleeSpecialQ:
-                    _animator.SetTrigger("QSpecial");
+                    _animator.SetTrigger("MeleeSpecial");
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillDataByType(type), this);
                     break;
                 case CombatActionType.RangedSpecialE:
-                    _animator.SetTrigger("ESpecial");
+                    _animator.SetTrigger("RangedSpecial");
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                     break;
                 case CombatActionType.ShieldSpecialR:
-                    _animator.SetTrigger("RSpecial");
+                    _animator.SetTrigger("ShieldSpecial");
                     //SkillRequestCallBack(_controller.GetSkillsController.GetSkillIDByType(type), this);
                     break;
             }
@@ -370,6 +368,11 @@ namespace Arcatech.Units
 
         public virtual void TriggerTogglingEvent_UE(float value)
         {    // 1 on start 0 on end
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"Animation event triggers toggle {value}");
+            }
+
             if (_controller == null) return; //in case we have a scene
 
             bool result = value > 0;

@@ -20,11 +20,11 @@ namespace Arcatech.Scenes.Cameras
             transform.LookAt(Target.transform.position);
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(transform.position, Vector3.one);
-            Gizmos.DrawLine(transform.position, Target.transform.position) ;
-        }
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.green;
+        //    Gizmos.DrawWireCube(transform.position, Vector3.one);
+        //    Gizmos.DrawLine(transform.position, Target.transform.position) ;
+        //}
     }
 }

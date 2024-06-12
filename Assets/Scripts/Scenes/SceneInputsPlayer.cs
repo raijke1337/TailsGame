@@ -14,7 +14,6 @@ namespace Arcatech.Scenes
         {
             _inputs = GetComponent<InputsPlayer>();
             _unit = GetComponent<PlayerUnit>();
-            _inputs.InputDirectionOverride = Vector3.forward;        // just walk forward for now
             _unit.InitiateUnit();
             _coroutine = StartCoroutine(UpdatingCoroutine());
 

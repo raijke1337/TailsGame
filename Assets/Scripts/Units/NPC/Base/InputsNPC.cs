@@ -54,17 +54,13 @@ namespace Arcatech.Units.Inputs
         }
         public override void UpdateController(float delta)
         {
-            base.UpdateController(delta);
-            if (_stateMachine == null ) return;
+            if (_stateMachine == null) return;
             _stateMachine.UpdateInDelta(delta);
             CurrentState = _stateMachine.CurrentState;
-            MoveDirectionFromInputs = _stateMachine.CurrentVelocity;
+
+            base.UpdateController(delta);
 
         }
-
-
-
-
         #endregion
 
 
@@ -188,18 +184,6 @@ namespace Arcatech.Units.Inputs
         {    
             _stateMachine.SelectedUnit = arg;
         }
-
-
-        //attack action logic is here
-        protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
-        {
-            DoCombatAction(type);
-        }
-
-        protected virtual void RotateToSelectedUnit()
-        {
-            LerpRotateToTarget(_stateMachine.SelectedUnit.transform.position, lastDelta);
-        }
         protected virtual void Fsm_GetFocusUnitSM(ReferenceUnitType type)
         {
             if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitsGroup.GetUnitForAI(type);
@@ -207,6 +191,27 @@ namespace Arcatech.Units.Inputs
 
             if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
         }
+
+        //attack action logic is here
+        protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
+        {
+            DoCombatAction(type);
+        }
+
+        protected override void SetMoveDirection()
+        {
+            _inputsMovement = _navMeshAg.velocity.normalized;
+        }
+
+        protected override void SetAimDirection()
+        {
+            _inputsAiming = transform.forward;
+        }
+        protected virtual void RotateToSelectedUnit()
+        {
+            _inputsAiming = (_stateMachine.SelectedUnit.transform.position);
+        }
+
         protected void Unsub(BaseUnit unit)
         {
             if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
@@ -239,14 +244,17 @@ namespace Arcatech.Units.Inputs
             Gizmos.color = Color.white;
             Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookRange); // look sphere range is used to call nearby allies into combat
         }
+
+        protected override void SetRotationDot()
+        {
+
+        }
+
+        protected override void SetRotationCross()
+        {
+
+        }
 #endif
-
-
-
-
-
-
-
     }
 
 }

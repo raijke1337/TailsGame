@@ -12,6 +12,7 @@ namespace Arcatech.Items
         public BaseEquippableItemComponent Item;
         public SerizalizedSkillConfiguration Skill;
         public SerializedEffectsCollection Effects;
+        public RuntimeAnimatorController AnimatorController;
 
     }
 }

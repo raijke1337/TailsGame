@@ -57,6 +57,30 @@ namespace Arcatech.Units
             }
 
         }
+
+        protected override void OnItemAdd(Item i)
+        {
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"Added item {i.Description.Title}");
+            }
+        }
+
+        protected override void StartJump()
+        {
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"{GetFullName} wants to jump but can't!");
+            }
+        }
+
+        protected override void LandJump(string arg)
+        {
+            if (_controller.DebugMessage)
+            {
+                Debug.Log($"{GetFullName} wants to land jump but can't!");
+            }
+        }
     }
 
 }

@@ -29,13 +29,17 @@ namespace Arcatech.Managers
             set
             {
                 _player.LockUnit = value;
-                foreach (var g in _npcGroups)
+                if (_npcGroups != null)
                 {
-                    foreach (var n in g.GetAllUnits)
+                    foreach (var g in _npcGroups)
                     {
-                        n.LockUnit =value ;
+                        foreach (var n in g.GetAllUnits)
+                        {
+                            n.LockUnit = value;
+                        }
                     }
                 }
+
                 _isUnitsLocked = value;
             }
         }
@@ -95,6 +99,7 @@ namespace Arcatech.Managers
             if (_isUnitsLocked) return;
 
             _player.RunUpdate(delta);
+            if (_npcGroups == null) return;
             foreach (var g in _npcGroups)
             {
                 foreach (var n in g.GetAllUnits.ToArray())

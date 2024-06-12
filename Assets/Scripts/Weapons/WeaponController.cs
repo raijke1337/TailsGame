@@ -90,13 +90,13 @@ namespace Arcatech.Units
                 return true;
             }
         }
-        public WeaponEvents<EquipItemType> SwitchAnimationLayersEvent; // also used for layers switch in playerunit
+        public WeaponEvents<RuntimeAnimatorController> SwitchAnimationLayersEvent;
 
         public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
 
         protected virtual void SwitchWeapon(EquipItemType type)
         {
-            SwitchAnimationLayersEvent?.Invoke(type);
+            SwitchAnimationLayersEvent?.Invoke(_equipment[type].AnimatorController);
             if (type == EquipItemType.MeleeWeap)
             {
                 Equip(type);

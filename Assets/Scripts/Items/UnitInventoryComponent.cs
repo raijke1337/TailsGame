@@ -21,6 +21,14 @@ namespace Arcatech.Units
 
 
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
+        public EquipmentItem GetEquipByType(EquipItemType t)
+        {
+            if (_equips.TryGetValue(t, out var e))
+            {
+                return e;
+            }
+            else return null;
+        }
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
 
         public event SimpleEventsHandler<UnitInventoryComponent> InventoryUpdateEvent;
@@ -109,7 +117,6 @@ namespace Arcatech.Units
         {
             return (_equips.TryGetValue(equip.ItemType, out var eq));
         }
-
         #endregion
 
 

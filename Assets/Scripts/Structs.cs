@@ -84,7 +84,7 @@ namespace Arcatech
 
     public interface ITakesTriggers
     {
-        void ApplyEffectToController(TriggeredEffect effect);
+        void ApplyEffect(TriggeredEffect effect);
     }
 
     public interface IStatsComponentForHandler : IManaged

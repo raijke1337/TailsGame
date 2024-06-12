@@ -12,8 +12,8 @@ namespace Arcatech.UI
 
         private PlayerUnit _player;
 
-        private ShieldController _shield;
-        private ComboController _combo;
+        private EnergyController _shield;
+        private StaminaController _combo;
         private SkillsController _skills;
 
 

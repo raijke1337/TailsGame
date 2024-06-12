@@ -98,28 +98,28 @@ namespace Arcatech.Managers
             }
             if (tr is LevelRewardTrigger rew)
             {
-                if (ShowDebug)
-                {
-                    Debug.Log($"Picked up {rew.Content}");
-                }
-                u.GetUnitInventory.PickedUpItem(rew.Content,true);
+                //if (ShowDebug)
+                //{
+                //    Debug.Log($"Picked up {rew.Content}");
+                //}
+                u.AddItem(rew.Content,true);
                 ManageTrigger(rew, false);
 
             }
             if (tr is LevelTextTrigger txt)
             {
-                if (ShowDebug)
-                {
-                    Debug.Log($"Level text trigger {txt}");
-                }
+                //if (ShowDebug)
+                //{
+                //    Debug.Log($"Level text trigger {txt}");
+                //}
                 _ui.UpdateGameText(txt.Text, isEnter);
             }
             if (tr is LevelCompleteTrigger comp)
             {
-                if (ShowDebug)
-                {
-                    Debug.Log($"");
-                }
+                //if (ShowDebug)
+                //{
+                //    Debug.Log($"");
+                //}
                 GameManager.Instance.OnLevelCompleteTrigger(comp.UnlocksLevel);
             }
 
@@ -127,10 +127,10 @@ namespace Arcatech.Managers
             {
                 bool satisfied = check.GetCondition;
                 check.UpdateControlledItems(satisfied);
-                if (ShowDebug)
-                {
-                    Debug.Log($"");
-                }
+                //if (ShowDebug)
+                //{
+                //    Debug.Log($"{}");
+                //}
             }
         }
     }

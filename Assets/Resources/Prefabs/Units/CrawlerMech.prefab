@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432d323bf0b9ab045b4c6b0294e2fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 1
+  DebugMessage: 0
   Empties:
     ItemPositions:
       _serializedList:
@@ -919,6 +919,7 @@ MonoBehaviour:
       - Key: 255
         Value: {fileID: 3983754378033790471}
   InputDirectionOverride: {x: 0, y: 0, z: 0}
+  _minimumAngleChangeToRotate: 0
   IsInMeleeCombo: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: b0eb904fb2c8562449235464840592fb, type: 2}
@@ -955,6 +956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Side: 1
   StatsConfig: {fileID: 11400000, guid: ba12167310a77ec44b989f57a32e05ea, type: 2}
+  _rotationCheckerDelay: 0
   _debugJumpForceMult: 0
   _groundCollider: {fileID: 0}
   _defaultItems: {fileID: 11400000, guid: cb8f3e177a5d7d647bfae10227e18234, type: 2}

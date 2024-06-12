@@ -25,12 +25,12 @@ namespace Arcatech.Scenes.Cameras
             transform.position = Vector3.SmoothDamp(transform.position,TargetBone.position, ref velo, FollowSpeed);
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(TargetBone.position, 0.2f);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, 0.1f);
-        }
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.green;
+        //    Gizmos.DrawWireSphere(TargetBone.position, 0.2f);
+        //    Gizmos.color = Color.blue;
+        //    Gizmos.DrawWireSphere(transform.position, 0.1f);
+        //}
     }
 }
