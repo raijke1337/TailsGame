@@ -1,5 +1,6 @@
 using Arcatech.Effects;
 using Arcatech.Items;
+using Arcatech.Triggers;
 using System;
 using UnityEngine;
 
@@ -32,10 +33,10 @@ namespace Arcatech.Units
             {
                 switch (i.ItemType)
                 {
-                    case EquipItemType.MeleeWeap:
+                    case EquipmentType.MeleeWeap:
                         Sheathe(i.ItemType);
                         break;
-                    case EquipItemType.RangedWeap:
+                    case EquipmentType.RangedWeap:
                         Equip(i.ItemType);
                         break;
                 }
@@ -44,44 +45,44 @@ namespace Arcatech.Units
             {
                 switch (i.ItemType)
                 {
-                    case EquipItemType.MeleeWeap:
+                    case EquipmentType.MeleeWeap:
                         Equip(i.ItemType);
                         break;
-                    case EquipItemType.RangedWeap:
+                    case EquipmentType.RangedWeap:
                         Equip(i.ItemType);
                         break;
                 }
             }
 
         }
-        public override bool TryRemoveItem(EquipItemType type, out EquipmentItem removed)
+        public override bool TryRemoveItem(EquipmentType type, out EquipmentItem removed)
         {
 
             var re = base.TryRemoveItem(type,out removed);
             if (re)
             {
-                IsReady = ((type == EquipItemType.MeleeWeap && _equipment[EquipItemType.RangedWeap] == null) ||
-                    (type == EquipItemType.RangedWeap && _equipment[EquipItemType.MeleeWeap] == null));
+                IsReady = ((type == EquipmentType.MeleeWeap && _items[EquipmentType.RangedWeap] == null) ||
+                    (type == EquipmentType.RangedWeap && _items[EquipmentType.MeleeWeap] == null));
             }
 
             return re;
         }
 
-        protected bool Equip(EquipItemType type)
+        protected bool Equip(EquipmentType type)
         {
-            if (!_equipment.ContainsKey(type) || (_equipment[type] == null)) return false;
+            if (!_items.ContainsKey(type) || (_items[type] == null)) return false;
             else
             {
-                var weap = _equipment[type];
+                var weap = _items[type];
                 IsReady = true;
 
                 switch (type)
                 {
-                    case EquipItemType.MeleeWeap:
-                        weap.SetItemEmpty(Empties.ItemPositions[EquipItemType.MeleeWeap]);
+                    case EquipmentType.MeleeWeap:
+                        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.MeleeWeap]);
                         break;
-                    case EquipItemType.RangedWeap:
-                        weap.SetItemEmpty(Empties.ItemPositions[EquipItemType.RangedWeap]);
+                    case EquipmentType.RangedWeap:
+                        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.RangedWeap]);
                         break;
                     default:
                         return false;
@@ -92,29 +93,29 @@ namespace Arcatech.Units
         }
         public WeaponEvents<RuntimeAnimatorController> SwitchAnimationLayersEvent;
 
-        public void SwitchModels(EquipItemType type) => SwitchWeapon(type);
+        public void SwitchModels(EquipmentType type) => SwitchWeapon(type);
 
-        protected virtual void SwitchWeapon(EquipItemType type)
+        protected virtual void SwitchWeapon(EquipmentType type)
         {
-            SwitchAnimationLayersEvent?.Invoke(_equipment[type].AnimatorController);
-            if (type == EquipItemType.MeleeWeap)
+            SwitchAnimationLayersEvent?.Invoke(_items[type].AnimatorController);
+            if (type == EquipmentType.MeleeWeap)
             {
                 Equip(type);
-                Sheathe(EquipItemType.RangedWeap);
+                Sheathe(EquipmentType.RangedWeap);
             }
-            if (type == EquipItemType.RangedWeap)
+            if (type == EquipmentType.RangedWeap)
             {
                 Equip(type);
-                Sheathe(EquipItemType.MeleeWeap);
+                Sheathe(EquipmentType.MeleeWeap);
             }
         }
 
 
-        protected void Sheathe(EquipItemType type)
+        protected void Sheathe(EquipmentType type)
         {
-            if (_equipment.TryGetValue(type, out var equip))
+            if (_items.TryGetValue(type, out var equip))
             {
-                equip.SetItemEmpty(Empties.ItemPositions[EquipItemType.Other]);
+                equip.SetItemEmpty(Empties.ItemPositions[EquipmentType.Other]);
             }
         }
 
@@ -123,9 +124,9 @@ namespace Arcatech.Units
 
         #region ctrl functins
 
-        public virtual bool OnWeaponUseSuccessCheck(EquipItemType type)
+        public virtual bool OnWeaponUseSuccessCheck(EquipmentType type)
         {
-            if (!_equipment.ContainsKey(type))
+            if (!_items.ContainsKey(type))
             {
                 return false;
             }
@@ -134,21 +135,21 @@ namespace Arcatech.Units
                 bool ok;
                 switch (type)
                 {
-                    case EquipItemType.RangedWeap:
-                        var ranged = _equipment[type] as RangedWeaponItem;
+                    case EquipmentType.RangedWeap:
+                        var ranged = _items[type] as RangedWeaponItem;
                         ok = ranged.TryUseItem();
                         break;
                     default:
-                       var weap = (_equipment[type] as WeaponItem);
+                       var weap = (_items[type] as WeaponItem);
                         ok = weap.TryUseItem();
 
                         break;
                 }
                 if (ok)
                 {
-                    EffectEventCallback(new EffectRequestPackage(_equipment[type].Effects.GetRandomSound(EffectMoment.OnStart), _equipment[type].Effects.GetRandomEffect(EffectMoment.OnStart),
+                    EffectEventCallback(new EffectRequestPackage(_items[type].Effects.GetRandomSound(EffectMoment.OnStart), _items[type].Effects.GetRandomEffect(EffectMoment.OnStart),
                         null,
-                        _equipment[type].GetInstantiatedPrefab().transform));
+                        _items[type].GetInstantiatedPrefab().transform));
                     SwitchWeapon(type);
                 }
                 return ok;
@@ -157,7 +158,7 @@ namespace Arcatech.Units
         public void ToggleTriggersOnMelee(bool isEnable)
         {
             // todo might get nullref here
-            (_equipment[EquipItemType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeaponComponent).ToggleColliders(isEnable);
+            (_items[EquipmentType.MeleeWeap].GetInstantiatedPrefab() as MeleeWeaponComponent).ToggleColliders(isEnable);
         }
 
         #endregion
@@ -166,13 +167,31 @@ namespace Arcatech.Units
 
 
 
-        public override void StopStatsComponent()
+        public override void StopComp()
         {
-            base.StopStatsComponent();
+
+        }
+
+        public override void ApplyEffect(TriggeredEffect effect)
+        {
+
+        }
+
+        public override void UpdateInDelta(float deltaTime)
+        {
+            if (IsReady)
+            {
+                _items[EquipmentType.MeleeWeap].DoUpdates(deltaTime);
+                //_items[EquipItemType.RangedWeap].DoUpdates(deltaTime);
+            }
+        }
+
+        public override void StartComp()
+        {
+
         }
 
         #endregion
-        public override string GetUIText { get => ($""); } // unused because in UI skill cd is displayed
 
     }
 

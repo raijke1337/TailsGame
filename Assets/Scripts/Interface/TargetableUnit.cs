@@ -1,3 +1,4 @@
+using Arcatech.Stats;
 using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.UI
@@ -12,8 +13,8 @@ namespace Arcatech.UI
         {
             if (TryGetComponent<BaseUnit>(out var u))
             {
-                _title = u.GetFullName;
-                _hp = u.GetStats[BaseStatType.Health];
+                //_title = u.GetFullName;
+                //_hp = u.GetStats[BaseStatType.Health];
             }
         }
     }

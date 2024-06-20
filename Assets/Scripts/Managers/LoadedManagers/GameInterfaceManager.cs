@@ -1,3 +1,4 @@
+using Arcatech.EventBus;
 using Arcatech.Texts;
 using Arcatech.UI;
 using System.Collections;
@@ -12,10 +13,17 @@ namespace Arcatech.Managers
         [SerializeField] private GameObject _ded;
         [SerializeField] private GameObject _pause;
 
+        [Space, SerializeField] private CartoonFX.CFXR_ParticleText _textPrefab;
+
+
+        EventBinding<DrawDamageEvent> _drawDamageBind;
+
+
 
         #region managed
         public override void Initiate()
         {
+
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
@@ -25,6 +33,9 @@ namespace Arcatech.Managers
                 _text.gameObject.SetActive(false);
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
+
+                _drawDamageBind = new EventBinding<DrawDamageEvent>(DrawDamageNumber);
+                EventBus<DrawDamageEvent>.Register(_drawDamageBind);
 
             }
             else
@@ -48,6 +59,7 @@ namespace Arcatech.Managers
 
         public override void Stop()
         {
+            EventBus<DrawDamageEvent>.Unregister(_drawDamageBind);
             _playerPan.StopController();
         }
         #endregion
@@ -121,6 +133,18 @@ namespace Arcatech.Managers
             yield return null;
         }
         #endregion
+
+
+        #region draw damage
+        private void DrawDamageNumber (DrawDamageEvent data)
+        {
+            var txt = Instantiate(_textPrefab,data.Unit.transform);
+            txt.UpdateText(data.Damage.ToString());
+        }
+
+        #endregion
+
+
         #region menus
 
         public void OnPauseRequesShowPanelAndPause(bool isPause)

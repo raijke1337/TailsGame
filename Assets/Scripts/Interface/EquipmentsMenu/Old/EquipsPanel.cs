@@ -7,7 +7,7 @@ namespace Arcatech.UI
 {
     public class EquipsPanel : InventoryItemsHolder
     {
-        [SerializeField] protected SerializedDictionary<EquipItemType, ItemTileComponent> EquipsTiles;
+        [SerializeField] protected SerializedDictionary<EquipmentType, ItemTileComponent> EquipsTiles;
         public override ItemTileComponent AddTileContent(InventoryItem content)
         {
             if (content == null) return null;

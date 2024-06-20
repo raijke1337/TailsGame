@@ -40,7 +40,7 @@ namespace Arcatech.Units.Inputs
             }
             _navMeshAg = GetComponent<NavMeshAgent>();
 
-            _navMeshAg.speed = _statsCtrl.GetBaseStats[BaseStatType.MoveSpeed].GetCurrent;
+            _navMeshAg.speed = _statsCtrl.AssessStat(TriggerChangedValue.MoveSpeed).GetCurrent;
             _navMeshAg.stoppingDistance = EnemyStats.AttackRange;
             _stateMachine = new StateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
 
@@ -63,79 +63,6 @@ namespace Arcatech.Units.Inputs
         }
         #endregion
 
-
-
-        #region reflection excercise
-
-        protected virtual void ReflexionBinds(bool isStart)
-        {
-            // here we find all events in class and sub to them
-            string prefix = Constants.StateMachineData.c_MethodPrefix;
-            // get methods from inputs
-            Type _inputs = typeof(InputsNPC);
-            MethodInfo[] responses = _inputs.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.NonPublic);
-
-            // filter by prefix to only get proper methods
-            List<MethodInfo> filtered = new List<MethodInfo>();
-            foreach (var r in responses)
-            {
-                bool result;
-                result = r.Name.Contains(Constants.StateMachineData.c_MethodPrefix);
-                if (result)
-                {
-                    filtered.Add(r);
-                }
-            }
-
-            List<(EventInfo, MethodInfo, Delegate)> values = new List<(EventInfo, MethodInfo, Delegate)>();
-
-            // get event data from state machine 
-            Type _fsm = typeof(StateMachine);
-            var events = _fsm.GetEvents();
-
-            // extablish desired methods and delegates and record into tuples
-            foreach (var @event in events)
-            {
-                string desiredMethod = string.Concat(prefix, @event.Name);
-                MethodInfo found = null;
-                foreach (var method in filtered)
-                {
-                    if (method.Name == desiredMethod) found = method;
-                }
-                if (found == null) Debug.LogWarning($"{_fsm.Name}{@event.Name} has no appropriate method {desiredMethod} in {this}");
-                else
-                {
-                    var delType = @event.EventHandlerType;
-                    var argument = found.GetParameters();
-
-                    Delegate del = Delegate.CreateDelegate(delType, argument.First(), found);
-
-                    values.Add((@event, found, del));
-                }
-            }
-
-            //sub here
-
-            if (isStart)
-            {
-                foreach (var record in values)
-                {
-                    record.Item1.AddEventHandler(_stateMachine, record.Item3);
-                    Debug.Log($"Subbing event {record.Item1} to {record.Item2}, delegate is {record.Item3}");
-                }
-            }
-            else
-            {
-                foreach (var record in values)
-                {
-                    record.Item1.RemoveEventHandler(_stateMachine, record.Item3);
-                    Debug.Log($"Unubbing event {record.Item1} to {record.Item2}, delegate is {record.Item3}");
-                }
-            }
-        }
-
-        #endregion
-
         #region state machine
         protected virtual void StateMachineBinds(bool isStart)
         {
@@ -145,34 +72,32 @@ namespace Arcatech.Units.Inputs
 
             if (isStart)
             {
-                _stateMachine.SetupStatsComponent();
+                _stateMachine.StartComp();
                 _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
                 _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
-                _stateMachine.RotationRequestedSM += Fsm_RotationRequestedSM;
                 _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
             }
             else
             {
-                _stateMachine.StopStatsComponent();
+                _stateMachine.StopComp();
                 _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
                 _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
-                _stateMachine.RotationRequestedSM -= Fsm_RotationRequestedSM;
                 _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
             }
         }
-        protected virtual void Fsm_RotationRequestedSM()
-        {
-            RotateToSelectedUnit();
-        }
+        //protected virtual void Fsm_RotationRequestedSM()
+        //{
+        //    RotateToSelectedUnit();
+        //}
 
 
-        protected virtual void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
+        protected virtual void Fsm_ChangeRangeActionRequestSM(UnitActionType arg)
         {
-            Debug.Log($"{Unit.GetFullName} used switch ranges for {arg} but it has no logic in {this}");
+            //Debug.Log($"{Unit.GetFullName} used switch ranges for {arg} but it has no logic in {this}");
         }
 
         protected virtual void Fsm_AggroRequestedSM()
@@ -193,23 +118,9 @@ namespace Arcatech.Units.Inputs
         }
 
         //attack action logic is here
-        protected virtual void Fsm_AgressiveActionRequestSM(CombatActionType type)
+        protected virtual void Fsm_AgressiveActionRequestSM(UnitActionType type)
         {
-            DoCombatAction(type);
-        }
-
-        protected override void SetMoveDirection()
-        {
-            _inputsMovement = _navMeshAg.velocity.normalized;
-        }
-
-        protected override void SetAimDirection()
-        {
-            _inputsAiming = transform.forward;
-        }
-        protected virtual void RotateToSelectedUnit()
-        {
-            _inputsAiming = (_stateMachine.SelectedUnit.transform.position);
+            RequestCombatAction(type);
         }
 
         protected void Unsub(BaseUnit unit)
@@ -245,14 +156,21 @@ namespace Arcatech.Units.Inputs
             Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookRange); // look sphere range is used to call nearby allies into combat
         }
 
-        protected override void SetRotationDot()
+
+
+        protected override void OnLockInputs(bool isLock)
         {
 
         }
 
-        protected override void SetRotationCross()
+        protected override void DoHorizontalMovement(float delta)
         {
 
+        }
+
+        protected override void DoJump(bool jumpBool)
+        {
+           // throw new NotImplementedException();
         }
 #endif
     }

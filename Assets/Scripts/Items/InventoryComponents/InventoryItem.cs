@@ -13,7 +13,7 @@ namespace Arcatech.Items
         public Sprite ItemIcon { get => _description.Picture; }
         public ExtendedText GetDescription => _description;
 
-        public EquipItemType ItemType { get; }
+        public EquipmentType ItemType { get; }
         protected ExtendedText _description;
         public BaseUnit Owner;
 

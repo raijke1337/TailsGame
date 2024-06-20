@@ -51,6 +51,8 @@ namespace Arcatech.Scenes.Cameras
 
         public override void RunUpdate(float delta)
         {
+
+
             if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
             {
                 _cameraTargetGizmoColor = Color.green;

@@ -4,7 +4,7 @@ public class CrawlerMechInputs : InputsNPC
 {
     // find ally and run to them, then fight
 
-    protected override void Fsm_AgressiveActionRequestSM(CombatActionType type)
+    protected override void Fsm_AgressiveActionRequestSM(UnitActionType type)
     {
         base.Fsm_AgressiveActionRequestSM(type);
     }

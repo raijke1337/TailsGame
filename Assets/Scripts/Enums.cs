@@ -7,44 +7,9 @@ public enum Side
 public enum BaseStatType : byte
 {
     Health,
+    Stamina,
     MoveSpeed,
-    TurnSpeed
-}
-public enum ShieldStatType
-{
-    Shield,
-    ShieldRegen,
-    ShieldRegenMultiplier,
-    ShieldAbsorbMult
-}
-
-public enum EquipItemType
-{
-    None,
-    MeleeWeap,
-    RangedWeap,
-    Shield,
-    Booster,
-    Costume,
-    Modifier,
-    Other = 255
-}
-
-public enum CombatActionType
-{
-    Melee,
-    Ranged,
-    Dodge,
-    MeleeSpecialQ,
-    RangedSpecialE,
-    ShieldSpecialR
-}
-
-public enum TriggerTargetType
-{
-    TargetsEnemies,
-    TargetsUser,
-    TargetsAllies
+    TurnSpeed,
 }
 public enum TriggerChangedValue : byte
 {
@@ -57,6 +22,44 @@ public enum TriggerChangedValue : byte
     //DodgeCharge = 60,
 }
 
+public enum GeneratorStatType
+{
+    Capacity,
+    CapacityRegen,
+    DamageAbsorbMultiplier
+}
+
+public enum EquipmentType
+{
+    None,
+    MeleeWeap,
+    RangedWeap,
+    Shield,
+    Booster,
+    Costume,
+    Modifier,
+    Other = 255
+}
+
+public enum UnitActionType
+{
+    Melee,
+    Ranged,
+    DodgeSkill,
+    MeleeSkill,
+    RangedSkill,
+    ShieldSkill,
+    Jump
+}
+
+public enum TriggerTargetType
+{
+    TargetsEnemies,
+    TargetsUser,
+    TargetsAllies
+}
+
+
 #region interface
 public enum CursorType
 {
@@ -68,8 +71,8 @@ public enum CursorType
 public enum DisplayValueType : byte
 {
     Health = 0,
-    Shield = 1,
-    Combo = 2
+    Energy = 1,
+    Stamina = 2
 }
 
 public enum FontType

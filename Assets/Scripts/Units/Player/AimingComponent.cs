@@ -12,7 +12,6 @@ namespace Arcatech.Units.Inputs
         #region setup
         private Camera _camera;
         private Plane _aimPlane;
-        private float _vertOffset;
 
         #endregion
 
@@ -61,34 +60,48 @@ namespace Arcatech.Units.Inputs
         public RaycastHit GetCurrentRaycastHit { get { return hit; } }
         #endregion
 
+
+        private float prevY;
+        float planeY = 0f;
+
+
         public SimpleEventsHandler<bool, BaseTargetableItem> SelectionUpdatedEvent;
 
 
         #region managed
         public override void StartController()
         {
-            _vertOffset = transform.position.y;
-            _aimPlane = new Plane(Vector3.down, _vertOffset);
+            _aimPlane = new Plane(Vector3.down, planeY);
+
             _target = transform.forward;
             _camera = Camera.main;
         }
 
-        private float prevY;
 
         public override void UpdateController(float delta)
         {
+
             if (transform.position.y != prevY)
             {
-                _aimPlane.Translate(new Vector3(0, transform.position.y - prevY, 0));
+                _aimPlane.Translate(Vector2.down * (transform.position.y - prevY));
+                prevY = transform.position.y;
             }
 
-            Ray r = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(r, out var newhit))
+            {
+                if (newhit.collider != hit.collider)
+                {
+                    hit = newhit;
+                }
+                _target = hit.transform.position;
+            }
 
             // no object, aim at plane
             if (_aimPlane.Raycast(r, out float rayDist))
             {
                 _target = r.GetPoint(rayDist);
-                SelectionUpdatedEvent?.Invoke(false, null);
             }
 
             // hit a selectable
@@ -103,12 +116,10 @@ namespace Arcatech.Units.Inputs
             }
 
             var vectorToTarget = _target - transform.position;
-
             distanceToTarget = vectorToTarget.magnitude;
             _dotProduct = Vector3.Dot(transform.forward, GetNormalizedDirectionToTaget);
             _rotationToTarget = Vector3.Cross(transform.forward, GetNormalizedDirectionToTaget).y;
 
-            prevY = transform.position.y;
 
         }
 
@@ -121,8 +132,6 @@ namespace Arcatech.Units.Inputs
         }
 
         #endregion
-
-
 
 
 

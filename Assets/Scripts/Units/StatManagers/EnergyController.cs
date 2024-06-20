@@ -5,113 +5,83 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Arcatech.Units
+namespace Arcatech.Stats
 {
     [Serializable]
-    public class EnergyController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
+    public class EnergyController : IManagedComponent
     {
-      //  public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
-        private Dictionary<ShieldStatType, StatValueContainer> _stats;
-        public event SimpleEventsHandler ShieldBrokenEvent;
+        #region serialized
+        [SerializeField] private string _value;
+        #endregion
 
-        #region conditional
-        public EnergyController(ItemEmpties em, BaseUnit ow) : base(em, ow)
+
+        private Dictionary<GeneratorStatType, StatValueContainer> _shieldStats;
+
+       // public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent;
+
+        public EnergyController(GeneratorSettings settings)
         {
-
-        }
-        protected override void FinishItemConfig(EquipmentItem item)
-        {
-
-            var cfg = DataManager.Instance.GetConfigByID<ShieldSettings>(_equipment[EquipItemType.Shield].ID);
-
-            if (cfg == null)
+            _shieldStats = new Dictionary<GeneratorStatType, StatValueContainer>();
+            foreach (KeyValuePair<GeneratorStatType, StatValueContainer> p in settings.Stats)
             {
-                IsReady = false;
-                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
+                _shieldStats[p.Key] = new StatValueContainer(p.Value);
+                _shieldStats[p.Key].StartComp();
             }
+            StartComp();
+        }
+
+
+        public StatValueContainer GetValueContainer { get { return _shieldStats[GeneratorStatType.Capacity]; } }
+
+        public bool IsReady { get; private set; }
+        public bool TryAbsorb (TriggeredEffect incoming, out TriggeredEffect remaining)
+        {
+            remaining = incoming;
+            if (!IsReady || _shieldStats[GeneratorStatType.Capacity].GetCurrent == 0) return false;
             else
             {
-                _stats = new Dictionary<ShieldStatType, StatValueContainer>();
-                foreach (KeyValuePair<ShieldStatType, StatValueContainer> p in cfg.Stats)
+                float mult = _shieldStats[GeneratorStatType.DamageAbsorbMultiplier].GetCurrent;
+
+                incoming.InitialValue *= mult;
+                incoming.OverTimeValue *= mult;
+
+
+                if (incoming.InitialValue <= _shieldStats[GeneratorStatType.Capacity].GetCurrent)
                 {
-                    _stats[p.Key] = new StatValueContainer(p.Value);
-                    _stats[p.Key].Setup();
+                    incoming.OverTimeValue = 0;
+                    _shieldStats[GeneratorStatType.Capacity].ApplyTriggeredEffect(incoming);
+                    return true;
                 }
-
-            }
-        }
-        protected override void InstantiateItem(EquipmentItem i)
-        {
-            i.SetItemEmpty(Empties.ItemPositions[EquipItemType.Shield]);
-        }
-        #endregion
-
-
-        #region managed
-
-        public override void UpdateInDelta(float deltaTime)
-        {
-            base.UpdateInDelta(deltaTime);
-            if (_equipment.TryGetValue(EquipItemType.Shield, out var s))
-            {
-                s.DoUpdates(deltaTime);
-                _stats[ShieldStatType.Shield].ChangeCurrent(_stats[ShieldStatType.ShieldRegen].GetCurrent * _stats[ShieldStatType.ShieldRegenMultiplier].GetCurrent* deltaTime);
-            }
-        }
-
-
-        #endregion
-        public TriggeredEffect ProcessHealthChange(in TriggeredEffect effect)
-        { // debug shield logic TODO
-
-            if (effect.InitialValue >= 0f)
-            {
-                return effect; // heal effect
-            }
-            else 
-            {
-                float currentSh = _stats[ShieldStatType.Shield].GetCurrent;
-                float toAbsorbInitAdj = -effect.InitialValue * _stats[ShieldStatType.ShieldAbsorbMult].GetCurrent;
-                // positive & positive
-
-
-                if (toAbsorbInitAdj <= currentSh)
+                else
                 {
-                    effect.RepeatedValue = 0;
-                    effect.InitialValue += toAbsorbInitAdj; // neg += positive 
+                    float absorb = _shieldStats[GeneratorStatType.DamageAbsorbMultiplier].GetCurrent;
+                    incoming.OverTimeValue = 0;
+                    _shieldStats[GeneratorStatType.Capacity].ApplyTriggeredEffect(incoming);
+
+                    remaining.InitialValue -= absorb;
+                    return false;
                 }
-
-                if (toAbsorbInitAdj  > currentSh)
-                {
-                    float remains = toAbsorbInitAdj - currentSh; // positive
-                    toAbsorbInitAdj = currentSh;
-
-                    effect.InitialValue = -remains;
-                    ShieldBrokenEvent?.Invoke();
-
-                }
-
-
-                TriggeredEffect _shieldAbsord = new TriggeredEffect(effect.ID, effect.StatType, -toAbsorbInitAdj, 0, effect.RepeatApplicationDelay, effect.TotalDuration, effect.Icon);
-                _activeEffects.Add(_shieldAbsord);
-
-
-
-                return effect;
             }
         }
 
-        protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+        public void UpdateInDelta(float deltaTime)
         {
-            return _stats[ShieldStatType.Shield];
+            if (!IsReady) return;
+
+            foreach (var st in _shieldStats)
+            {
+                st.Value.UpdateInDelta(deltaTime);
+            }
         }
 
-        public override string GetUIText { get => ($"{_stats[ShieldStatType.Shield].GetCurrent} / {_stats[ShieldStatType.Shield].GetMax}"); }
+        public void StartComp()
+        {
+            IsReady = true;
+        }
 
-
-        #region AI
-        public IReadOnlyDictionary<ShieldStatType, StatValueContainer> GetShieldStats { get => _stats; }
-        #endregion
+        public void StopComp()
+        {
+            IsReady = false;
+        }
     }
-
 }

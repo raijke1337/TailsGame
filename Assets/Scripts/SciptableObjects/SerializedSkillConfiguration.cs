@@ -10,10 +10,10 @@ namespace Arcatech.Skills
     {
 
         public ExtendedText Description;
-        public EquipItemType SpawnPlace;
+        public EquipmentType SpawnPlace;
         [Space, Range(1, 10)] public int Charges;
         [Range(1, 10)] public int ChargeRestore;
-        [Space] public SerializedStatTriggerConfig ComboCostTrigger;
+        [Space] public SerializedStatTriggerConfig CostTrigger;
 
         [Space] public SerializedProjectileConfiguration SkillProjectileConfig;
 

@@ -6,10 +6,10 @@ namespace Arcatech.Triggers
     public class SerializedStatTriggerConfig : ScriptableObjectID
     {
         public TriggerChangedValue ChangedValueType;
-        public float InitialValue;
-        public float RepeatedValue;
-        public float RepeatApplicationDelay;
-        public float TotalDuration;
+        public int InitialValue;
+        public int OverTimeValue;
+        public int OverTimeDuration;
+        public int OverTimeInstances;
         public Sprite Icon;
 
         public TriggerTargetType TargetType;

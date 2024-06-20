@@ -39,7 +39,7 @@ namespace Arcatech.AI
                 inputs.ForceCombat();
                 if (inputs.DebugMessage)
                 {
-                    Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attaked!");
+                 //   Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attaked!");
                 }
             }
 

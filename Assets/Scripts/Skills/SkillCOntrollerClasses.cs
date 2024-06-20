@@ -24,12 +24,13 @@ namespace Arcatech.Skills
             owner.GetEmpties.ItemPositions.TryGetValue(cfg.SpawnPlace,out p);
 
             _effects = new EffectsCollection(cfg.Effects, p);
+            CostTrigger = cfg.CostTrigger;
         }
         public virtual void UpdateInDelta(float time)
         {
             foreach (var timer in _cdTimers.ToList())
             {
-                timer.TimerTick(time);
+                timer.Tick(time);
             }
         }
 
@@ -41,6 +42,8 @@ namespace Arcatech.Skills
         private EffectsCollection _effects;
         public EffectsCollection Effects { get => _effects; }
 
+        public SerializedStatTriggerConfig CostTrigger { get; }
+
         public float PlacerRadius { get => _settings.PlacerRadius; }
         public float EffectRadius { get => _settings.AoERadius; }
         // end
@@ -48,15 +51,17 @@ namespace Arcatech.Skills
 
 
 
-        public bool TryUseSkill (out TriggeredEffect cost)
+        public bool SkillCooldownReady
         {
-            cost = new TriggeredEffect(_settings.ComboCostTrigger);
-            return (_cdTimers.Count < _settings.Charges);
+            get
+            {
+                return (_cdTimers.Count < _settings.Charges);
+            }
         }
         public virtual SkillProjectileComponent UseSkill { get
         {
 
-                UsedSkillTImer();
+                UsedSkillTimer();
             var skillGameobject = GameObject.Instantiate(_settings.SkillProjectileConfig.ProjectilePrefab) as SkillProjectileComponent;
 
                 skillGameobject.Setup(_settings,Owner);
@@ -77,18 +82,13 @@ namespace Arcatech.Skills
         // from stored cfg
         private readonly SerizalizedSkillConfiguration _settings;
         private Queue<Timer> _cdTimers;
-        private void UsedSkillTImer()
+        private void UsedSkillTimer()
         {
-            var t = new Timer(_settings.ChargeRestore);
+            var t = new CountDownTimer(_settings.ChargeRestore);
             _cdTimers.Enqueue(t);
-            t.TimeUp += T_TimeUp;
+            t.OnTimerStopped += () => _cdTimers.Dequeue();
         }
-
-        private void T_TimeUp(Timer arg)
-        {
-            _cdTimers.Dequeue();
-            arg.TimeUp -= T_TimeUp;
-        }
+ 
         #endregion
 
         #region UI
@@ -115,16 +115,6 @@ namespace Arcatech.Skills
         }
 
     }
-    //public class ProjectileSkillObjectForControls : SkillObjectForControls
-    //{
-    //    public SerializedProjectileConfiguration GetProjectileData
-    //    { get; }
-    //    public ProjectileSkillObjectForControls(ProjectileSkillConfigurationSO cfg, BaseUnit owner) : base(cfg, owner)
-    //    {
-    //        GetProjectileData = cfg.SkillProjectile;
-    //    }
-    //}
-
 
 
 }

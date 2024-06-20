@@ -8,7 +8,7 @@ namespace Arcatech.Items
     {
 
         public ProjectileComponent ProjectilePrefab;
-        public EquipItemType SpawnPlace;
+        public EquipmentType SpawnPlace;
         public float TimeToLive;
         public float ProjectileSpeed;
 
@@ -21,7 +21,7 @@ namespace Arcatech.Items
 
     public class ProjectileSettingsPackage
     {
-        public EquipItemType SpawnPlace;
+        public EquipmentType SpawnPlace;
         public float TimeToLive;
         public float ProjectileSpeed;
         public ProjectileComponent ProjectilePrefab;

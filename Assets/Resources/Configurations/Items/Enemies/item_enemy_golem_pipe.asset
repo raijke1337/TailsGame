@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: item_enemy_golem_pipe
   m_EditorClassIdentifier: 
   ID: golem_pipe
-  Description: {fileID: 11400000, guid: 71a21251d9b94f84db2be288ed279269, type: 2}
+  Description: {fileID: 0}
   ItemType: 1
   Item: {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824, type: 3}
   Skill: {fileID: 0}
@@ -22,6 +22,7 @@ MonoBehaviour:
       _serializedList: []
     Effects:
       _serializedList: []
+  AnimatorController: {fileID: 9100000, guid: 1b5923699c461194fb3ec6011d5d02b9, type: 2}
   WeaponCooldown: 0.5
   WeaponHitTriggers:
   - {fileID: 11400000, guid: a16d54ce3c1181047b22659dfc2cdaf6, type: 2}

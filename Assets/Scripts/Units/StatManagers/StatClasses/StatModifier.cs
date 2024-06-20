@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Arcatech.Managers
+namespace Arcatech.Stats
 {
-    public static class EventsBusManager
+    public class StatModifier
     {
+
+
+
 
     }
 }

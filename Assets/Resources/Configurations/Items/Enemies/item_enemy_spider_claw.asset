@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: item_enemy_spider_claw
   m_EditorClassIdentifier: 
   ID: spider_claw
-  Description: {fileID: 11400000, guid: 7cf326037cdf8874fb60e90be5914b32, type: 2}
+  Description: {fileID: 0}
   ItemType: 1
   Item: {fileID: 6803315406574239959, guid: bacc8a76c2d8d514592c6a02e717c351, type: 3}
   Skill: {fileID: 11400000, guid: 462567c6c9bf47047ba06793bf8421f8, type: 2}
@@ -22,6 +22,7 @@ MonoBehaviour:
       _serializedList: []
     Effects:
       _serializedList: []
+  AnimatorController: {fileID: 9100000, guid: a31e9fe7cb45b184097a264bfce31269, type: 2}
   WeaponCooldown: 0
   WeaponHitTriggers:
   - {fileID: 11400000, guid: cc4db5a73042554438af220d89750b27, type: 2}

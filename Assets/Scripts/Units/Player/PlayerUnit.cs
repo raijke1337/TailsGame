@@ -5,10 +5,14 @@ using Arcatech.Units.Inputs;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using KBCore.Refs;
+
+
 namespace Arcatech.Units
 {
     public class PlayerUnit : BaseUnit
     {
+
         private InputsPlayer _playerController;
         protected Camera _faceCam;
 
@@ -20,9 +24,8 @@ namespace Arcatech.Units
             UpdateComponents();
             base.InitiateUnit();
             ToggleCamera(true);
-
         }
- 
+
 
         protected override void UpdateComponents()
         {
@@ -58,46 +61,6 @@ namespace Arcatech.Units
             GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
             CreateStartingEquipments(GetUnitInventory);
         }
-        #endregion
-        #region jump
-        protected override void StartJump()
-        {
-            if (_controller.DebugMessage)
-            {
-                Debug.Log("Start jump");
-            }
-            _rigidbody.AddForce((_playerController.transform.forward + _rigidbody.transform.up) * _debugJumpForceMult, ForceMode.Impulse);
-            airTimer = StartCoroutine(AirTimeTimer());
-            _animator.SetTrigger("JumpStart");
-        }
-        private Coroutine airTimer;
-
-        private IEnumerator AirTimeTimer()
-        {
-            float time = 0;
-            while (true)
-            {
-                time += Time.deltaTime;
-                _animator.SetFloat("AirTime", time);
-                yield return null;
-            }
-        }
-
-        protected override void LandJump(string tag)
-        {
-            if ((tag == "Ground" || tag == "SolidItem") && airTimer != null)
-            {
-                if (_controller.DebugMessage)// && IsAirborne)
-                {
-                    Debug.Log($"Land  jump on tag {tag}");
-                }
-                StopCoroutine(airTimer);
-                airTimer = null;
-                _animator.SetFloat("AirTime", 0);
-                _animator.SetTrigger("JumpEnd");
-            }
-        }
-
         #endregion
 
         #region animator
@@ -163,5 +126,6 @@ namespace Arcatech.Units
             }
         }
     }
-    #endregion
+
+#endregion
 }

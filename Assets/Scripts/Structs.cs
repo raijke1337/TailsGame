@@ -41,7 +41,7 @@ namespace Arcatech
     [Serializable]
     public class ItemEmpties
     {
-        public SerializedDictionary<EquipItemType, Transform> ItemPositions;
+        public SerializedDictionary<EquipmentType, Transform> ItemPositions;
     }
     #endregion
 
@@ -77,6 +77,7 @@ namespace Arcatech
 
     #region interfaces
 
+
     public interface IHasEffects
     {
         public event EffectsManagerEvent BaseControllerEffectEvent;
@@ -87,37 +88,21 @@ namespace Arcatech
         void ApplyEffect(TriggeredEffect effect);
     }
 
-    public interface IStatsComponentForHandler : IManaged
+    public interface IManagedComponent : IManaged
     {
         bool IsReady { get; }
-        event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
-
-        // void Ping();
     }
     public interface IManaged
     {
         void UpdateInDelta(float deltaTime);
-        void SetupStatsComponent();
-        void StopStatsComponent();
+        void StartComp();
+        void StopComp();
     }
 
-    public interface IHasID
-    { string GetID { get; } }
-    public interface IHasGameObject
-    { public GameObject GetObject(); }
+
     public interface IHasOwner
     { BaseUnit Owner { get; } }
 
-    public interface IAppliesTriggers : IHasGameObject
-    {
-        event SimpleTriggerEvent TriggerHitUnitEvent;
-    }
-
-
-    public interface IExpires : IHasGameObject
-    {
-        event SimpleEventsHandler<IExpires> SkillComponentExpiredEvent;
-    }
 
     public interface INeedsEmpties
     { ItemEmpties Empties { get; } }

@@ -37,7 +37,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""SkillQ"",
+                    ""name"": ""UseMeleeSkill"",
                     ""type"": ""Button"",
                     ""id"": ""bfd0dbeb-7ca0-4e47-bd96-58cb6786a09d"",
                     ""expectedControlType"": ""Button"",
@@ -46,7 +46,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SkillE"",
+                    ""name"": ""UseRangedSkill"",
                     ""type"": ""Button"",
                     ""id"": ""e2917fca-79e3-4182-bf7b-96c2ec7e5061"",
                     ""expectedControlType"": ""Button"",
@@ -55,7 +55,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SkillR"",
+                    ""name"": ""UseShieldSkill"",
                     ""type"": ""Button"",
                     ""id"": ""f0f3862b-e0cd-4e33-967e-fe7cc6fe6044"",
                     ""expectedControlType"": ""Button"",
@@ -73,7 +73,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Dash"",
+                    ""name"": ""UseDodgeSkill"",
                     ""type"": ""Button"",
                     ""id"": ""dc59ae78-b565-45db-9c63-afd7d5a4a4a6"",
                     ""expectedControlType"": ""Button"",
@@ -91,18 +91,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SpecialAttack"",
+                    ""name"": ""RangedAttack"",
                     ""type"": ""Button"",
                     ""id"": ""e9c23c4d-a739-4ae0-8b74-c3ffdef73b6d"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Items"",
-                    ""type"": ""Button"",
-                    ""id"": ""c1abd474-226a-4b66-b401-4ba971a244d4"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -112,6 +103,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""b5fc2ab7-72da-4da8-b113-26745a684b5a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""fa67abf7-db6f-4647-92c3-22d959f31839"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Mount"",
+                    ""type"": ""Button"",
+                    ""id"": ""15eca33c-4683-4ad2-a4d6-18b36102cf02"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -181,7 +190,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SkillQ"",
+                    ""action"": ""UseMeleeSkill"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -203,7 +212,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Dash"",
+                    ""action"": ""UseDodgeSkill"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -214,7 +223,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SkillE"",
+                    ""action"": ""UseRangedSkill"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -225,7 +234,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SkillR"",
+                    ""action"": ""UseShieldSkill"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -247,18 +256,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""SpecialAttack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1000d161-135a-4f12-a1d5-4a6abf769f99"",
-                    ""path"": ""<Keyboard>/i"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Items"",
+                    ""action"": ""RangedAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -272,6 +270,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6917a357-b112-45e3-ae3b-31c7897b45fe"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa17cbf8-f841-48ac-b8a5-2acc3159fa41"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mount"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -281,15 +301,16 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Game
         m_Game = asset.FindActionMap("Game", throwIfNotFound: true);
         m_Game_WASD = m_Game.FindAction("WASD", throwIfNotFound: true);
-        m_Game_SkillQ = m_Game.FindAction("SkillQ", throwIfNotFound: true);
-        m_Game_SkillE = m_Game.FindAction("SkillE", throwIfNotFound: true);
-        m_Game_SkillR = m_Game.FindAction("SkillR", throwIfNotFound: true);
+        m_Game_UseMeleeSkill = m_Game.FindAction("UseMeleeSkill", throwIfNotFound: true);
+        m_Game_UseRangedSkill = m_Game.FindAction("UseRangedSkill", throwIfNotFound: true);
+        m_Game_UseShieldSkill = m_Game.FindAction("UseShieldSkill", throwIfNotFound: true);
         m_Game_Pause = m_Game.FindAction("Pause", throwIfNotFound: true);
-        m_Game_Dash = m_Game.FindAction("Dash", throwIfNotFound: true);
+        m_Game_UseDodgeSkill = m_Game.FindAction("UseDodgeSkill", throwIfNotFound: true);
         m_Game_MainAttack = m_Game.FindAction("MainAttack", throwIfNotFound: true);
-        m_Game_SpecialAttack = m_Game.FindAction("SpecialAttack", throwIfNotFound: true);
-        m_Game_Items = m_Game.FindAction("Items", throwIfNotFound: true);
+        m_Game_RangedAttack = m_Game.FindAction("RangedAttack", throwIfNotFound: true);
         m_Game_Jump = m_Game.FindAction("Jump", throwIfNotFound: true);
+        m_Game_Aim = m_Game.FindAction("Aim", throwIfNotFound: true);
+        m_Game_Mount = m_Game.FindAction("Mount", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -352,29 +373,31 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Game;
     private List<IGameActions> m_GameActionsCallbackInterfaces = new List<IGameActions>();
     private readonly InputAction m_Game_WASD;
-    private readonly InputAction m_Game_SkillQ;
-    private readonly InputAction m_Game_SkillE;
-    private readonly InputAction m_Game_SkillR;
+    private readonly InputAction m_Game_UseMeleeSkill;
+    private readonly InputAction m_Game_UseRangedSkill;
+    private readonly InputAction m_Game_UseShieldSkill;
     private readonly InputAction m_Game_Pause;
-    private readonly InputAction m_Game_Dash;
+    private readonly InputAction m_Game_UseDodgeSkill;
     private readonly InputAction m_Game_MainAttack;
-    private readonly InputAction m_Game_SpecialAttack;
-    private readonly InputAction m_Game_Items;
+    private readonly InputAction m_Game_RangedAttack;
     private readonly InputAction m_Game_Jump;
+    private readonly InputAction m_Game_Aim;
+    private readonly InputAction m_Game_Mount;
     public struct GameActions
     {
         private @PlayerControls m_Wrapper;
         public GameActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @WASD => m_Wrapper.m_Game_WASD;
-        public InputAction @SkillQ => m_Wrapper.m_Game_SkillQ;
-        public InputAction @SkillE => m_Wrapper.m_Game_SkillE;
-        public InputAction @SkillR => m_Wrapper.m_Game_SkillR;
+        public InputAction @UseMeleeSkill => m_Wrapper.m_Game_UseMeleeSkill;
+        public InputAction @UseRangedSkill => m_Wrapper.m_Game_UseRangedSkill;
+        public InputAction @UseShieldSkill => m_Wrapper.m_Game_UseShieldSkill;
         public InputAction @Pause => m_Wrapper.m_Game_Pause;
-        public InputAction @Dash => m_Wrapper.m_Game_Dash;
+        public InputAction @UseDodgeSkill => m_Wrapper.m_Game_UseDodgeSkill;
         public InputAction @MainAttack => m_Wrapper.m_Game_MainAttack;
-        public InputAction @SpecialAttack => m_Wrapper.m_Game_SpecialAttack;
-        public InputAction @Items => m_Wrapper.m_Game_Items;
+        public InputAction @RangedAttack => m_Wrapper.m_Game_RangedAttack;
         public InputAction @Jump => m_Wrapper.m_Game_Jump;
+        public InputAction @Aim => m_Wrapper.m_Game_Aim;
+        public InputAction @Mount => m_Wrapper.m_Game_Mount;
         public InputActionMap Get() { return m_Wrapper.m_Game; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -387,33 +410,36 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @WASD.started += instance.OnWASD;
             @WASD.performed += instance.OnWASD;
             @WASD.canceled += instance.OnWASD;
-            @SkillQ.started += instance.OnSkillQ;
-            @SkillQ.performed += instance.OnSkillQ;
-            @SkillQ.canceled += instance.OnSkillQ;
-            @SkillE.started += instance.OnSkillE;
-            @SkillE.performed += instance.OnSkillE;
-            @SkillE.canceled += instance.OnSkillE;
-            @SkillR.started += instance.OnSkillR;
-            @SkillR.performed += instance.OnSkillR;
-            @SkillR.canceled += instance.OnSkillR;
+            @UseMeleeSkill.started += instance.OnUseMeleeSkill;
+            @UseMeleeSkill.performed += instance.OnUseMeleeSkill;
+            @UseMeleeSkill.canceled += instance.OnUseMeleeSkill;
+            @UseRangedSkill.started += instance.OnUseRangedSkill;
+            @UseRangedSkill.performed += instance.OnUseRangedSkill;
+            @UseRangedSkill.canceled += instance.OnUseRangedSkill;
+            @UseShieldSkill.started += instance.OnUseShieldSkill;
+            @UseShieldSkill.performed += instance.OnUseShieldSkill;
+            @UseShieldSkill.canceled += instance.OnUseShieldSkill;
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @Dash.started += instance.OnDash;
-            @Dash.performed += instance.OnDash;
-            @Dash.canceled += instance.OnDash;
+            @UseDodgeSkill.started += instance.OnUseDodgeSkill;
+            @UseDodgeSkill.performed += instance.OnUseDodgeSkill;
+            @UseDodgeSkill.canceled += instance.OnUseDodgeSkill;
             @MainAttack.started += instance.OnMainAttack;
             @MainAttack.performed += instance.OnMainAttack;
             @MainAttack.canceled += instance.OnMainAttack;
-            @SpecialAttack.started += instance.OnSpecialAttack;
-            @SpecialAttack.performed += instance.OnSpecialAttack;
-            @SpecialAttack.canceled += instance.OnSpecialAttack;
-            @Items.started += instance.OnItems;
-            @Items.performed += instance.OnItems;
-            @Items.canceled += instance.OnItems;
+            @RangedAttack.started += instance.OnRangedAttack;
+            @RangedAttack.performed += instance.OnRangedAttack;
+            @RangedAttack.canceled += instance.OnRangedAttack;
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Aim.started += instance.OnAim;
+            @Aim.performed += instance.OnAim;
+            @Aim.canceled += instance.OnAim;
+            @Mount.started += instance.OnMount;
+            @Mount.performed += instance.OnMount;
+            @Mount.canceled += instance.OnMount;
         }
 
         private void UnregisterCallbacks(IGameActions instance)
@@ -421,33 +447,36 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @WASD.started -= instance.OnWASD;
             @WASD.performed -= instance.OnWASD;
             @WASD.canceled -= instance.OnWASD;
-            @SkillQ.started -= instance.OnSkillQ;
-            @SkillQ.performed -= instance.OnSkillQ;
-            @SkillQ.canceled -= instance.OnSkillQ;
-            @SkillE.started -= instance.OnSkillE;
-            @SkillE.performed -= instance.OnSkillE;
-            @SkillE.canceled -= instance.OnSkillE;
-            @SkillR.started -= instance.OnSkillR;
-            @SkillR.performed -= instance.OnSkillR;
-            @SkillR.canceled -= instance.OnSkillR;
+            @UseMeleeSkill.started -= instance.OnUseMeleeSkill;
+            @UseMeleeSkill.performed -= instance.OnUseMeleeSkill;
+            @UseMeleeSkill.canceled -= instance.OnUseMeleeSkill;
+            @UseRangedSkill.started -= instance.OnUseRangedSkill;
+            @UseRangedSkill.performed -= instance.OnUseRangedSkill;
+            @UseRangedSkill.canceled -= instance.OnUseRangedSkill;
+            @UseShieldSkill.started -= instance.OnUseShieldSkill;
+            @UseShieldSkill.performed -= instance.OnUseShieldSkill;
+            @UseShieldSkill.canceled -= instance.OnUseShieldSkill;
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @Dash.started -= instance.OnDash;
-            @Dash.performed -= instance.OnDash;
-            @Dash.canceled -= instance.OnDash;
+            @UseDodgeSkill.started -= instance.OnUseDodgeSkill;
+            @UseDodgeSkill.performed -= instance.OnUseDodgeSkill;
+            @UseDodgeSkill.canceled -= instance.OnUseDodgeSkill;
             @MainAttack.started -= instance.OnMainAttack;
             @MainAttack.performed -= instance.OnMainAttack;
             @MainAttack.canceled -= instance.OnMainAttack;
-            @SpecialAttack.started -= instance.OnSpecialAttack;
-            @SpecialAttack.performed -= instance.OnSpecialAttack;
-            @SpecialAttack.canceled -= instance.OnSpecialAttack;
-            @Items.started -= instance.OnItems;
-            @Items.performed -= instance.OnItems;
-            @Items.canceled -= instance.OnItems;
+            @RangedAttack.started -= instance.OnRangedAttack;
+            @RangedAttack.performed -= instance.OnRangedAttack;
+            @RangedAttack.canceled -= instance.OnRangedAttack;
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Aim.started -= instance.OnAim;
+            @Aim.performed -= instance.OnAim;
+            @Aim.canceled -= instance.OnAim;
+            @Mount.started -= instance.OnMount;
+            @Mount.performed -= instance.OnMount;
+            @Mount.canceled -= instance.OnMount;
         }
 
         public void RemoveCallbacks(IGameActions instance)
@@ -468,14 +497,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     public interface IGameActions
     {
         void OnWASD(InputAction.CallbackContext context);
-        void OnSkillQ(InputAction.CallbackContext context);
-        void OnSkillE(InputAction.CallbackContext context);
-        void OnSkillR(InputAction.CallbackContext context);
+        void OnUseMeleeSkill(InputAction.CallbackContext context);
+        void OnUseRangedSkill(InputAction.CallbackContext context);
+        void OnUseShieldSkill(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
-        void OnDash(InputAction.CallbackContext context);
+        void OnUseDodgeSkill(InputAction.CallbackContext context);
         void OnMainAttack(InputAction.CallbackContext context);
-        void OnSpecialAttack(InputAction.CallbackContext context);
-        void OnItems(InputAction.CallbackContext context);
+        void OnRangedAttack(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
+        void OnMount(InputAction.CallbackContext context);
     }
 }

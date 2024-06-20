@@ -65,11 +65,11 @@ namespace Arcatech.Managers
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
             {
-                _gameControllers.UpdateManagers(Time.deltaTime);
+                _gameControllers.UpdateManagers(Time.fixedDeltaTime);
             }
         }
 

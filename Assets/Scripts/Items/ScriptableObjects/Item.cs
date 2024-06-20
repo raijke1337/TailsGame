@@ -8,6 +8,6 @@ namespace Arcatech.Items
     public class Item : ScriptableObjectID
     {
         public ExtendedText Description;
-        public EquipItemType ItemType;
+        public EquipmentType ItemType;
     }
 }

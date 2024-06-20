@@ -1,66 +1,78 @@
+using Arcatech.EventBus;
+using Arcatech.Items;
+using Arcatech.Managers;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using Arcatech.Units.Stats;
 using AYellowpaper.SerializedCollections;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Compilation;
 using UnityEngine;
 
-namespace Arcatech.Units
+namespace Arcatech.Stats
 {
     [Serializable]
-    public class UnitStatsController : BaseController, IStatsComponentForHandler, ITakesTriggers
+    public class UnitStatsController : BaseControllerConditional, IManagedComponent, ITakesTriggers
     {
-        public SerializedDictionary<BaseStatType, StatValueContainer> GetBaseStats { get; private set; }
-       public event SimpleEventsHandler ZeroHealthEvent;
-       public event SimpleEventsHandler<float> UnitTookDamageEvent; //value
-        public string GetDisplayName { get; }
-        public override string GetUIText { get => GetDisplayName; }
+        public Dictionary<BaseStatType, StatValueContainer> CurrentStats { get; set;  }
 
-        private StatValueContainer _healthContainer;
+        private EnergyController _energy;
+        public event SimpleEventsHandler ZeroHealthEvent; // dead
+        public event SimpleEventsHandler StunEvent; // just stun
+        public event SimpleEventsHandler KnockDownEvent; // fall, armor damage
+        public event SimpleEventsHandler<float> UnitTookDamageEvent; //        
+
+
+        public UnitStatsController(ItemEmpties empties, BaseUnit owner) : base(empties, owner)
+        {
+            CurrentStats = new Dictionary<BaseStatType, StatValueContainer>();
+        }
 
         #region ihandler
-        public override void SetupStatsComponent()
+        public override void StartComp()
         {
-            foreach (var v in GetBaseStats.Values) { v.Setup(); }
+            foreach (var v in CurrentStats.Values)             
+            {
+                v.StartComp(); 
+            }
+
+            CurrentStats[BaseStatType.Health].ValueChangedEvent += OnHealthValueChange;
+
             IsReady = true;
         }
-        public override void StopStatsComponent()
+        public override void StopComp()
         {
-            base.StopStatsComponent();
-            _healthContainer.ValueChangedEvent -= OnHealthValueChange;
+            CurrentStats[BaseStatType.Health].ValueChangedEvent -= OnHealthValueChange;
         }
         #endregion
 
-
-        public UnitStatsController(BaseUnit owner) : base(owner)
+        public StatValueContainer AssessStat(TriggerChangedValue stat)
         {
-            GetBaseStats = new SerializedDictionary<BaseStatType, StatValueContainer>();
-            var cfg = owner.StatsConfig;
-
-            if (cfg == null) return;
-
-
-            var _keys = cfg.Stats.Keys.ToArray();
-            var _values = cfg.Stats.Values.ToArray();
-
-            for (int i = 0; i < _keys.Count(); i++)
+            switch (stat)
             {
-                GetBaseStats.Add(_keys[i], new StatValueContainer(_values[i]));
+                case TriggerChangedValue.Health:
+                    return CurrentStats[BaseStatType.Health];
+                case TriggerChangedValue.Energy:
+                    return _energy.GetValueContainer;
+                case TriggerChangedValue.Stamina:
+                    return CurrentStats[BaseStatType.Stamina];
+                case TriggerChangedValue.MoveSpeed:
+                    return CurrentStats[BaseStatType.MoveSpeed];
+                default:
+                    Debug.LogError($"Tried to assess stat {stat}, not implemented");
+                    break;
             }
-
-            GetDisplayName = cfg.displayName;
-            _healthContainer = GetBaseStats[BaseStatType.Health];
-            _healthContainer.ValueChangedEvent += OnHealthValueChange;
+            return null;
 
         }
+
         protected void OnHealthValueChange(float current, float prev)
         {
             if (!IsReady) return;
-
             if (prev>current)
             {
-                //Debug.Log($"base stats health change called");
                 UnitTookDamageEvent?.Invoke(prev - current);
             }
             if (current <= 0)
@@ -69,24 +81,58 @@ namespace Arcatech.Units
             }
         }
 
-
-
-        // numbers change is all here       
-        protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+        protected override void FinishItemConfig(EquipmentItem item)
         {
-            StatValueContainer result = null;
+
+            var cfg = DataManager.Instance.GetConfigByID<GeneratorSettings>(_items[EquipmentType.Shield].ID);
+
+            if (cfg == null)
+            {
+                IsReady = false;
+                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
+            }
+            _energy = new EnergyController(cfg);
+        }
+
+        protected override void InstantiateItem(EquipmentItem i)
+        {
+            i.SetItemEmpty(Empties.ItemPositions[EquipmentType.Shield]);
+        }
+
+        public override void ApplyEffect(TriggeredEffect effect)
+        {
             switch (effect.StatType)
             {
                 case TriggerChangedValue.Health:
-                    result = GetBaseStats[BaseStatType.Health];
+                    if (!_energy.TryAbsorb(effect,out var remaining))
+                    {
+                        CurrentStats[BaseStatType.Health].ApplyTriggeredEffect(remaining);
+                    }
                     break;
-                case TriggerChangedValue.MoveSpeed:
-                    result = GetBaseStats[BaseStatType.MoveSpeed];
+                case TriggerChangedValue.Energy:
+                    _energy.GetValueContainer.ApplyTriggeredEffect(effect);
+                    break;
+                case TriggerChangedValue.Stamina:
+                    CurrentStats[BaseStatType.Stamina].ApplyTriggeredEffect(effect);
                     break;
                 default:
+                    Debug.LogWarning($"trigger of type {effect.StatType} not implemented");
                     break;
             }
-            return result;
         }
+
+
+        public override void UpdateInDelta(float deltaTime)
+        {
+            foreach (var stat in CurrentStats)
+            {
+                stat.Value.UpdateInDelta(deltaTime);
+            }
+            if (_energy != null)
+            {
+                _energy.UpdateInDelta(deltaTime);
+            }
+        }
+
     }
 }

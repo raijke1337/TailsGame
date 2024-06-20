@@ -1,26 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 namespace Arcatech.Units
 {
-    [RequireComponent(typeof(BoxCollider))]
     public class GroundDetectorPlatformCollider : MonoBehaviour
     {
-        private BoxCollider _col;
+        #region platfroming
+        Transform platform;
 
-        public event SimpleEventsHandler<string> PlatfromCollidedWithTagEvent;
-
-        private void Start()
+        private void OnCollisionEnter(Collision collision)
         {
-            _col = GetComponent<BoxCollider>();
-            //_col.isTrigger = false;
+            if (collision.gameObject.CompareTag("MovingPlatform"))
+            {
+                // land on top
+                if (collision.GetContact(0).normal.y > 0.5f)
+                {
+                    platform = collision.transform;
+                    transform.SetParent(platform);
+                }
+            }
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionExit(Collision collision)
         {
-            PlatfromCollidedWithTagEvent?.Invoke(other.tag);
+            if (collision.gameObject.CompareTag("MovingPlatform"))
+            {
+                transform.SetParent(null);
+                platform = null;
+            }
         }
 
+        #endregion
+
+        [SerializeField] float _groundDist = 0.1f;
+        [SerializeField] LayerMask _groundMask;
+
+        public event UnityAction<bool> OffTheGroundEvent = delegate {};
+
+        public bool IsGrounded { get;private set; }
+        public float AirTime
+        { get;
+            private set;
+        }
+
+        void FixedUpdate()
+        {
+            bool state = Physics.CheckSphere(transform.position, _groundDist, _groundMask);
+
+            if (!state)
+            { 
+                AirTime += Time.fixedDeltaTime;
+                if (IsGrounded)
+                {
+                    OffTheGroundEvent.Invoke(true);
+                } 
+            }
+            if (state)
+            {
+                if (!IsGrounded)
+                {
+                    OffTheGroundEvent.Invoke(false);
+                }
+                AirTime = 0f;
+            }
+            IsGrounded = state;
+        }
 
 
     }

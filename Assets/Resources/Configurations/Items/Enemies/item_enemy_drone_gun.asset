@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: item_enemy_drone_gun
   m_EditorClassIdentifier: 
   ID: dronegun
-  Description: {fileID: 11400000, guid: d182ad7fe6f71c24ca935ac7d8f1d366, type: 2}
+  Description: {fileID: 0}
   ItemType: 2
   Item: {fileID: 619754833450251262, guid: 250c6690b13f55d419d054628bb3e24a, type: 3}
   Skill: {fileID: 11400000, guid: 430823da09604be44afb1760ea86ea04, type: 2}
@@ -22,6 +22,7 @@ MonoBehaviour:
       _serializedList: []
     Effects:
       _serializedList: []
+  AnimatorController: {fileID: 9100000, guid: 749506982cdf68b4ebb302f3006f9141, type: 2}
   WeaponCooldown: 1
   WeaponHitTriggers:
   - {fileID: 11400000, guid: 8a780d4d5e17cc04285d20465c666c8d, type: 2}

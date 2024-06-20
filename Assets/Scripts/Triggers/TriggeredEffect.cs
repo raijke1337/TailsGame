@@ -5,40 +5,47 @@ namespace Arcatech.Triggers
 {
     public class TriggeredEffect
     {
-        public string ID; // used to load info
-        public TriggerChangedValue StatType; // used to pick changed stat
-        public float InitialValue;
-        public float RepeatedValue; //tick value
-        public float RepeatApplicationDelay { get; }
-        public float TotalDuration;
-        public Sprite Icon;
-        public TriggerTargetType Target;
-        public float TotalValue { get
-            {
-                return InitialValue + (((TotalDuration - RepeatApplicationDelay) / RepeatApplicationDelay) * RepeatedValue);
-            } }
+        public string ID { get; }
+        public TriggerChangedValue StatType { get; }
+        public float OverTimeValue { get; set; }
+        public int OverTimeDuration { get; }
+        public int OverTimeInstances { get; }
 
+
+        public float InitialValue { get; set; }
+        public float TimeSinceTick { get; set; }
+
+        
+        public Sprite Icon { get; }
+        public TriggerTargetType Target { get; }
+
+        public float TimeToTick { get
+            {
+                return OverTimeDuration / OverTimeInstances;
+            }
+        }
+        public float ValuePerTick
+        {
+            get
+            {
+                return OverTimeValue / OverTimeInstances;
+            }
+        }
         public EffectsCollection GetEffects { get; }
 
-
-        public float CurrentRepeatTimer; // used by stats controller to do ticks
-        public bool InitialDone = false; // is initial value applied
-
-        public TriggeredEffect(string id, TriggerChangedValue type, float init, float repeat = 0, float repeatDelay = 0, float totalDuration = 0, Sprite icon = null)
-        {
-            ID = id; StatType = type; InitialValue = init; RepeatedValue = repeat; RepeatApplicationDelay = repeatDelay; TotalDuration = totalDuration; Icon = icon;
-            CurrentRepeatTimer = RepeatApplicationDelay;
-        }
         public TriggeredEffect(SerializedStatTriggerConfig config)
         {
-            ID = config.ID; StatType = config.ChangedValueType; InitialValue = config.InitialValue; RepeatedValue = config.RepeatedValue; RepeatApplicationDelay = config.RepeatApplicationDelay; TotalDuration = config.TotalDuration; Icon = config.Icon;
-            CurrentRepeatTimer = RepeatApplicationDelay; Target = config.TargetType; GetEffects = new EffectsCollection(config.Effects);
+            ID = config.ID;
+            StatType = config.ChangedValueType;
+            InitialValue = config.InitialValue;
+            OverTimeValue = config.OverTimeValue;
+            OverTimeDuration = config.OverTimeDuration;
+            OverTimeInstances = config.OverTimeInstances;
+            TimeSinceTick = 0;
+            Icon = config.Icon;
+            Target = config.TargetType;
+            GetEffects = new EffectsCollection(config.Effects);
         }
-        public override string ToString()
-        {
-            return ($"{ID} effect start value {InitialValue} done {InitialDone}; time left {TotalDuration}");
-        }
-
     }
 
 }

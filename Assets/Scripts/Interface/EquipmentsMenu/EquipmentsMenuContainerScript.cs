@@ -17,7 +17,7 @@ namespace Arcatech.UI
 
         private UnitInventoryComponent _playerInventory;
 
-        [SerializeField] SerializedDictionary<EquipItemType, ItemTileComponent> _equipsTiles;
+        [SerializeField] SerializedDictionary<EquipmentType, ItemTileComponent> _equipsTiles;
         [SerializeField] List<ItemTileComponent> _inventoryTiles = new List<ItemTileComponent>();
 
         [Space, SerializeField] private ItemTileComponent _tilePreset; // for items

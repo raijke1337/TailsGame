@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1012797217815041932}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,9 +43,9 @@ GameObject:
   m_Component:
   - component: {fileID: 979451970447391360}
   - component: {fileID: 726043566997034929}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bridge 3x9
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,7 +66,6 @@ Transform:
   - {fileID: 2277209521501631353}
   - {fileID: 3400201349418947486}
   - {fileID: 1341924187579064184}
-  - {fileID: 4362119188826610280}
   - {fileID: 1012797217815041932}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -248,6 +247,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arca Bridge Pillar
       objectReference: {fileID: 0}
+    - target: {fileID: 6311327189099642460, guid: 096b68b9c7697a74bbec0c5dfd32ac69,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6313791211748915532, guid: 096b68b9c7697a74bbec0c5dfd32ac69,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -308,80 +312,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6313791211748915532, guid: 096b68b9c7697a74bbec0c5dfd32ac69,
     type: 3}
   m_PrefabInstance: {fileID: 1398720239307276600}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1556684323810958895
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 979451970447391360}
-    m_Modifications:
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 14
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5004061208784788182, guid: 66b3070b8c1c10444afd1152fae680c2,
-        type: 3}
-      propertyPath: m_Name
-      value: ceilingBig
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 66b3070b8c1c10444afd1152fae680c2, type: 3}
---- !u!4 &4362119188826610280 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2959753839362114631, guid: 66b3070b8c1c10444afd1152fae680c2,
-    type: 3}
-  m_PrefabInstance: {fileID: 1556684323810958895}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4327900715909339901
 PrefabInstance:
@@ -469,6 +399,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Arca Bridge Pillar (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6311327189099642460, guid: 096b68b9c7697a74bbec0c5dfd32ac69,
+        type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6313791211748915532, guid: 096b68b9c7697a74bbec0c5dfd32ac69,
         type: 3}

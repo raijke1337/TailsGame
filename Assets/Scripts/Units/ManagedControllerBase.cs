@@ -1,6 +1,7 @@
+using KBCore.Refs;
 using UnityEngine;
 
-public abstract class ManagedControllerBase : MonoBehaviour
+public abstract class ManagedControllerBase : ValidatedMonoBehaviour
 {
     [SerializeField] public bool DebugMessage;
     public virtual void StartController()

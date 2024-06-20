@@ -6,7 +6,7 @@ using UnityEngine.AI;
 namespace Arcatech.AI
 {
     [Serializable]
-    public class StateMachine : IStatsComponentForHandler
+    public class StateMachine : IManagedComponent
     {
         #region handler
         public void UpdateInDelta(float deltaTime)
@@ -17,7 +17,7 @@ namespace Arcatech.AI
             TimeInState += deltaTime;
             if (wasSelectedUnitUpdated) OnUpdatedUnit();
         }
-        public void SetupStatsComponent()
+        public void StartComp()
         {
             var eyes = new GameObject("SphereCaster");
             eyes.transform.SetPositionAndRotation(ControlledUnit.transform.position, ControlledUnit.transform.rotation);
@@ -28,7 +28,7 @@ namespace Arcatech.AI
         }
         public bool IsReady { get => true; }
 
-        public void StopStatsComponent()
+        public void StopComp()
         {
 
         }
@@ -63,14 +63,14 @@ namespace Arcatech.AI
         private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
 
 
-        public event StateMachineEvent<CombatActionType> AgressiveActionRequestSM;
-        public event StateMachineEvent<CombatActionType> ChangeRangeActionRequestSM;
+        public event StateMachineEvent<UnitActionType> AgressiveActionRequestSM;
+        public event StateMachineEvent<UnitActionType> ChangeRangeActionRequestSM;
         public event StateMachineEvent<PlayerUnit> PlayerSpottedSM;
         public event StateMachineEvent<ReferenceUnitType> RequestFocusSM;
         public event StateMachineEvent AggroRequestedSM;
         public event StateMachineEvent RotationRequestedSM;
 
-        public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent; // unused
+        public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent; // unused
 
         public NavMeshAgent NMAgent { get; }
         [HideInInspector] public Transform[] PatrolPoints;
@@ -138,7 +138,7 @@ namespace Arcatech.AI
             }
             return result;
         }
-        public void OnAttackRequest(CombatActionType type)
+        public void OnAttackRequest(UnitActionType type)
         {
             AgressiveActionRequestSM?.Invoke(type);
         }
@@ -152,10 +152,10 @@ namespace Arcatech.AI
         public bool OnAllyNeedsHelp()
         {
             if (FocusUnit == null) return false;
-            return FocusUnit.GetStats[BaseStatType.Health].GetCurrent / FocusUnit.GetStats[BaseStatType.Health].GetMax <= 0.5f;  // HUGE todo
+            return FocusUnit.GetInputs().AssessStat(TriggerChangedValue.Health).GetCurrent / FocusUnit.GetInputs().AssessStat(TriggerChangedValue.Health).GetMax <= 0.5f;  // HUGE todo
         }
         public void OnRotateRequest() => RotationRequestedSM?.Invoke();
-        public void OnSwapRanges(CombatActionType type) => ChangeRangeActionRequestSM?.Invoke(type);
+        public void OnSwapRanges(UnitActionType type) => ChangeRangeActionRequestSM?.Invoke(type);
 
         public void Ping()
         { }

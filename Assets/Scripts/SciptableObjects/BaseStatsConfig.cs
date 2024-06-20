@@ -1,4 +1,5 @@
 
+using Arcatech.Stats;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 

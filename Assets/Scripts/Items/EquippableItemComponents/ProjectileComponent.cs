@@ -11,7 +11,7 @@ namespace Arcatech.Items
         public bool IsSetup { get; protected set; } = false;
         public BaseUnit Owner { get; set; }
         private ProjectileSettingsPackage _projData;
-        public EquipItemType SpawnPlace { get; protected set; }
+        public EquipmentType SpawnPlace { get; protected set; }
 
         public ProjectileSettingsPackage GetProjectileSettings => _projData;
 

@@ -1191,7 +1191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81c6598b0eed0334d9c1ff7cc1d20865, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 1
+  DebugMessage: 0
+  _unitStatsConfig: {fileID: 11400000, guid: b68375f69c060204787f2c01560a8781, type: 2}
   Empties:
     ItemPositions:
       _serializedList:
@@ -1211,7 +1212,6 @@ MonoBehaviour:
         Value: {fileID: 0}
       - Key: 255
         Value: {fileID: 0}
-  InputDirectionOverride: {x: 0, y: 0, z: 0}
   IsInMeleeCombo: 0
   patrolPoints: []
   InitialState: {fileID: 11400000, guid: afbe920454ade2b4ab20de1fb1104fe9, type: 2}
@@ -1296,14 +1296,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8683f71a5cfe53439f51db09350de3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _baseAnimator: {fileID: 9100000, guid: 1b5923699c461194fb3ec6011d5d02b9, type: 2}
   Side: 1
-  StatsConfig: {fileID: 11400000, guid: b68375f69c060204787f2c01560a8781, type: 2}
   _debugJumpForceMult: 0
   _groundCollider: {fileID: 0}
+  _minAngleToPlayRotation: 0
+  _dampTime: 0.1
   _defaultItems: {fileID: 11400000, guid: 1710305839a70bd4fbeccb329f572691, type: 2}
-  _dropPrefab: {fileID: 5591554248188464965, guid: 9c99c0c85eb6ece4c8d1a19ffcda0e5f,
+  _dropPrefab: {fileID: 5386112262815798598, guid: 9c99c0c85eb6ece4c8d1a19ffcda0e5f,
     type: 3}
-  _drop: {fileID: 0}
+  _drop: {fileID: 11400000, guid: bd22f52d8ac01824fbe79053739e9493, type: 2}
   _enemyStatsConfig: {fileID: 11400000, guid: 7dd8bf0d697ef2441931b130b1c2f299, type: 2}
 --- !u!114 &7250393868015656704
 MonoBehaviour:

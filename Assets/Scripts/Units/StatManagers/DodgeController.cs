@@ -11,16 +11,14 @@ namespace Arcatech.Units
 {
 
     [Serializable]
-    public class DodgeController : BaseControllerConditional, IStatsComponentForHandler, ITakesTriggers
+    public class DodgeController : BaseControllerConditional, IManagedComponent, ITakesTriggers
 
     { // ALL LOGIC FOR TIMERS ETC MOVED TO DODGE SKILL CTRL OBJECT (Skill controller)
         public DodgeController(ItemEmpties em, BaseUnit ow) : base(em, ow)
         {
 
         }
-       //Dictionary<DodgeStatType, StatValueContainer> _stats;
 
-        
 
         #region conditional
 
@@ -32,19 +30,17 @@ namespace Arcatech.Units
             if (cfg == null)
             {
                 IsReady = false;
-                // throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
             }
-
-            _booster = _equipment[EquipItemType.Booster];
+            //_booster = _items[EquipItemType.Booster];
         }
         protected override void InstantiateItem(EquipmentItem i)
         {
-            i.SetItemEmpty(Empties.ItemPositions[EquipItemType.Booster]);
+            i.SetItemEmpty(Empties.ItemPositions[EquipmentType.Booster]);
         }
         #endregion
 
         #region managed
-        public override void SetupStatsComponent()
+        public override void StartComp()
         {
             if (!IsReady) // set ready by running OnItemAssign
             {
@@ -55,8 +51,16 @@ namespace Arcatech.Units
 
         public override void UpdateInDelta(float deltaTime)
         {
-            //foreach (var timer in _timerQueue.ToList()) timer.TimerTick(deltaTime);
-            base.UpdateInDelta(deltaTime);
+        }
+
+        public override void ApplyEffect(TriggeredEffect effect)
+        {
+
+        }
+
+        public override void StopComp()
+        {
+
         }
 
         #endregion
@@ -64,13 +68,8 @@ namespace Arcatech.Units
         #region ctrl
 
         //private Queue<Timer> _timerQueue = new Queue<Timer>();
-        private EquipmentItem _booster;
+       // private EquipmentItem _booster;
 
-        public override string GetUIText
-        {
-            get => "";
-        }
-        
 
         //public bool IsDodgePossibleCheck()
         //{
@@ -98,12 +97,6 @@ namespace Arcatech.Units
         //    _stats[DodgeStatType.Charges].ChangeCurrent(1);
         //    arg.TimeUp -= T_TimeUp; 
         //}
-
-
-        protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
-        {
-            return null ;
-        }
 
 
         #endregion

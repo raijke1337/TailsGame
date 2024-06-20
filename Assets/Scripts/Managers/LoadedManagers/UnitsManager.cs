@@ -112,13 +112,17 @@ namespace Arcatech.Managers
         public override void Stop()
         {
             _player.DisableUnit();
-            foreach (var g in _npcGroups)
+            if (_npcGroups != null)
             {
-                foreach (var n in g.GetAllUnits)
+                foreach (var g in _npcGroups)
                 {
-                    n.DisableUnit();
+                    foreach (var n in g.GetAllUnits)
+                    {
+                        n.DisableUnit();
+                    }
                 }
             }
+
         }
         #endregion
 
@@ -156,7 +160,7 @@ namespace Arcatech.Managers
 
         private void HandleUnitDeath(BaseUnit unit)
         {
-            if (ShowDebug) Debug.Log($"{unit.GetFullName} died");
+            if (ShowDebug) Debug.Log($"{unit} died");
                 unit.DisableUnit();
             unit.LockUnit = true;
             

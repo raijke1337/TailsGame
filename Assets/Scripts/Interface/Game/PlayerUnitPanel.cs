@@ -1,4 +1,6 @@
+using Arcatech.EventBus;
 using Arcatech.Managers;
+using Arcatech.Stats;
 using Arcatech.Texts;
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
@@ -15,41 +17,35 @@ namespace Arcatech.UI
         private EnergyController _shield;
         private StaminaController _combo;
         private SkillsController _skills;
-
-
-        private StatValueContainer SHc;
-        private StatValueContainer HEc;
-        private StatValueContainer HPc;
+        private StatValueContainer _energyCont;
+        private StatValueContainer _staminaCont;
+        private StatValueContainer _healthCont;
 
         protected List<StatValueContainer> _cont = new List<StatValueContainer>();
 
         [SerializeField] IconContainersManager _icons;
 
+
+
+
         public override void StartController()
         {
-
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
-            _shield = _player.GetInputs<InputsPlayer>().GetShieldController;
-            _combo = _player.GetInputs<InputsPlayer>().GetComboController;
+
+            _healthCont = _player.GetInputs().AssessStat(TriggerChangedValue.Health);
+            _energyCont = _player.GetInputs().AssessStat(TriggerChangedValue.Energy);
+            _staminaCont = _player.GetInputs().AssessStat(TriggerChangedValue.Energy);
+
 
             _skills = _player.GetInputs().GetSkillsController;
 
             base.StartController(); // instantiate bars
-
             _icons.StartController();
 
+            _bars.LoadValues(_healthCont, DisplayValueType.Health);
+            _bars.LoadValues(_staminaCont, DisplayValueType.Stamina);
+            _bars.LoadValues(_staminaCont, DisplayValueType.Energy);
 
-            HPc = _player.GetStats[BaseStatType.Health];
-            _bars.LoadValues(HPc, DisplayValueType.Health);
-            HEc = _combo.GetComboContainer;
-            _bars.LoadValues(HEc, DisplayValueType.Combo);
-
-            if (_shield.IsReady)
-            {
-                SHc = _shield.GetShieldStats[ShieldStatType.Shield];
-
-                _bars.LoadValues(SHc, DisplayValueType.Shield);
-            }
             if (_skills.IsReady)
             {
                 foreach (var sk in _skills.GetControlData())
@@ -80,8 +76,8 @@ namespace Arcatech.UI
                 // null in scene levels
                 _player.PlayerIsTalking(d);
             }
-
         }
+
 
     }
 

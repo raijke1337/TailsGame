@@ -9,15 +9,13 @@ using UnityEngine;
 namespace Arcatech.Units
 {
     [Serializable]
-    public abstract class BaseController : IStatsComponentForHandler, IHasOwner, IHasEffects
+    public abstract class BaseController : IManagedComponent, IHasOwner
     {
-        protected List<TriggeredEffect> _activeEffects = new List<TriggeredEffect>();
         public BaseUnit Owner { get; }
 
         private bool _isReady = false;
-        public abstract string GetUIText { get; }
 
-        public event SimpleEventsHandler<bool, IStatsComponentForHandler> ComponentChangedStateToEvent;
+        public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent;
 
         public BaseController(BaseUnit owner)
         {
@@ -25,11 +23,11 @@ namespace Arcatech.Units
         }
 
 
-        protected void StateChangeCallback(bool ready, IStatsComponentForHandler comp)
+        protected void StateChangeCallback(bool ready, IManagedComponent comp)
         {
             ComponentChangedStateToEvent?.Invoke(ready, comp);
-            //Debug.Log($"{this} called state change with value {val}");
         }
+
         public virtual bool IsReady
         {
             get => _isReady;
@@ -40,77 +38,18 @@ namespace Arcatech.Units
             }
         }
 
-        public virtual void StopStatsComponent()
-        {
-            //  Debug.Log($"{this} was stopped");
-        }
-
-        public virtual void HandleEffects(float deltaTime)
-        {
-            if (!IsReady || _activeEffects.Count == 0) return;
-            foreach (TriggeredEffect ef in _activeEffects)
-            {
-                // actual handling\
-                StatValueContainer stat = SelectStatValueContainer(ef);
-                // start effect
-                if (!ef.InitialDone)
-                {
-                    stat.ChangeCurrent(ef.InitialValue);
-                    ef.InitialDone = true;
-                }
-                // remove expired or instantaneous
-
-                // handle timers    
-                ef.CurrentRepeatTimer -= deltaTime;
-                ef.TotalDuration -= deltaTime;
-                if (ef.CurrentRepeatTimer <= 0f)
-                {
-                    stat.ChangeCurrent(ef.RepeatedValue);
-                    ef.CurrentRepeatTimer = ef.RepeatApplicationDelay;
-                }
-            }
-            foreach (var ef in _activeEffects.ToList())
-            {
-                if (ef.TotalDuration <= 0f)
-                {
-                    _activeEffects.Remove(ef);
-                    return;
-                }
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="effect"></param>
-        /// <returns>if result is negative</returns>
-        public virtual void ApplyEffect(TriggeredEffect effect)
-        {
-            _activeEffects.Add(effect);
-        }
-
-        protected virtual StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
-        {
-            Debug.LogWarning($"{this} was requested to select a StatValueContainer by effect {effect}, and nothing happened");
-            return null;
-        }
-
+        public abstract void ApplyEffect(TriggeredEffect effect);
 
         #region managed
-        public virtual void UpdateInDelta(float deltaTime)
-        {
-
-
-            if (!IsReady) return;
-            HandleEffects(deltaTime);
-        }
-        public virtual void SetupStatsComponent()
-        {
-
-        }
+        public abstract void UpdateInDelta(float deltaTime);
+        public abstract void StartComp();
+        public abstract void StopComp();
         #endregion
 
 
         #region Effects
+
+        // todo move this stuff to an events bus system as watched
 
         public event EffectsManagerEvent BaseControllerEffectEvent;
         protected void EffectEventCallback(EffectRequestPackage pack) => BaseControllerEffectEvent?.Invoke(pack);

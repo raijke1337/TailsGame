@@ -6,63 +6,84 @@ using TMPro;
 namespace Arcatech.Units
 {
     [Serializable]
-    public class StaminaController : BaseController, IStatsComponentForHandler, ITakesTriggers
+    public class StaminaController : BaseController, IManagedComponent
     {
-
-        private StatValueContainer _container;
-
-        protected float Degen;
-        protected float Timeout;
-        private float _currentTimeout = 0f;
-
         public StaminaController(BaseUnit owner) : base(owner)
         {
-
-            var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>("default");
-            if (cfg == null)
-            {
-                IsReady = false;
-                return;
-            }
-            _container = new StatValueContainer(cfg.ComboContainer);
-            Degen = cfg.DegenCoeff;
-            Timeout = cfg.HeatTimeout;
-            _container.Setup();
-
-            IsReady = true;
         }
 
-        #region gameplay
+        // moved to UnitStatCtrl
 
-        #endregion
-        protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+
+        //private StatValueContainer _container;
+
+        //protected float Degen;
+        //protected float Timeout;
+        //private float _currentTimeout = 0f;
+
+        //public StaminaController(BaseUnit owner) : base(owner)
+        //{
+
+        //    var cfg = DataManager.Instance.GetConfigByID<ComboStatsConfig>("default");
+        //    if (cfg == null)
+        //    {
+        //        IsReady = false;
+        //        return;
+        //    }
+        //    _container = new StatValueContainer(cfg.ComboContainer);
+        //    Degen = cfg.DegenCoeff;
+        //    Timeout = cfg.HeatTimeout;
+        //    _container.SetupStatsComponent();
+
+        //    IsReady = true;
+        //}
+
+        //protected override StatValueContainer SelectStatValueContainer(TriggeredEffect effect)
+        //{
+        //    return _container;
+        //}
+        //#region UI
+        //public override string GetUIText { get => ($"{_container.GetCurrent} / {_container.GetMax}"); }
+        //public StatValueContainer GetComboContainer => _container;
+
+        //#endregion
+
+
+
+        //#region managed
+
+        //public override void UpdateInDelta(float deltaTime)
+        //{
+
+        //    base.UpdateInDelta(deltaTime);
+        //    if (_currentTimeout <= Timeout)
+        //    {
+        //        _currentTimeout += deltaTime;
+        //        return;
+        //    }
+        //    _container.ChangeCurrent(-Degen * deltaTime);
+        //}
+
+        //#endregion
+        public override void ApplyEffect(TriggeredEffect effect)
         {
-            return _container;
+            throw new NotImplementedException();
         }
-        #region UI
-        public override string GetUIText { get => ($"{_container.GetCurrent} / {_container.GetMax}"); }
-        public StatValueContainer GetComboContainer => _container;
 
-        #endregion
+        public override void StartComp()
+        {
+            throw new NotImplementedException();
+        }
 
-
-
-        #region managed
+        public override void StopComp()
+        {
+            throw new NotImplementedException();
+        }
 
         public override void UpdateInDelta(float deltaTime)
         {
-
-            base.UpdateInDelta(deltaTime);
-            if (_currentTimeout <= Timeout)
-            {
-                _currentTimeout += deltaTime;
-                return;
-            }
-            _container.ChangeCurrent(-Degen * deltaTime);
+            throw new NotImplementedException();
         }
-
-        #endregion
-
     }
 
 }

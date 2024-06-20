@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "SkillQ",
+                    "name": "UseMeleeSkill",
                     "type": "Button",
                     "id": "bfd0dbeb-7ca0-4e47-bd96-58cb6786a09d",
                     "expectedControlType": "Button",
@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SkillE",
+                    "name": "UseRangedSkill",
                     "type": "Button",
                     "id": "e2917fca-79e3-4182-bf7b-96c2ec7e5061",
                     "expectedControlType": "Button",
@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SkillR",
+                    "name": "UseShieldSkill",
                     "type": "Button",
                     "id": "f0f3862b-e0cd-4e33-967e-fe7cc6fe6044",
                     "expectedControlType": "Button",
@@ -51,7 +51,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Dash",
+                    "name": "UseDodgeSkill",
                     "type": "Button",
                     "id": "dc59ae78-b565-45db-9c63-afd7d5a4a4a6",
                     "expectedControlType": "Button",
@@ -69,18 +69,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SpecialAttack",
+                    "name": "RangedAttack",
                     "type": "Button",
                     "id": "e9c23c4d-a739-4ae0-8b74-c3ffdef73b6d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Items",
-                    "type": "Button",
-                    "id": "c1abd474-226a-4b66-b401-4ba971a244d4",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -90,6 +81,24 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "b5fc2ab7-72da-4da8-b113-26745a684b5a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "fa67abf7-db6f-4647-92c3-22d959f31839",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Mount",
+                    "type": "Button",
+                    "id": "15eca33c-4683-4ad2-a4d6-18b36102cf02",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -159,7 +168,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SkillQ",
+                    "action": "UseMeleeSkill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -181,7 +190,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "UseDodgeSkill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -192,7 +201,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SkillE",
+                    "action": "UseRangedSkill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -203,7 +212,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SkillR",
+                    "action": "UseShieldSkill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -225,18 +234,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SpecialAttack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1000d161-135a-4f12-a1d5-4a6abf769f99",
-                    "path": "<Keyboard>/i",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Items",
+                    "action": "RangedAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -248,6 +246,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6917a357-b112-45e3-ae3b-31c7897b45fe",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aa17cbf8-f841-48ac-b8a5-2acc3159fa41",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Mount",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -5,7 +5,7 @@ namespace Arcatech.AI
     {
         public override bool Decide(StateMachine controller)
         {
-            throw new System.NotImplementedException();
+            return true;
         }
 
     }

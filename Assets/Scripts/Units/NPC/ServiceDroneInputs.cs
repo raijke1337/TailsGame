@@ -3,23 +3,23 @@ namespace Arcatech.Units.Inputs
 
     public class ServiceDroneInputs : InputsNPC
     {
-        protected override void Fsm_ChangeRangeActionRequestSM(CombatActionType arg)
+        protected override void Fsm_ChangeRangeActionRequestSM(UnitActionType arg)
         {
             switch (arg)
             {
-                case CombatActionType.Melee:
+                case UnitActionType.Melee:
                     break;
-                case CombatActionType.Ranged:
+                case UnitActionType.Ranged:
                     _stateMachine.NMAgent.stoppingDistance = EnemyStats.AttackRange;
                     break;
-                case CombatActionType.Dodge:
+                case UnitActionType.DodgeSkill:
                     break;
-                case CombatActionType.MeleeSpecialQ:
+                case UnitActionType.MeleeSkill:
                     break;
-                case CombatActionType.RangedSpecialE:
-                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetControlData(CombatActionType.RangedSpecialE).EffectRadius;
+                case UnitActionType.RangedSkill:
+                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetControlData(UnitActionType.RangedSkill).EffectRadius;
                     break;
-                case CombatActionType.ShieldSpecialR:
+                case UnitActionType.ShieldSkill:
                     break;
             }
         }

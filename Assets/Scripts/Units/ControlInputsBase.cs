@@ -2,74 +2,82 @@ using Arcatech.Effects;
 using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
+using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
+using Arcatech.Units.Stats;
+using KBCore.Refs;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Arcatech.Units
 {
+    [RequireComponent(typeof(GroundDetectorPlatformCollider))]
     public abstract class ControlInputsBase : ManagedControllerBase, ITakesTriggers
     {
-        protected BaseUnit Unit;
+        protected const float zeroF = 0f;
+        public BaseUnit Unit { get; set; }
+
 
         private bool _inputsLocked;
         [SerializeField] public bool LockInputs
         {
-            get 
-            { 
-                return _inputsLocked; 
-            }
-            set 
+            get
             {
-                if (_inputsLocked == value) return;
-
-                _inputsLocked = value; 
-                if (_inputsLocked)
-                {
-                    if(DebugMessage) Debug.Log($"Lock inputs in {Unit.GetFullName}");
-                    _inputsMovement = Vector3.zero;
-                }
-                else
-                {
-                    if (DebugMessage)  Debug.Log($"Unlock inputs in {Unit.GetFullName}");
-                }
+                return _inputsLocked;
+            }
+            set
+            {
+                OnLockInputs(value);
+                _inputsLocked = value;
+                
             }
         }// todo ?
+        protected abstract void OnLockInputs(bool isLock);
 
+
+
+
+        [SerializeField] protected BaseStatsConfig _unitStatsConfig;
+        public string GetFullName => _unitStatsConfig.displayName;
 
         protected List<BaseController> _controllers = new List<BaseController>();
-
-        public void SetUnit(BaseUnit u) => Unit = u;
-
         protected float lastDelta;
 
         [SerializeField] protected ItemEmpties Empties;
         public ItemEmpties GetEmpties => Empties;
 
         protected UnitStatsController _statsCtrl;
-        protected WeaponController _weaponCtrl;
-        protected DodgeController _dodgeCtrl; // checks timer, the actual dodge is a skill
-        protected EnergyController _shieldCtrl;
-        protected SkillsController _skillCtrl;
-        protected StaminaController _comboCtrl;
-        //protected StunsController _stunsCtrl;
-        // depreciated in favor of new mechanics
 
+        protected WeaponController _weaponCtrl;
+        protected DodgeController _dodgeCtrl;
+        protected SkillsController _skillCtrl;
         public DodgeController GetDodgeController => _dodgeCtrl;
-        public EnergyController GetShieldController => _shieldCtrl;
         public UnitStatsController GetStatsController => _statsCtrl;
         public SkillsController GetSkillsController => _skillCtrl;
         public WeaponController GetWeaponController => _weaponCtrl;
 
 
+
+        [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
+        public GroundDetectorPlatformCollider GetGroundCollider => _groundedPlatform;
+
+        #region movement and jumping
+        protected abstract void DoHorizontalMovement(float delta);
+
+        #endregion
+
+        public Vector3 GetMovementVector { get; protected set; } 
+
         #region controller events
 
         // shared
 
-        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent; 
-        public event EffectsManagerEvent EffectEventRequest; 
+        public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
+        public event EffectsManagerEvent EffectEventRequest;
 
         // this needs to be updated to get unique triggeredeffects from each use of item
         public event TriggerEvent TriggerEventRequest;
@@ -89,7 +97,6 @@ namespace Arcatech.Units
         public event SimpleEventsHandler ZeroHealthHappened;
         public event SkillRequestedEvent SkillSpawnEvent;
 
-        protected void StunEventCallback() => StaggerHappened?.Invoke();
         protected virtual void ShieldBreakEventCallback() => ShieldBreakHappened?.Invoke();
 
         protected void SkillSpawnEventCallback(SkillProjectileComponent data)
@@ -99,22 +106,8 @@ namespace Arcatech.Units
 
         #endregion
 
-        #region ai
-        public StatValueContainer AssessStat(TriggerChangedValue stat)
-        {
-            switch (stat)
-            {
-                case TriggerChangedValue.Health:
-                    return _statsCtrl.GetBaseStats[BaseStatType.Health];
-                case TriggerChangedValue.Energy:
-                    return _shieldCtrl.GetShieldStats[ShieldStatType.Shield];
-                case TriggerChangedValue.Stamina:
-                    return _comboCtrl.GetComboContainer;
-                default:
-                    return null;
-            }
-        }
-        #endregion
+
+        public StatValueContainer AssessStat(TriggerChangedValue stat) => _statsCtrl.AssessStat(stat);
 
         #region items
         public void AssignDefaultItems(UnitInventoryComponent items)
@@ -132,18 +125,18 @@ namespace Arcatech.Units
                 switch (item.ItemType)
                 {
                     default:
-                        Debug.Log($"assigned {item} on {Unit.name} controller but it is not implemented");
+                        Debug.LogError($"assigned {item} on {Unit.name} controller but it is not implemented");
                         break;
-                    case (EquipItemType.MeleeWeap):
+                    case (EquipmentType.MeleeWeap):
                         _weaponCtrl.LoadItem(item, out removed);
                         break;
-                    case (EquipItemType.RangedWeap):
+                    case (EquipmentType.RangedWeap):
                         _weaponCtrl.LoadItem(item, out removed);
                         break;
-                    case (EquipItemType.Shield):
-                        _shieldCtrl.LoadItem(item, out removed);
+                    case (EquipmentType.Shield):
+                        _statsCtrl.LoadItem(item, out removed);
                         break;
-                    case (EquipItemType.Booster):
+                    case (EquipmentType.Booster):
                         _dodgeCtrl.LoadItem(item, out removed);
                         break;
                 }
@@ -155,7 +148,7 @@ namespace Arcatech.Units
                 {
                     _skillCtrl.LoadItemSkill(item);
                 }
-            }            
+            }
         }
 
         private void CheckEquipsOnInventoryUpdate(UnitInventoryComponent inve)
@@ -165,10 +158,10 @@ namespace Arcatech.Units
 
             Debug.Log($"Inventory update in {Unit}");
 
-            _weaponCtrl.TryRemoveItem(EquipItemType.MeleeWeap, out _);
-            _weaponCtrl.TryRemoveItem(EquipItemType.RangedWeap, out _);
-            _dodgeCtrl.TryRemoveItem(EquipItemType.Booster, out _);
-            _shieldCtrl.TryRemoveItem(EquipItemType.Shield, out _);
+            _weaponCtrl.TryRemoveItem(EquipmentType.MeleeWeap, out _);
+            _weaponCtrl.TryRemoveItem(EquipmentType.RangedWeap, out _);
+            _dodgeCtrl.TryRemoveItem(EquipmentType.Booster, out _);
+            _statsCtrl.TryRemoveItem(EquipmentType.Shield, out _);
             // TODO // 
 
 
@@ -179,16 +172,16 @@ namespace Arcatech.Units
                     default:
                         Debug.Log($"No equipment logic for equipement {e}, type {e.ItemType}");
                         break;
-                    case (EquipItemType.MeleeWeap):                        
+                    case (EquipmentType.MeleeWeap):
                         _weaponCtrl.LoadItem(e, out _);
                         break;
-                    case (EquipItemType.RangedWeap):
+                    case (EquipmentType.RangedWeap):
                         _weaponCtrl.LoadItem(e, out _);
                         break;
-                    case (EquipItemType.Shield):
-                        _shieldCtrl.LoadItem(e, out _);
+                    case (EquipmentType.Shield):
+                        _statsCtrl.LoadItem(e, out _);
                         break;
-                    case (EquipItemType.Booster):
+                    case (EquipmentType.Booster):
                         _dodgeCtrl.LoadItem(e, out _);
                         break;
                 }
@@ -202,17 +195,16 @@ namespace Arcatech.Units
         #region ManagedController
         public override void UpdateController(float delta)
         {
-            if (LockInputs) return; 
+            if (LockInputs) return;
             lastDelta = delta;
             foreach (BaseController ctrl in _controllers)
             {
                 if (ctrl.IsReady)
                     ctrl.UpdateInDelta(delta);
             }
-            SetMoveDirection();
-            SetAimDirection();
-            SetRotationCross();
-            SetRotationDot();
+
+            if (!_groundedPlatform.IsGrounded) return;
+            DoHorizontalMovement(delta);
         }
         public override void StartController()
         {
@@ -226,7 +218,7 @@ namespace Arcatech.Units
                     break;
                 case LevelType.Scene:
                     Initialize(false);
-                        break;
+                    break;
                 case LevelType.Game:
                     Initialize(true);
                     break;
@@ -238,7 +230,7 @@ namespace Arcatech.Units
             {
                 if (ctrl.IsReady)
                 {
-                    ctrl.StopStatsComponent();
+                    ctrl.StopComp();
 
                     ControllerSubs(ctrl, false);
                 }
@@ -248,33 +240,30 @@ namespace Arcatech.Units
         private void Initialize(bool full)
         {
 
-            _statsCtrl = new UnitStatsController(Unit);
-            _shieldCtrl = new EnergyController(Empties, Unit);
+            _statsCtrl = new UnitStatsController(Empties, Unit);
+            _statsCtrl.CurrentStats = new Dictionary<BaseStatType, StatValueContainer>();
+
+            foreach (var k in _unitStatsConfig.Stats.Keys)
+            {
+                _statsCtrl.CurrentStats[k] = new StatValueContainer(_unitStatsConfig.Stats[k]);
+            }
+
             _dodgeCtrl = new DodgeController(Empties, Unit);
             _weaponCtrl = new WeaponController(Empties, Unit);
-
             _controllers.Add(_statsCtrl);
-            _controllers.Add(_shieldCtrl);
             _controllers.Add(_dodgeCtrl);
             _controllers.Add(_weaponCtrl);
 
             if (full)
             {
-                _comboCtrl = new StaminaController(Unit);
-                //_stunsCtrl = new StunsController(Unit);
                 _skillCtrl = new SkillsController(Empties, Unit);
-
                 _controllers.Add(_skillCtrl);
-                _controllers.Add(_comboCtrl);
-                //_controllers.Add(_stunsCtrl);
-
                 LockInputs = false;
-
             }
 
             foreach (var ctrl in _controllers)
             {
-                ctrl.SetupStatsComponent();
+                ctrl.StartComp();
                 ControllerSubs(ctrl, true);
             }
         }
@@ -283,19 +272,12 @@ namespace Arcatech.Units
         {
             if (isStart)
             {
-                if (ctrl is EnergyController s)
-                {
-                    s.ShieldBrokenEvent += ShieldBreakEventCallback;
-                }
+
                 if (ctrl is UnitStatsController st)
                 {
                     st.UnitTookDamageEvent += OnDamageTaken;
                     st.ZeroHealthEvent += OnZeroHealth;
                 }
-                //if (ctrl is StunsController stun)
-                //{
-                //    _stunsCtrl.StunHappenedEvent += StunEventCallback;
-                //}
 
                 ctrl.BaseControllerEffectEvent += EffectEventCallback;
                 ctrl.BaseControllerTriggerEvent += TriggerEventCallBack;
@@ -308,92 +290,36 @@ namespace Arcatech.Units
                 ctrl.BaseControllerTriggerEvent -= TriggerEventCallBack;
                 ctrl.BaseControllerProjectileEvent -= ProjectileEventCallBack;
 
-                if (ctrl is EnergyController s)
-                {
-                    s.ShieldBrokenEvent -= ShieldBreakEventCallback;
-                }
                 if (ctrl is UnitStatsController st)
                 {
                     st.UnitTookDamageEvent -= OnDamageTaken;
                     st.ZeroHealthEvent -= OnZeroHealth;
                 }
-                //if (ctrl is StunsController stun)
-                //{
-                //    _stunsCtrl.StunHappenedEvent -= StunEventCallback;
-                //}
             }
         }
+                #endregion
 
 
-        #endregion
+
 
         #region triggers
 
 
         public void ApplyEffect(TriggeredEffect eff)
         {
-            switch (eff.StatType)
-            {
-                case TriggerChangedValue.Health:
-                    if (!_shieldCtrl.IsReady)
-                    {
-                        _statsCtrl.ApplyEffect(eff);
-                    }
-                    else
-                    {
-                        _statsCtrl.ApplyEffect(_shieldCtrl.ProcessHealthChange(eff));
-                    }
-                    break;
-                case TriggerChangedValue.Energy:
-                    _shieldCtrl.ApplyEffect(eff);
-                    break;
-                case TriggerChangedValue.Stamina:
-                    _comboCtrl.ApplyEffect(eff);
-                    break;
-                case TriggerChangedValue.MoveSpeed:
-                    _statsCtrl.ApplyEffect(eff);
-                    break;
-                //case TriggerChangedValue.Stagger:
-                //    _stunsCtrl.ApplyEffect(eff);
-                //    break;
-            }
+            _statsCtrl.ApplyEffect(eff);
         }
 
         #endregion
 
-        #region movement
 
-        public ref Vector3 GetMoveDirection => ref _inputsMovement;
-        public ref Vector3 GetAimDirection => ref _inputsAiming;
-        public ref float GetRotationDot => ref _inputsDot;
-        public ref float GetRotationDirection => ref _inputsCross;
-
-
-        protected Vector3 _inputsMovement;
-        protected Vector3 _inputsAiming;
-        protected float _inputsDot;
-        protected float _inputsCross;
-
-        protected abstract void SetMoveDirection();
-        protected abstract void SetAimDirection();
-        protected abstract void SetRotationDot();
-        protected abstract void SetRotationCross();
-
-
-        public event SimpleEventsHandler JumpCalledEvent;
-        protected virtual void DoJumpAction()
-        {
-            if (!LockInputs)
-            JumpCalledEvent?.Invoke();
-        }
-
-        #endregion
-
-        #region combat actions
-
-        public event SimpleEventsHandler<CombatActionType> CombatActionSuccessEvent;
-        private void CombatActionSuccessCallback(CombatActionType type) => CombatActionSuccessEvent?.Invoke(type);
+        #region unit actions
         public bool IsInMeleeCombo = false;
+
+        public event UnityAction<UnitActionType> CombatActionAnimationRequest = delegate { };
+        private void AnimateACtionCallback(UnitActionType type) => CombatActionAnimationRequest?.Invoke(type);
+
+
         public void ToggleBusyControls_AnimationEvent(int state)
         {
             if (DebugMessage)
@@ -402,127 +328,76 @@ namespace Arcatech.Units
             }
             LockInputs = state != 0;
         }
-        protected virtual void DoCombatAction (CombatActionType type)
+        protected virtual void RequestCombatAction(UnitActionType type, bool jumpBool = false)
         {
-            bool canAct = true;            
+            bool canAct = true;
 
-            if (LockInputs && !IsInMeleeCombo)
+            if (LockInputs && !IsInMeleeCombo || !_groundedPlatform.IsGrounded)
             {
                 return;
             }
+            if (DebugMessage)
+            {
+                Debug.Log($"Do combat action {type}");
+            }
             switch (type)
             {
-                case CombatActionType.Melee:
+                case UnitActionType.Melee:
                     if (canAct || IsInMeleeCombo)
                     {
-                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.MeleeWeap);
-                        if (canAct) CombatActionSuccessCallback(type);
+                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipmentType.MeleeWeap);
+                        if (canAct) AnimateACtionCallback(type);
                     }
                     break;
-                case CombatActionType.Ranged:
+                case UnitActionType.Ranged:
                     if (canAct)
                     {
-                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipItemType.RangedWeap);
-                        if (canAct) CombatActionSuccessCallback(type);
+                        canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipmentType.RangedWeap);
+                        if (canAct) AnimateACtionCallback(type);
                     }
                     break;
-                case CombatActionType.Dodge:
-                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out var sk))
+                case UnitActionType.Jump:
+                    if (canAct)
                     {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
+                        DoJump(jumpBool);
+                        AnimateACtionCallback(UnitActionType.Jump);
                     }
                     break;
-                case CombatActionType.MeleeSpecialQ:
-                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
+                default:
+                    if (canAct && _skillCtrl.IsSkillReady(type, out var cost))
                     {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-                case CombatActionType.RangedSpecialE:
-                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
-                    }
-                    break;
-                case CombatActionType.ShieldSpecialR:
-                    if (canAct && _skillCtrl.TryUseSkill(type, _comboCtrl, out sk))
-                    {
-                        SkillSpawnEventCallback(sk);
-                        CombatActionSuccessCallback(type);
+                        if (_statsCtrl.AssessStat(cost.StatType).HasCapacity(cost.InitialValue))
+                        {
+                            var sk = _skillCtrl.ProduceSkill(type);
+                            _statsCtrl.ApplyEffect(cost);
+
+                            SkillSpawnEventCallback(sk);
+                            AnimateACtionCallback(type);
+                        }
                     }
                     break;
             }
         }
 
+        protected abstract void DoJump(bool jumpBool);
 
         #endregion
 
 
-        //#region dodging
 
-        /// <summary>
-        /// Moved to UNIT for rigidbody implementation
-        /// </summary>
-
-        //public void StartDodgeMovement(BoosterSkillInstanceComponent bs)
-        //{
-        //    if (DebugMessage) Debug.Log($"Start dodge for unit: {Unit}");
-        //    _dodgeCor = StartCoroutine(DodgingMovement(bs));
-        //}
-
-        //private Coroutine _dodgeCor;
-        //protected Vector3 boostVelocity;
-        //private IEnumerator DodgingMovement(BoosterSkillInstanceComponent bs)
-        //{
-        //    var stats = bs.GetDodgeSettings;
-        //    Vector3 start = transform.position;
-        //    Vector3 end = start + GetMoveDirection * stats.Range;
-
-        //    LockInputs = true;
-
-        //    float p = 0f;
-        //    while (p <= 1f)
-        //    {
-        //        p += Time.deltaTime * stats.Speed;
-        //        transform.position = Vector3.Slerp(start, end,p);
-        //        yield return null;
-        //    }
-        //    LockInputs = false;
-        //    yield return null;
-        //}
-        //// stop the dodge like this
-
-        //protected void OnCollisionEnter(Collision collision)
-        //{
-        //    if (_dodgeCor != null && !collision.gameObject.CompareTag("Ground"))
-        //    {
-        //        if (DebugMessage) Debug.Log($"Collided with {collision.gameObject.name} with tag {collision.gameObject.tag}\n {Unit} dodge cancelled.");
-        //        LockInputs = false;
-        //        StopCoroutine(_dodgeCor);
-        //        _dodgeCor = null;
-        //    }
-        //}
-
-       // #endregion
-        #region hp
+        #region stats events
 
         protected virtual void OnZeroHealth()
         {
-            //Debug.Log($"unit dead seen in baseinputs");
             ZeroHealthHappened?.Invoke();
         }
 
         protected virtual void OnDamageTaken(float arg)
         {
-           // Debug.Log($"hp change seen in baseinputs");
             DamageHappened?.Invoke(arg);
 
         }
         #endregion
 
     }
-
 }

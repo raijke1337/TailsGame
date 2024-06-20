@@ -12,7 +12,7 @@ namespace Arcatech.Units
     public class UnitInventoryComponent
     {
         private BaseUnit _owner;
-        private Dictionary<EquipItemType, EquipmentItem> _equips;
+        private Dictionary<EquipmentType, EquipmentItem> _equips;
         private List<InventoryItem> _items;
         private List<InventoryItem> _drops;
 
@@ -21,7 +21,7 @@ namespace Arcatech.Units
 
 
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
-        public EquipmentItem GetEquipByType(EquipItemType t)
+        public EquipmentItem GetEquipByType(EquipmentType t)
         {
             if (_equips.TryGetValue(t, out var e))
             {
@@ -126,7 +126,7 @@ namespace Arcatech.Units
         {
             _owner = owner;
 
-            _equips = new Dictionary<EquipItemType, EquipmentItem>();
+            _equips = new Dictionary<EquipmentType, EquipmentItem>();
             _items = new List<InventoryItem>();
 
             foreach (var e in cfg.Equipment)
