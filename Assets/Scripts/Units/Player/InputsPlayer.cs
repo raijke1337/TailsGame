@@ -37,6 +37,8 @@ namespace Arcatech.Units.Inputs
 
             _playerInputReader.EnablePlayerInputs();
 
+            _jumpCD = new StopwatchTimer();
+            _jumpCD.Start();
 
             _aim = GetComponent<AimingComponent>();
             _aim.StartController();
@@ -74,6 +76,8 @@ namespace Arcatech.Units.Inputs
             DoAiming(delta);
             _aim.UpdateController(delta);
             _costume.UpdateController(delta);
+
+            _jumpCD.Tick(delta);
         }
         public override void StopController()
         {
@@ -242,14 +246,22 @@ namespace Arcatech.Units.Inputs
 
         [Header("Jump settings")]
         [SerializeField, Tooltip("force of jump")] float _jumpForce;
-
+        [SerializeField] float _jumpCooldown = 2f;
+        Timer _jumpCD;
         protected override void DoJump(bool jumpBool)
         {
-            if (_groundedPlatform.IsGrounded && jumpBool)
+            if (_groundedPlatform.IsGrounded && jumpBool && _jumpCD.Progress >_jumpCooldown)
             {
-                AdjustMovementVector(Vector2.zero); 
-                _rb.AddForce((transform.forward + transform.up*3) * _jumpForce, ForceMode.Impulse);
+                AdjustMovementVector(Vector2.zero);
+                _rb.AddForce((transform.forward + transform.up) * _jumpForce * 10, ForceMode.Impulse);
+                _jumpCD.Start();
             }
+
+
+
+
+
+
         }
         
         #endregion

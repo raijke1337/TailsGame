@@ -921,7 +921,7 @@ AnimatorStateMachine:
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 2828262022254962995}
-    m_Position: {x: 780, y: 380, z: 0}
+    m_Position: {x: 660, y: 300, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: -2313175023803113568}
     m_Position: {x: 640, y: 160, z: 0}
@@ -933,7 +933,7 @@ AnimatorStateMachine:
     m_Position: {x: 640, y: 110, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: -7900258007095095380}
-    m_Position: {x: 640, y: 260, z: 0}
+    m_Position: {x: 650, y: 230, z: 0}
   m_AnyStateTransitions:
   - {fileID: -4194499774137910880}
   - {fileID: 4887259806791751348}
@@ -1237,7 +1237,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: JumpStart
-  m_Speed: 2
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -5536929446042295793}
@@ -1270,7 +1270,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: AirTime
-    m_EventTreshold: 1
+    m_EventTreshold: 0.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7105291196715778279}
   m_Solo: 0
@@ -2495,13 +2495,13 @@ AnimatorStateMachine:
     m_Position: {x: 270, y: -10, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7105291196715778279}
-    m_Position: {x: 490, y: 140, z: 0}
+    m_Position: {x: 480, y: 140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7364338928963845646}
     m_Position: {x: 250, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7327020900264013088}
-    m_Position: {x: 510, y: 190, z: 0}
+    m_Position: {x: 480, y: 190, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -2734,7 +2734,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 3
     m_ConditionEvent: AirTime
-    m_EventTreshold: 1
+    m_EventTreshold: 0.1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7327020900264013088}
   m_Solo: 0
