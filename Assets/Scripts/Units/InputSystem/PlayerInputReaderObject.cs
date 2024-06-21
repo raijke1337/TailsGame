@@ -12,7 +12,7 @@ public class PlayerInputReaderObject : ScriptableObject, IGameActions
     public event UnityAction<Vector2> Movement = delegate { };
     public event UnityAction<Vector2> Aim = delegate { };
 
-    public event UnityAction<bool> Jump = delegate { };
+    public event UnityAction Jump = delegate { };
     public event UnityAction Melee = delegate { };
     public event UnityAction Ranged = delegate { };
 
@@ -59,16 +59,7 @@ public class PlayerInputReaderObject : ScriptableObject, IGameActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        switch (context.phase)
-        {
-
-            case InputActionPhase.Started:
-                Jump.Invoke(true);
-                break;
-            case InputActionPhase.Canceled:
-                Jump.Invoke(false);
-                break;
-        }
+        Jump.Invoke();
     }
     public void OnMainAttack(InputAction.CallbackContext context)
     {

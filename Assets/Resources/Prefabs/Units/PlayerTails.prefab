@@ -363,7 +363,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64e5d154b6411c7488169152a4b79f02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 1
+  DebugMessage: 0
+  _rb: {fileID: 3679989756617116995}
   _unitStatsConfig: {fileID: 11400000, guid: 92a4cd72b01e8a447ba166f4b73927d8, type: 2}
   Empties:
     ItemPositions:
@@ -385,11 +386,11 @@ MonoBehaviour:
       - Key: 255
         Value: {fileID: 7150900122075931372}
   _groundedPlatform: {fileID: 8743729188238178463}
+  _animator: {fileID: 633146174127125324}
   IsInMeleeCombo: 0
+  _jumpForce: 150
   _playerInputReader: {fileID: 11400000, guid: c5f0d6e24b96f5143956c9299b3ee2b4, type: 2}
-  _rb: {fileID: 3679989756617116995}
   _smoothTime: 0.2
-  _jumpForce: 25
   _minAngleToPlayRotation: 0.9
   _dampTime: 0.1
 --- !u!114 &5283087494177499262
@@ -424,7 +425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e07e63b09fbe22408cd9b2ce0a8da22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 1
+  DebugMessage: 0
 --- !u!114 &1106022451855181113
 MonoBehaviour:
   m_ObjectHideFlags: 0

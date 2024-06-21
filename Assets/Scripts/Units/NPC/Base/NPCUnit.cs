@@ -24,7 +24,7 @@ namespace Arcatech.Units
         public override void InitiateUnit()
         {
             base.InitiateUnit();
-            if (_npcController == null) _npcController = _controller as InputsNPC;
+            if (_npcController == null) _npcController = _inputs as InputsNPC;
             if (!CompareTag("Enemy"))
                 Debug.LogWarning($"Set enemy tag for{name}");
             _npcController.UnitsGroup = UnitsGroup;
@@ -60,7 +60,7 @@ namespace Arcatech.Units
 
         protected override void OnItemAdd(Item i)
         {
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
             {
                 Debug.Log($"Added item {i.Description.Title}");
             }

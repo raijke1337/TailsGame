@@ -37,8 +37,6 @@ namespace Arcatech.Units.Inputs
 
             _playerInputReader.EnablePlayerInputs();
 
-            _jumpCD = new StopwatchTimer();
-            _jumpCD.Start();
 
             _aim = GetComponent<AimingComponent>();
             _aim.StartController();
@@ -77,7 +75,6 @@ namespace Arcatech.Units.Inputs
             _aim.UpdateController(delta);
             _costume.UpdateController(delta);
 
-            _jumpCD.Tick(delta);
         }
         public override void StopController()
         {
@@ -140,9 +137,9 @@ namespace Arcatech.Units.Inputs
             RequestCombatAction(UnitActionType.MeleeSkill);
         }
 
-        private void OnJumpAction(bool perfrmed)
+        private void OnJumpAction()
         {
-            RequestCombatAction(UnitActionType.Jump, perfrmed);
+            RequestCombatAction(UnitActionType.Jump);
         }
 
         private void OnDodgeSkill()
@@ -195,7 +192,7 @@ namespace Arcatech.Units.Inputs
 
         #region movement
         [Header("Movement settings")]
-        [SerializeField,Self] Rigidbody _rb;
+
 
         [SerializeField] float _smoothTime = 0.2f;
         private float _velocity;
@@ -203,30 +200,31 @@ namespace Arcatech.Units.Inputs
 
         protected void AdjustMovementVector(Vector2 horizontal)
         {
-
             Vector3 AD = _adj.Isoright * horizontal.x;
             Vector3 WS = _adj.Isoforward * horizontal.y;
              _adjustedMovement = AD + WS;
         }
-        protected override void DoHorizontalMovement(float delta)
+        protected override Vector3 DoHorizontalMovement(float delta)
         {
             if (_adjustedMovement.magnitude > zeroF)
             {
-                ApplyHorizontalMovement(_adjustedMovement);
+                var result = ApplyHorizontalMovement(_adjustedMovement);
                 DampAnimatorSpeedFloat(_adjustedMovement.magnitude);
+                return result;
             }
             else
             {
+                var result = ApplyHorizontalMovement(_adjustedMovement);
                 DampAnimatorSpeedFloat(zeroF);
                 _rb.velocity = new Vector3(zeroF, _rb.velocity.y, zeroF);
+                return result;
             }
         }
-        void ApplyHorizontalMovement(Vector3 adjDir)
+        Vector3 ApplyHorizontalMovement(Vector3 adjDir)
         {
             var velocity = adjDir * (_statsCtrl.CurrentStats[BaseStatType.MoveSpeed].GetCurrent * Time.fixedDeltaTime);
             _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
-
-            GetMovementVector = velocity;
+            return velocity;
 
         }
 
@@ -242,29 +240,7 @@ namespace Arcatech.Units.Inputs
         public float AnimatorSpeedFloat { get; private set; }
         #endregion
 
-        #region jumping
 
-        [Header("Jump settings")]
-        [SerializeField, Tooltip("force of jump")] float _jumpForce;
-        [SerializeField] float _jumpCooldown = 2f;
-        Timer _jumpCD;
-        protected override void DoJump(bool jumpBool)
-        {
-            if (_groundedPlatform.IsGrounded && jumpBool && _jumpCD.Progress >_jumpCooldown)
-            {
-                AdjustMovementVector(Vector2.zero);
-                _rb.AddForce((transform.forward + transform.up) * _jumpForce * 10, ForceMode.Impulse);
-                _jumpCD.Start();
-            }
-
-
-
-
-
-
-        }
-        
-        #endregion
 
 
         #region aiming
@@ -282,11 +258,18 @@ namespace Arcatech.Units.Inputs
         {
             PlayerInputsDot = _aim.GetDotProduct;
             PlayerInputsCross = _aim.GetRotationToTarget;
-
-            if (PlayerInputsDot < _minAngleToPlayRotation)
+            if (_adjustedMovement.magnitude == zeroF)
+            {
+                if (PlayerInputsDot < _minAngleToPlayRotation)
+                {
+                    transform.LookAt(Vector3.SmoothDamp(transform.position, _aim.GetLookTarget, ref _sDampVel, _dampTime));
+                }
+            }
+            else
             {
                 transform.LookAt(Vector3.SmoothDamp(transform.position, _aim.GetLookTarget, ref _sDampVel, _dampTime));
             }
+
         }
 
         #endregion

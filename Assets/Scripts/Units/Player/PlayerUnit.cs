@@ -40,7 +40,7 @@ namespace Arcatech.Units
             
             if (isEnable)
             {
-                _playerController = _controller as InputsPlayer;
+                _playerController = _inputs as InputsPlayer;
                 _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
                 _playerController.ShieldBreakHappened += HandleShieldBreakEvent;
             }
@@ -81,19 +81,13 @@ namespace Arcatech.Units
             _playerController.IsInMeleeCombo = false;
         }
 
-
-        protected override void ZeroAnimatorFloats()
-        {
-            base.ZeroAnimatorFloats();
-            _animator.SetFloat("AirTime", 0);
-        } 
         private void HandleShieldBreakEvent()
-        {if (_controller.DebugMessage)
+        {if (_inputs.DebugMessage)
             Debug.Log($"Inputs report shield break event");
         }
         public void PlayerIsTalking(DialoguePart d)
         {
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
                 Debug.Log($"Dialogue window is shown by player panel script, dialogue is: {d.Mood}");
         }
 
@@ -101,14 +95,14 @@ namespace Arcatech.Units
         {
             _animator.SetTrigger("TakeDamage");
 
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
                 Debug.Log($"Player unit handle dmg event");
         }
 
         protected override void HandleDeath()
         {
             _animator.SetTrigger("KnockDown");
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
                 Debug.Log($"Player unit handle death event");
         }
 
@@ -120,7 +114,7 @@ namespace Arcatech.Units
         protected override void OnItemAdd(Item i)
         {
             _animator.SetTrigger("ItemPickup");
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
             {
                 Debug.Log($"Player picked up item {i}");
             }

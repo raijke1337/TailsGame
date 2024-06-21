@@ -10,8 +10,10 @@ using KBCore.Refs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Windows;
 
 namespace Arcatech.Units
 {
@@ -20,7 +22,7 @@ namespace Arcatech.Units
     {
         protected const float zeroF = 0f;
         public BaseUnit Unit { get; set; }
-
+        [SerializeField, Self] protected Rigidbody _rb;
 
         private bool _inputsLocked;
         [SerializeField] public bool LockInputs
@@ -33,12 +35,12 @@ namespace Arcatech.Units
             {
                 OnLockInputs(value);
                 _inputsLocked = value;
-                
+
+                ZeroAnimatorFloats();
+                AnimateMovement();
             }
         }// todo ?
         protected abstract void OnLockInputs(bool isLock);
-
-
 
 
         [SerializeField] protected BaseStatsConfig _unitStatsConfig;
@@ -62,19 +64,12 @@ namespace Arcatech.Units
 
 
 
-        [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
-        public GroundDetectorPlatformCollider GetGroundCollider => _groundedPlatform;
 
-        #region movement and jumping
-        protected abstract void DoHorizontalMovement(float delta);
 
-        #endregion
-
-        public Vector3 GetMovementVector { get; protected set; } 
 
         #region controller events
 
-        // shared
+        // TODO - move this stuff to factories and event buss
 
         public event SimpleEventsHandler<ProjectileComponent> SpawnProjectileEvent;
         public event EffectsManagerEvent EffectEventRequest;
@@ -107,7 +102,6 @@ namespace Arcatech.Units
         #endregion
 
 
-        public StatValueContainer AssessStat(TriggerChangedValue stat) => _statsCtrl.AssessStat(stat);
 
         #region items
         public void AssignDefaultItems(UnitInventoryComponent items)
@@ -204,7 +198,10 @@ namespace Arcatech.Units
             }
 
             if (!_groundedPlatform.IsGrounded) return;
-            DoHorizontalMovement(delta);
+           
+            UpdateAnimatorVector(DoHorizontalMovement(delta));
+
+            AnimateMovement();
         }
         public override void StartController()
         {
@@ -302,7 +299,7 @@ namespace Arcatech.Units
 
 
 
-        #region triggers
+        #region triggered effects
 
 
         public void ApplyEffect(TriggeredEffect eff)
@@ -310,16 +307,113 @@ namespace Arcatech.Units
             _statsCtrl.ApplyEffect(eff);
         }
 
+        public StatValueContainer AssessStat(TriggerChangedValue stat) => _statsCtrl.AssessStat(stat);
+
         #endregion
 
+        #region movement and jumping
 
-        #region unit actions
+        [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
+        public GroundDetectorPlatformCollider GetGroundCollider => _groundedPlatform;
+        protected abstract Vector3 DoHorizontalMovement(float delta);
+        public Vector3 CurrentMovementDirection { get; protected set; }
+        #endregion
+
+        #region animations
+        [SerializeField,Self] protected Animator _animator;
         public bool IsInMeleeCombo = false;
+        Vector2 animVect;
 
-        public event UnityAction<UnitActionType> CombatActionAnimationRequest = delegate { };
-        private void AnimateACtionCallback(UnitActionType type) => CombatActionAnimationRequest?.Invoke(type);
+        protected virtual void ZeroAnimatorFloats()
+        {
+            _animator.SetBool("Moving", false);
+            _animator.SetFloat("ForwardMove", 0f);
+            _animator.SetFloat("SideMove", 0f);
+            _animator.SetFloat("Rotation", 0);
+
+        }
+
+        //  calculates the vector which is used to set values in animator
+        protected void UpdateAnimatorVector(Vector3 movement)
+        {
+            var playerFwd = transform.forward;
+            var playerRght = transform.right;
+            movement.y = 0;
+            movement.Normalize();
+            // Dot product of two vectors determines how much they are pointing in the same direction.
+            // If the vectors are normalized (transform.forward and right are)
+            // then the value will be between -1 and +1.
+            var x = Vector3.Dot(playerRght, movement);
+            var z = Vector3.Dot(playerFwd, movement);
+            animVect.x = x;
+            animVect.y = z;
+        }
+        protected virtual void AnimateMovement()
+        {
+            if (animVect.x == 0f && animVect.y == 0f)
+            {
+                _animator.SetBool("Moving", false);
+                _animator.SetFloat("ForwardMove", 0f);
+                _animator.SetFloat("SideMove", 0f);
+
+                // rotate in place
+                if (this is InputsPlayer p)
+                {
+                    if (p.PlayerInputsDot < p.RotationTreschold)
+                    {
+                        _animator.SetFloat("Rotation", p.PlayerInputsCross);
+                    }
+                    else
+                    {
+                        _animator.SetFloat("Rotation", 0);
+                    }
+                }
+
+            }
+            else
+            {
+                _animator.SetFloat("Rotation", 0);
+                _animator.SetBool("Moving", true);
+
+                _animator.SetFloat("ForwardMove", animVect.y);
+                _animator.SetFloat("SideMove", animVect.x);
+
+            }
+        }
 
 
+        protected virtual void AnimateCombatActivity(UnitActionType type)
+        {
+            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
+            switch (type)
+            {
+                case UnitActionType.Melee:
+                    _animator.SetTrigger("MeleeAttack");
+                    break;
+                case UnitActionType.Ranged:
+                    _animator.SetTrigger("RangedAttack");
+                    break;
+                case UnitActionType.DodgeSkill:
+                    _animator.SetTrigger("Dodge");
+                    break;
+                case UnitActionType.MeleeSkill:
+                    _animator.SetTrigger("MeleeSpecial");
+                    break;
+                case UnitActionType.RangedSkill:
+                    _animator.SetTrigger("RangedSpecial");
+                    break;
+                case UnitActionType.ShieldSkill:
+                    _animator.SetTrigger("ShieldSpecial");
+                    break;
+                case UnitActionType.Jump:
+                    _animator.SetTrigger("JumpStart");
+                    break;
+            }
+        }
+        protected virtual void AnimateStagger()
+        {
+            _animator.SetTrigger("TakeDamage");
+        }
         public void ToggleBusyControls_AnimationEvent(int state)
         {
             if (DebugMessage)
@@ -328,7 +422,9 @@ namespace Arcatech.Units
             }
             LockInputs = state != 0;
         }
-        protected virtual void RequestCombatAction(UnitActionType type, bool jumpBool = false)
+
+
+        protected virtual void RequestCombatAction(UnitActionType type)
         {
             bool canAct = true;
 
@@ -346,21 +442,21 @@ namespace Arcatech.Units
                     if (canAct || IsInMeleeCombo)
                     {
                         canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipmentType.MeleeWeap);
-                        if (canAct) AnimateACtionCallback(type);
+                        if (canAct) AnimateCombatActivity(type);
                     }
                     break;
                 case UnitActionType.Ranged:
                     if (canAct)
                     {
                         canAct = _weaponCtrl.OnWeaponUseSuccessCheck(EquipmentType.RangedWeap);
-                        if (canAct) AnimateACtionCallback(type);
+                        if (canAct) AnimateCombatActivity(type);
                     }
                     break;
                 case UnitActionType.Jump:
                     if (canAct)
                     {
-                        DoJump(jumpBool);
-                        AnimateACtionCallback(UnitActionType.Jump);
+                        DoJump();
+                        AnimateCombatActivity(UnitActionType.Jump);
                     }
                     break;
                 default:
@@ -372,16 +468,26 @@ namespace Arcatech.Units
                             _statsCtrl.ApplyEffect(cost);
 
                             SkillSpawnEventCallback(sk);
-                            AnimateACtionCallback(type);
+                            AnimateCombatActivity(type);
                         }
                     }
                     break;
             }
         }
+        #endregion
 
-        protected abstract void DoJump(bool jumpBool);
+        #region jumping
+
+        [Header("Jump settings")]
+        [SerializeField, Tooltip("force of jump")] float _jumpForce;
+        protected void DoJump()
+        {
+            _rb.velocity = transform.forward+transform.up;
+            _rb.AddForce((transform.forward + transform.up) * _jumpForce, ForceMode.Impulse);
+        }
 
         #endregion
+
 
 
 

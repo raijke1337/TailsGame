@@ -163,15 +163,11 @@ namespace Arcatech.Units.Inputs
 
         }
 
-        protected override void DoHorizontalMovement(float delta)
+        protected override Vector3 DoHorizontalMovement(float delta)
         {
-
+            return Vector3.zero;
         }
 
-        protected override void DoJump(bool jumpBool)
-        {
-           // throw new NotImplementedException();
-        }
 #endif
     }
 

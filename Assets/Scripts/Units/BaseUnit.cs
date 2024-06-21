@@ -5,7 +5,6 @@ using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
-using Arcatech.Units.Stats;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,20 +22,20 @@ namespace Arcatech.Units
 
         protected Rigidbody _rigidbody;
         public Collider GetCollider { get; private set; }
-        protected ControlInputsBase _controller;
+        protected ControlInputsBase _inputs;
 
         public Side Side;
         
 
 
-        public ItemEmpties GetEmpties => _controller.GetEmpties;
+        public ItemEmpties GetEmpties => _inputs.GetEmpties;
 
         public abstract ReferenceUnitType GetUnitType();
 
-        public T GetInputs<T>() where T : ControlInputsBase => _controller as T;
+        public T GetInputs<T>() where T : ControlInputsBase => _inputs as T;
         public ControlInputsBase GetInputs()
         {
-            return _controller;
+            return _inputs;
         }
 
         private bool _locked = false;
@@ -49,12 +48,7 @@ namespace Arcatech.Units
             set
             {
                 _locked = value;
-                ZeroAnimatorFloats();
-                _controller.LockInputs = value;
-                if (value)
-                {
-                    UpdateAnimator(); // to reset the movement anim
-                }
+                _inputs.LockInputs = value;
             }
         }
 
@@ -78,7 +72,7 @@ namespace Arcatech.Units
         protected void CreateStartingEquipments(UnitInventoryComponent item) // equipment can't be changed mid-level so it's no problem here that this is run once
         {
             UpdateComponents();
-            _controller.AssignDefaultItems(item);
+            _inputs.AssignDefaultItems(item);
         }
         public bool IsArmed
         {
@@ -95,11 +89,9 @@ namespace Arcatech.Units
         public virtual void InitiateUnit() // this is run by unit manager
         {
             UpdateComponents();
-            _controller.Unit = this;
-            _controller.StartController();
+            _inputs.Unit = this;
+            _inputs.StartController();
             InitInventory();
-
-            _controller.GetGroundCollider.OffTheGroundEvent += HandleAirTime;
 
             _animator.runtimeAnimatorController = _baseAnimator;
             _animator.Play("Idle");
@@ -113,18 +105,16 @@ namespace Arcatech.Units
         public virtual void DisableUnit()
         {
             ControllerEventsBinds(false);
-            _controller.StopController();
+            _inputs.StopController();
             StopAllCoroutines();
-            _controller.GetGroundCollider.OffTheGroundEvent -= HandleAirTime;
         }
 
 
         public virtual void RunUpdate(float delta)
         {
             if (LockUnit) return;
-            UpdateAnimator();
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-            _controller.UpdateController(delta);
+            _inputs.UpdateController(delta);
 
         }
 
@@ -138,7 +128,7 @@ namespace Arcatech.Units
             if (GetCollider == null) GetCollider = GetComponent<Collider>();
             if (_animator == null) _animator = GetComponent<Animator>();
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
-            if (_controller == null) _controller = GetComponent<ControlInputsBase>();
+            if (_inputs == null) _inputs = GetComponent<ControlInputsBase>();
         }
 
 
@@ -146,27 +136,22 @@ namespace Arcatech.Units
         {
             if (isEnable)
             {
-                _controller.CombatActionAnimationRequest += (t) => AnimateCombatActivity(t);
-                _controller.StaggerHappened += AnimateStagger;
-                _controller.SkillSpawnEvent += OnInputsCreateSkill;
-                _controller.EffectEventRequest += EffectEventCallback;
-                _controller.TriggerEventRequest += TriggerEventCallback;
-                _controller.SpawnProjectileEvent += PlaceProjectileCallback;
-                _controller.ZeroHealthHappened += OnInputsReportDeath;
-                _controller.DamageHappened += OnInputsReportDamage;     
+                _inputs.SkillSpawnEvent += OnInputsCreateSkill;
+                _inputs.EffectEventRequest += EffectEventCallback;
+                _inputs.TriggerEventRequest += TriggerEventCallback;
+                _inputs.SpawnProjectileEvent += PlaceProjectileCallback;
+                _inputs.ZeroHealthHappened += OnInputsReportDeath;
+                _inputs.DamageHappened += OnInputsReportDamage;     
 
             }
             else
             {
-
-                _controller.CombatActionAnimationRequest -= (t) => AnimateCombatActivity(t);
-                _controller.StaggerHappened -= AnimateStagger;
-                _controller.SkillSpawnEvent -= OnInputsCreateSkill;
-                _controller.EffectEventRequest -= EffectEventCallback;
-                _controller.TriggerEventRequest -= TriggerEventCallback;
-                _controller.SpawnProjectileEvent -= PlaceProjectileCallback;
-                _controller.ZeroHealthHappened -= OnInputsReportDeath;
-                _controller.DamageHappened -= OnInputsReportDamage;
+                _inputs.SkillSpawnEvent -= OnInputsCreateSkill;
+                _inputs.EffectEventRequest -= EffectEventCallback;
+                _inputs.TriggerEventRequest -= TriggerEventCallback;
+                _inputs.SpawnProjectileEvent -= PlaceProjectileCallback;
+                _inputs.ZeroHealthHappened -= OnInputsReportDeath;
+                _inputs.DamageHappened -= OnInputsReportDamage;
             }
 
         }
@@ -187,15 +172,15 @@ namespace Arcatech.Units
         #region stats
         private void OnInputsReportDeath()
         {
-            if (_controller.DebugMessage)
+            if (_inputs.DebugMessage)
             {
-                Debug.Log($"{_controller.GetFullName} died");
+                Debug.Log($"{_inputs.GetFullName} died");
             }
 
             HandleDeath();
             IsUnitAlive = false;
             _animator.SetTrigger("Death");
-            _controller.LockInputs = true;
+            _inputs.LockInputs = true;
 
             GetCollider.enabled = false;
             _rigidbody.useGravity = false;
@@ -207,160 +192,28 @@ namespace Arcatech.Units
         protected abstract void HandleDamage(float value);
         protected abstract void HandleDeath();
 
-        protected Vector2 animVect = Vector2.zero;
-
-
-        [SerializeField] protected float _debugJumpForceMult;
-
         public virtual void ApplyEffect(TriggeredEffect eff)
         {
-            _controller.ApplyEffect(eff);
+            _inputs.ApplyEffect(eff);
         }
         #endregion
-        #region movement, animations
-
 
         public void UnitDodge(BoosterSkillInstanceComponent bs)
         {
-            if (LockUnit || _controller.LockInputs) return;
+            if (LockUnit || _inputs.LockInputs) return;
             Debug.Log($"whoosh!");
         }
 
-
-        protected virtual void ZeroAnimatorFloats()
-        {
-            _animator.SetBool("Moving", false);
-            _animator.SetFloat("ForwardMove", 0f);
-            _animator.SetFloat("SideMove", 0f);
-            _animator.SetFloat("Rotation", 0);
-
-        }
-
-        Coroutine airCor;
-
-        private void HandleAirTime(bool started)
-        {
-            if (started)
-            {
-                airCor = StartCoroutine(UpdateAirTimeValue());
-            }
-            if (!started && airCor!= null)
-            {
-                StopCoroutine(airCor);
-                _animator.SetFloat("AirTime", 0);
-                _animator.SetTrigger("JumpEnd");
-            }
-        }
-
-        private IEnumerator UpdateAirTimeValue()
-        { 
-            
-            while (true)
-            {
-                _animator.SetFloat("AirTime", _controller.GetGroundCollider.AirTime);
-                yield return null;  
-            }
-        }
-
-        protected virtual void UpdateAnimator()
-        {
-            Vector3 movement = _controller.GetMovementVector;
-
-            if (movement.x == 0f && movement.z == 0f)
-            {
-                _animator.SetBool("Moving", false);
-                _animator.SetFloat("ForwardMove", 0f);
-                _animator.SetFloat("SideMove", 0f);
-
-                // rotate in place
-                if (_controller is InputsPlayer p)
-                {
-                    if (p.PlayerInputsDot < p.RotationTreschold)
-                    {
-                        _animator.SetFloat("Rotation", p.PlayerInputsCross);
-                    }
-                    else
-                    {
-                        _animator.SetFloat("Rotation", 0);
-                    }
-                }
-
-            }
-            else
-            {
-                _animator.SetFloat("Rotation",0);
-                _animator.SetBool("Moving", true);
-
-                UpdateAnimatorVector(movement);
-
-                _animator.SetFloat("ForwardMove", animVect.y);
-                _animator.SetFloat("SideMove", animVect.x);
-
-            }
-        }
-
-        //  calculates the vector which is used to set values in animator
-        protected void UpdateAnimatorVector(Vector3 movement)
-        {
-            var playerFwd = transform.forward;
-            var playerRght = transform.right;
-            movement.y = 0;
-            movement.Normalize();
-            // Dot product of two vectors determines how much they are pointing in the same direction.
-            // If the vectors are normalized (transform.forward and right are)
-            // then the value will be between -1 and +1.
-            var x = Vector3.Dot(playerRght, movement);
-            var z = Vector3.Dot(playerFwd, movement);
-            animVect.x = x;
-            animVect.y = z;
-        }
-
-
-        protected virtual void AnimateCombatActivity(UnitActionType type)
-        {
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-            switch (type)
-            {
-                case UnitActionType.Melee:
-                    _animator.SetTrigger("MeleeAttack");
-                    break;
-                case UnitActionType.Ranged:
-                    _animator.SetTrigger("RangedAttack");
-                    break;
-                case UnitActionType.DodgeSkill:
-                    _animator.SetTrigger("Dodge");
-                    break;
-                case UnitActionType.MeleeSkill:
-                    _animator.SetTrigger("MeleeSpecial");
-                    break;
-                case UnitActionType.RangedSkill:
-                    _animator.SetTrigger("RangedSpecial");
-                    break;
-                case UnitActionType.ShieldSkill:
-                    _animator.SetTrigger("ShieldSpecial");
-                    break;
-                case UnitActionType.Jump:
-                    _animator.SetTrigger("JumpStart");
-                    break;
-            }
-        }
-
-
         public virtual void TriggerTogglingEvent_UE(float value)
         {    
-            if (_controller == null) return; //in case we have a scene
+            if (_inputs == null) return; //in case we have a scene
 
             bool result = value > 0;
-            _controller.GetWeaponController.ToggleTriggersOnMelee(result);
-        }
-
-        protected virtual void AnimateStagger()
-        {
-            _animator.SetTrigger("TakeDamage");
+            _inputs.GetWeaponController.ToggleTriggersOnMelee(result);
         }
 
 
-        #endregion
+
 
 
 
@@ -390,7 +243,5 @@ namespace Arcatech.Units
         #endregion
 
         
-
-
     }
 }
