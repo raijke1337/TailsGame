@@ -175,20 +175,19 @@ namespace Arcatech.Managers
         private void CreateDefaultSave()
         {
             RefreshSceneContainers();
-            var defcfg = GetConfigByID<UnitItemsSO>("player");
+            //var defcfg = GetConfigByID<UnitItemsSO>("player");
 
-            SerializedUnitInventory items = new SerializedUnitInventory();
-            foreach (var e in defcfg.Equipment)
-            {
-                items.Equips.Add(e.ID);
-            }
-            foreach (var i in defcfg.Inventory)
-            {
-                items.Inventory.Add(i.ID);
-            }
-
-            _loadedSave.CurrentInventory = new UnitInventoryItemConfigsContainer(items);
-
+            //SerializedUnitInventory items = new SerializedUnitInventory();
+            //foreach (var e in defcfg.Equipment)
+            //{
+            //    items.Equips.Add(e.ID);
+            //}
+            //foreach (var i in defcfg.Inventory)
+            //{
+            //    items.Inventory.Add(i.ID);
+            //}
+            // items are added on player inventory init 
+            _loadedSave.CurrentInventory = new UnitInventoryItemConfigsContainer();
 
             List<SceneContainer> list = new List<SceneContainer>();
             foreach (var cont in _allLevels)

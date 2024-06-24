@@ -35,12 +35,8 @@ namespace Arcatech.AI
 
             foreach (var u in otherUnits)
             {
-                var inputs = u.GetInputs<InputsNPC>();
-                inputs.ForceCombat();
-                if (inputs.DebugMessage)
-                {
-                 //   Debug.Log($"{u.GetFullName} enters combat because {arg.GetFullName} was attaked!");
-                }
+                u.ForceCombat();
+
             }
 
         }

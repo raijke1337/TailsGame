@@ -11,7 +11,7 @@ namespace Arcatech.Managers
         #region UI buttons
         public void OnDone()
         {
-            if (_player.IsArmed)
+            if (_player.PlayerArmed)
             {
                 GameManager.Instance.OnFinishedEquips();
             }
@@ -52,7 +52,7 @@ namespace Arcatech.Managers
                 Debug.LogError($"Player unit not found!");
             }
             _player.InitiateUnit();
-            _menuContainer.InitialInventoryDisplay(_player.GetUnitInventory);
+            _menuContainer.InitialInventoryDisplay(_player.GetInventoryComponent);
 
         }
 

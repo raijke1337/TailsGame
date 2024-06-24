@@ -61,7 +61,7 @@ namespace Arcatech.Managers
             {
                 foreach (var config in eff.Triggers)
                 {
-                    ServeTriggerApplication(new TriggeredEffect (config),null, target, isEnter);
+                    ServeTriggerApplication(new StatsEffect (config),null, target, isEnter);
                 }            
             }
         }
@@ -69,13 +69,13 @@ namespace Arcatech.Managers
 
         // here we need a check to prevent repeat applications so individual instances are accepted instead
 
-        public void ServeTriggerApplication(TriggeredEffect triggerEffect, BaseUnit source, BaseUnit target, bool IsEnter)
+        public void ServeTriggerApplication(StatsEffect triggerEffect, BaseUnit source, BaseUnit target, bool IsEnter)
         {
             if (IsEnter) ApplyTriggerEffect(triggerEffect, target, source);
         }
 
-        private Dictionary<TriggeredEffect, List<BaseUnit>> _hitTargetsPerEffect = new Dictionary<TriggeredEffect, List<BaseUnit>>();
-        private void ApplyTriggerEffect(TriggeredEffect effect, BaseUnit target, BaseUnit source)
+        private Dictionary<StatsEffect, List<BaseUnit>> _hitTargetsPerEffect = new Dictionary<StatsEffect, List<BaseUnit>>();
+        private void ApplyTriggerEffect(StatsEffect effect, BaseUnit target, BaseUnit source)
         {
 
             BaseUnit finaltgt = null;
@@ -188,7 +188,7 @@ namespace Arcatech.Managers
                 {
                     hit.Add(finaltgt);                    
                     finaltgt.ApplyEffect(effect);
-                    if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
+                    //if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                     HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
                 }
@@ -198,7 +198,7 @@ namespace Arcatech.Managers
                 _hitTargetsPerEffect[effect] = new List<BaseUnit>();
                 _hitTargetsPerEffect[effect].Add(finaltgt); 
                 finaltgt.ApplyEffect(effect);
-                if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
+               // if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
                 HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
             }
@@ -209,7 +209,7 @@ namespace Arcatech.Managers
         #endregion
 
         #region forward to effects mng
-        private void HandleEffectsFromTrigger (TriggeredEffect e, EffectMoment when, Transform where)
+        private void HandleEffectsFromTrigger (StatsEffect e, EffectMoment when, Transform where)
         {
             var pack = new EffectRequestPackage(e.GetEffects.GetRandomSound(when), e.GetEffects.GetRandomEffect(when), null, where);
             _effects.ServeEffectsRequest(pack);
@@ -243,12 +243,12 @@ namespace Arcatech.Managers
 
         private void PositionProjectile (ProjectileComponent spawned)
         {
-            var Owner = spawned.Owner;
+            //var Owner = spawned.Owner;
 
-            spawned.transform.SetPositionAndRotation(Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.position,
-                Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.rotation);
+            //spawned.transform.SetPositionAndRotation(Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.position,
+            //    Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.rotation);
 
-            spawned.transform.forward = Owner.transform.forward;
+            //spawned.transform.forward = Owner.transform.forward;
         }
 
 

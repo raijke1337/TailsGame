@@ -86,7 +86,7 @@ namespace Arcatech.Managers
                     case SkillState.AoE:
                         foreach (var ef in comp.GetEffectCfgs)
                         {
-                            triggers.ServeTriggerApplication(new Triggers.TriggeredEffect(ef), comp.Owner, t, true);
+                            triggers.ServeTriggerApplication(new Triggers.StatsEffect(ef), comp.Owner, t, true);
                         }
 
                         //if (t!=null) Debug.Log($"{comp.Data.Description.Title} has hit {t}");

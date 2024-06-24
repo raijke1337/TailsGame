@@ -76,17 +76,17 @@ namespace Arcatech.Units
                 var weap = _items[type];
                 IsReady = true;
 
-                switch (type)
-                {
-                    case EquipmentType.MeleeWeap:
-                        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.MeleeWeap]);
-                        break;
-                    case EquipmentType.RangedWeap:
-                        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.RangedWeap]);
-                        break;
-                    default:
-                        return false;
-                }
+                //switch (type)
+                //{
+                //    case EquipmentType.MeleeWeap:
+                //        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.MeleeWeap]);
+                //        break;
+                //    case EquipmentType.RangedWeap:
+                //        weap.SetItemEmpty(Empties.ItemPositions[EquipmentType.RangedWeap]);
+                //        break;
+                //    default:
+                //        return false;
+                //}
 
                 return true;
             }
@@ -113,10 +113,10 @@ namespace Arcatech.Units
 
         protected void Sheathe(EquipmentType type)
         {
-            if (_items.TryGetValue(type, out var equip))
-            {
-                equip.SetItemEmpty(Empties.ItemPositions[EquipmentType.Other]);
-            }
+            //if (_items.TryGetValue(type, out var equip))
+            //{
+            //    equip.SetItemEmpty(Empties.ItemPositions[EquipmentType.Other]);
+            //}
         }
 
 
@@ -172,7 +172,7 @@ namespace Arcatech.Units
 
         }
 
-        public override void ApplyEffect(TriggeredEffect effect)
+        public override void ApplyEffect(StatsEffect effect)
         {
 
         }

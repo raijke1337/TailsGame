@@ -182,7 +182,7 @@ namespace Arcatech.UI
             if (item is EquipmentItem eq)
             {
                 _swapItemsButton.gameObject.SetActive(true);
-                if (_playerInventory.IsItemEquipped(eq))
+                if (_playerInventory.IsItemEquipped(eq.ItemType, out _))
                 {
                     _swapItemsButton.SetText("UNEQUIP");
                 }

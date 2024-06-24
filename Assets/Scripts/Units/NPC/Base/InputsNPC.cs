@@ -40,18 +40,13 @@ namespace Arcatech.Units.Inputs
             }
             _navMeshAg = GetComponent<NavMeshAgent>();
 
-            _navMeshAg.speed = _statsCtrl.AssessStat(TriggerChangedValue.MoveSpeed).GetCurrent;
+            //_navMeshAg.speed = _statsCtrl.AssessStat(BaseStatType.MoveSpeed).GetCurrent;
             _navMeshAg.stoppingDistance = EnemyStats.AttackRange;
             _stateMachine = new StateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
 
-            StateMachineBinds(true);
             _stateMachine.SetPatrolPoints(patrolPoints);
         }
-        public override void StopController()
-        {
-            base.StopController();
-            StateMachineBinds(false);
-        }
+
         public override void UpdateController(float delta)
         {
             if (_stateMachine == null) return;
@@ -64,36 +59,7 @@ namespace Arcatech.Units.Inputs
         #endregion
 
         #region state machine
-        protected virtual void StateMachineBinds(bool isStart)
-        {
-#if UNITY_EDITOR
-            //if (DebugEnabled && isStart) ReflexionBinds(isStart);
-#endif
-
-            if (isStart)
-            {
-                _stateMachine.StartComp();
-                _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
-                _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
-                _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
-                _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
-                _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
-            }
-            else
-            {
-                _stateMachine.StopComp();
-                _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
-                _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
-                _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
-                _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
-                _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
-            }
-        }
-        //protected virtual void Fsm_RotationRequestedSM()
-        //{
-        //    RotateToSelectedUnit();
-        //}
-
+      
 
         protected virtual void Fsm_ChangeRangeActionRequestSM(UnitActionType arg)
         {
@@ -166,6 +132,29 @@ namespace Arcatech.Units.Inputs
         protected override Vector3 DoHorizontalMovement(float delta)
         {
             return Vector3.zero;
+        }
+
+        protected override ControlInputsBase ControllerBindings(bool start)
+        {
+            if (start)
+            {
+                _stateMachine.StartComp();
+                _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
+                _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
+                _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
+                _stateMachine.AggroRequestedSM += Fsm_AggroRequestedSM;
+                _stateMachine.ChangeRangeActionRequestSM += Fsm_ChangeRangeActionRequestSM;
+            }
+            else
+            {
+                _stateMachine.StopComp();
+                _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
+                _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
+                _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;
+                _stateMachine.AggroRequestedSM -= Fsm_AggroRequestedSM;
+                _stateMachine.ChangeRangeActionRequestSM -= Fsm_ChangeRangeActionRequestSM;
+            }
+            return this;
         }
 
 #endif

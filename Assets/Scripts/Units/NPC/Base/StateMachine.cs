@@ -152,7 +152,8 @@ namespace Arcatech.AI
         public bool OnAllyNeedsHelp()
         {
             if (FocusUnit == null) return false;
-            return FocusUnit.GetInputs().AssessStat(TriggerChangedValue.Health).GetCurrent / FocusUnit.GetInputs().AssessStat(TriggerChangedValue.Health).GetMax <= 0.5f;  // HUGE todo
+            else return true;
+           // return FocusUnit.GetInputs().AssessStat(AffectedStat.Health).GetCurrent / FocusUnit.GetInputs().AssessStat(AffectedStat.Health).GetMax <= 0.5f;  // HUGE todo
         }
         public void OnRotateRequest() => RotationRequestedSM?.Invoke();
         public void OnSwapRanges(UnitActionType type) => ChangeRangeActionRequestSM?.Invoke(type);

@@ -40,7 +40,7 @@ namespace Arcatech.Scenes.Cameras
         public override void Initiate()
         {
             _camera = GetComponent<Camera>();
-            if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInputs<InputsPlayer>().Aiming;
+            if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetAimingComponent;
 
             _hitsThisFrame = new RaycastHit[50];
             _cors = new Dictionary<FadingDecorComponent, Coroutine>();
@@ -51,8 +51,6 @@ namespace Arcatech.Scenes.Cameras
 
         public override void RunUpdate(float delta)
         {
-
-
             if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
             {
                 _cameraTargetGizmoColor = Color.green;

@@ -57,7 +57,7 @@ namespace Arcatech.Triggers
 
             if (Content is Equip e)
             {
-                _model = Instantiate(e.Item, place);
+                _model = Instantiate(e.ItemPrefab, place);
             }
             else
             {

@@ -15,10 +15,15 @@ MonoBehaviour:
   ID: shield_base
   Description: {fileID: 11400000, guid: bb0dd66f7fe7eab4aba775ac218f1101, type: 2}
   ItemType: 3
-  Item: {fileID: 4605639681520304311, guid: d55e7f9a0535b724cbfbd2c9db672b96, type: 3}
+  ItemPrefab: {fileID: 0}
+  StatMods:
+  - {fileID: 11400000, guid: e7818a83ec04e8a4880f9ced44281ba6, type: 2}
   Skill: {fileID: 11400000, guid: 9f1da8c017ac9e04ebdb9da6c15826eb, type: 2}
+  CostTrigger: {fileID: 0}
   Effects:
     Sounds:
       _serializedList: []
     Effects:
       _serializedList: []
+  AnimatorController: {fileID: 0}
+  ItemPlaceType: 0

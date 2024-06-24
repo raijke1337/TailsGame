@@ -1,11 +1,7 @@
 using Arcatech.Managers;
 using Arcatech.Scenes.Cameras;
-using Arcatech.UI;
 using KBCore.Refs;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.InputSystem.InputAction;
 
 namespace Arcatech.Units.Inputs
 {
@@ -15,14 +11,16 @@ namespace Arcatech.Units.Inputs
 
         [SerializeField, Anywhere] PlayerInputReaderObject _playerInputReader;
 
-        private AimingComponent _aim;
+        private IsoCamAdjust _adj;
+        [SerializeField,Self] private AimingComponent _aim;
         public AimingComponent Aiming => _aim;
 
 
-        private IsoCamAdjust _adj;
+
         private CostumesControllerComponent _costume;
-        private GameInterfaceManager _gameInterfaceManager;
-        public event SimpleEventsHandler<RuntimeAnimatorController> ChangeLayerEvent;
+       // private GameInterfaceManager _gameInterfaceManager;
+
+
 
         #region managedctrl
 
@@ -43,28 +41,11 @@ namespace Arcatech.Units.Inputs
             _costume = GetComponent<CostumesControllerComponent>();
             _costume.StartController();
 
-            _playerInputReader.Aim += OnAimAction;
-            _playerInputReader.Movement += OnMovementAction;
-
-            _playerInputReader.Melee += OnMeleeAction;
-            _playerInputReader.Ranged += OnRangedAction;
-            _playerInputReader.Jump += OnJumpAction;
-
-            _playerInputReader.DodgeSpec += OnDodgeSkill;
-            _playerInputReader.MeleeSpec += OnMeleeSkill;
-            _playerInputReader.RangedSpec += OnRangedSkill;
-            _playerInputReader.ShieldSpec += OnShieldSkill;
-
-            _playerInputReader.PausePressed += OnPauseButton;
-            _playerInputReader.MountAction += OnMountButton;
 
 
-            _weaponCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayerWeapon;
-            _skillCtrl.SwitchAnimationLayersEvent += SwitchAnimatorLayerSkill;
-            _skillCtrl.SwitchAnimationLayersEvent += _weaponCtrl.SwitchModels;
             transform.LookAt(transform.forward);
 
-            _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
+           // _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
         }
         public override void UpdateController(float delta)
         {
@@ -78,33 +59,10 @@ namespace Arcatech.Units.Inputs
         }
         public override void StopController()
         {
-            base.StopController();
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             // not init for non game levels
-
-
             _aim.StopController();
             _costume.StopController();
-
-
-            _playerInputReader.Aim -= OnAimAction;
-            _playerInputReader.Movement -= OnMovementAction;
-
-            _playerInputReader.Melee -= OnMeleeAction;
-            _playerInputReader.Ranged -= OnRangedAction;
-            _playerInputReader.Jump -= OnJumpAction;
-
-            _playerInputReader.DodgeSpec -= OnDodgeSkill;
-            _playerInputReader.MeleeSpec -= OnMeleeSkill;
-            _playerInputReader.RangedSpec -= OnRangedSkill;
-            _playerInputReader.ShieldSpec -= OnShieldSkill;
-            _playerInputReader.PausePressed -= OnPauseButton;
-            _playerInputReader.MountAction -= OnMountButton;
-
-            _weaponCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayerWeapon;
-            _skillCtrl.SwitchAnimationLayersEvent -= SwitchAnimatorLayerSkill;
-            _skillCtrl.SwitchAnimationLayersEvent -= _weaponCtrl.SwitchModels;
-
         }
 
         #endregion
@@ -119,8 +77,7 @@ namespace Arcatech.Units.Inputs
 
         private void OnPauseButton()
         {
-            if (_gameInterfaceManager == null) return; // weirdstuff happening here as it's called from NULL TODO
-            _gameInterfaceManager.OnPauseRequesShowPanelAndPause(true);
+            Debug.Log($"Pause button NYI");
         }
 
         private void OnShieldSkill()
@@ -172,24 +129,6 @@ namespace Arcatech.Units.Inputs
 
 
 
-        #region anims
-
-        private void SwitchAnimatorLayerSkill(EquipmentType type)
-        {
-            if (LockInputs) return;
-            ChangeLayerEvent?.Invoke(Unit.GetUnitInventory.GetEquipByType(type).AnimatorController);
-        }
-
-        private void SwitchAnimatorLayerWeapon(RuntimeAnimatorController ctrl)
-        {
-            if (LockInputs) return;
-            ChangeLayerEvent?.Invoke(ctrl);
-        }
-
-        #endregion
-
-
-
         #region movement
         [Header("Movement settings")]
 
@@ -222,7 +161,7 @@ namespace Arcatech.Units.Inputs
         }
         Vector3 ApplyHorizontalMovement(Vector3 adjDir)
         {
-            var velocity = adjDir * (_statsCtrl.CurrentStats[BaseStatType.MoveSpeed].GetCurrent * Time.fixedDeltaTime);
+            var velocity = adjDir * (_stats[MovementStatType.MoveSpeed].GetCurrent * Time.fixedDeltaTime);
             _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
             return velocity;
 
@@ -288,5 +227,46 @@ namespace Arcatech.Units.Inputs
         {
         }
 
+        protected override ControlInputsBase ControllerBindings(bool start)
+        {
+            if (start)
+
+            {
+                _playerInputReader.Aim += OnAimAction;
+                _playerInputReader.Movement += OnMovementAction;
+
+                _playerInputReader.Melee += OnMeleeAction;
+                _playerInputReader.Ranged += OnRangedAction;
+                _playerInputReader.Jump += OnJumpAction;
+
+                _playerInputReader.DodgeSpec += OnDodgeSkill;
+                _playerInputReader.MeleeSpec += OnMeleeSkill;
+                _playerInputReader.RangedSpec += OnRangedSkill;
+                _playerInputReader.ShieldSpec += OnShieldSkill;
+
+                _playerInputReader.PausePressed += OnPauseButton;
+                _playerInputReader.MountAction += OnMountButton;
+            }
+            else
+            {
+
+
+                _playerInputReader.Aim -= OnAimAction;
+                _playerInputReader.Movement -= OnMovementAction;
+
+                _playerInputReader.Melee -= OnMeleeAction;
+                _playerInputReader.Ranged -= OnRangedAction;
+                _playerInputReader.Jump -= OnJumpAction;
+
+                _playerInputReader.DodgeSpec -= OnDodgeSkill;
+                _playerInputReader.MeleeSpec -= OnMeleeSkill;
+                _playerInputReader.RangedSpec -= OnRangedSkill;
+                _playerInputReader.ShieldSpec -= OnShieldSkill;
+                _playerInputReader.PausePressed -= OnPauseButton;
+                _playerInputReader.MountAction -= OnMountButton;
+            }
+
+            return this;
+        }
     }
 }

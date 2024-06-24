@@ -23,7 +23,7 @@ namespace Arcatech.Skills
 
         public EffectsCollection GetEffects { get; private set; }
 
-        public SerializedStatTriggerConfig[] GetEffectCfgs => _cfg.Triggers;
+        public SerializedStatsEffectConfig[] GetEffectCfgs => _cfg.Triggers;
 
 
         protected SkillState CurrentState = SkillState.Placer;

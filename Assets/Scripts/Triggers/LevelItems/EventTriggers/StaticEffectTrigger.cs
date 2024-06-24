@@ -4,6 +4,6 @@ namespace Arcatech.Triggers
 {
     public class StaticEffectTrigger : BaseLevelEventTrigger
     {
-        public SerializedStatTriggerConfig[] Triggers;
+        public SerializedStatsEffectConfig[] Triggers;
     }
 }

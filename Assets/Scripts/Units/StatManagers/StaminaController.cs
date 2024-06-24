@@ -65,7 +65,7 @@ namespace Arcatech.Units
         //}
 
         //#endregion
-        public override void ApplyEffect(TriggeredEffect effect)
+        public override void ApplyEffect(StatsEffect effect)
         {
             throw new NotImplementedException();
         }

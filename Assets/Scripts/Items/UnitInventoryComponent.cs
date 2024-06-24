@@ -1,15 +1,14 @@
 using Arcatech.Items;
-using Arcatech.Managers;
+using Arcatech.Triggers;
+using KBCore.Refs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Arcatech.Units
 {
-    [Serializable]
-    public class UnitInventoryComponent
+    public class UnitInventoryComponent : ManagedControllerBase
     {
         private BaseUnit _owner;
         private Dictionary<EquipmentType, EquipmentItem> _equips;
@@ -18,17 +17,7 @@ namespace Arcatech.Units
 
         private ItemEmpties _empties;
 
-
-
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
-        public EquipmentItem GetEquipByType(EquipmentType t)
-        {
-            if (_equips.TryGetValue(t, out var e))
-            {
-                return e;
-            }
-            else return null;
-        }
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
 
         public event SimpleEventsHandler<UnitInventoryComponent> InventoryUpdateEvent;
@@ -82,8 +71,6 @@ namespace Arcatech.Units
                     MoveToEquipped(eq);
                 }
             }
-
-
         }
         public void MoveToSheathed(EquipmentItem i)
         {
@@ -98,7 +85,7 @@ namespace Arcatech.Units
             _items.Remove(i);
             _equips[i.ItemType] = i;
 
-            i.OnEquip(_empties.ItemPositions[i.ItemType]);
+            i.OnEquip(_empties.ItemPositions[i.ItemPlaceType]);
         }
         private void MoveToInventory(InventoryItem i)
         {
@@ -113,16 +100,45 @@ namespace Arcatech.Units
             }
         }
         // to choose the text for the context button
-        public bool IsItemEquipped(EquipmentItem equip)
-        {
-            return (_equips.TryGetValue(equip.ItemType, out var eq));
-        }
+
         #endregion
 
 
+        public bool IsItemEquipped (EquipmentType type, out EquipmentItem item)
+        {
+            return _equips.TryGetValue(type, out item);
+        }
 
-        // for default inventory setup from config SOs
-        public UnitInventoryComponent(UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
+        public UnitInventoryComponent DrawItems (IDrawItemStrategy strategy)
+        {
+            foreach (var e in _equips.Values)
+            {
+                e.SetItemEmpty(_empties.ItemPositions[strategy.GetPlaces[e.ItemType]]);
+            }
+            return this;
+        }
+
+        #region setup
+        public SerializedStatModConfig[] GetCurrentMods
+        {
+            get
+            {
+                var list = new List<SerializedStatModConfig>();
+                foreach (var equip in _equips.Values)
+                {
+                    if (equip.ItemStats != null)
+                    {
+                        list.AddRange(equip.ItemStats);
+                    }
+                }
+
+                return list.ToArray();
+
+            }
+        }
+
+
+        public UnitInventoryComponent LoadSerializedItems (UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
         {
             _owner = owner;
 
@@ -139,7 +155,9 @@ namespace Arcatech.Units
             }
 
             _empties = owner.GetEmpties;
+            return this;
         }
+        
         private InventoryItem ProduceItem(Item cfg)
         {
             InventoryItem ret;
@@ -174,5 +192,24 @@ namespace Arcatech.Units
             //cringe but it should work
         }
 
+
+        #region managed
+        public override void StartController()
+        {
+            base.StartController();
+        }
+        public override void UpdateController(float delta)
+        {
+
+        }
+
+        public override void StopController()
+        {
+
+        }
+        #endregion
+        #endregion
     }
+
+
 }

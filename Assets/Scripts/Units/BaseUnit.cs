@@ -3,8 +3,11 @@ using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Managers;
 using Arcatech.Skills;
+using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
+using Arcatech.Units.Stats;
+using KBCore.Refs;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +16,41 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    [RequireComponent(typeof(ControlInputsBase))]
+    [RequireComponent(typeof(ControlInputsBase),typeof(UnitStatsController),typeof(UnitInventoryComponent))]
 
-    public abstract class BaseUnit : MonoBehaviour, ITakesTriggers, IHasEffects
+    public abstract class BaseUnit : ValidatedMonoBehaviour
     {
-        protected Animator _animator;
-        [SerializeField] protected RuntimeAnimatorController _baseAnimator;
-
-        protected Rigidbody _rigidbody;
-        public Collider GetCollider { get; private set; }
-        protected ControlInputsBase _inputs;
-
+        [Header("Unit settings")]
         public Side Side;
+        [SerializeField] protected UnitItemsSO defaultEquips;
+        [SerializeField] protected ItemEmpties itemEmpties;
+        [SerializeField] protected BaseStatsConfig defaultStats;
+        [SerializeField] protected MovementStatsConfig movementStats;
+        [SerializeField] protected DrawItemsStrategy defaultItemsDrawStrat;
         
 
+        [SerializeField] protected RuntimeAnimatorController _baseAnimator;
+        [SerializeField,Self] protected Animator _animator;
+        [SerializeField, Self] protected UnitInventoryComponent _inventory;
+        [SerializeField, Self] protected UnitStatsController _stats;
+        [SerializeField, Self] protected ControlInputsBase _inputs;
 
-        public ItemEmpties GetEmpties => _inputs.GetEmpties;
+        public string GetUnitName => defaultStats.DisplayName;
+
+        public UnitInventoryComponent GetInventoryComponent => _inventory;
+
+
+        public Collider GetCollider { get; private set; }
+             
+        public ItemEmpties GetEmpties => itemEmpties;
 
         public abstract ReferenceUnitType GetUnitType();
 
-        public T GetInputs<T>() where T : ControlInputsBase => _inputs as T;
-        public ControlInputsBase GetInputs()
-        {
-            return _inputs;
-        }
+        //public T GetInputs<T>() where T : ControlInputsBase => _inputs as T;
+        //public ControlInputsBase GetInputs()
+        //{
+        //    return _inputs;
+        //}
 
         private bool _locked = false;
         public bool LockUnit
@@ -60,52 +74,48 @@ namespace Arcatech.Units
 
 
         #region equipments
-        public UnitInventoryComponent GetUnitInventory { get; protected set; }
+
         public void AddItem(Item item,bool equip)
         {
-            GetUnitInventory.PickedUpItem(item, equip);
+            _inventory.PickedUpItem(item, equip);
             OnItemAdd(item);
         }
-        protected abstract void InitInventory();
+        protected abstract UnitInventoryItemConfigsContainer SelectSerializedItemsConfig();
         protected abstract void OnItemAdd(Item i);
-
-        protected void CreateStartingEquipments(UnitInventoryComponent item) // equipment can't be changed mid-level so it's no problem here that this is run once
-        {
-            UpdateComponents();
-            _inputs.AssignDefaultItems(item);
-        }
-        public bool IsArmed
-        {
-            get
-            {
-                var list = new List<EquipmentItem>(GetUnitInventory.GetCurrentEquips);
-                return list.Any(t => t.ItemType == EquipmentType.MeleeWeap) || list.Any(t => t.ItemType == EquipmentType.RangedWeap);
-            }
-        }
 
         #endregion
 
         #region managed
         public virtual void InitiateUnit() // this is run by unit manager
         {
-            UpdateComponents();
-            _inputs.Unit = this;
-            _inputs.StartController();
-            InitInventory();
+
+            _inventory.LoadSerializedItems(SelectSerializedItemsConfig(),this)
+                .DrawItems(defaultItemsDrawStrat)
+                .StartController();
+
+            _stats.PopulateDictionary().
+                AddMods(defaultStats.InitialStats)
+                .AddMods(_inventory.GetCurrentMods)
+                .StartController();
+            
+            _inputs.PopulateDictionary().
+                SetMovementStats(movementStats)
+                .StartController();
+            
 
             _animator.runtimeAnimatorController = _baseAnimator;
             _animator.Play("Idle");
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
-                ControllerEventsBinds(true); 
                 LockUnit = false;
             }    
         }
         public virtual void DisableUnit()
         {
-            ControllerEventsBinds(false);
             _inputs.StopController();
+            _inventory.StopController();
+            _stats.StopController();
             StopAllCoroutines();
         }
 
@@ -115,6 +125,9 @@ namespace Arcatech.Units
             if (LockUnit) return;
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             _inputs.UpdateController(delta);
+            _stats.UpdateController(delta);
+            _inventory.UpdateController(delta);
+
 
         }
 
@@ -123,38 +136,6 @@ namespace Arcatech.Units
 
         #region unit
 
-        protected virtual void UpdateComponents()
-        {
-            if (GetCollider == null) GetCollider = GetComponent<Collider>();
-            if (_animator == null) _animator = GetComponent<Animator>();
-            if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
-            if (_inputs == null) _inputs = GetComponent<ControlInputsBase>();
-        }
-
-
-        protected virtual void ControllerEventsBinds(bool isEnable)
-        {
-            if (isEnable)
-            {
-                _inputs.SkillSpawnEvent += OnInputsCreateSkill;
-                _inputs.EffectEventRequest += EffectEventCallback;
-                _inputs.TriggerEventRequest += TriggerEventCallback;
-                _inputs.SpawnProjectileEvent += PlaceProjectileCallback;
-                _inputs.ZeroHealthHappened += OnInputsReportDeath;
-                _inputs.DamageHappened += OnInputsReportDamage;     
-
-            }
-            else
-            {
-                _inputs.SkillSpawnEvent -= OnInputsCreateSkill;
-                _inputs.EffectEventRequest -= EffectEventCallback;
-                _inputs.TriggerEventRequest -= TriggerEventCallback;
-                _inputs.SpawnProjectileEvent -= PlaceProjectileCallback;
-                _inputs.ZeroHealthHappened -= OnInputsReportDeath;
-                _inputs.DamageHappened -= OnInputsReportDamage;
-            }
-
-        }
 
         private void OnInputsReportDamage(float arg)
         {
@@ -172,10 +153,6 @@ namespace Arcatech.Units
         #region stats
         private void OnInputsReportDeath()
         {
-            if (_inputs.DebugMessage)
-            {
-                Debug.Log($"{_inputs.GetFullName} died");
-            }
 
             HandleDeath();
             IsUnitAlive = false;
@@ -183,7 +160,7 @@ namespace Arcatech.Units
             _inputs.LockInputs = true;
 
             GetCollider.enabled = false;
-            _rigidbody.useGravity = false;
+            //_rigidbody.useGravity = false;
 
             BaseUnitDiedEvent?.Invoke(this);
 
@@ -192,9 +169,9 @@ namespace Arcatech.Units
         protected abstract void HandleDamage(float value);
         protected abstract void HandleDeath();
 
-        public virtual void ApplyEffect(TriggeredEffect eff)
+        public virtual void ApplyEffect(StatsEffect eff)
         {
-            _inputs.ApplyEffect(eff);
+            _stats.AddEffect(eff);
         }
         #endregion
 
@@ -209,7 +186,7 @@ namespace Arcatech.Units
             if (_inputs == null) return; //in case we have a scene
 
             bool result = value > 0;
-            _inputs.GetWeaponController.ToggleTriggersOnMelee(result);
+            //_inputs.GetWeaponController.ToggleTriggersOnMelee(result);
         }
 
 
@@ -219,7 +196,7 @@ namespace Arcatech.Units
 
         #region trigger events
         public event TriggerEvent UnitTriggerRequestEvent;
-        protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, TriggeredEffect cfg)
+        protected void TriggerEventCallback(BaseUnit tg, BaseUnit src, bool ent, StatsEffect cfg)
         {
             UnitTriggerRequestEvent?.Invoke(tg, src, ent, cfg);
         }

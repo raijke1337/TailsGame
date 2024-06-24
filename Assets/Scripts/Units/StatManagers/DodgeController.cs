@@ -35,7 +35,7 @@ namespace Arcatech.Units
         }
         protected override void InstantiateItem(EquipmentItem i)
         {
-            i.SetItemEmpty(Empties.ItemPositions[EquipmentType.Booster]);
+           // i.SetItemEmpty(Empties.ItemPositions[EquipmentType.Booster]);
         }
         #endregion
 
@@ -53,7 +53,7 @@ namespace Arcatech.Units
         {
         }
 
-        public override void ApplyEffect(TriggeredEffect effect)
+        public override void ApplyEffect(StatsEffect effect)
         {
 
         }

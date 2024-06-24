@@ -38,17 +38,17 @@ namespace Arcatech.Items
 
         }
 
-        private Dictionary<ProjectileComponent, List<TriggeredEffect>> _shotPorjectilesDict = new Dictionary<ProjectileComponent, List<TriggeredEffect>>();
+        private Dictionary<ProjectileComponent, List<StatsEffect>> _shotPorjectilesDict = new Dictionary<ProjectileComponent, List<StatsEffect>>();
 
         protected void ProjectileSubs(ProjectileComponent p, bool isSub)
         {
             if (isSub)
             {
                 p.ProjectileEnteredTriggerEvent += CheckForProjectileHit;
-                _shotPorjectilesDict.Add(p, new List<TriggeredEffect>());
+                _shotPorjectilesDict.Add(p, new List<StatsEffect>());
                 foreach (var cfg in _storedTriggerSettings)
                 {
-                    _shotPorjectilesDict[p].Add(new TriggeredEffect(cfg));
+                    _shotPorjectilesDict[p].Add(new StatsEffect(cfg));
                 }
                 p.ProjectileExpiredEvent += (t) => ProjectileSubs(t, false);
             }

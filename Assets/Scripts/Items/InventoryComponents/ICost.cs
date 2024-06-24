@@ -3,7 +3,7 @@ namespace Arcatech.Items
 {
     public interface ICost
     {
-        public TriggeredEffect Cost { get; }
+        public StatsEffect Cost { get; }
     }
 
 

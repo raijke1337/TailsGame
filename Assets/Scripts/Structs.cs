@@ -32,7 +32,7 @@ namespace Arcatech
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
 
     public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
-    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect eff);
+    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect eff);
     #endregion
 
     #region structs 
@@ -41,8 +41,18 @@ namespace Arcatech
     [Serializable]
     public class ItemEmpties
     {
-        public SerializedDictionary<EquipmentType, Transform> ItemPositions;
+        public SerializedDictionary<ItemPlaceType, Transform> ItemPositions;
     }
+    public enum ItemPlaceType : byte
+    {
+        MeleeEmpty,
+        RangedEmpty,
+        SheathedEmpty,
+        ShieldEmpty, 
+        BoosterEmpty, 
+        OtherEmpty = 255
+    }
+
     #endregion
 
     #region puzzle stuff
@@ -85,7 +95,7 @@ namespace Arcatech
 
     public interface ITakesTriggers
     {
-        void ApplyEffect(TriggeredEffect effect);
+        void ApplyEffect(StatsEffect effect);
     }
 
     public interface IManagedComponent : IManaged

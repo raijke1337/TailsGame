@@ -13,106 +13,68 @@ using UnityEngine;
 
 namespace Arcatech.Stats
 {
-    public class UnitStatsController : MonoBehaviour, IManagedComponent 
+    public class UnitStatsController : ManagedControllerBase
     {
-        public Dictionary<BaseStatType, StatValueContainer> CurrentStats { get; set;  }
+        private Dictionary<BaseStatType, StatValueContainer> _stats { get; set;  }
 
-        public bool IsReady => throw new NotImplementedException();
-
-        private EnergyController _energy;
         public event SimpleEventsHandler ZeroHealthEvent; // dead
         public event SimpleEventsHandler StunEvent; // just stun
         public event SimpleEventsHandler KnockDownEvent; // fall, armor damage
         public event SimpleEventsHandler<float> UnitTookDamageEvent; //        
 
+        public UnitStatsController PopulateDictionary()
+        {
+            _stats = new Dictionary<BaseStatType, StatValueContainer>();
+            var vals = Enum.GetValues(typeof(BaseStatType));
+            foreach (var typ in vals)
+            {
+                _stats[(BaseStatType)typ] = new StatValueContainer();
+            }
+            return this;
+        }
+        public UnitStatsController AddMods (SerializedStatModConfig[] mods)
+        {
+            foreach (var cfg in mods)
+            {
+                _stats[cfg.ChangedStat].ApplyStatsMod(new StatsMod(cfg));
+            }
+            return this;
+        }
 
-        //public UnitStatsController(ItemEmpties empties, BaseUnit owner) : base(empties, owner)
-        //{
-        //    CurrentStats = new Dictionary<BaseStatType, StatValueContainer>();
-        //}
+        public UnitStatsController AddEffect (StatsEffect eff)
+        {
+            if (_stats.TryGetValue(eff.StatType,out var c))
+            {
+                c.ApplyStatsEffect(eff);
+            }
+            return this;
+        }
+        #region managed
 
-        #region ihandler
+        public override void StartController()
+        {
+            foreach (var stat in _stats.Values)
+            {
+                stat.Initialize(stat.GetMax);
+            }
+            _isReady = true;
+            base.StartController();
 
+        }
+        public override void UpdateController(float delta)
+        {
+            if (!_isReady) return;
 
+            foreach (var stat in _stats)
+            {
+                stat.Value.UpdateInDelta(delta);
+            }
+        }
+
+        public override void StopController()
+        {
+            _isReady = false;
+        }
         #endregion
-
-        public StatValueContainer AssessStat(TriggerChangedValue stat)
-        {
-            switch (stat)
-            {
-                case TriggerChangedValue.Health:
-                    return CurrentStats[BaseStatType.Health];
-                case TriggerChangedValue.Energy:
-                    return _energy.GetValueContainer;
-                case TriggerChangedValue.Stamina:
-                    return CurrentStats[BaseStatType.Stamina];
-                case TriggerChangedValue.MoveSpeed:
-                    return CurrentStats[BaseStatType.MoveSpeed];
-                default:
-                    Debug.LogError($"Tried to assess stat {stat}, not implemented");
-                    break;
-            }
-            return null;
-
-        }
-
-        protected void OnHealthValueChange(float current, float prev)
-        {
-            if (!IsReady) return;
-            if (prev>current)
-            {
-                UnitTookDamageEvent?.Invoke(prev - current);
-            }
-            if (current <= 0)
-            {                
-                ZeroHealthEvent?.Invoke();
-            }
-        }
-
-
-        public void ApplyEffect(TriggeredEffect effect)
-        {
-            switch (effect.StatType)
-            {
-                case TriggerChangedValue.Health:
-                    if (!_energy.TryAbsorb(effect,out var remaining))
-                    {
-                        CurrentStats[BaseStatType.Health].ApplyTriggeredEffect(remaining);
-                    }
-                    break;
-                case TriggerChangedValue.Energy:
-                    _energy.GetValueContainer.ApplyTriggeredEffect(effect);
-                    break;
-                case TriggerChangedValue.Stamina:
-                    CurrentStats[BaseStatType.Stamina].ApplyTriggeredEffect(effect);
-                    break;
-                default:
-                    Debug.LogWarning($"trigger of type {effect.StatType} not implemented");
-                    break;
-            }
-        }
-
-
-        public override void UpdateInDelta(float deltaTime)
-        {
-            foreach (var stat in CurrentStats)
-            {
-                stat.Value.UpdateInDelta(deltaTime);
-            }
-            if (_energy != null)
-            {
-                _energy.UpdateInDelta(deltaTime);
-            }
-        }
-
-        public void StartComp()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StopComp()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

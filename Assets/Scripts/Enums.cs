@@ -8,26 +8,16 @@ public enum BaseStatType : byte
 {
     Health,
     Stamina,
-    MoveSpeed,
-    TurnSpeed,
-}
-public enum TriggerChangedValue : byte
-{
-    Health = 0,
-    Energy = 10,
-    Stamina = 20,
-    MoveSpeed = 30,
-    //TurnSpeed = 40,
-    //Stagger = 50,
-    //DodgeCharge = 60,
+    Energy
 }
 
-public enum GeneratorStatType
+public enum MovementStatType : byte
 {
-    Capacity,
-    CapacityRegen,
-    DamageAbsorbMultiplier
+    MoveSpeed,
+    TurnSpeed,
+    JumpForce
 }
+
 
 public enum EquipmentType
 {

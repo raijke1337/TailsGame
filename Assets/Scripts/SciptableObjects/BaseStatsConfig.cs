@@ -1,15 +1,15 @@
-
-using Arcatech.Stats;
-using AYellowpaper.SerializedCollections;
+using Arcatech.Triggers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Arcatech.Units.Stats
 {
-    [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats", order = 1)]
+    [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats")]
     public class BaseStatsConfig : ScriptableObjectID
     {
-        public string displayName;
-        public SerializedDictionary<BaseStatType, StatValueContainer> Stats;
+        public string DisplayName;
+        public SerializedStatModConfig[] InitialStats;
     }
+
 
 }

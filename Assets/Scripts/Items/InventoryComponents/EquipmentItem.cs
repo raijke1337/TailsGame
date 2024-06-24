@@ -11,19 +11,20 @@ namespace Arcatech.Items
     [Serializable]
     public class EquipmentItem : InventoryItem, ICost
     {
-
+        public SerializedStatModConfig[] ItemStats { get; protected set; }
         public SerizalizedSkillConfiguration Skill { get; protected set; }
         public EffectsCollection Effects { get; private set; }
 
         [SerializeField] protected BaseEquippableItemComponent _prefab;
+
         protected BaseEquippableItemComponent _instantiated;
         public RuntimeAnimatorController AnimatorController { get; protected set; }
-        private SerializedStatTriggerConfig _cost;
-        public TriggeredEffect Cost
+        private SerializedStatsEffectConfig _cost;
+        public StatsEffect Cost
         {
             get
             {
-                return new TriggeredEffect(_cost);
+                return new StatsEffect(_cost);
             }
         }
 
@@ -32,13 +33,21 @@ namespace Arcatech.Items
             if (cfg is Equip e)
             {
                 Skill = e.Skill;
-                _prefab = e.Item;
+                _prefab = e.ItemPrefab;
                 Effects = new EffectsCollection(e.Effects);
                 AnimatorController = e.AnimatorController;
                 _cost = e.CostTrigger;
+                ItemStats = new SerializedStatModConfig[e.StatMods.Length];
+
+                for (int i = 0; i < e.StatMods.Length; i++)
+                {
+                    ItemStats[i] = e.StatMods[i];
+                }
+                this.ItemPlaceType = e.ItemPlaceType;
             }
         }
 
+        public ItemPlaceType ItemPlaceType { get; protected set; }
 
         public BaseEquippableItemComponent GetInstantiatedPrefab()
         {

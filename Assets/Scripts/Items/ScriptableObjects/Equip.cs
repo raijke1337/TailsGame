@@ -10,11 +10,13 @@ namespace Arcatech.Items
     public class Equip : Item
     {
 
-        public BaseEquippableItemComponent Item;
+        public BaseEquippableItemComponent ItemPrefab;
+        public SerializedStatModConfig[] StatMods;
         public SerizalizedSkillConfiguration Skill;
-        public SerializedStatTriggerConfig CostTrigger; 
+        public SerializedStatsEffectConfig CostTrigger; 
         public SerializedEffectsCollection Effects;
         public RuntimeAnimatorController AnimatorController;
+        public ItemPlaceType ItemPlaceType;
 
     }
 }

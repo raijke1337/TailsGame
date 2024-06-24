@@ -6,84 +6,64 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using KBCore.Refs;
+using Arcatech.Scenes.Cameras;
 
 
 namespace Arcatech.Units
 {
     public class PlayerUnit : BaseUnit
     {
+        [SerializeField, Child] protected FaceCameraCOntrroller _faceCam;
 
-        private InputsPlayer _playerController;
-        protected Camera _faceCam;
+        public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
-        #region managed
         public override void InitiateUnit()
         {
-            UpdateComponents();
             base.InitiateUnit();
             ToggleCamera(true);
         }
-
-
-        protected override void UpdateComponents()
-        {
-            base.UpdateComponents();
-            if (_faceCam == null) _faceCam = GetComponentsInChildren<Camera>().First(t => t.CompareTag("FaceCamera"));
-        }
-
-        protected override void ControllerEventsBinds(bool isEnable)
-        {
-            base.ControllerEventsBinds(isEnable);
-
-            
-            if (isEnable)
+        public bool PlayerArmed
+        { get
             {
-                _playerController = _inputs as InputsPlayer;
-                _playerController.ChangeLayerEvent += ChangeAnimatorLayer;
-                _playerController.ShieldBreakHappened += HandleShieldBreakEvent;
-            }
-            else if (_playerController != null) // issue in scenes
-            {                
-                _playerController.ChangeLayerEvent -= ChangeAnimatorLayer;
-                _playerController.ShieldBreakHappened -= HandleShieldBreakEvent;
-            }
-        }
+                return _inventory.IsItemEquipped(EquipmentType.MeleeWeap, out _) || _inventory.IsItemEquipped(EquipmentType.RangedWeap, out _);
+        } }
 
-        #endregion
+
         #region inventory
 
-        protected override void InitInventory()
+        protected override UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {
-            var savedEquips = DataManager.Instance.GetCurrentPlayerItems;
 
-            GetUnitInventory = new UnitInventoryComponent(savedEquips, this);
-            CreateStartingEquipments(GetUnitInventory);
+            if (DataManager.Instance.IsNewGame)
+            {
+                return new UnitInventoryItemConfigsContainer(defaultEquips);
+            }
+            else
+            {
+                return DataManager.Instance.GetCurrentPlayerItems;
+            }
+
         }
         #endregion
 
         #region animator
 
-        private void ChangeAnimatorLayer(RuntimeAnimatorController animator)
-        {
-            _animator.runtimeAnimatorController = animator;
-        }
-
         public void ComboWindowStart()
         {
             _animator.SetBool("AdvancingCombo", true);
-            _playerController.IsInMeleeCombo = true;
+           // _playerController.IsInMeleeCombo = true;
         }
         public void ComboWindowEnd()
         {
             _animator.SetBool("AdvancingCombo", false);
-            _playerController.IsInMeleeCombo = false;
+            //_playerController.IsInMeleeCombo = false;
         }
 
         private void HandleShieldBreakEvent()
-        {if (_inputs.DebugMessage)
-            Debug.Log($"Inputs report shield break event");
+        { if (_inputs.DebugMessage)
+                Debug.Log($"Inputs report shield break event");
         }
         public void PlayerIsTalking(DialoguePart d)
         {
@@ -121,5 +101,5 @@ namespace Arcatech.Units
         }
     }
 
-#endregion
+    #endregion
 }

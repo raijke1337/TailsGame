@@ -10,7 +10,7 @@ namespace Arcatech.Triggers
 
         protected override bool CheckTheCondition()
         {
-            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetUnitInventory.HasItem(RequiredItem);
+            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent.HasItem(RequiredItem);
         }
     }
 }

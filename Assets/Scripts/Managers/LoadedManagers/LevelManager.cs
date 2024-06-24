@@ -93,7 +93,7 @@ namespace Arcatech.Managers
             {
                 foreach (var e in ef.Triggers)
                 {
-                    _trigs.ServeTriggerApplication(new TriggeredEffect(e), null, GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit, isEnter);
+                    _trigs.ServeTriggerApplication(new StatsEffect(e), null, GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit, isEnter);
                 }
             }
             if (tr is LevelRewardTrigger rew)

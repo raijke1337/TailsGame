@@ -10,14 +10,14 @@ namespace Arcatech.Items
     public class WeaponItem : EquipmentItem
     {
 
-        protected List<SerializedStatTriggerConfig>  _storedTriggerSettings;
-        protected List<TriggeredEffect> _currentUseEffects;
+        protected List<SerializedStatsEffectConfig>  _storedTriggerSettings;
+        protected List<StatsEffect> _currentUseEffects;
 
         protected readonly float UseCooldown;
         protected float _currentCD;
         public WeaponItem(Weapon cfg, BaseUnit ow) : base(cfg, ow)
         {
-            _storedTriggerSettings = new List<SerializedStatTriggerConfig>(cfg.WeaponHitTriggers);
+            _storedTriggerSettings = new List<SerializedStatsEffectConfig>(cfg.WeaponHitTriggers);
             UseCooldown = cfg.WeaponCooldown;
             _currentCD = 0;
         }
@@ -29,10 +29,10 @@ namespace Arcatech.Items
             {
                 weap.PrefabCollisionEvent += OnWeapTriggerEvent;
             }
-            _currentUseEffects = new List<TriggeredEffect>();
+            _currentUseEffects = new List<StatsEffect>();
             foreach (var cfg in _storedTriggerSettings)
             {
-                _currentUseEffects.Add(new TriggeredEffect(cfg));
+                _currentUseEffects.Add(new StatsEffect(cfg));
             }
         }
         public virtual bool TryUseItem()
@@ -41,10 +41,10 @@ namespace Arcatech.Items
             if (ok)
             {
                 //Debug.LogWarning($"Try use item in {this}, created new effect triggers");
-                _currentUseEffects = new List<TriggeredEffect>();
+                _currentUseEffects = new List<StatsEffect>();
                 foreach (var cfg in _storedTriggerSettings)
                 {
-                    _currentUseEffects.Add(new TriggeredEffect(cfg));
+                    _currentUseEffects.Add(new StatsEffect(cfg));
                 }
                 _currentCD = UseCooldown;
             }

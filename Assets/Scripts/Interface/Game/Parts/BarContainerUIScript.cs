@@ -27,7 +27,7 @@ namespace Arcatech.UI
                 {
                     if (_valueContainer != null)
                     {
-                        _valueContainer.ValueChangedEvent -= OnUpdatedValue;
+                       // _valueContainer.ValueChangedEvent -= OnUpdatedValue;
                     }
                     _valueContainer = value;
                     _fill.fillAmount = 1f;
@@ -35,7 +35,7 @@ namespace Arcatech.UI
 
                     _fill.fillAmount = Container.GetCurrent / Container.GetMax;
 
-                    _valueContainer.ValueChangedEvent += OnUpdatedValue;
+                   // _valueContainer.ValueChangedEvent += OnUpdatedValue;
 
                     _text.text = value.ToString();
                     _text.font = GameUIManager.Instance.GetFont(FontType.Title);

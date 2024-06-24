@@ -21,7 +21,7 @@ namespace Arcatech.Skills
             _settings = cfg;
             _cdTimers = new Queue<Timer>();
             Transform p = null;
-            owner.GetEmpties.ItemPositions.TryGetValue(cfg.SpawnPlace,out p);
+            //owner.GetEmpties.ItemPositions.TryGetValue(cfg.SpawnPlace,out p);
 
             _effects = new EffectsCollection(cfg.Effects, p);
             _cost = cfg.CostTrigger;
@@ -37,12 +37,12 @@ namespace Arcatech.Skills
         #region public
         public BaseUnit Owner { get; }
         public ExtendedText Description { get => _settings.Description; }
-        public SerializedStatTriggerConfig[] Triggers { get => _settings.Triggers; }
+        public SerializedStatsEffectConfig[] Triggers { get => _settings.Triggers; }
 
         private EffectsCollection _effects;
         public EffectsCollection Effects { get => _effects; }
 
-        SerializedStatTriggerConfig _cost { get; }
+        SerializedStatsEffectConfig _cost { get; }
 
         public float PlacerRadius { get => _settings.PlacerRadius; }
         public float EffectRadius { get => _settings.AoERadius; }
@@ -101,12 +101,12 @@ namespace Arcatech.Skills
             }
         }
 
-        public TriggeredEffect Cost
+        public StatsEffect Cost
 
         {
             get
             {
-                return new TriggeredEffect(_cost);
+                return new StatsEffect(_cost);
             }
         }
 

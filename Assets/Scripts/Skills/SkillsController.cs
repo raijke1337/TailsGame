@@ -59,7 +59,7 @@ namespace Arcatech.Units
         }
 
 
-        public bool IsSkillReady (UnitActionType actionType, out TriggeredEffect cost)
+        public bool IsSkillReady (UnitActionType actionType, out StatsEffect cost)
         {
             cost = null;
             if (_skills == null || _skills[actionType] == null) return false;
@@ -84,8 +84,8 @@ namespace Arcatech.Units
                                 break;
                         }
              SpawnProjectileCallBack(result);
-             result.transform.position = Owner.GetEmpties.ItemPositions[result.SpawnPlace].position;
-                        result.transform.forward = Owner.transform.forward;
+             //result.transform.position = Owner.GetEmpties.ItemPositions[result.SpawnPlace].position;
+             //           result.transform.forward = Owner.transform.forward;
             return result;
         }
 
@@ -106,7 +106,7 @@ public SkillObjectForControls GetControlData(UnitActionType t) => _skills[t];
             }
         }
 
-        public override void ApplyEffect(TriggeredEffect effect)
+        public override void ApplyEffect(StatsEffect effect)
         {
            // throw new NotImplementedException();
         }

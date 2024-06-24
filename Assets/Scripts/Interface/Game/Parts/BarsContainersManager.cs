@@ -12,6 +12,7 @@ namespace Arcatech.UI
 
         public void LoadValues(StatValueContainer cont, DisplayValueType type)
         {
+            return;
             Assert.IsNotNull(cont, $"Loading null into {this}");
             switch (type)
             {

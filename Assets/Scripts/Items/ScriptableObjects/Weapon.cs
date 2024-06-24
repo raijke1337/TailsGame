@@ -9,6 +9,6 @@ namespace Arcatech.Items
     public class Weapon : Equip
     {
         [Tooltip("Time between uses"),Range(0.05f,1f)]public float WeaponCooldown;
-        public List<SerializedStatTriggerConfig>  WeaponHitTriggers;
+        public List<SerializedStatsEffectConfig>  WeaponHitTriggers;
     }
 }

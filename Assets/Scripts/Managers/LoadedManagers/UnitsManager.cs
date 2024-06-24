@@ -4,6 +4,7 @@ using Arcatech.Items;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using Arcatech.Units.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
@@ -16,6 +17,8 @@ namespace Arcatech.Managers
         private PlayerUnit _player;
         public PlayerUnit GetPlayerUnit { get => _player; }
         private List<RoomUnitsGroup> _npcGroups;
+
+        
 
 
         private EffectsManager _effects;
@@ -181,7 +184,7 @@ namespace Arcatech.Managers
             _trigger.RegisterExistingProjectile(arg);
         }
 
-        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
+        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect cfg)
         {
             //Debug.Log($"{source.GetFullName} trigger request {cfg.name}");
             _trigger.ServeTriggerApplication(cfg, source, target, isEnter);

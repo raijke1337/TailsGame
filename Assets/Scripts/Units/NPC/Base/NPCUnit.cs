@@ -30,10 +30,9 @@ namespace Arcatech.Units
             _npcController.UnitsGroup = UnitsGroup;
         }
 
-        protected override void InitInventory()
+        protected override UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {
-            GetUnitInventory = new UnitInventoryComponent(new UnitInventoryItemConfigsContainer(_defaultItems),this);
-            CreateStartingEquipments(GetUnitInventory);
+            return new UnitInventoryItemConfigsContainer( _defaultItems);
         }
 
         public override ReferenceUnitType GetUnitType()
@@ -46,7 +45,7 @@ namespace Arcatech.Units
             _npcController.ForceCombat();
             OnUnitAttackedEvent?.Invoke(this);
         }
-
+        public void ForceCombat() => _npcController.ForceCombat();
         protected override void HandleDeath()
         {
             if (_drop != null)

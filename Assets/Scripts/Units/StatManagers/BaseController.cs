@@ -38,7 +38,7 @@ namespace Arcatech.Units
             }
         }
 
-        public abstract void ApplyEffect(TriggeredEffect effect);
+        public abstract void ApplyEffect(StatsEffect effect);
 
         #region managed
         public abstract void UpdateInDelta(float deltaTime);
@@ -59,7 +59,7 @@ namespace Arcatech.Units
         #region triggers from weapons and /skills 
 
         public event TriggerEvent BaseControllerTriggerEvent;
-        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, TriggeredEffect cfg)
+        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect cfg)
         {
             //Debug.Log($"Weapon trigger event: hit {target.name} from {source.name}");
             BaseControllerTriggerEvent?.Invoke(target, source, isEnter, cfg);

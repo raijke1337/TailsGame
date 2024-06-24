@@ -17,7 +17,7 @@ namespace Arcatech.Units.Inputs
                 case UnitActionType.MeleeSkill:
                     break;
                 case UnitActionType.RangedSkill:
-                    _stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetControlData(UnitActionType.RangedSkill).EffectRadius;
+                    //_stateMachine.NMAgent.stoppingDistance = _skillCtrl.GetControlData(UnitActionType.RangedSkill).EffectRadius;
                     break;
                 case UnitActionType.ShieldSkill:
                     break;

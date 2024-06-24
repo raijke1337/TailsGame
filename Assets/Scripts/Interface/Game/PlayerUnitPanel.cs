@@ -14,7 +14,6 @@ namespace Arcatech.UI
 
         private PlayerUnit _player;
 
-        private EnergyController _shield;
         private StaminaController _combo;
         private SkillsController _skills;
         private StatValueContainer _energyCont;
@@ -30,14 +29,15 @@ namespace Arcatech.UI
 
         public override void StartController()
         {
+            return;
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
 
-            _healthCont = _player.GetInputs().AssessStat(TriggerChangedValue.Health);
-            _energyCont = _player.GetInputs().AssessStat(TriggerChangedValue.Energy);
-            _staminaCont = _player.GetInputs().AssessStat(TriggerChangedValue.Energy);
+            //_healthCont = _player.GetInputs().AssessStat(BaseStatType.Health);
+            //_energyCont = _player.GetInputs().AssessStat(BaseStatType.Energy);
+            //_staminaCont = _player.GetInputs().AssessStat(BaseStatType.Energy);
 
 
-            _skills = _player.GetInputs().GetSkillsController;
+           // _skills = _player.GetInputs().GetSkillsController;
 
             base.StartController(); // instantiate bars
             _icons.StartController();
@@ -59,12 +59,14 @@ namespace Arcatech.UI
 
         public override void UpdateController(float delta)
         {
+            return;
             _bars.UpdateController(delta);
             _icons.UpdateController(delta);
         }
 
         public override void StopController()
         {
+            return;
             _bars.StopController();
             _icons.StopController();
         }
