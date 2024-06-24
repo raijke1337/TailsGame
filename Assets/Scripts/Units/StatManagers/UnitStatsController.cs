@@ -13,10 +13,11 @@ using UnityEngine;
 
 namespace Arcatech.Stats
 {
-    [Serializable]
-    public class UnitStatsController : BaseControllerConditional, IManagedComponent, ITakesTriggers
+    public class UnitStatsController : MonoBehaviour, IManagedComponent 
     {
         public Dictionary<BaseStatType, StatValueContainer> CurrentStats { get; set;  }
+
+        public bool IsReady => throw new NotImplementedException();
 
         private EnergyController _energy;
         public event SimpleEventsHandler ZeroHealthEvent; // dead
@@ -25,27 +26,14 @@ namespace Arcatech.Stats
         public event SimpleEventsHandler<float> UnitTookDamageEvent; //        
 
 
-        public UnitStatsController(ItemEmpties empties, BaseUnit owner) : base(empties, owner)
-        {
-            CurrentStats = new Dictionary<BaseStatType, StatValueContainer>();
-        }
+        //public UnitStatsController(ItemEmpties empties, BaseUnit owner) : base(empties, owner)
+        //{
+        //    CurrentStats = new Dictionary<BaseStatType, StatValueContainer>();
+        //}
 
         #region ihandler
-        public override void StartComp()
-        {
-            foreach (var v in CurrentStats.Values)             
-            {
-                v.StartComp(); 
-            }
 
-            CurrentStats[BaseStatType.Health].ValueChangedEvent += OnHealthValueChange;
 
-            IsReady = true;
-        }
-        public override void StopComp()
-        {
-            CurrentStats[BaseStatType.Health].ValueChangedEvent -= OnHealthValueChange;
-        }
         #endregion
 
         public StatValueContainer AssessStat(TriggerChangedValue stat)
@@ -81,25 +69,8 @@ namespace Arcatech.Stats
             }
         }
 
-        protected override void FinishItemConfig(EquipmentItem item)
-        {
 
-            var cfg = DataManager.Instance.GetConfigByID<GeneratorSettings>(_items[EquipmentType.Shield].ID);
-
-            if (cfg == null)
-            {
-                IsReady = false;
-                throw new Exception($"Mising cfg by ID {item.ID} from item {item} : {this}");
-            }
-            _energy = new EnergyController(cfg);
-        }
-
-        protected override void InstantiateItem(EquipmentItem i)
-        {
-            i.SetItemEmpty(Empties.ItemPositions[EquipmentType.Shield]);
-        }
-
-        public override void ApplyEffect(TriggeredEffect effect)
+        public void ApplyEffect(TriggeredEffect effect)
         {
             switch (effect.StatType)
             {
@@ -134,5 +105,14 @@ namespace Arcatech.Stats
             }
         }
 
+        public void StartComp()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopComp()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

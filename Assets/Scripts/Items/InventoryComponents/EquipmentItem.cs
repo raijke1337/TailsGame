@@ -6,8 +6,10 @@ using System;
 using UnityEngine;
 namespace Arcatech.Items
 {
+
+
     [Serializable]
-    public class EquipmentItem : InventoryItem
+    public class EquipmentItem : InventoryItem, ICost
     {
 
         public SerizalizedSkillConfiguration Skill { get; protected set; }
@@ -16,6 +18,14 @@ namespace Arcatech.Items
         [SerializeField] protected BaseEquippableItemComponent _prefab;
         protected BaseEquippableItemComponent _instantiated;
         public RuntimeAnimatorController AnimatorController { get; protected set; }
+        private SerializedStatTriggerConfig _cost;
+        public TriggeredEffect Cost
+        {
+            get
+            {
+                return new TriggeredEffect(_cost);
+            }
+        }
 
         public EquipmentItem(Item cfg, BaseUnit ow) : base(cfg, ow)
         {
@@ -25,6 +35,7 @@ namespace Arcatech.Items
                 _prefab = e.Item;
                 Effects = new EffectsCollection(e.Effects);
                 AnimatorController = e.AnimatorController;
+                _cost = e.CostTrigger;
             }
         }
 
@@ -87,5 +98,6 @@ namespace Arcatech.Items
         { }
 
     }
+
 
 }

@@ -196,12 +196,13 @@ namespace Arcatech.Units
                 if (ctrl.IsReady)
                     ctrl.UpdateInDelta(delta);
             }
+            _animator.SetFloat("AirTime", _groundedPlatform.AirTime);
 
-            if (!_groundedPlatform.IsGrounded) return;
-           
-            UpdateAnimatorVector(DoHorizontalMovement(delta));
-
-            AnimateMovement();
+            if (_groundedPlatform.IsGrounded)
+            {
+                UpdateAnimatorVector(DoHorizontalMovement(delta));
+                AnimateMovement();
+            }
         }
         public override void StartController()
         {
@@ -314,9 +315,26 @@ namespace Arcatech.Units
         #region movement and jumping
 
         [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
-        public GroundDetectorPlatformCollider GetGroundCollider => _groundedPlatform;
         protected abstract Vector3 DoHorizontalMovement(float delta);
-        public Vector3 CurrentMovementDirection { get; protected set; }
+ 
+
+        [Header("Jump settings")]
+        [SerializeField, Tooltip("force of jump")] float _jumpForce;
+        protected void DoJump()
+        {
+            _rb.velocity = transform.forward + transform.up;
+            _rb.AddForce((transform.forward + transform.up) * _jumpForce, ForceMode.Impulse);
+            _groundedPlatform.OffTheGroundEvent += HandleLanding;
+        }
+
+        private void HandleLanding(bool startjump)
+        {
+            if (!startjump)
+            {
+                _groundedPlatform.OffTheGroundEvent -= HandleLanding;
+                _animator.SetTrigger("JumpEnd");
+            }
+        }
         #endregion
 
         #region animations
@@ -330,8 +348,8 @@ namespace Arcatech.Units
             _animator.SetFloat("ForwardMove", 0f);
             _animator.SetFloat("SideMove", 0f);
             _animator.SetFloat("Rotation", 0);
-
         }
+
 
         //  calculates the vector which is used to set values in animator
         protected void UpdateAnimatorVector(Vector3 movement)
@@ -476,25 +494,14 @@ namespace Arcatech.Units
         }
         #endregion
 
-        #region jumping
-
-        [Header("Jump settings")]
-        [SerializeField, Tooltip("force of jump")] float _jumpForce;
-        protected void DoJump()
-        {
-            _rb.velocity = transform.forward+transform.up;
-            _rb.AddForce((transform.forward + transform.up) * _jumpForce, ForceMode.Impulse);
-        }
-
-        #endregion
-
-
+  
 
 
         #region stats events
 
         protected virtual void OnZeroHealth()
         {
+            _animator.SetTrigger("Death");
             ZeroHealthHappened?.Invoke();
         }
 

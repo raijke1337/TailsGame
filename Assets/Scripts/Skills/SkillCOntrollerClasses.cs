@@ -13,7 +13,7 @@ namespace Arcatech.Skills
 {
 
     [Serializable]
-    public class SkillObjectForControls
+    public class SkillObjectForControls : ICost
     {
         public SkillObjectForControls(SerizalizedSkillConfiguration cfg, BaseUnit owner)
         {
@@ -24,7 +24,7 @@ namespace Arcatech.Skills
             owner.GetEmpties.ItemPositions.TryGetValue(cfg.SpawnPlace,out p);
 
             _effects = new EffectsCollection(cfg.Effects, p);
-            CostTrigger = cfg.CostTrigger;
+            _cost = cfg.CostTrigger;
         }
         public virtual void UpdateInDelta(float time)
         {
@@ -42,7 +42,7 @@ namespace Arcatech.Skills
         private EffectsCollection _effects;
         public EffectsCollection Effects { get => _effects; }
 
-        public SerializedStatTriggerConfig CostTrigger { get; }
+        SerializedStatTriggerConfig _cost { get; }
 
         public float PlacerRadius { get => _settings.PlacerRadius; }
         public float EffectRadius { get => _settings.AoERadius; }
@@ -98,6 +98,15 @@ namespace Arcatech.Skills
             get
             {
                 return (_settings.Charges - _cdTimers.Count).ToString();
+            }
+        }
+
+        public TriggeredEffect Cost
+
+        {
+            get
+            {
+                return new TriggeredEffect(_cost);
             }
         }
 

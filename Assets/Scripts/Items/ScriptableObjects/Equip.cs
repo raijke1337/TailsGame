@@ -1,5 +1,6 @@
 using Arcatech.Effects;
 using Arcatech.Skills;
+using Arcatech.Triggers;
 using System;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Arcatech.Items
 
         public BaseEquippableItemComponent Item;
         public SerizalizedSkillConfiguration Skill;
+        public SerializedStatTriggerConfig CostTrigger; 
         public SerializedEffectsCollection Effects;
         public RuntimeAnimatorController AnimatorController;
 

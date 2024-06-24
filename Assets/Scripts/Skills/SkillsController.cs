@@ -66,7 +66,7 @@ namespace Arcatech.Units
 
             else
             {
-                cost = new TriggeredEffect(_skills[actionType].CostTrigger);
+                cost = _skills[actionType].Cost;
                 return _skills[actionType].SkillCooldownReady;
             }
         }

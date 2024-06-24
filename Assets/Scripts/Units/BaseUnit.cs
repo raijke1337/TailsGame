@@ -179,7 +179,7 @@ namespace Arcatech.Units
 
             HandleDeath();
             IsUnitAlive = false;
-            _animator.SetTrigger("Death");
+
             _inputs.LockInputs = true;
 
             GetCollider.enabled = false;

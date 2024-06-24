@@ -350,7 +350,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseAnimator: {fileID: 9100000, guid: b44497980440ea74cb484f8b5ec9f0bf, type: 2}
   Side: 0
-  _debugJumpForceMult: 200
 --- !u!114 &1910410889340383960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,7 +387,7 @@ MonoBehaviour:
   _groundedPlatform: {fileID: 8743729188238178463}
   _animator: {fileID: 633146174127125324}
   IsInMeleeCombo: 0
-  _jumpForce: 150
+  _jumpForce: 80
   _playerInputReader: {fileID: 11400000, guid: c5f0d6e24b96f5143956c9299b3ee2b4, type: 2}
   _smoothTime: 0.2
   _minAngleToPlayRotation: 0.9
