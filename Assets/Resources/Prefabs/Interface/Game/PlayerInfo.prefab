@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1754500726221882384}
   - component: {fileID: 3280515573052961879}
   - component: {fileID: 4590525505793621450}
+  - component: {fileID: 7619162449449312722}
   m_Layer: 5
   m_Name: PlayerIconsContainer
   m_TagString: Untagged
@@ -61,16 +62,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+  m_Color: {r: 0.4784314, g: 0.4784314, b: 0.4784314, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4508516164457878799, guid: 4d6d3e529a32a4141bbac8264745777d,
+  m_Sprite: {fileID: -9022961981736316390, guid: 4d6d3e529a32a4141bbac8264745777d,
     type: 3}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -92,8 +93,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: 0
-  m_MinHeight: 60
+  m_MinWidth: -1
+  m_MinHeight: -1
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -112,12 +113,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 5
-    m_Right: 5
-    m_Top: 5
-    m_Bottom: 5
-  m_ChildAlignment: 3
-  m_Spacing: 5
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -139,6 +140,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _iconPrefab: {fileID: 2227612161499422585, guid: 788f07dca5930df4ca0f6c0b8b4c4327,
     type: 3}
+--- !u!114 &7619162449449312722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2702853595827752659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 125
+  m_MinHeight: 125
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &4520747255399273756
 GameObject:
   m_ObjectHideFlags: 0
@@ -238,6 +259,7 @@ GameObject:
   - component: {fileID: 1951005365334512948}
   - component: {fileID: 8287699923847468061}
   - component: {fileID: 8848110000107006623}
+  - component: {fileID: 8489045722375499927}
   m_Layer: 5
   m_Name: PlayerInfoContainer
   m_TagString: Untagged
@@ -331,6 +353,26 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &8489045722375499927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5117168161077593553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 180
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &6546836208742194381
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,7 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -442,14 +484,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82fb7408b3734604b9d21da627e5aa53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barsDict:
+  _barPrefab: {fileID: -4125909945277179907, guid: 43c2a86545ab84a4e8332517e2754c40,
+    type: 3}
+  _statColors:
     _serializedList:
     - Key: 0
-      Value: {fileID: 0}
+      Value:
+        BaseColor: {r: 0.15123935, g: 0.6886792, b: 0, a: 1}
+        PositiveColor: {r: 0.030356646, g: 1, b: 0, a: 1}
+        NegativeColor: {r: 1, g: 0, b: 0, a: 1}
     - Key: 1
-      Value: {fileID: 0}
+      Value:
+        BaseColor: {r: 1, g: 0.6300465, b: 0, a: 1}
+        PositiveColor: {r: 0.5471698, g: 0.34332225, b: 0, a: 1}
+        NegativeColor: {r: 1, g: 0.98475426, b: 0, a: 1}
     - Key: 2
-      Value: {fileID: 0}
+      Value:
+        BaseColor: {r: 0, g: 0.60875654, b: 1, a: 1}
+        PositiveColor: {r: 0, g: 1, b: 0.7505076, a: 1}
+        NegativeColor: {r: 0, g: 0.26723528, b: 1, a: 1}
+  _barsEaseMethod: 4
+  _barsEaseTime: 0.3
 --- !u!114 &7995317923333977885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,10 +700,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f82911a03b02874287e1920e335e436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bars: {fileID: 4323658368867813923}
-  _barFillRateMult: 1
-  _disappearTimer: 1
   _icons: {fileID: 4590525505793621450}
+  _bars: {fileID: 4323658368867813923}
 --- !u!114 &5357409033183181032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,12 +717,12 @@ MonoBehaviour:
   m_Padding:
     m_Left: 5
     m_Right: 5
-    m_Top: 5
+    m_Top: 32
     m_Bottom: 5
   m_ChildAlignment: 4
   m_Spacing: 5
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0

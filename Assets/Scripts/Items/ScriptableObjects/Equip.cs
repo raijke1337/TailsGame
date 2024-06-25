@@ -16,7 +16,7 @@ namespace Arcatech.Items
         public SerializedStatsEffectConfig CostTrigger; 
         public SerializedEffectsCollection Effects;
         public RuntimeAnimatorController AnimatorController;
-        public ItemPlaceType ItemPlaceType;
+        //public ItemPlaceType ItemPlaceType;
 
     }
 }

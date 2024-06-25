@@ -85,7 +85,7 @@ namespace Arcatech.Units
             _items.Remove(i);
             _equips[i.ItemType] = i;
 
-            i.OnEquip(_empties.ItemPositions[i.ItemPlaceType]);
+            //i.OnEquip(_empties.ItemPositions[i.ItemPlaceType]);
         }
         private void MoveToInventory(InventoryItem i)
         {
@@ -154,10 +154,13 @@ namespace Arcatech.Units
                 _items.Add(ProduceItem(i));
             }
 
-            _empties = owner.GetEmpties;
             return this;
         }
-        
+        public UnitInventoryComponent SetItemEmpties(ItemEmpties e)
+        {
+            _empties = e;
+            return this;
+        }
         private InventoryItem ProduceItem(Item cfg)
         {
             InventoryItem ret;

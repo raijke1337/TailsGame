@@ -1,12 +1,11 @@
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Managers;
+using Arcatech.Scenes.Cameras;
 using Arcatech.Texts;
 using Arcatech.Units.Inputs;
-using System.Collections;
-using System.Linq;
-using UnityEngine;
 using KBCore.Refs;
-using Arcatech.Scenes.Cameras;
+using UnityEngine;
 
 
 namespace Arcatech.Units
@@ -14,14 +13,17 @@ namespace Arcatech.Units
     public class PlayerUnit : BaseUnit
     {
         [SerializeField, Child] protected FaceCameraCOntrroller _faceCam;
-
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
+
+        
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
         public override void InitiateUnit()
         {
             base.InitiateUnit();
+            
+
             ToggleCamera(true);
         }
         public bool PlayerArmed
@@ -29,6 +31,11 @@ namespace Arcatech.Units
             {
                 return _inventory.IsItemEquipped(EquipmentType.MeleeWeap, out _) || _inventory.IsItemEquipped(EquipmentType.RangedWeap, out _);
         } }
+
+        protected override void HandleStatChangesEvents(StatChangedEvent ev)
+        {
+            EventBus<StatChangedEvent>.Raise(ev);
+        }
 
 
         #region inventory

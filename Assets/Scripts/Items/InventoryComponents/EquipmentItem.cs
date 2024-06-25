@@ -43,11 +43,11 @@ namespace Arcatech.Items
                 {
                     ItemStats[i] = e.StatMods[i];
                 }
-                this.ItemPlaceType = e.ItemPlaceType;
+                //this.ItemPlaceType = e.ItemPlaceType;
             }
         }
 
-        public ItemPlaceType ItemPlaceType { get; protected set; }
+        //public ItemPlaceType ItemPlaceType { get; protected set; }
 
         public BaseEquippableItemComponent GetInstantiatedPrefab()
         {

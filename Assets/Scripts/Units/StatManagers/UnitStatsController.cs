@@ -1,37 +1,22 @@
 using Arcatech.EventBus;
-using Arcatech.Items;
-using Arcatech.Managers;
 using Arcatech.Triggers;
-using Arcatech.Units;
-using Arcatech.Units.Stats;
-using AYellowpaper.SerializedCollections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Compilation;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Arcatech.Stats
 {
     public class UnitStatsController : ManagedControllerBase
     {
         private Dictionary<BaseStatType, StatValueContainer> _stats { get; set;  }
+        public event UnityAction<StatChangedEvent> StatsUpdatedEvent = delegate { };
 
-        public event SimpleEventsHandler ZeroHealthEvent; // dead
-        public event SimpleEventsHandler StunEvent; // just stun
-        public event SimpleEventsHandler KnockDownEvent; // fall, armor damage
-        public event SimpleEventsHandler<float> UnitTookDamageEvent; //        
+        [SerializeField, Tooltip("How often the component reports on all stats")] float _freqUpdates = 0.3f;
+        private CountDownTimer _updatesCooldownTimer;
 
-        public UnitStatsController PopulateDictionary()
-        {
-            _stats = new Dictionary<BaseStatType, StatValueContainer>();
-            var vals = Enum.GetValues(typeof(BaseStatType));
-            foreach (var typ in vals)
-            {
-                _stats[(BaseStatType)typ] = new StatValueContainer();
-            }
-            return this;
-        }
+
         public UnitStatsController AddMods (SerializedStatModConfig[] mods)
         {
             foreach (var cfg in mods)
@@ -47,6 +32,20 @@ namespace Arcatech.Stats
             {
                 c.ApplyStatsEffect(eff);
             }
+            RaiseEvent(eff.StatType);
+            return this;
+        }
+        #region setup
+
+
+        public UnitStatsController PopulateDictionary()
+        {
+            _stats = new Dictionary<BaseStatType, StatValueContainer>();
+            var vals = Enum.GetValues(typeof(BaseStatType));
+            foreach (var typ in vals)
+            {
+                _stats[(BaseStatType)typ] = new StatValueContainer();
+            }
             return this;
         }
         #region managed
@@ -56,11 +55,22 @@ namespace Arcatech.Stats
             foreach (var stat in _stats.Values)
             {
                 stat.Initialize(stat.GetMax);
+                stat.CachedValue = stat.GetCurrent;
             }
             _isReady = true;
-            base.StartController();
+            _updatesCooldownTimer = new CountDownTimer(_freqUpdates);
+            _updatesCooldownTimer.OnTimerStopped += () =>
+            {
+                StartCoroutine(ReportUpdatedStats());
+                _updatesCooldownTimer.Start();
+            };
 
+            base.StartController();
+            StartCoroutine(ReportUpdatedStats());
         }
+
+        
+
         public override void UpdateController(float delta)
         {
             if (!_isReady) return;
@@ -76,5 +86,21 @@ namespace Arcatech.Stats
             _isReady = false;
         }
         #endregion
+        #endregion
+    
+        private IEnumerator ReportUpdatedStats()
+        {
+            yield return null;
+            foreach (var stat in _stats.Keys)
+            {
+                RaiseEvent(stat);   
+            }
+        }
+        private void RaiseEvent(BaseStatType stat)
+        {
+            StatsUpdatedEvent.Invoke(new StatChangedEvent(stat, _stats[stat]));
+            _stats[stat].CachedValue = _stats[stat].GetCurrent;
+        }
+    
     }
 }

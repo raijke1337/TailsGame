@@ -5,12 +5,8 @@ using Arcatech.Managers;
 using Arcatech.Skills;
 using Arcatech.Stats;
 using Arcatech.Triggers;
-using Arcatech.Units.Inputs;
 using Arcatech.Units.Stats;
 using KBCore.Refs;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 
@@ -36,21 +32,8 @@ namespace Arcatech.Units
         [SerializeField, Self] protected ControlInputsBase _inputs;
 
         public string GetUnitName => defaultStats.DisplayName;
-
         public UnitInventoryComponent GetInventoryComponent => _inventory;
-
-
-        public Collider GetCollider { get; private set; }
-             
-        public ItemEmpties GetEmpties => itemEmpties;
-
         public abstract ReferenceUnitType GetUnitType();
-
-        //public T GetInputs<T>() where T : ControlInputsBase => _inputs as T;
-        //public ControlInputsBase GetInputs()
-        //{
-        //    return _inputs;
-        //}
 
         private bool _locked = false;
         public bool LockUnit
@@ -90,6 +73,7 @@ namespace Arcatech.Units
         {
 
             _inventory.LoadSerializedItems(SelectSerializedItemsConfig(),this)
+                .SetItemEmpties(itemEmpties)
                 .DrawItems(defaultItemsDrawStrat)
                 .StartController();
 
@@ -97,6 +81,8 @@ namespace Arcatech.Units
                 AddMods(defaultStats.InitialStats)
                 .AddMods(_inventory.GetCurrentMods)
                 .StartController();
+
+            _stats.StatsUpdatedEvent += HandleStatChangesEvents;
             
             _inputs.PopulateDictionary().
                 SetMovementStats(movementStats)
@@ -111,8 +97,26 @@ namespace Arcatech.Units
                 LockUnit = false;
             }    
         }
+
+        protected virtual void HandleStatChangesEvents(StatChangedEvent ev)
+        {
+            switch (ev.StatType)
+            {
+                case BaseStatType.Health:
+                    EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, ev.Container.GetCurrent - ev.Container.CachedValue));
+                    break;
+                case BaseStatType.Stamina:
+                    break;
+                case BaseStatType.Energy:
+                    break;
+            }
+
+        }
+
         public virtual void DisableUnit()
         {
+            _stats.StatsUpdatedEvent -= HandleStatChangesEvents;
+
             _inputs.StopController();
             _inventory.StopController();
             _stats.StopController();
@@ -127,21 +131,12 @@ namespace Arcatech.Units
             _inputs.UpdateController(delta);
             _stats.UpdateController(delta);
             _inventory.UpdateController(delta);
-
-
         }
 
         #endregion
 
 
         #region unit
-
-
-        private void OnInputsReportDamage(float arg)
-        {
-            EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(arg,this));
-            HandleDamage(arg);
-        }
 
         protected void OnInputsCreateSkill(SkillProjectileComponent data, BaseUnit source, Transform where)
         {
@@ -150,22 +145,6 @@ namespace Arcatech.Units
 
         #endregion
 
-        #region stats
-        private void OnInputsReportDeath()
-        {
-
-            HandleDeath();
-            IsUnitAlive = false;
-
-            _inputs.LockInputs = true;
-
-            GetCollider.enabled = false;
-            //_rigidbody.useGravity = false;
-
-            BaseUnitDiedEvent?.Invoke(this);
-
-        }
-
         protected abstract void HandleDamage(float value);
         protected abstract void HandleDeath();
 
@@ -173,7 +152,6 @@ namespace Arcatech.Units
         {
             _stats.AddEffect(eff);
         }
-        #endregion
 
         public void UnitDodge(BoosterSkillInstanceComponent bs)
         {
@@ -219,6 +197,6 @@ namespace Arcatech.Units
         }
         #endregion
 
-        
+
     }
 }

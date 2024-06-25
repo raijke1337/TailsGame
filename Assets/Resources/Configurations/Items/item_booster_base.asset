@@ -15,10 +15,14 @@ MonoBehaviour:
   ID: booster_base
   Description: {fileID: 11400000, guid: 30b9843af1e42464c89633f3ca5e6f90, type: 2}
   ItemType: 4
-  Item: {fileID: 2980722090164582330, guid: f1aa1a5e7e757844d9f774dc883ddbdc, type: 3}
+  ItemPrefab: {fileID: 2980722090164582330, guid: f1aa1a5e7e757844d9f774dc883ddbdc,
+    type: 3}
+  StatMods: []
   Skill: {fileID: 11400000, guid: cb37095c933aad34da650c3826a3d3ec, type: 2}
+  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
   Effects:
     Sounds:
       _serializedList: []
     Effects:
       _serializedList: []
+  AnimatorController: {fileID: 0}

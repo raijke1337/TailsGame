@@ -1,71 +1,63 @@
 using Arcatech.Stats;
+using DG.Tweening;
+using KBCore.Refs;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Arcatech.UI
 {
-    public class BarContainerUIScript : MonoBehaviour
+    public class BarContainerUIScript : ValidatedMonoBehaviour
     {
+        [Header("Prefab settings")]
         [SerializeField] private Image _fill;
         [SerializeField] private TextMeshProUGUI _text;
+        [SerializeField, Self] Image _background;
 
-        private StatValueContainer _valueContainer;
-        private float _tgtFillValue = 1;
-
-
-        public StatValueContainer Container
+        private ColorSet _colors;
+        Color _baseBgColor;
+        private Ease _ease = Ease.Linear;
+        float fillTime = 0.1f;
+        public BarContainerUIScript SetColors(ColorSet color)
         {
-            get
-            {
-                return _valueContainer;
-            }
+            _baseBgColor = _background.color;
+            _colors = color;
+            _fill.color = _colors.BaseColor;
 
-            set
-            {
-                if (_valueContainer != value)
-                {
-                    if (_valueContainer != null)
-                    {
-                       // _valueContainer.ValueChangedEvent -= OnUpdatedValue;
-                    }
-                    _valueContainer = value;
-                    _fill.fillAmount = 1f;
-
-
-                    _fill.fillAmount = Container.GetCurrent / Container.GetMax;
-
-                   // _valueContainer.ValueChangedEvent += OnUpdatedValue;
-
-                    _text.text = value.ToString();
-                    _text.font = GameUIManager.Instance.GetFont(FontType.Title);
-                    
-
-                }
-            }
+            return this;
+        }
+        public BarContainerUIScript SetEaseMethod(Ease e)
+        {
+            _ease = e;
+            return this;
+        }
+        public BarContainerUIScript SetFillTime(float time)
+        {
+            fillTime = time;
+            return this;
         }
 
-
-        private void OnUpdatedValue(float old, float now)
+        public void UpdateValue(StatValueContainer c)
         {
-            _text.text = Container.ToString();
-            _tgtFillValue = Container.GetCurrent / Container.GetMax;
-        }
-
-        public void UpdateValues(float delta)
-        {
-            if (_tgtFillValue == _fill.fillAmount) return;
-            else
+            Color flash = Color.white;
+            if (c.GetCurrent > c.CachedValue) // heal
             {
-                float vel = 0;
-                _fill.fillAmount = Mathf.SmoothDamp(_fill.fillAmount, _tgtFillValue, ref vel, delta);
-
-                // Debug.Log($"{this} ref velocity : {vel}");
+                flash = _colors.PositiveColor;
             }
+            if (c.GetCurrent < c.CachedValue)
+            {
+                flash = _colors.NegativeColor;
+            }
+
+            _background.DOColor(flash, 0.1f).SetEase(Ease.InQuint).Play().onComplete += FlashBack;
+                _fill.DOFillAmount(c.GetPercent, fillTime).SetEase(_ease).Play();
+            _text.text = c.ToString();
         }
 
-
-
-
+        private void FlashBack()
+        {
+            _background.DOColor(_baseBgColor, 0.1f).SetEase(Ease.InQuint).Play();
+        }
     }
 }

@@ -1,48 +1,40 @@
 using Arcatech.Stats;
 using AYellowpaper.SerializedCollections;
+using DG.Tweening;
+using KBCore.Refs;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Arcatech.UI
 {
-    public class BarsContainersManager : ManagedControllerBase
+    public class BarsContainersManager : ValidatedMonoBehaviour
     {
-        [SerializeField] SerializedDictionary<DisplayValueType, BarContainerUIScript> _barsDict;
+        Dictionary <BaseStatType, BarContainerUIScript> _barsDict;
+        [SerializeField] BarContainerUIScript _barPrefab;
+        [Space,SerializeField] SerializedDictionary<BaseStatType,ColorSet> _statColors;
+        [SerializeField] Ease _barsEaseMethod;
+        [SerializeField] float _barsEaseTime = 0.3f;
 
-
-        public void LoadValues(StatValueContainer cont, DisplayValueType type)
+        private void AddBar (BaseStatType barValue)
         {
-            return;
-            Assert.IsNotNull(cont, $"Loading null into {this}");
-            switch (type)
-            {
-                default:
-                    _barsDict[type].Container = cont;
-                    _barsDict[type].gameObject.SetActive(true);
-                    break;
-            }
+            _barsDict[barValue] = Instantiate(_barPrefab, this.transform).
+                SetColors(_statColors[barValue]).
+                SetEaseMethod(_barsEaseMethod).
+                SetFillTime(_barsEaseTime);
         }
 
-        public override void UpdateController(float delta)
+        public void UpdateBarValue(BaseStatType barValue, StatValueContainer container)
         {
-            foreach (var c in _barsDict.Values)
+            if (_barsDict == null)
             {
-                if (c != null)
-                    c.UpdateValues(delta);
+                _barsDict = new Dictionary<BaseStatType, BarContainerUIScript>();
             }
-        }
-
-        public override void StopController()
-        {
-
-        }
-
-        public override void StartController()
-        {
-            foreach (var bar in _barsDict.Values)
+            if (!_barsDict.TryGetValue(barValue, out _))
             {
-                bar.gameObject.SetActive(false);
+                AddBar (barValue);
             }
+            _barsDict[barValue].UpdateValue(container);
         }
     }
 }

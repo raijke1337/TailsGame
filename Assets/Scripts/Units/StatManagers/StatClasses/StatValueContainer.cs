@@ -9,9 +9,9 @@ namespace Arcatech.Stats
     [Serializable]
     public class StatValueContainer
     {
+        public float CachedValue { get; set; } // to store changes between updates
 
         private float _currentValue;
-        private float _previous;
         private float _maxValue;
         private float _minValue = 0f;
 
@@ -34,8 +34,6 @@ namespace Arcatech.Stats
 
         public void ApplyStatsEffect(StatsEffect eff)
         {
-            _previous = _currentValue;
-
             if (eff.OverTimeDuration == 0) // instant effect
             {
                 _currentValue = Mathf.Clamp(_currentValue + eff.InitialValue, _minValue, _maxValue);
@@ -76,7 +74,6 @@ namespace Arcatech.Stats
         public void UpdateInDelta(float deltaTime)
         {
             if (!_setup) return;
-            _previous = _currentValue;
 
             foreach (var mod in  _currentMods)
             {

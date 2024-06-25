@@ -1,9 +1,10 @@
 using Arcatech.Skills;
+using KBCore.Refs;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.UI
 {
-    public class IconContainersManager : ManagedControllerBase
+    public class IconContainersManager : ValidatedMonoBehaviour
     {
 
         [SerializeField] private IconContainerUIScript _iconPrefab;
@@ -19,27 +20,5 @@ namespace Arcatech.UI
         }
 
 
-        public override void StartController()
-        {
-            if (_iconPrefab == null)
-            {
-                Debug.LogError($"Set icon prefab in {this}!");
-            }
-        }
-
-
-        public override void UpdateController(float delta)
-        {
-            if (_icons == null) return; // camp level new game
-            foreach (var item in _icons)
-            {
-                item.UpdateInDelta(delta);
-            }
-        }
-
-        public override void StopController()
-        {
-
-        }
     }
 }

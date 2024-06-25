@@ -1,5 +1,7 @@
 using Arcatech.Effects;
+using Arcatech.EventBus;
 using CartoonFX;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Arcatech.Managers
@@ -11,11 +13,19 @@ namespace Arcatech.Managers
         private void Awake()
         {
             if (Instance == null) Instance = this;
+            else { Destroy(gameObject); }
         }
         #endregion
         private void Start()
         {
             SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
+            _drawDamageEventBind = new EventBinding<DrawDamageEvent>(PlaceDamageText);
+            EventBus<DrawDamageEvent>.Register(_drawDamageEventBind);
+        }
+
+        private void PlaceDamageText(DrawDamageEvent @event)
+        {
+            Debug.Log($"Place damage text {@event.Damage} at {@event.Unit.transform.position}");
         }
 
         private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
@@ -23,8 +33,17 @@ namespace Arcatech.Managers
             PlayMusic(GameManager.Instance.GetCurrentLevelData.Music);
         }
 
+
+
+
+        [Header("Sound prefabs")]
         [SerializeField] private AudioSource _audioPrefab;
         [SerializeField] private AudioSource _musicPrefab;
+        [Header("Effect prefabs")]
+        [SerializeField] private CFXR_ParticleText _particleTextPrefab;
+        private EventBinding<DrawDamageEvent> _drawDamageEventBind;
+        
+
         private AudioSource _musicObj;
 
 
