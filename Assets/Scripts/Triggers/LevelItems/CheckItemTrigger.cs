@@ -1,6 +1,5 @@
 using Arcatech.Items;
 using Arcatech.Managers;
-using Arcatech.Triggers.Items;
 namespace Arcatech.Triggers
 {
 
@@ -10,7 +9,9 @@ namespace Arcatech.Triggers
 
         protected override bool CheckTheCondition()
         {
-            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent.HasItem(RequiredItem);
+            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent.HasItem(RequiredItem.ID, out _);
         }
+   
     }
+
 }

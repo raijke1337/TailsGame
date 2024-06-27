@@ -8,7 +8,7 @@ namespace Arcatech.Units
     [Serializable]
     public class StaminaController : BaseController, IManagedComponent
     {
-        public StaminaController(BaseUnit owner) : base(owner)
+        public StaminaController(DummyUnit owner) : base(owner)
         {
         }
 

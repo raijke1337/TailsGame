@@ -7,71 +7,68 @@ using UnityEngine;
 
 namespace Arcatech.Items
 {
-    public class WeaponItem : EquipmentItem
+    public class WeaponItem : EquipmentItem, IWeapon
     {
 
         protected List<SerializedStatsEffectConfig>  _storedTriggerSettings;
-        protected List<StatsEffect> _currentUseEffects;
+        private SerializedStatsEffectConfig _cost;
+        protected BaseWeaponComponent _weaponGameobject;
 
-        protected readonly float UseCooldown;
-        protected float _currentCD;
-        public WeaponItem(Weapon cfg, BaseUnit ow) : base(cfg, ow)
+        public StatsEffect GetCost { get => new(_cost); }
+
+
+        public IDrawItemStrategy DrawStrategy { get; protected set; }
+        public UnitActionType UseActionType{ get; protected set; }
+
+        public DummyUnit Owner { get; protected set; }
+
+        protected IWeaponUseStrategy _strat;
+
+        public WeaponItem(Equip cfg) : base(cfg)
         {
-            _storedTriggerSettings = new List<SerializedStatsEffectConfig>(cfg.WeaponHitTriggers);
-            UseCooldown = cfg.WeaponCooldown;
-            _currentCD = 0;
         }
 
-        protected override void GenerateObject()
+        public void UseItem()
         {
-            base.GenerateObject();
-            if (_instantiated is BaseWeaponComponent weap)
-            {
-                weap.PrefabCollisionEvent += OnWeapTriggerEvent;
-            }
-            _currentUseEffects = new List<StatsEffect>();
-            foreach (var cfg in _storedTriggerSettings)
-            {
-                _currentUseEffects.Add(new StatsEffect(cfg));
-            }
+            _strat.WeaponUsedStateEnter();
         }
-        public virtual bool TryUseItem()
-        { // ranged has ist own logic
-            bool ok = _currentCD <= 0;
-            if (ok)
-            {
-                //Debug.LogWarning($"Try use item in {this}, created new effect triggers");
-                _currentUseEffects = new List<StatsEffect>();
-                foreach (var cfg in _storedTriggerSettings)
-                {
-                    _currentUseEffects.Add(new StatsEffect(cfg));
-                }
-                _currentCD = UseCooldown;
-            }
-            return ok;
-        }
-        public override void DoUpdates(float d)
+
+        public IUsableItem AssignStrategy()
         {
-            if (_currentCD > 0)
+            switch (ItemType)
             {
-                _currentCD -= d;
+                case EquipmentType.MeleeWeap:
+                    _strat = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, _storedTriggerSettings.ToArray(), Owner);
+                    break;
+                case EquipmentType.RangedWeap:
+
+                    Debug.Log($"No ranged weapon use strat for {this}");
+                    break;
             }
+           return this;
         }
 
-        public event TriggerEvent PrefabTriggerHitSomething;
+        public INeedsOwner SetOwner(DummyUnit owner)
+        {
+            var c = _config as Weapon;
 
-        protected void OnWeapTriggerEvent(BaseUnit target, bool isEnter)
-        {            
-            if (isEnter && target != Owner)            
+            Owner = owner;
+            _weaponGameobject = _gameItem as BaseWeaponComponent;
+            _cost = c.Cost;
+            _storedTriggerSettings = new List<SerializedStatsEffectConfig>(c.UseEffects);
+
+            switch (c.ItemType)
             {
-                foreach (var ef in _currentUseEffects)
-                {
-                    PrefabTriggerHitSomething?.Invoke(target, Owner, isEnter, ef);
-                }
+                case EquipmentType.MeleeWeap:
+                    UseActionType = UnitActionType.Melee;
+                    break;
+                case EquipmentType.RangedWeap:
+                    UseActionType = UnitActionType.Ranged;
+                    break;
             }
+            DrawStrategy = c.DrawStrategy;
+
+            return this;
         }
-
-        
-
     }
 }

@@ -47,15 +47,16 @@ namespace Arcatech.Units.Inputs
             _stateMachine.SetPatrolPoints(patrolPoints);
         }
 
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
             if (_stateMachine == null) return;
             _stateMachine.UpdateInDelta(delta);
             CurrentState = _stateMachine.CurrentState;
 
-            base.UpdateController(delta);
+            base.ControllerUpdate(delta);
 
         }
+
         #endregion
 
         #region state machine
@@ -89,7 +90,7 @@ namespace Arcatech.Units.Inputs
             RequestCombatAction(type);
         }
 
-        protected void Unsub(BaseUnit unit)
+        protected void Unsub(DummyUnit unit)
         {
             if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
             unit.BaseUnitDiedEvent -= Unsub;

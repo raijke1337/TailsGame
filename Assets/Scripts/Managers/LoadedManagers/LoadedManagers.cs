@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 namespace Arcatech.Managers
 {
-    public class LoadedManagers : MonoBehaviour
+    public class LoadedManagers : ManagedControllerBase
     {
         public SkillsPlacerManager SkillsPlacerManager { get; private set; }
         public TriggersManager TriggersProjectilesManager { get; private set; }
@@ -17,21 +17,21 @@ namespace Arcatech.Managers
 
 
         private LoadedManagerBase[] _managers;
+        LevelType _currentLvlType;
+        // private SceneContainer _lvl;
 
-        private SceneContainer _lvl;
-
-        public void Initiate(SceneContainer lv)
+        public void StartController(LevelType lv)
         {
-            _lvl = lv;
+            // _lvl = lv;
+            _currentLvlType = lv;
 
-
-            LevelManager = GetComponent<LevelManager>(); // for texts and event triggers
+             LevelManager = GetComponent<LevelManager>(); // for texts and event triggers
 
             UnitsManager = GetComponent<UnitsManager>();
 
             GameInterfaceManager = Instantiate(GameManager.Instance.GetGameInterfacePrefab);
 
-            if (_lvl.LevelType == LevelType.Game)
+            if (lv == LevelType.Game)
             {
                 SkillsPlacerManager = GetComponent<SkillsPlacerManager>();
                 TriggersProjectilesManager = GetComponent<TriggersManager>();
@@ -59,29 +59,41 @@ namespace Arcatech.Managers
             {
                 Assert.IsNotNull(m);
 
-                m.Initiate();
+                m.StartController();
             }
 
         }
 
-        public void UpdateManagers(float delta)
+
+        public override void ControllerUpdate(float delta)
         {
             foreach (var m in _managers)
             {
                 if (m != null)
-                    m.RunUpdate(delta);
+                    m.ControllerUpdate(delta);
             }
-
         }
-        public void Stop()
+
+        public override void FixedControllerUpdate(float fixedDelta)
         {
-            if (_lvl.LevelType == LevelType.Game || _lvl.LevelType == LevelType.Scene)
+            foreach (var m in _managers)
+            {
+                if (m != null)
+                    m.FixedControllerUpdate(fixedDelta);
+            }
+        }
+
+        public override void StopController()
+        {
+            if (_currentLvlType == LevelType.Game || _currentLvlType == LevelType.Scene)
             {
                 foreach (var m in _managers)
-                { if (m != null) m.Stop(); }
+                { if (m != null) m.StopController(); }
             }
         }
 
-
+        public override void StartController()
+        {
+        }
     }
 }

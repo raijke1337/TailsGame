@@ -1,7 +1,9 @@
 using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,31 +11,17 @@ namespace Arcatech.Managers
 {
     public class TriggersManager : LoadedManagerBase
     {
-        private List<BaseLevelEventTrigger> _staticT = new List<BaseLevelEventTrigger>();
 
-        protected EffectsManager _effects;
-
+        EventBinding<StatsEffectTriggerEvent> _triggersBinding;
 
         #region LoadedManager
-        public override void Initiate()
+        public override void StartController()
         {
-            //UpdateDatas();
-            var staticTriggers = FindObjectsOfType<BaseLevelEventTrigger>(); // find triggers on level
-            if (ShowDebug) Debug.Log($"Found {staticTriggers.Length} triggers on level");
-
-            foreach (var t in staticTriggers)
-            {
-
-                //Debug.Log($"Add {t.name}");
-                t.TriggerHitUnitEvent += (ta, tb) => HandleStaticTrigger(ta, tb, t);
-                _staticT.Add(t);
-            }
-            _effects = EffectsManager.Instance;
-
+            _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
+            _applied = new Dictionary<StatsEffect, List<DummyUnit>>();
+            EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
         }
-
-
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
             if (_projectiles == null) return;
             foreach (var p in _projectiles.ToList())
@@ -41,45 +29,57 @@ namespace Arcatech.Managers
                 p.UpdateInDelta(delta);
             }
         }
-
-        public override void Stop()
+        public override void FixedControllerUpdate(float fixedDelta)
         {
-            foreach (var t in _staticT)
-            {
-                t.TriggerHitUnitEvent -= (ta, tb) => HandleStaticTrigger(ta, tb, t);
-            }
 
-            var _skillsMan = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
+        }
+
+        public override void StopController()
+        {
+            _applied.Clear();
+            EventBus<StatsEffectTriggerEvent>.Deregister(_triggersBinding);
         }
         #endregion
 
         #region triggers
 
-        private void HandleStaticTrigger(BaseUnit target, bool isEnter, BaseLevelEventTrigger lv)
+        private Dictionary<StatsEffect, List<DummyUnit>> _applied;
+        private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-            if (lv is StaticEffectTrigger eff && target is PlayerUnit) // case : trap or health up
+            if (DebugMessage)
             {
-                foreach (var config in eff.Triggers)
+                Debug.Log($"receive event {obj.AppliedEffects}, to {obj.Target.GetUnitName}");
+            }
+            // a new set of instances is created for each use of applicatior
+
+            foreach (StatsEffect eff in obj.AppliedEffects)
+            {
+                if (_applied.TryGetValue(eff, out var r))
                 {
-                    ServeTriggerApplication(new StatsEffect (config),null, target, isEnter);
-                }            
+                    // effect in list
+
+                    if (r.Contains(obj.Target)) return; // target in list
+                    else
+                    {
+                        // target not in list
+                        ApplyTriggerEffect(eff, obj.Target, obj.Source);
+                        r.Add(obj.Target);
+                    }
+                }
+                // effect not in list just do normally
+                else
+                {
+                    _applied[eff] = new List<DummyUnit>();
+                    _applied[eff].Add(obj.Target);
+                    ApplyTriggerEffect(eff, obj.Target, obj.Source);
+                }
             }
         }
 
 
-        // here we need a check to prevent repeat applications so individual instances are accepted instead
-
-        public void ServeTriggerApplication(StatsEffect triggerEffect, BaseUnit source, BaseUnit target, bool IsEnter)
+        private void ApplyTriggerEffect(StatsEffect effect, DummyUnit target, DummyUnit source)
         {
-            if (IsEnter) ApplyTriggerEffect(triggerEffect, target, source);
-        }
-
-        private Dictionary<StatsEffect, List<BaseUnit>> _hitTargetsPerEffect = new Dictionary<StatsEffect, List<BaseUnit>>();
-        private void ApplyTriggerEffect(StatsEffect effect, BaseUnit target, BaseUnit source)
-        {
-
-            BaseUnit finaltgt = null;
-
+            DummyUnit finaltgt = null;
             if (source is null)
             {
                 // static trigger (trap, health pack etc)
@@ -170,52 +170,29 @@ namespace Arcatech.Managers
                         //Debug.LogError($"Trigger {config} from {source.GetID} to {target.GetID} did not apply!");
                         break;
                 }
-            }
-            if (finaltgt == null)
-            {
+                if (DebugMessage)
+                {
+                    Debug.Log($"applying effect {effect} to {finaltgt}");
+                }
+                finaltgt.ApplyEffect(effect);
                 return;
             }
 
-            // new part to check for repeat applications 
-            if (_hitTargetsPerEffect.TryGetValue(effect, out var hit))
-            {
-                if (hit.Contains(finaltgt))
-                {
-                    //Debug.Log($"trigger {effect.ID} already applied to {finaltgt.name}, skipping");
-                    return; // 
-                }
-                else
-                {
-                    hit.Add(finaltgt);                    
-                    finaltgt.ApplyEffect(effect);
-                    //if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
 
-                    HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
-                }
-            }
-            else
+            if (finaltgt == null)
             {
-                _hitTargetsPerEffect[effect] = new List<BaseUnit>();
-                _hitTargetsPerEffect[effect].Add(finaltgt); 
-                finaltgt.ApplyEffect(effect);
-               // if (ShowDebug) { Debug.Log($"trigger {effect.ID} applied to {finaltgt.name}"); }
-
-                HandleEffectsFromTrigger(effect, EffectMoment.OnCollision, finaltgt.transform);
+                if (DebugMessage)
+                {
+                    Debug.Log($"fail to apply {effect}");
+                }
+                return ;
             }
+            
         }
 
-        // statics are found manually an others are served from unit manager
 
         #endregion
 
-        #region forward to effects mng
-        private void HandleEffectsFromTrigger (StatsEffect e, EffectMoment when, Transform where)
-        {
-            var pack = new EffectRequestPackage(e.GetEffects.GetRandomSound(when), e.GetEffects.GetRandomEffect(when), null, where);
-            _effects.ServeEffectsRequest(pack);
-        }
-
-        #endregion
 
 
         #region projectiles
@@ -278,6 +255,8 @@ namespace Arcatech.Managers
                 }
             }
         }
+
+
         #endregion
     }
 

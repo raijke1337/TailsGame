@@ -16,7 +16,7 @@ namespace Arcatech.AI
         public RoomUnitsGroup(List<NPCUnit> list)
         {
             _units = list;
-            foreach (BaseUnit unit in _units)
+            foreach (DummyUnit unit in _units)
             {
                 unit.BaseUnitDiedEvent += RemoveUnitOnDeath;
             }
@@ -54,9 +54,9 @@ namespace Arcatech.AI
 
 
         // used by inputs
-        public BaseUnit GetUnitForAI(ReferenceUnitType type)
+        public DummyUnit GetUnitForAI(ReferenceUnitType type)
         {
-            BaseUnit res = null;
+            DummyUnit res = null;
             switch (type)
             {
                 case ReferenceUnitType.Small:

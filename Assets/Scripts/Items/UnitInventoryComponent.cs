@@ -1,7 +1,10 @@
+using Arcatech.EventBus;
 using Arcatech.Items;
+using Arcatech.Skills;
 using Arcatech.Triggers;
 using KBCore.Refs;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static UnityEngine.UI.GridLayoutGroup;
@@ -10,7 +13,6 @@ namespace Arcatech.Units
 {
     public class UnitInventoryComponent : ManagedControllerBase
     {
-        private BaseUnit _owner;
         private Dictionary<EquipmentType, EquipmentItem> _equips;
         private List<InventoryItem> _items;
         private List<InventoryItem> _drops;
@@ -20,26 +22,20 @@ namespace Arcatech.Units
         public IReadOnlyCollection<EquipmentItem> GetCurrentEquips => _equips.Values;
         public IReadOnlyCollection<InventoryItem> GetCurrentInventory => _items;
 
-        public event SimpleEventsHandler<UnitInventoryComponent> InventoryUpdateEvent;
-        protected void CallBackUpdateEvent() => InventoryUpdateEvent?.Invoke(this);
+        
 
-        #region used by level events 
+        #region used by level events  and UI
 
-        public bool HasItem(Item search)
-        {
-            return (_equips.Values.Any(t=>t.ID==search.ID) || _items.Any(t=>t.ID==search.ID));
-        }
-        public void PickedUpItem(Item i,bool wantEquip)
+        public void OnplayerPickedUpItem(Item i, bool wantEquip)
         {
             if (_items.Where(t => t.ID == i.ID).Any() || _equips.Where(t => t.Value.ID == i.ID).Any())
             {
-               // Debug.Log($"Not added item {i} to {_owner} because it is already owned");
                 return; // supposed to prevent duplication 
             }
             else
             {
                 var res = ProduceItem(i);
-                //_items.Add(res);
+                _items.Add(res);
 
                 if (wantEquip && res is EquipmentItem e)
                 {
@@ -49,16 +45,15 @@ namespace Arcatech.Units
                 {
                     MoveToInventory(res);
                 }
-                //Debug.Log($"Added item {i} to {_owner}");
-                CallBackUpdateEvent();
             }
         }
 
-        #endregion
+        private InventoryItem ProduceItem(Item i)
+        {
+            return new InventoryItem(i);
+        }
 
-        #region equipments level
-
-        public void HandleSwapButton (InventoryItem i)
+        public void HandleSwapButton(InventoryItem i)
         {
             if (i is EquipmentItem eq)
             {
@@ -71,10 +66,6 @@ namespace Arcatech.Units
                     MoveToEquipped(eq);
                 }
             }
-        }
-        public void MoveToSheathed(EquipmentItem i)
-        {
-
         }
         private void MoveToEquipped(EquipmentItem i)
         {
@@ -94,31 +85,87 @@ namespace Arcatech.Units
                 _equips.Remove(i.ItemType);
             }
             _items.Add(i);
-            if (i is EquipmentItem eq)
-            {
-                eq.OnUnequip();
-            }
         }
         // to choose the text for the context button
 
         #endregion
 
-
-        public bool IsItemEquipped (EquipmentType type, out EquipmentItem item)
+        #region checks
+        public bool IsItemEquipped(EquipmentType type, out EquipmentItem item)
         {
             return _equips.TryGetValue(type, out item);
         }
+        public bool HasItem<T>(T type, out InventoryItem item) where T : Item
+        {
+            item = _items.FirstOrDefault(t => t.ID == type.ID);
+            if (item == null) return false;
+            return true;
+        }
+        public bool HasItem(string ID, out InventoryItem item)
+        {
+            item = _items.FirstOrDefault(t => t.ID == ID);
+            if (item == null)
+            {
+                item = _equips.Values.FirstOrDefault(t => t.ID == ID);
+                if (item == null) { return false; }
+                return true;
+            }
+            return true;
+        }
+        #endregion
 
-        public UnitInventoryComponent DrawItems (IDrawItemStrategy strategy)
+
+        public UnitInventoryComponent DrawItems(IDrawItemStrategy strategy)
         {
             foreach (var e in _equips.Values)
             {
-                e.SetItemEmpty(_empties.ItemPositions[strategy.GetPlaces[e.ItemType]]);
+                ItemPlaceType placeType = strategy.GetPlaces[e.ItemType];
+                switch (placeType)
+                {
+                    case ItemPlaceType.Hidden:
+                        e.ItemShown = false;
+                        break;
+                    default:
+                        e.SetItemEmpty(_empties.ItemPositions[strategy.GetPlaces[e.ItemType]]);
+                        break;
+                }
             }
             return this;
         }
 
-        #region setup
+        public SerializedSkillConfiguration[] GetSkillConfigs
+        {
+            get
+            {
+                List<SerializedSkillConfiguration> foundSkills = new();
+                foreach (var e in _equips.Values)
+                {
+                    if (e is IHasSkill ss)
+                    {
+                        foundSkills.Add(ss.GetSkillData);
+                    }
+                }
+                return foundSkills.ToArray();
+            }
+        } 
+
+        public IWeapon[] GetWeapons
+        {
+            get
+            {
+                List<IWeapon> weaps = new();
+                foreach (var e in _equips.Values)
+                {
+                    if (e is IWeapon ww)
+                    {
+                        weaps.Add(ww);
+                        
+                    }
+                }
+                return weaps.ToArray();
+            }
+        }
+
         public SerializedStatModConfig[] GetCurrentMods
         {
             get
@@ -131,84 +178,68 @@ namespace Arcatech.Units
                         list.AddRange(equip.ItemStats);
                     }
                 }
-
                 return list.ToArray();
-
             }
         }
 
 
+
+        #region setup
+
+
         public UnitInventoryComponent LoadSerializedItems (UnitInventoryItemConfigsContainer cfg, BaseUnit owner)
         {
-            _owner = owner;
-
             _equips = new Dictionary<EquipmentType, EquipmentItem>();
             _items = new List<InventoryItem>();
 
             foreach (var e in cfg.Equipment)
             {
-                _equips[e.ItemType] = ProduceItem(e) as EquipmentItem;
+                if (e is IWeapon)
+                {
+                    _equips[e.ItemType] = ProduceItem(e) as WeaponItem;
+                }
+                else
+                {
+                    _equips[e.ItemType] = ProduceItem(e) as EquipmentItem;
+                }
+
             }
-            foreach (var i in cfg.Inventory)
+            foreach (Item i in cfg.Inventory)
             {
                 _items.Add(ProduceItem(i));
             }
 
+            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner, this));
+
             return this;
         }
+
         public UnitInventoryComponent SetItemEmpties(ItemEmpties e)
         {
             _empties = e;
             return this;
         }
-        private InventoryItem ProduceItem(Item cfg)
-        {
-            InventoryItem ret;
-            if (cfg is Equip e)
-            {
-                ret = new EquipmentItem(e, _owner);
-
-                if (cfg is Weapon w)
-                {
-                    if (cfg is RangedWeapon r)
-                    {
-                        ret = new RangedWeaponItem(r, _owner);
-                    }
-                    else
-                    {
-                        ret = new WeaponItem(w, _owner);
-                    }
-                }
-                if (cfg is Booster b)
-                {
-                    ret = new BoosterItem(b,_owner);
-                }
-            }
-            else
-            {
-                ret =  new InventoryItem(cfg, _owner);
-            }
-
-            //Debug.Log($"{ret.ID} config as {ret.GetType()}");
-
-            return ret;
-            //cringe but it should work
-        }
 
 
-        #region managed
+
+
+
+        #region managed  - UNUSED
         public override void StartController()
         {
-            base.StartController();
+
         }
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
 
         }
 
         public override void StopController()
         {
+        }
 
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
         }
         #endregion
         #endregion

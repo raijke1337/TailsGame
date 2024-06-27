@@ -35,6 +35,18 @@ namespace Arcatech.Stats
             RaiseEvent(eff.StatType);
             return this;
         }
+
+        public bool TryApplyCost (StatsEffect cost)
+        {
+            var cont = _stats[cost.StatType];
+            bool OK = cont.GetCurrent >= cost.InitialValue;
+            if (OK)
+            {
+                cont.ApplyStatsEffect(cost);
+            }
+            return OK;
+        }
+
         #region setup
 
 
@@ -65,13 +77,12 @@ namespace Arcatech.Stats
                 _updatesCooldownTimer.Start();
             };
 
-            base.StartController();
             StartCoroutine(ReportUpdatedStats());
         }
 
         
 
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
             if (!_isReady) return;
 
@@ -85,9 +96,14 @@ namespace Arcatech.Stats
         {
             _isReady = false;
         }
+
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
+            
+        }
         #endregion
         #endregion
-    
+
         private IEnumerator ReportUpdatedStats()
         {
             yield return null;
@@ -101,6 +117,7 @@ namespace Arcatech.Stats
             StatsUpdatedEvent.Invoke(new StatChangedEvent(stat, _stats[stat]));
             _stats[stat].CachedValue = _stats[stat].GetCurrent;
         }
-    
+
+
     }
 }

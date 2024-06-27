@@ -1,4 +1,5 @@
 using Arcatech.Items;
+using Arcatech.Units;
 using CartoonFX;
 using UnityEngine;
 
@@ -42,9 +43,8 @@ namespace Arcatech.Triggers
             gameObject.SetActive(false);
         }
 
-        protected override void Start()
+        protected virtual void Start()
         {
-            base.Start();
             Transform place;
             if (_itemSpot != null)
             {
@@ -65,5 +65,6 @@ namespace Arcatech.Triggers
             }
             _model.transform.SetPositionAndRotation(place.position, place.rotation);
         }
+
     }
 }

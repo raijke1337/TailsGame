@@ -1,29 +1,32 @@
+using Arcatech.EventBus;
 using Arcatech.Units;
 using UnityEngine;
+using UnityEngine.Events;
+
 namespace Arcatech.Triggers
 {
     public class WeaponTriggerComponent : BaseTrigger
     {
+
+        public event UnityAction<DummyUnit> UnitHitEvent = delegate { };
         public void ToggleCollider(bool isEnable)
         {
-            if (Collider == null) Collider = GetComponent<Collider>();
             Collider.enabled = isEnable;
         }
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent<BaseUnit>(out var c))
+            if (other.TryGetComponent<DummyUnit>(out var u))
             {
-                //Debug.Log($"Trigger callback by {this.gameObject.name} on {c}");
-                TriggerCallback(c, true);
+                TriggerCallback(u, true);
             }
         }
-
-        protected override void OnTriggerExit(Collider other)
+        // weapon signals about trigger hits based on the event
+        protected virtual void TriggerCallback(DummyUnit unit, bool entering)
         {
-            if (other.TryGetComponent<BaseUnit>(out var c))
+            if (entering)
             {
-                TriggerCallback(c, false);
+                UnitHitEvent.Invoke(unit);
             }
         }
     }

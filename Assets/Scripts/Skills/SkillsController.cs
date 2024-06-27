@@ -1,124 +1,75 @@
 using Arcatech.Items;
-using Arcatech.Skills;
+using Arcatech.Stats;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using UnityEngine;
 
-namespace Arcatech.Units
+namespace Arcatech.Skills
 {
-    [Serializable]
-    public class SkillsController : BaseController, INeedsEmpties
+    public class SkillsController : ManagedControllerBase, ICombatActions, INeedsOwner
     {
 
+        protected Dictionary<UnitActionType, ISkill> _skills;
+        UnitStatsController _stats;
+        UnitInventoryComponent _inventory;
 
-        public SkillEvents<EquipmentType> SwitchAnimationLayersEvent;
-        public ItemEmpties Empties { get; }
-        public SkillsController(ItemEmpties ie, BaseUnit Owner) : base(Owner)
+
+        public SkillsController SetSkills(SerializedSkillConfiguration[] ss)
         {
-            Empties = ie;
-        }
-
-        // this is used in game for skill requests
-        private Dictionary<UnitActionType, SkillObjectForControls> _skills;
-
-        public void LoadItemSkill(EquipmentItem item)
-        {
-            if (item == null) return;
-
-            if (_skills == null) _skills = new Dictionary<UnitActionType, SkillObjectForControls>();
-
-            var cfg = item.Skill;
-            SkillObjectForControls control = new SkillObjectForControls(cfg, Owner);
-
-            if (cfg is DodgeSkillConfigurationSO dcfg)
+            _skills = new();
+            foreach (var skill in ss)
             {
-                control = new DodgeSkillObjectForControls(dcfg, Owner);
+                _skills[skill.UnitActionType] = new SkillObjectForControls(skill);
             }
+            return this;
+        }
 
-            
-            IsReady = true;
-            switch (item.ItemType)
+        #region  interface
+               
+        public IUsesStats SetStats(UnitStatsController s)
+        {
+            _stats = s;
+            return this;
+        }
+
+        public bool TryUseAction(UnitActionType action)
+        { 
+            if (_skills.ContainsKey(action))
             {
-                case EquipmentType.MeleeWeap:
-                    _skills[UnitActionType.MeleeSkill] = control;
-                    break;
-                case EquipmentType.RangedWeap:
-                    _skills[UnitActionType.RangedSkill] = control;
-                    break;
-                case EquipmentType.Shield:
-                    _skills[UnitActionType.ShieldSkill] = control;
-                    break;
-                case EquipmentType.Booster:
-                    _skills[UnitActionType.DodgeSkill] = control;
-                    break;
-                default:
-                    break;
+                _skills[action].UseItem();
+                return true;
             }
+            return false;
+
         }
 
-
-        public bool IsSkillReady (UnitActionType actionType, out StatsEffect cost)
+        #endregion
+        public override void StartController()
         {
-            cost = null;
-            if (_skills == null || _skills[actionType] == null) return false;
 
-            else
-            {
-                cost = _skills[actionType].Cost;
-                return _skills[actionType].SkillCooldownReady;
-            }
-        }
-        public SkillProjectileComponent ProduceSkill(UnitActionType actionType)
-        {
-            var result = _skills [actionType].UseSkill;
-
-                        switch (actionType)
-                        {
-                            case UnitActionType.MeleeSkill:
-                                SwitchAnimationLayersEvent?.Invoke(EquipmentType.MeleeWeap);
-                                break;
-                            case UnitActionType.RangedSkill:
-                                SwitchAnimationLayersEvent?.Invoke(EquipmentType.RangedWeap);
-                                break;
-                        }
-             SpawnProjectileCallBack(result);
-             //result.transform.position = Owner.GetEmpties.ItemPositions[result.SpawnPlace].position;
-             //           result.transform.forward = Owner.transform.forward;
-            return result;
         }
 
-
-
-
-public SkillObjectForControls GetControlData(UnitActionType t) => _skills[t];
-        public SkillObjectForControls[] GetControlData() => _skills.Values.ToArray();
-
-
-        public override void UpdateInDelta(float deltaTime)
-        {
-            if (_skills == null) return;
-
-            foreach (var sk in _skills.Values)
-            {
-                sk.UpdateInDelta(deltaTime);
-            }
-        }
-
-        public override void ApplyEffect(StatsEffect effect)
-        {
-           // throw new NotImplementedException();
-        }
-
-        public override void StartComp()
+        public override void ControllerUpdate(float delta)
         {
             //throw new NotImplementedException();
         }
 
-        public override void StopComp()
+        public override void FixedControllerUpdate(float fixedDelta)
         {
             //throw new NotImplementedException();
+        }
+
+        public override void StopController()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public IUsesStats SetInventory(UnitInventoryComponent comp)
+        {
+            _inventory = comp;
+            return this;
         }
     }
 }

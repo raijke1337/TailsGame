@@ -6,33 +6,29 @@ using Arcatech.Units.Inputs;
 using UnityEngine;
 namespace Arcatech.Units
 {
+
+
     [RequireComponent(typeof(InputsNPC))]
-    public class NPCUnit : BaseUnit
+    public class NPCUnit : ControlledUnit
     {
         private InputsNPC _npcController;
         public RoomUnitsGroup UnitsGroup { get; set; }
 
         //used by room ctrl
         public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
-        [SerializeField] protected UnitItemsSO _defaultItems;
         [SerializeField] private LevelRewardTrigger _dropPrefab;
         [SerializeField] private Item _drop; 
 
 
         [Space, SerializeField] protected EnemyStatsConfig _enemyStatsConfig;
 
-        public override void InitiateUnit()
+        public override void StartControllerUnit()
         {
-            base.InitiateUnit();
+            base.StartControllerUnit();
             if (_npcController == null) _npcController = _inputs as InputsNPC;
             if (!CompareTag("Enemy"))
                 Debug.LogWarning($"Set enemy tag for{name}");
             _npcController.UnitsGroup = UnitsGroup;
-        }
-
-        protected override UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
-        {
-            return new UnitInventoryItemConfigsContainer( _defaultItems);
         }
 
         public override ReferenceUnitType GetUnitType()
@@ -55,14 +51,6 @@ namespace Arcatech.Units
                 GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
             }
 
-        }
-
-        protected override void OnItemAdd(Item i)
-        {
-            if (_inputs.DebugMessage)
-            {
-                Debug.Log($"Added item {i.Description.Title}");
-            }
         }
     }
 

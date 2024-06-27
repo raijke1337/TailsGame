@@ -14,13 +14,7 @@ namespace Arcatech.Units.Inputs
         private IsoCamAdjust _adj;
         [SerializeField,Self] private AimingComponent _aim;
         public AimingComponent Aiming => _aim;
-
-
-
         private CostumesControllerComponent _costume;
-       // private GameInterfaceManager _gameInterfaceManager;
-
-
 
         #region managedctrl
 
@@ -47,14 +41,14 @@ namespace Arcatech.Units.Inputs
 
            // _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
         }
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
             if (_aim == null) return;
 
-            base.UpdateController(delta);
+            base.ControllerUpdate(delta);
             DoAiming(delta);
-            _aim.UpdateController(delta);
-            _costume.UpdateController(delta);
+            _aim.ControllerUpdate(delta);
+            _costume.ControllerUpdate(delta);
 
         }
         public override void StopController()
@@ -217,11 +211,10 @@ namespace Arcatech.Units.Inputs
 
 
 
-        protected override void ShieldBreakEventCallback()
-        {
-            _costume.OnBreak();
-            base.ShieldBreakEventCallback();
-        }
+        //protected override void ShieldBreakEventCallback()
+        //{
+        //    _costume.OnBreak();
+        //}
 
         protected override void OnLockInputs(bool isLock)
         {

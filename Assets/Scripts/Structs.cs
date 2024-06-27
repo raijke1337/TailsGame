@@ -31,8 +31,12 @@ namespace Arcatech
     public delegate void SkillRequestedEvent(SkillProjectileComponent data, BaseUnit source, Transform where);
     public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
 
-    public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
-    public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect eff);
+
+    /// <summary>
+    /// moved to events bus
+    /// </summary>
+    //public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
+    //public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect eff);
     #endregion
 
     #region structs 
@@ -50,6 +54,7 @@ namespace Arcatech
         SheathedEmpty,
         ShieldEmpty, 
         BoosterEmpty, 
+        Hidden,
         OtherEmpty = 255
     }
 
@@ -111,7 +116,9 @@ namespace Arcatech
 
 
     public interface IHasOwner
-    { BaseUnit Owner { get; } }
+    { 
+        DummyUnit Owner { get; } 
+    }
 
 
     public interface INeedsEmpties

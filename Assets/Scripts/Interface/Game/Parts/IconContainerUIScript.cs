@@ -22,8 +22,8 @@ namespace Arcatech.UI
 
                 _timerFill.fillAmount = 1;
                 _timerFill.enabled = false;
-                _icon.sprite = _skill.Description.Picture;
-                _text.text = _skill.GetTextForUI;
+                //_icon.sprite = _skill.Description.Picture;
+                //_text.text = _skill.GetTextForUI;
 
 
             }
@@ -37,15 +37,7 @@ namespace Arcatech.UI
 
         public void UpdateInDelta(float delta)
         {
-            _text.text = _skill.GetTextForUI;
-            if (_skill.GetTextForUI == "0")
-            {
-                _timerFill.enabled = true;
-            }
-            else
-            {
-                _timerFill.enabled = false;
-            }
+
         }
 
     }

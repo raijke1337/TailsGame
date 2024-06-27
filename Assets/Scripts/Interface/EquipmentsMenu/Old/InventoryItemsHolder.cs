@@ -49,11 +49,14 @@ namespace Arcatech.UI
             _tiles = new List<ItemTileComponent>();
         }
 
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
 
         }
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
+        }
         public override void StopController()
         {
         }

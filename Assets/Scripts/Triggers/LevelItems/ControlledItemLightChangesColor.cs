@@ -29,7 +29,7 @@ namespace Arcatech.Triggers.Items
             }
         }
 
-        protected override void InitiateValues()
+        protected override void StartControllerValues()
         {
             Assert.IsNotNull(_light,$"Pick light object in {this}");
         }

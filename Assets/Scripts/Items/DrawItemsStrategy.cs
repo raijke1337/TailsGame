@@ -1,4 +1,5 @@
-﻿using AYellowpaper.SerializedCollections;
+﻿using Arcatech.Items;
+using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

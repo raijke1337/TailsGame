@@ -16,7 +16,7 @@ namespace Arcatech.Managers
         protected List<LevelBlockDecorPrefabComponent> _levelBlocks;
 
         #region managed
-        public override void Initiate()
+        public override void StartController()
         {
             if (triggers != null) triggers.Clear();
             triggers = new List<BaseLevelEventTrigger>();
@@ -37,15 +37,19 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
             foreach (var t in _levelBlocks)
             {
-                t.UpdateController(delta);
+                t.ControllerUpdate(delta);
             }
         }
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
-        public override void Stop()
+        }
+
+        public override void StopController()
         {
             foreach (var t in triggers.ToList()) { ManageTrigger(t, false); }
             foreach (var t in _levelBlocks)
@@ -65,7 +69,7 @@ namespace Arcatech.Managers
             if (registering)
             {
                 triggers.Add(tr);
-                tr.TriggerHitUnitEvent += (u,e) => OnEventActivated(tr,u,e);
+                //tr.TriggerHitUnitEvent += (u,e) => OnEventActivated(tr,u,e);
                 if (tr is CheckConditionTrigger check)
                 {
                     check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
@@ -74,7 +78,7 @@ namespace Arcatech.Managers
             else
             {
                 triggers.Remove(tr);
-                tr.TriggerHitUnitEvent -= (u, e) => OnEventActivated(tr, u, e);
+               // tr.TriggerHitUnitEvent -= (u, e) => OnEventActivated(tr, u, e);
                 if (tr is CheckConditionTrigger check)
                 {
                     check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
@@ -87,15 +91,9 @@ namespace Arcatech.Managers
             Debug.Log("NYI");
         }
 
-        private void OnEventActivated(BaseLevelEventTrigger tr, BaseUnit u, bool isEnter)
+        private void OnEventActivated(BaseLevelEventTrigger tr, DummyUnit u, bool isEnter)
         {
-            if (tr is StaticEffectTrigger ef)
-            {
-                foreach (var e in ef.Triggers)
-                {
-                    _trigs.ServeTriggerApplication(new StatsEffect(e), null, GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit, isEnter);
-                }
-            }
+
             if (tr is LevelRewardTrigger rew)
             {
                 //if (ShowDebug)

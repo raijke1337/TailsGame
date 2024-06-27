@@ -30,13 +30,13 @@ namespace Arcatech.Triggers
         {
             Assert.IsFalse(_startingState == ControlledItemState.None);
             _currentState = ControlledItemState.None;
-            InitiateValues();
+            StartControllerValues();
             ChangeItemState(_startingState);
         }
 
 
         protected void CallbackEvent(ControlledItemState state)=> ItemChangedStateEvent?.Invoke(state, this);
         protected abstract void OnPerformChangeState(ControlledItemState desired);
-        protected abstract void InitiateValues();
+        protected abstract void StartControllerValues();
     }
 }

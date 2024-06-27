@@ -1,11 +1,8 @@
-using Arcatech.Items;
 using Arcatech.Scenes;
 using Arcatech.Triggers;
-using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Xml.Serialization;
-using UnityEngine;
 
 namespace Arcatech
 {
@@ -57,18 +54,6 @@ namespace Arcatech
 
 #endregion
 #region items
-
-    [Serializable]
-    public class RangedWeaponConfig
-    {
-
-        public SerializedProjectileConfiguration Projectile;
-
-        [Space,SerializeField, Range(1, 20), Tooltip("How projectiles will be spawned until reload is started")] public int Ammo;
-        [SerializeField, Range(1, 12), Tooltip("How many projectiles are created per each use")] public int ShotsPerUse;
-        [SerializeField, Range(0, 5), Tooltip("Time in reload")] public float Reload;
-        [SerializeField, Range(0, 1), Tooltip("Spread of shots (inaccuaracy)")] public float Spread;
-    }
 
     #endregion
 

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Arcatech.Units;
+using System.Collections.Generic;
 
-namespace Arcatech.Units
+namespace Arcatech.Items
 {
     public interface IDrawItemStrategy : IStrategy 
     {

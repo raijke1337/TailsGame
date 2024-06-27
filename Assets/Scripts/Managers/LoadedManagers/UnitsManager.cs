@@ -50,7 +50,7 @@ namespace Arcatech.Managers
 
 
         #region managed
-        public override void Initiate()
+        public override void StartController()
         {
             if (_effects == null)
             {
@@ -97,8 +97,9 @@ namespace Arcatech.Managers
             }
 
         }
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
+
             if (_isUnitsLocked) return;
 
             _player.RunUpdate(delta);
@@ -112,8 +113,24 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void Stop()
+        public override void FixedControllerUpdate(float fixedDelta)
         {
+            if (_isUnitsLocked) return;
+
+            _player.RunFixedUpdate(fixedDelta);
+            if (_npcGroups == null) return;
+            foreach (var g in _npcGroups)
+            {
+                foreach (var n in g.GetAllUnits.ToArray())
+                {
+                    n.RunFixedUpdate(fixedDelta);
+                }
+            }
+        }
+
+        public override void StopController()
+        {
+
             _player.DisableUnit();
             if (_npcGroups != null)
             {
@@ -132,30 +149,16 @@ namespace Arcatech.Managers
         #region units handling
 
 
-        private void SetupUnit(BaseUnit u, bool isEnable)
+        private void SetupUnit(DummyUnit u, bool isEnable)
         {
             if (isEnable)
             {
                 u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
-                
-                u.SkillRequestFromInputsSuccessEvent += (id, user, where) => ForwardSkillRequests(id, user, where);
-                u.BaseControllerEffectEvent += (t) => ForwardEffectsRequest(t,u);
-                u.UnitTriggerRequestEvent += ForwardTriggerRequest;
-                u.UnitPlacedProjectileEvent += ForwardProjectileRequest;
-
-
-                u.InitiateUnit();
+                u.StartControllerUnit();
             }
             else
             {
                 u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
-
-                u.SkillRequestFromInputsSuccessEvent -= (id, user, where) => ForwardSkillRequests(id, user, where);
-                u.BaseControllerEffectEvent -= (t) => ForwardEffectsRequest(t,u);
-                u.UnitTriggerRequestEvent -= ForwardTriggerRequest;
-                u.UnitPlacedProjectileEvent -= ForwardProjectileRequest;
-
-
                 u.DisableUnit();
             }
         }
@@ -174,33 +177,6 @@ namespace Arcatech.Managers
             }
 
         }
-
-        #endregion
-
-        #region unit requests
-        private void ForwardProjectileRequest(ProjectileComponent arg, BaseUnit owner)
-        {
-           // Debug.Log($"{owner} placed projectile {arg}");
-            _trigger.RegisterExistingProjectile(arg);
-        }
-
-        private void ForwardTriggerRequest(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect cfg)
-        {
-            //Debug.Log($"{source.GetFullName} trigger request {cfg.name}");
-            _trigger.ServeTriggerApplication(cfg, source, target, isEnter);
-        }
-
-        private void ForwardEffectsRequest(EffectRequestPackage pack,BaseUnit owner)
-        {
-            //Debug.Log($"{owner.GetFullName} sent a request to place effects: {pack}");
-            _effects.ServeEffectsRequest(pack);
-        }
-        private void ForwardSkillRequests(SkillProjectileComponent cfg, BaseUnit user, Transform place)
-        {
-           // Debug.Log($"{user.GetFullName} skill request {cfg.name}");
-            _skills.ServeSkillRequest(cfg, user, place);
-        }
-
         #endregion
 
     }

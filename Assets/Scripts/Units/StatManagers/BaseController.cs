@@ -11,13 +11,13 @@ namespace Arcatech.Units
     [Serializable]
     public abstract class BaseController : IManagedComponent, IHasOwner
     {
-        public BaseUnit Owner { get; }
+        public DummyUnit Owner { get; }
 
         private bool _isReady = false;
 
         public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent;
 
-        public BaseController(BaseUnit owner)
+        public BaseController(DummyUnit owner)
         {
             Owner = owner;
         }
@@ -56,15 +56,7 @@ namespace Arcatech.Units
 
         #endregion
 
-        #region triggers from weapons and /skills 
 
-        public event TriggerEvent BaseControllerTriggerEvent;
-        protected void TriggerEventCallback(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect cfg)
-        {
-            //Debug.Log($"Weapon trigger event: hit {target.name} from {source.name}");
-            BaseControllerTriggerEvent?.Invoke(target, source, isEnter, cfg);
-        }
-        #endregion
 
         #region projectile spawn
 

@@ -6,15 +6,16 @@ using UnityEngine;
 namespace Arcatech.Skills
 {
     [CreateAssetMenu(fileName = "New Skill Config", menuName = "Skills/Self Skill")]
-    public class SerizalizedSkillConfiguration : ScriptableObject
+    public class SerializedSkillConfiguration : ScriptableObject
     {
 
         public ExtendedText Description;
-        public EquipmentType SpawnPlace;
+        public UnitActionType UnitActionType;
+
+
         [Space, Range(1, 10)] public int Charges;
         [Range(1, 10)] public int ChargeRestore;
         [Space] public SerializedStatsEffectConfig CostTrigger;
-
         [Space] public SerializedProjectileConfiguration SkillProjectileConfig;
 
         [Range(0.1f, 10f)] public float PlacerRadius;

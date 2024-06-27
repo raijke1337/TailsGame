@@ -14,7 +14,7 @@ namespace Arcatech.Scenes
         {
             _inputs = GetComponent<InputsPlayer>();
             _unit = GetComponent<PlayerUnit>();
-            _unit.InitiateUnit();
+            _unit.StartControllerUnit();
             _coroutine = StartCoroutine(UpdatingCoroutine());
 
             // not necessary with inventory component since the unit is init

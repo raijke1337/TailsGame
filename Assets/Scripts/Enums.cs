@@ -31,7 +31,7 @@ public enum EquipmentType
     Other = 255
 }
 
-public enum UnitActionType
+public enum UnitActionType : byte
 {
     Melee,
     Ranged,
@@ -39,7 +39,8 @@ public enum UnitActionType
     MeleeSkill,
     RangedSkill,
     ShieldSkill,
-    Jump
+    Jump,
+    None = 255
 }
 
 public enum TriggerTargetType

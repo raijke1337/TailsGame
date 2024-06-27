@@ -9,11 +9,11 @@ namespace Arcatech.Managers
 {
     public class GameInterfaceManager : LoadedManagerBase
     {
-        [SerializeField,Child] private TargetPanel _tgtPan;
-        [SerializeField, Child] private PlayerUnitPanel _playerPan;
-        [SerializeField, Child] private GameTextComp _text;
-        [SerializeField, Child] private GameObject _ded;
-        [SerializeField, Child] private GameObject _pause;
+        [SerializeField] private TargetPanel _tgtPan;
+        [SerializeField] private PlayerUnitPanel _playerPan;
+        [SerializeField] private GameTextComp _text;
+        [SerializeField] private GameObject _ded;
+        [SerializeField] private GameObject _pause;
 
         [Space, SerializeField] private CartoonFX.CFXR_ParticleText _textPrefab;
 
@@ -23,7 +23,7 @@ namespace Arcatech.Managers
 
 
         #region managed
-        public override void Initiate()
+        public override void StartController()
         {
 
 
@@ -53,9 +53,12 @@ namespace Arcatech.Managers
 
         }
 
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
+        }
 
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
 
         }
@@ -64,9 +67,10 @@ namespace Arcatech.Managers
             EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
         }
-        public override void Stop()
+        public override void StopController()
         {
-            
+            EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
+            EventBus<StatChangedEvent>.Deregister(_statChangedBind);
         }
         #endregion
 

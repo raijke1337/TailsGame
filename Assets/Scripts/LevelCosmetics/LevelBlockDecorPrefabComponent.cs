@@ -72,13 +72,16 @@ namespace Arcatech.Level
                 d.StopController();
             }
         }
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
-        public override void UpdateController(float delta)
+        }
+        public override void ControllerUpdate(float delta)
         {
             if (_loadedDecors == null) return;
             foreach (var d in _loadedDecors)
             {
-                d.UpdateController(delta);
+                d.ControllerUpdate(delta);
             }
         }
     }

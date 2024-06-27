@@ -35,9 +35,10 @@ namespace Arcatech.Scenes.Cameras
         private Dictionary<FadingDecorComponent, Coroutine> _cors;
         private RaycastHit[] _hitsThisFrame;
 
+        private bool isStarted = false;
 
         #region managed
-        public override void Initiate()
+        public override void StartController()
         {
             _camera = GetComponent<Camera>();
             if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetAimingComponent;
@@ -45,12 +46,12 @@ namespace Arcatech.Scenes.Cameras
             _hitsThisFrame = new RaycastHit[50];
             _cors = new Dictionary<FadingDecorComponent, Coroutine>();
             transform.position = _playerAimingComponent.transform.position + _desiredOffsetFromPlayer;
-
-             //Debug.Log($"Camera initiate, target is {_playerTarget.gameObject}");
+            isStarted = true;
         }
 
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
+            if (!isStarted) return;
             if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
             {
                 _cameraTargetGizmoColor = Color.green;
@@ -76,9 +77,13 @@ namespace Arcatech.Scenes.Cameras
             SphereCastForHiding();
 
         }
-
-        public override void Stop()
+        public override void FixedControllerUpdate(float fixedDelta)
         {
+            if (!isStarted) return;
+        }
+        public override void StopController()
+        {
+            isStarted = false;
             StopAllCoroutines();
         }
 

@@ -65,11 +65,18 @@ namespace Arcatech.Managers
             }
         }
 
+        private void Update()
+        {
+            if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
+            {
+                _gameControllers.ControllerUpdate(Time.deltaTime);
+            }
+        }
         private void FixedUpdate()
         {
             if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
             {
-                _gameControllers.UpdateManagers(Time.fixedDeltaTime);
+                _gameControllers.FixedControllerUpdate(Time.fixedDeltaTime);
             }
         }
 
@@ -161,7 +168,7 @@ namespace Arcatech.Managers
         private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
         {
             _gameControllers = Instantiate(GameControllersPrefab);
-            _gameControllers.Initiate(_currentLevel);
+            _gameControllers.StartController(_currentLevel.LevelType);
 
             if (arg0.buildIndex == _mainScene.SceneLoaderIndex)
             {
@@ -179,14 +186,6 @@ namespace Arcatech.Managers
         #region game events
         public void OnPlayerPaused(bool isPausing)
         {
-            //if (isPausing)
-            //{
-            //    Time.timeScale = 0;
-            //}
-            //else
-            //{
-            //    Time.timeScale = 1;
-            //}
             _gameControllers.UnitsManager.UnitsLocked = isPausing; // shoukld stop player inputs
         }
 
@@ -197,7 +196,7 @@ namespace Arcatech.Managers
 
             if (_gameControllers != null)
             {
-                _gameControllers.Stop();
+                _gameControllers.StopController();
             }
 
             if (unlock == null)
@@ -218,7 +217,7 @@ namespace Arcatech.Managers
         {
             if (_gameControllers != null)
             {
-                _gameControllers.Stop();
+                _gameControllers.StopController();
             }
             DoLoadScene(_mainScene.SceneLoaderIndex);
         }
@@ -227,7 +226,7 @@ namespace Arcatech.Managers
         {
             if (_gameControllers != null)
             {
-                _gameControllers.Stop();
+                _gameControllers.StopController();
             }
             _gameControllers.GameInterfaceManager.GameOver();
         }

@@ -1,5 +1,6 @@
 using Arcatech.Managers;
 using Arcatech.Puzzles;
+using Arcatech.Units;
 using UnityEngine;
 
 namespace Arcatech.Triggers
@@ -51,5 +52,7 @@ namespace Arcatech.Triggers
             Destroy(_currentPuzzleWindow.gameObject);
             IsSolved = ok;
         }
+
+
     }
 }

@@ -1,3 +1,4 @@
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Managers.Save;
 using Arcatech.Scenes;
@@ -20,11 +21,21 @@ namespace Arcatech.Managers
             if (Instance == null)
             {
                 Instance = this;
+                _bind = new EventBinding<InventoryUpdateEvent>(OnInventoryUpdate);
+                EventBus<InventoryUpdateEvent>.Register(_bind);
+
+
                 LoadSave();
             }
             else Destroy(gameObject);
         }
+
+        private void OnDisable()
+        {
+            EventBus<InventoryUpdateEvent>.Deregister(_bind);
+        }
         #endregion
+        #region saving
 
         private LoadedGameSave _loadedSave;
         public bool IsNewGame
@@ -55,6 +66,88 @@ namespace Arcatech.Managers
             _loadedSave.UpdateCurrentInventory(comp);
         }
 
+        EventBinding<InventoryUpdateEvent> _bind;
+
+        private void LoadSave()
+        {
+            _loadedSave = new LoadedGameSave();
+            if (_loadedSave.IsNewGame)
+            {
+                Debug.Log($"No save found, starting new game");
+                CreateDefaultSave();
+            }
+        }
+
+        public class LoadedGameSave
+        {
+            public List<string> OpenedLevelsID;
+            public UnitInventoryItemConfigsContainer CurrentInventory { get; set; }
+            private SavesSerializer _ser;
+            public bool IsNewGame { get; set; }
+
+            public LoadedGameSave()
+            {
+                _ser = new SavesSerializer();
+                OpenedLevelsID = new List<string>();
+                if (_ser.TryLoadSerializedSave(out var loaded))
+                {
+                    OpenedLevelsID.AddRange(loaded.OpenedLevelIDs);
+                    CurrentInventory = new UnitInventoryItemConfigsContainer(loaded.PlayerItems);
+
+                    IsNewGame = false;
+                }
+                else
+                {
+                    CurrentInventory = new UnitInventoryItemConfigsContainer();
+                    IsNewGame = true;
+                }
+            }
+            public void PackSerializedSaveData()
+            {
+                _ser.UpdateSerializedSave(this);
+            }
+            public void UpdateCurrentInventory(UnitInventoryComponent comp)
+            {
+                CurrentInventory = new UnitInventoryItemConfigsContainer(comp);
+            }
+        }
+        private void CreateDefaultSave()
+        {
+            RefreshSceneContainers();
+
+            _loadedSave.CurrentInventory = new UnitInventoryItemConfigsContainer();
+            List<SceneContainer> list = new List<SceneContainer>();
+            foreach (var cont in _allLevels)
+            {
+                if (cont.IsUnlockedByDefault && cont.LevelType == LevelType.Game) list.Add(cont);
+            }
+            _loadedSave.PackSerializedSaveData();
+
+        }
+
+        public void AddUnlockedLevelToSave(SceneContainer lv, bool writeSave = false)
+        {
+            _loadedSave.IsNewGame = false;
+            if (!_loadedSave.OpenedLevelsID.Contains(lv.ID))
+            {
+                _loadedSave.OpenedLevelsID.Add(lv.ID);
+            }
+            if (writeSave) _loadedSave.PackSerializedSaveData();
+        }
+
+        public void OnNewGame()
+        {
+            if (_loadedSave == null) LoadSave();
+        }
+
+
+        private void OnApplicationQuit()
+        {
+            _loadedSave.PackSerializedSaveData();
+        }
+
+        #endregion
+
         #region level containers
 
         private List<SceneContainer> _allLevels;
@@ -83,6 +176,14 @@ namespace Arcatech.Managers
                 return list;
             }
         }
+
+        private void OnInventoryUpdate(InventoryUpdateEvent arg)
+        {
+            if (arg.Unit is PlayerUnit)
+            _loadedSave.UpdateCurrentInventory(arg.Inventory);
+        }
+
+
         private void RefreshSceneContainers()
         {
             if (_allLevels == null)
@@ -124,110 +225,6 @@ namespace Arcatech.Managers
         #endregion
 
 
-        #region saves
-
-
-        private void LoadSave()
-        {
-            _loadedSave = new LoadedGameSave();
-            if (_loadedSave.IsNewGame)
-            {
-                Debug.Log($"No save found, starting new game");
-                CreateDefaultSave();
-            }
-        }
-
-        public class LoadedGameSave
-        {
-            public List<string> OpenedLevelsID;
-            public UnitInventoryItemConfigsContainer CurrentInventory { get; set; }
-            private SavesSerializer _ser;
-            public bool IsNewGame { get; set; }
-
-            public LoadedGameSave()
-            {
-                _ser = new SavesSerializer();
-                OpenedLevelsID = new List<string>();
-                if (_ser.TryLoadSerializedSave(out var loaded))
-                {
-                    OpenedLevelsID.AddRange(loaded.OpenedLevelIDs);
-                    CurrentInventory = new UnitInventoryItemConfigsContainer(loaded.PlayerItems);
-
-                    IsNewGame = false;
-                }
-                else
-                {
-                    IsNewGame = true;
-                }
-            }
-            public void PackSerializedSaveData()
-            {
-                _ser.UpdateSerializedSave(this);
-            }
-            public void UpdateCurrentInventory(UnitInventoryComponent comp)
-            {
-                CurrentInventory = new UnitInventoryItemConfigsContainer(comp);
-            }
-        }
-
-
-
-        private void CreateDefaultSave()
-        {
-            RefreshSceneContainers();
-            //var defcfg = GetConfigByID<UnitItemsSO>("player");
-
-            //SerializedUnitInventory items = new SerializedUnitInventory();
-            //foreach (var e in defcfg.Equipment)
-            //{
-            //    items.Equips.Add(e.ID);
-            //}
-            //foreach (var i in defcfg.Inventory)
-            //{
-            //    items.Inventory.Add(i.ID);
-            //}
-            // items are added on player inventory init 
-            _loadedSave.CurrentInventory = new UnitInventoryItemConfigsContainer();
-
-            List<SceneContainer> list = new List<SceneContainer>();
-            foreach (var cont in _allLevels)
-            {
-                if (cont.IsUnlockedByDefault && cont.LevelType == LevelType.Game) list.Add(cont);
-            }
-
-            _loadedSave.PackSerializedSaveData();
-            // return new GameSave(list, items);
-        }
-
-        public void AddUnlockedLevelToSave(SceneContainer lv, bool writeSave = false)
-        {
-            _loadedSave.IsNewGame = false;
-            if (!_loadedSave.OpenedLevelsID.Contains(lv.ID))
-            {
-                _loadedSave.OpenedLevelsID.Add(lv.ID);
-            }
-            if (writeSave) _loadedSave.PackSerializedSaveData();
-        }
-
-        public void OnNewGame()
-        {
-            if (_loadedSave == null) LoadSave();
-        }
-
-        //public void UpdateInventoryInSave(UnitInventoryComponent inv, bool writeSave = false)
-        //{
-        //    _loadedSave.Items = inv.PackSaveData;
-        //    if (writeSave) _serializer.UpdateSerializedSave(_loadedSave);
-        //}
-
-        #endregion
-
-
-
-        private void OnApplicationQuit()
-        {
-            _loadedSave.PackSerializedSaveData();
-        }
 
         // only us3ed for items creation from cfgs for now
         #region configs

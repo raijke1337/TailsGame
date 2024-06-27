@@ -7,19 +7,11 @@ namespace Arcatech.Items
     public class MeleeWeaponComponent : BaseWeaponComponent
     {
 
-        protected override void FinishWeaponConfig()
+        public WeaponTriggerComponent Trigger { get; protected set; }
+        private void Awake()
         {
-            var t = GetComponent<WeaponTriggerComponent>();
-            _triggers.Add(t);
-            t.TriggerHitUnitEvent += TriggerActivationCallback;
+            Trigger = GetComponent<WeaponTriggerComponent>();
         }
-
-        public void ToggleColliders(bool enable)
-        {
-            _triggers[0].ToggleCollider(enable);
-        }
-
-
     }
 
 }

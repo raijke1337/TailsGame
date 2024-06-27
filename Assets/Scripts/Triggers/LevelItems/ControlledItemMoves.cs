@@ -26,7 +26,7 @@ namespace Arcatech.Triggers.Items
         private bool isBusy = false;
 
 
-        protected override void InitiateValues()
+        protected override void StartControllerValues()
         {
             _negPos = transform.localPosition;
             _negEulers = transform.localEulerAngles;

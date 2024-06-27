@@ -76,9 +76,12 @@ namespace Arcatech.Units.Inputs
             _target = transform.forward;
             _camera = Camera.main;
         }
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
+        }
 
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
 
             if (transform.position.y != prevY)

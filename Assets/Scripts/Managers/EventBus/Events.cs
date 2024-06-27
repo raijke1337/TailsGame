@@ -1,4 +1,5 @@
 ﻿using Arcatech.Stats;
+using Arcatech.Triggers;
 using Arcatech.Units;
 
 namespace Arcatech.EventBus
@@ -23,4 +24,25 @@ namespace Arcatech.EventBus
             Unit = unit; this.Damage = damage;
         }
     }
+
+    public struct StatsEffectTriggerEvent : IEvent
+    {
+        public StatsEffectTriggerEvent(DummyUnit target, DummyUnit source, bool isEnteringTrigger, StatsEffect[] appliedEffects)
+        {
+            Target = target;
+            Source = source;
+            IsEnteringTrigger = isEnteringTrigger;
+            AppliedEffects = appliedEffects;
+        }
+
+        public DummyUnit Target { get; }
+        public DummyUnit Source { get; }
+        public bool IsEnteringTrigger { get; }
+        public StatsEffect[] AppliedEffects { get; }
+
+
+    }
+
+
+
 }

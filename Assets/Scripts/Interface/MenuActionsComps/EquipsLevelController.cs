@@ -51,7 +51,7 @@ namespace Arcatech.Managers
             {
                 Debug.LogError($"Player unit not found!");
             }
-            _player.InitiateUnit();
+            _player.StartControllerUnit();
             _menuContainer.InitialInventoryDisplay(_player.GetInventoryComponent);
 
         }

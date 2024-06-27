@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Arcatech.Items
 {
-    public class ProjectileComponent : MonoBehaviour
+    public class ProjectileComponent : MonoBehaviour , IProjectile
     {
 
         #region managed
@@ -63,15 +63,18 @@ namespace Arcatech.Items
         public virtual void OnDestroy()
         {
             ProjectileExpiredEvent?.Invoke(this);
-
         }
 
         public event SimpleEventsHandler<Collider, ProjectileComponent> ProjectileEnteredTriggerEvent;
 
         public event SimpleEventsHandler<ProjectileComponent> ProjectileExpiredEvent;
-
-
-
-
     }
+
+
+    public interface IProjectile
+    {
+    
+    
+    }
+
 }

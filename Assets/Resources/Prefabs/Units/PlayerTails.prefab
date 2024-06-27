@@ -273,6 +273,8 @@ GameObject:
   - component: {fileID: 8743729188238178463}
   - component: {fileID: 6327298415893521332}
   - component: {fileID: 1730829326349353107}
+  - component: {fileID: 7264907082405173801}
+  - component: {fileID: 2577090860626456485}
   m_Layer: 0
   m_Name: PlayerTails
   m_TagString: Player
@@ -408,6 +410,8 @@ MonoBehaviour:
   _inventory: {fileID: 1730829326349353107}
   _stats: {fileID: 6327298415893521332}
   _inputs: {fileID: 1910410889340383960}
+  _weapons: {fileID: 7264907082405173801}
+  _skills: {fileID: 2577090860626456485}
   _faceCam: {fileID: 3246190761616418527}
 --- !u!114 &1910410889340383960
 MonoBehaviour:
@@ -572,6 +576,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7effe2a39cbdd2644a9826cd28d478b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugMessage: 0
+--- !u!114 &7264907082405173801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612417970087076613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953033af469d2e74fa07b370f303e205, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DebugMessage: 0
+--- !u!114 &2577090860626456485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612417970087076613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0084393d74a95848879ffd6cdc1a8aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMessage: 0

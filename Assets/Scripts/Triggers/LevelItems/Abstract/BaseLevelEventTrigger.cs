@@ -1,4 +1,6 @@
+using Arcatech.Effects;
 using Arcatech.Units;
+using System;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
@@ -6,18 +8,14 @@ namespace Arcatech.Triggers
     {
         [SerializeField] protected bool DestroyOnExit = false;
         [SerializeField] protected bool DestroyOnEnter = false;
-        protected override void Start()
-        {
-            base.Start();
-            Collider.isTrigger = true; 
-        }
+
+        public EffectsCollection Effects; // TODO
+
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.TryGetComponent(out PlayerUnit p))
+            if (other.gameObject.TryGetComponent(out DummyUnit p))
             {
-                TriggerCallback(p, true);
-               // OnEnter();
                 if (DestroyOnEnter)
                 {
                     gameObject.SetActive(false);
@@ -27,18 +25,14 @@ namespace Arcatech.Triggers
         }
         protected override void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.TryGetComponent(out PlayerUnit p))
+            if (other.gameObject.TryGetComponent(out DummyUnit p))
             {
-                TriggerCallback(p, false);
-               // OnExit();
-            }
-            if (DestroyOnExit)
-            {
-                gameObject.SetActive(false);
+                if (DestroyOnExit)
+                {
+                    gameObject.SetActive(false);
+                }
             }
         }
-        //protected abstract void OnEnter();
-        //protected abstract void OnExit();
 
 
     }

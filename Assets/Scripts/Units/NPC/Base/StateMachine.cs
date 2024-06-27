@@ -43,7 +43,7 @@ namespace Arcatech.AI
         public Vector3 CurrentVelocity { get; protected set; }
         public float TimeInState { get; private set; }
         public EnemyStatsConfig GetEnemyStats { get; private set; }
-        public BaseUnit ControlledUnit { get; }
+        public ControlledUnit ControlledUnit { get; }
         // set by inputs , bool for potential checks
         private bool wasSelectedUnitUpdated;
         private BaseUnit _selectedUnit;
@@ -57,8 +57,8 @@ namespace Arcatech.AI
                 wasSelectedUnitUpdated = false;
             }
         }
-        public BaseUnit FocusUnit { get; set; }
-        public BaseUnit Player { get; set; } // if it is set it means the unit is in combat
+        public DummyUnit FocusUnit { get; set; }
+        public PlayerUnit Player { get; set; } // if it is set it means the unit is in combat
 
         private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }
 
@@ -79,7 +79,7 @@ namespace Arcatech.AI
         public Transform EyesEmpty { get; private set; } // used for sphere casting to look
 
         #region setups
-        public StateMachine(NavMeshAgent agent, EnemyStatsConfig stats, State init, State dummy, BaseUnit unit)
+        public StateMachine(NavMeshAgent agent, EnemyStatsConfig stats, State init, State dummy, ControlledUnit unit)
         {
             NMAgent = agent;
             GetEnemyStats = stats;

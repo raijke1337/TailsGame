@@ -12,4 +12,5 @@ public class CheckUnitKilledTrigger : CheckConditionTrigger
     {
         return !_unit.IsUnitAlive;
     }
+
 }

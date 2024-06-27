@@ -10,6 +10,7 @@ using KBCore.Refs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Arcatech.Units
 {
@@ -17,7 +18,7 @@ namespace Arcatech.Units
     public abstract class ControlInputsBase : ManagedControllerBase
     {
         protected const float zeroF = 0f;
-        public BaseUnit Unit { get; set; }
+        public ControlledUnit Unit { get; set; }
         [SerializeField, Self] protected Rigidbody _rb;
         protected Dictionary<MovementStatType, StatValueContainer> _stats { get; set; }
 
@@ -40,17 +41,6 @@ namespace Arcatech.Units
         protected abstract void OnLockInputs(bool isLock);
 
         protected float lastDelta;
-
-        //specific 
-        public event SimpleEventsHandler StaggerHappened;
-        public event SimpleEventsHandler ShieldBreakHappened;
-        public event SimpleEventsHandler<float> DamageHappened;
-        public event SimpleEventsHandler ZeroHealthHappened;
-        public event SkillRequestedEvent SkillSpawnEvent;
-
-        protected virtual void ShieldBreakEventCallback() => ShieldBreakHappened?.Invoke();
-
-        #region setup
 
 
         public ControlInputsBase PopulateDictionary()
@@ -76,23 +66,18 @@ namespace Arcatech.Units
         #region ManagedController
 
 
-        public override void UpdateController(float delta)
+        public override void ControllerUpdate(float delta)
         {
             if (LockInputs) return;
             lastDelta = delta;
 
             _animator.SetFloat("AirTime", _groundedPlatform.AirTime);
 
-            if (_groundedPlatform.IsGrounded)
-            {
-                UpdateAnimatorVector(DoHorizontalMovement(delta));
-                AnimateMovement();
-            }
+
         }
         public override void StartController()
         {
             ControllerBindings(true);
-            base.StartController();
             _isReady = true;
 
         }
@@ -101,12 +86,17 @@ namespace Arcatech.Units
             ControllerBindings(false);
             _isReady = false;
         }
+
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
+            if (_groundedPlatform.IsGrounded)
+            {
+                UpdateAnimatorVector(DoHorizontalMovement(fixedDelta));
+                AnimateMovement();
+            }
+        }
         #endregion
         protected abstract ControlInputsBase ControllerBindings(bool start);
-
-        #endregion
-
-
 
 
         #region movement and jumping
@@ -132,7 +122,7 @@ namespace Arcatech.Units
         #endregion
 
         #region animations
-        [SerializeField,Self] protected Animator _animator;
+        [SerializeField, Self] protected Animator _animator;
         public bool IsInMeleeCombo = false;
         Vector2 animVect;
 
@@ -238,6 +228,8 @@ namespace Arcatech.Units
         }
 
 
+        public event Action<UnitActionType> UnitActionRequestedEvent = delegate { };
+
         protected virtual void RequestCombatAction(UnitActionType type)
         {
             if (LockInputs || !_groundedPlatform.IsGrounded) return;
@@ -249,20 +241,11 @@ namespace Arcatech.Units
 
             switch (type)
             {
-                case UnitActionType.Melee:
-                    break;
-                case UnitActionType.Ranged:
-                    break;
-                case UnitActionType.DodgeSkill:
-                    break;
-                case UnitActionType.MeleeSkill:
-                    break;
-                case UnitActionType.RangedSkill:
-                    break;
-                case UnitActionType.ShieldSkill:
-                    break;
                 case UnitActionType.Jump:
                     DoJump();
+                    break;
+                default:
+                    UnitActionRequestedEvent.Invoke(type);
                     break;
             }
         }

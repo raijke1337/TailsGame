@@ -167,7 +167,7 @@ namespace Arcatech.UI
                 try
                 {
                     _skillTooltipPanel.gameObject.SetActive(true);
-                    desc = e.Skill.Description;
+                   // desc = e.GetSkillData.Descrription;
 
                     _skillTooltipPanel.Texts = desc;
 

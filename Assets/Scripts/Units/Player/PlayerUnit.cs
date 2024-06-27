@@ -10,7 +10,8 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    public class PlayerUnit : BaseUnit
+    [RequireComponent(typeof(InputsPlayer))]
+    public class PlayerUnit : ControlledUnit
     {
         [SerializeField, Child] protected FaceCameraCOntrroller _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
@@ -19,9 +20,9 @@ namespace Arcatech.Units
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
-        public override void InitiateUnit()
+        public override void StartControllerUnit()
         {
-            base.InitiateUnit();
+            base.StartControllerUnit();
             
 
             ToggleCamera(true);
@@ -32,7 +33,7 @@ namespace Arcatech.Units
                 return _inventory.IsItemEquipped(EquipmentType.MeleeWeap, out _) || _inventory.IsItemEquipped(EquipmentType.RangedWeap, out _);
         } }
 
-        protected override void HandleStatChangesEvents(StatChangedEvent ev)
+        protected override void RaiseStatChangeEvent(StatChangedEvent ev)
         {
             EventBus<StatChangedEvent>.Raise(ev);
         }
@@ -80,7 +81,7 @@ namespace Arcatech.Units
 
         protected override void HandleDamage(float value)
         {
-            _animator.SetTrigger("TakeDamage");
+            base.HandleDamage(value);
 
             if (_inputs.DebugMessage)
                 Debug.Log($"Player unit handle dmg event");
@@ -98,12 +99,13 @@ namespace Arcatech.Units
             return ReferenceUnitType.Player;
         }
 
-        protected override void OnItemAdd(Item i)
+        public override void AddItem(Item item, bool equip)
         {
+            base.AddItem(item,equip);
             _animator.SetTrigger("ItemPickup");
             if (_inputs.DebugMessage)
             {
-                Debug.Log($"Player picked up item {i}");
+                Debug.Log($"Player picked up item {item}");
             }
         }
     }

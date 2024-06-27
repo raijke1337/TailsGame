@@ -13,18 +13,21 @@ namespace Arcatech.Managers
         private TriggersManager triggers;
 
         #region ManagerBase
-        public override void Initiate()
+        public override void StartController()
         {
             effectsManager = EffectsManager.Instance;
             triggers = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
         }
 
-        public override void RunUpdate(float delta)
+        public override void ControllerUpdate(float delta)
         {
 
         }
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
 
-        public override void Stop()
+        }
+        public override void StopController()
         {
 
         }
@@ -86,7 +89,7 @@ namespace Arcatech.Managers
                     case SkillState.AoE:
                         foreach (var ef in comp.GetEffectCfgs)
                         {
-                            triggers.ServeTriggerApplication(new Triggers.StatsEffect(ef), comp.Owner, t, true);
+                          //  triggers.ServeTriggerApplication(new Triggers.StatsEffect(ef), comp.Owner, t, true);
                         }
 
                         //if (t!=null) Debug.Log($"{comp.Data.Description.Title} has hit {t}");

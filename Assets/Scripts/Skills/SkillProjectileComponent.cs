@@ -11,14 +11,13 @@ namespace Arcatech.Skills
 
     {
 
-        private SerizalizedSkillConfiguration _cfg;
-        public virtual void Setup(SerizalizedSkillConfiguration cfg, BaseUnit owner)
+        private SerializedSkillConfiguration _cfg;
+        public virtual void Setup(SerializedSkillConfiguration cfg, BaseUnit owner)
         {
             _cfg = cfg;
             GetEffects = new EffectsCollection(cfg.Effects);
             base.Setup(cfg.SkillProjectileConfig,owner);
 
-            SpawnPlace = cfg.SpawnPlace; // override proj object ettings
         }
 
         public EffectsCollection GetEffects { get; private set; }

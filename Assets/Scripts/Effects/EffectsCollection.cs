@@ -12,7 +12,7 @@ namespace Arcatech.Effects
         [SerializeField] public SerializedDictionary<EffectMoment, CFXR_Effect[]> Effects;
     }
 
-
+    [Serializable]
     public class EffectsCollection
     {
         private Dictionary <EffectMoment, AudioClip[]> _soundsdict;
