@@ -20,10 +20,7 @@ namespace Arcatech.Units
                 SetMovementStats(movementStats)
                 .StartController();
 
-                _inputs.UnitActionRequestedEvent += HandleUnitAction;
-
-
-                
+                _inputs.UnitActionRequestedEvent += HandleUnitAction;                
 
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)

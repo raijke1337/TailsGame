@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 namespace Arcatech.UI
 {
-    public class InventoryItemsHolder : ManagedControllerBase
+    public class InventoryItemsHolder : MonoBehaviour, IManagedController
     {
         [SerializeField] protected ItemTileComponent TilePrefab;
         [SerializeField] protected Transform _iconsParent;
@@ -14,7 +14,7 @@ namespace Arcatech.UI
         /// </summary>
         /// <param name="content"></param>
         /// <returns>tile where the item is placed</returns>
-        public virtual ItemTileComponent AddTileContent(InventoryItem content)
+        public virtual ItemTileComponent AddTileContent(Item content)
         {
             if (content == null) return null;
             if (_tiles == null) _tiles = new List<ItemTileComponent>();
@@ -34,7 +34,7 @@ namespace Arcatech.UI
         /// </summary>
         /// <param name="content"></param>
         /// <returns>tile that was destroyed</returns>
-        public virtual ItemTileComponent RemoveTileContent(InventoryItem content)
+        public virtual ItemTileComponent RemoveTileContent(Item content)
         {
             if (content == null) return null;
             var tile = _tiles.First(t => t.Item == content);
@@ -44,20 +44,20 @@ namespace Arcatech.UI
         }
 
 
-        public override void StartController()
+        public  void StartController()
         {
             _tiles = new List<ItemTileComponent>();
         }
 
-        public override void ControllerUpdate(float delta)
+        public  void ControllerUpdate(float delta)
         {
 
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public  void FixedControllerUpdate(float fixedDelta)
         {
 
         }
-        public override void StopController()
+        public  void StopController()
         {
         }
     }

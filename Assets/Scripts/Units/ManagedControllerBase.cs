@@ -1,38 +1,24 @@
 using Arcatech.Items;
 using Arcatech.Units;
 using KBCore.Refs;
+using System;
 using UnityEngine;
-
-public abstract class ManagedControllerBase : ValidatedMonoBehaviour, IManagedController
+[Serializable]
+public abstract class ManagedControllerBase : IManagedController
 {
-    [SerializeField] public bool DebugMessage;
-    protected bool _isReady;
-
-    public abstract void StartController();
-    public abstract void ControllerUpdate(float delta);
-    public abstract void FixedControllerUpdate(float fixedDelta);
-    public abstract void StopController();
-
-
-    #region needsOwner
-
-    private DummyUnit _owner;
-    public DummyUnit Owner => _owner;
-
-    public INeedsOwner SetOwner(DummyUnit owner)
+    [SerializeField] public bool DebugMessage = false;
+    public ManagedControllerBase(DummyUnit dummyUnit)
     {
-        _owner = owner;
-        return this;
+        Owner = dummyUnit;
     }
-    #endregion
-}
 
-
-
-public interface IManagedController : INeedsOwner
-{
+    public DummyUnit Owner { get; }
     public abstract void StartController();
     public abstract void ControllerUpdate(float delta);
     public abstract void FixedControllerUpdate(float fixedDelta);
+    
     public abstract void StopController();
+
+
+
 }

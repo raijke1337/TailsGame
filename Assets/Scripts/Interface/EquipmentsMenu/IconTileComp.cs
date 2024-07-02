@@ -18,8 +18,8 @@ namespace Arcatech.UI
 
 
 
-        private InventoryItem _item;
-        public InventoryItem Item
+        private Item _item;
+        public Item Item
         {
             get
             { return _item; }
@@ -27,7 +27,7 @@ namespace Arcatech.UI
             {
                 _item = value;
                 if (value == null) Clear();
-                else SetSprite(value.ItemIcon);
+                else SetSprite(value.Config.Description.Picture);
             }
         }
 

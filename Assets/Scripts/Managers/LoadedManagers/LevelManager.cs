@@ -5,9 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Arcatech.Level;
+using Arcatech.EventBus;
+using Arcatech.Items;
+
 namespace Arcatech.Managers
 {
-    public class LevelManager : LoadedManagerBase
+    public class LevelManager : MonoBehaviour, IManagedController
     {
         [SerializeField] private List<BaseLevelEventTrigger> triggers = new List<BaseLevelEventTrigger>();
         private GameInterfaceManager _ui;
@@ -16,7 +19,7 @@ namespace Arcatech.Managers
         protected List<LevelBlockDecorPrefabComponent> _levelBlocks;
 
         #region managed
-        public override void StartController()
+        public virtual void StartController()
         {
             if (triggers != null) triggers.Clear();
             triggers = new List<BaseLevelEventTrigger>();
@@ -37,19 +40,19 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
             foreach (var t in _levelBlocks)
             {
                 t.ControllerUpdate(delta);
             }
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
 
         }
 
-        public override void StopController()
+        public virtual void StopController()
         {
             foreach (var t in triggers.ToList()) { ManageTrigger(t, false); }
             foreach (var t in _levelBlocks)
@@ -63,7 +66,9 @@ namespace Arcatech.Managers
         {
             ManageTrigger(tr, registering);
         }
-
+        ///
+        /// Massive todo
+        ///
         private void ManageTrigger(BaseLevelEventTrigger tr,bool registering)
         {
             if (registering)
@@ -96,17 +101,18 @@ namespace Arcatech.Managers
 
             if (tr is LevelRewardTrigger rew)
             {
-                //if (ShowDebug)
+                //if (DebugMessage)
                 //{
                 //    Debug.Log($"Picked up {rew.Content}");
                 //}
-                u.AddItem(rew.Content,true);
+                //u.AddItem(rew.Content,true);
+
                 ManageTrigger(rew, false);
 
             }
             if (tr is LevelTextTrigger txt)
             {
-                //if (ShowDebug)
+                //if (DebugMessage)
                 //{
                 //    Debug.Log($"Level text trigger {txt}");
                 //}
@@ -114,18 +120,15 @@ namespace Arcatech.Managers
             }
             if (tr is LevelCompleteTrigger comp)
             {
-                //if (ShowDebug)
-                //{
-                //    Debug.Log($"");
-                //}
-                GameManager.Instance.OnLevelCompleteTrigger(comp.UnlocksLevel);
+
+                EventBus<LevelCompletedEvent>.Raise(new LevelCompletedEvent(comp.ThisLevel));
             }
 
             if (tr is CheckConditionTrigger check)
             {
                 bool satisfied = check.GetCondition;
                 check.UpdateControlledItems(satisfied);
-                //if (ShowDebug)
+                //if (DebugMessage)
                 //{
                 //    Debug.Log($"{}");
                 //}

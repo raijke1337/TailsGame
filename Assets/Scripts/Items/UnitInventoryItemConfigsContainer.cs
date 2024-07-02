@@ -8,108 +8,38 @@ using UnityEngine;
 
 namespace Arcatech.Items
 {
-
-    #region items
-
-    // used for npc inventory init
     [Serializable]
     public class UnitInventoryItemConfigsContainer
     {
-        public string ID;
-        [SerializeField] public List<Equip> Equipment;
-        [SerializeField, Space] public List<Item> Inventory;
+        [SerializeField] public List<ItemSO> Equipment;
+        [SerializeField] public List<ItemSO> Inventory;
+
+        // used to load items from save
+        public UnitInventoryItemConfigsContainer(UnitInventoryItemConfigsContainer refe)
+        {
+            Equipment = new List<ItemSO>(refe.Equipment);
+            Inventory = new List<ItemSO>(refe.Inventory);
+        }
+
+        // used for default inventory load
         public UnitInventoryItemConfigsContainer(UnitItemsSO cfg)
         {
-            LoadCfg(cfg);
+            Equipment = new List<ItemSO>(cfg.Equipment);
+            Inventory = new List<ItemSO>(cfg.Inventory);
         }
-        // used for player inventory load
-        public UnitInventoryItemConfigsContainer(SerializedUnitInventory inv)
+        // used to pack save data
+        public UnitInventoryItemConfigsContainer(List<Item> equipment, List<Item> inventory)
         {
-            Equipment = new List<Equip>();
-            Inventory = new List<Item>();
-
-            foreach (string id in inv.Inventory)
+            foreach (Equipment item in equipment)
             {
-                var i = DataManager.Instance.GetConfigByID<Item>(id);
-                if (i is Equip e)
-                {
-                    Inventory.Add(e);
-                }
-                else
-                {
-                    Inventory.Add(i);
-                }
+                Equipment.Add(item.Config);
             }
-            foreach (string id in inv.Equips)
+            foreach (Item inventoryItem in inventory)
             {
-                var i = DataManager.Instance.GetConfigByID<Item>(id);
-                if (i is Equip e)
-                {
-                    Equipment.Add(e);
-                }
+                Inventory.Add(inventoryItem.Config);
             }
         }
-        // fpr saving
-        public UnitInventoryItemConfigsContainer(UnitInventoryComponent cfg)
-        {
-            Equipment = new List<Equip>();
-            Inventory = new List<Item>();
-
-            foreach (var item in cfg.GetCurrentInventory)
-            {
-                var i = DataManager.Instance.GetConfigByID<Item>(item.ID);
-                if (i is Equip e)
-                {
-                    Inventory.Add(e);
-                }
-                else
-                {
-                    Inventory.Add(i);
-                }
-            }
-            foreach (var item in cfg.GetCurrentEquips)
-            {
-                var i = DataManager.Instance.GetConfigByID<Item>(item.ID);
-                if (i is Equip e)
-                {
-                    Equipment.Add(e);
-                }
-                else
-                {
-                    Debug.Log($"Trying to save {item} as equipped and failed");
-                }
-            }
-
-
-        }
-        public UnitInventoryItemConfigsContainer()
-        {
-            Equipment = new List<Equip>();
-            Inventory = new List<Item>();
-        }
-        public void LoadCfg (UnitItemsSO cfg)
-        {
-            Equipment = new List<Equip>(cfg.Equipment);
-            Inventory = new List<Item>();
-
-            foreach (Item i in cfg.Inventory)
-            {
-                if (i is Equip e)
-                {
-                    Inventory.Add(e);
-                }
-                else
-                {
-                    Inventory.Add(i);
-                }
-            }
-            ID = cfg.ID;
-        }
-
     }
-
-    #endregion
-
 
 
 }

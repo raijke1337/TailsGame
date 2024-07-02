@@ -8,14 +8,13 @@ using UnityEngine.Assertions;
 using AYellowpaper.SerializedCollections;
 using System.Linq;
 using TMPro;
+using UnityEngine.Events;
 
 namespace Arcatech.UI
 {
-    public class EquipmentsMenuContainerScript : MonoBehaviour
+    public class EquipmentsMenuContainerScript : MonoBehaviour, IUnitInventoryView
     {
-        #region display
-
-        private UnitInventoryComponent _playerInventory;
+        #region display;
 
         [SerializeField] SerializedDictionary<EquipmentType, ItemTileComponent> _equipsTiles;
         [SerializeField] List<ItemTileComponent> _inventoryTiles = new List<ItemTileComponent>();
@@ -23,24 +22,32 @@ namespace Arcatech.UI
         [Space, SerializeField] private ItemTileComponent _tilePreset; // for items
         [SerializeField] private Transform _tileParent; // for items too
 
+        [SerializeField] TooltipPanelComp _itemTooltipPanel;
+        [SerializeField] TooltipPanelComp _skillTooltipPanel;
 
-        public void InitialInventoryDisplay (UnitInventoryComponent inv)
-        {
-            _playerInventory = inv;
-            UpdateInventoryDisplay();
-            _itemTooltipPanel.gameObject.SetActive(false);
-            _skillTooltipPanel.gameObject.SetActive(false);
-            _swapItemsButton.gameObject.SetActive(false);
-        }
-              
-        public void UpdateInventoryDisplay()
+
+
+        #endregion
+
+        UnitInventoryModel _inventoryModel;
+
+
+
+        private void Awake()
         {
             Assert.IsNotNull(_tilePreset);
             Assert.IsNotNull(_tileParent);
             Assert.IsNotNull(_equipsTiles);
-            Assert.IsNotNull(_playerInventory);
             Assert.IsNotNull(_swapItemsButton);
 
+
+            _itemTooltipPanel.gameObject.SetActive(false);
+            _skillTooltipPanel.gameObject.SetActive(false);
+            _swapItemsButton.gameObject.SetActive(false);
+        }
+        public void RefreshView(UnitInventoryModel model)
+        {
+            _inventoryModel = model;
             //clean up
             foreach (var tile in _equipsTiles.Values)
             {
@@ -60,17 +67,17 @@ namespace Arcatech.UI
             }
 
             //draw
-            foreach (EquipmentItem equip in _playerInventory.GetCurrentEquips)
+            foreach (Equipment equip in model.Equipments.GetAllValues())
             {
-                _equipsTiles[equip.ItemType].Item = equip;
-                _equipsTiles[equip.ItemType].IconClickedEvent += IconTileClicked;
+                _equipsTiles[equip.Type].Item = equip;
+                _equipsTiles[equip.Type].IconClickedEvent += IconTileClicked;
             }
-            var inve = _playerInventory.GetCurrentInventory;
+            var inve = model.Inventory.items;
 
             int placedTiles = _inventoryTiles.Count;
 
             int counter = 0;
-            while (counter < placedTiles && counter < inve.Count)
+            while (counter < placedTiles && counter < inve.Count())
             {
                 _inventoryTiles[counter].gameObject.SetActive(true);
                 _inventoryTiles[counter].IconClickedEvent += IconTileClicked;
@@ -81,7 +88,7 @@ namespace Arcatech.UI
             if (counter == placedTiles)
             // case : not enough tiles
             {
-                while (counter < inve.Count)
+                while (counter < inve.Count())
                 {
                     var tile = Instantiate(_tilePreset, _tileParent);
                     tile.Item = inve.ToArray()[counter];
@@ -91,7 +98,7 @@ namespace Arcatech.UI
                 }
             }
             //case : some tiles left : deactivate the empty ones
-            if (counter == inve.Count)
+            if (counter == inve.Count())
             {
                 while (counter < _inventoryTiles.Count)
                 {
@@ -99,62 +106,49 @@ namespace Arcatech.UI
                     counter++;
                 }
             }
-
         }
 
+        #region item operations
 
-
-
-        #endregion
-
-
-        #region un(equip)
+        public event UnityAction InventoryChanged = delegate { };
 
         [SerializeField] private TextMeshProUGUI _swapItemsButton;
-        private InventoryItem _selectedItem;
+        private Item _selectedItem;
         public void UI_OnUpdateButtonClick()
         {
-            _playerInventory.HandleSwapButton(_selectedItem);
             _itemTooltipPanel.gameObject.SetActive(false);
             _skillTooltipPanel.gameObject.SetActive(false);
             _swapItemsButton.gameObject.SetActive(false);
 
-            UpdateInventoryDisplay();
+            InventoryChanged.Invoke();
         }
-
-
-        #endregion
-
-        #region click item
 
         private IconTileComp _hldTile;
         private void IconTileClicked(IconTileComp arg)
         {
             if (_hldTile != null) { _hldTile.HighLightToggle(); }
 
-           // Debug.Log($"Registered click on {arg.Item.ID} in {arg.name}");
             arg.HighLightToggle();
             _hldTile = arg;
             ItemTileClicked(arg.Item);
         }
-        private void ItemTileClicked(InventoryItem arg)
+        private void ItemTileClicked(Item arg)
         {
             _selectedItem = arg;
             ShowTooltips(arg);
             ShowButton(arg);
         }
 
-        [SerializeField] TooltipPanelComp _itemTooltipPanel;
-        [SerializeField] TooltipPanelComp _skillTooltipPanel;
 
-        private void ShowTooltips(InventoryItem item)
+
+        private void ShowTooltips(Item item)
         {
             _itemTooltipPanel.gameObject.SetActive(false);
             _skillTooltipPanel.gameObject.SetActive(false);
 
             if (item == null) return;
 
-            var desc = item.GetDescription;
+            var desc = item.Config.Description;
             try
             {
                 _itemTooltipPanel.gameObject.SetActive(true);
@@ -162,7 +156,7 @@ namespace Arcatech.UI
             }
             catch { }
 
-            if (item is EquipmentItem e)
+            if (item is Equipment e)
             {
                 try
                 {
@@ -176,13 +170,13 @@ namespace Arcatech.UI
             }
         }
 
-        private void ShowButton(InventoryItem item)
+        private void ShowButton(Item item)
         {
             _swapItemsButton.gameObject.SetActive(false);
-            if (item is EquipmentItem eq)
+            if (item is Equipment eq)
             {
                 _swapItemsButton.gameObject.SetActive(true);
-                if (_playerInventory.IsItemEquipped(eq.ItemType, out _))
+                if (_inventoryModel.Equipments.TryGetValue(item.Type, out _))
                 {
                     _swapItemsButton.SetText("UNEQUIP");
                 }
@@ -192,6 +186,7 @@ namespace Arcatech.UI
                 }
             }
         }
+
 
         #endregion
 

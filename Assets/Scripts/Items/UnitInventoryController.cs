@@ -1,0 +1,185 @@
+using Arcatech.EventBus;
+using Arcatech.Items;
+using Arcatech.Skills;
+using Arcatech.Triggers;
+using Arcatech.Units;
+using KBCore.Refs;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
+
+namespace Arcatech.Items
+{
+    public class UnitInventoryController : ManagedControllerBase
+    {
+
+
+        private IUnitInventoryView InventoryView;
+        private UnitInventoryModel Inventory;
+
+
+
+
+        #region setup
+
+
+        public UnitInventoryController SetItemEmpties(ItemEmpties e)
+        {
+            _empties = e;
+            return this;
+        }
+
+        public UnitInventoryController SetModelView (IUnitInventoryView view)
+        {
+            if (view != null)
+            {
+                InventoryView = view;
+                InventoryView.RefreshView(Inventory);
+                view.InventoryChanged += OnInvenoryChangedUI;
+            }
+
+            return this;
+        }
+
+        public UnitInventoryItemConfigsContainer PackPlayerData()
+        {
+            List<Item> inv = new List<Item>(Inventory.Inventory.items);
+            List<Item> eq = new List<Item>(Inventory.Equipments.GetAllValues());
+
+            return new UnitInventoryItemConfigsContainer(eq,inv);
+        }
+
+
+        #endregion
+
+        private void OnInvenoryChangedUI()
+        {
+            // moveto inventory, move to equipped go here)
+            // events from the view component
+            if (DebugMessage)
+            {
+
+                Debug.Log($"Something happened in inventory view");
+            }
+        }
+
+
+        #region used by other components
+        private ItemEmpties _empties;
+
+        public UnitInventoryController(UnitInventoryItemConfigsContainer cfg,ItemEmpties em, DummyUnit dummyUnit) : base(dummyUnit)
+        {
+            Inventory = new UnitInventoryModel(cfg, dummyUnit);
+            _empties= em;
+        }
+
+        public UnitInventoryController DrawItems(IDrawItemStrategy strategy)
+        {
+            foreach (var e in Inventory.Equipments.GetAllValues())
+            {
+                ItemPlaceType placeType = strategy.GetPlaces[e.Type];
+                switch (placeType)
+                {
+                    case ItemPlaceType.Hidden:
+                        e.ItemShown = false;
+                        break;
+                    default:
+                        e.SetItemEmpty(_empties.ItemPositions[strategy.GetPlaces[e.Type]]);
+                        break;
+                }
+            }
+            return this;
+        }
+
+        public SerializedSkillConfiguration[] GetSkillConfigs
+        {
+            get
+            {
+                List<SerializedSkillConfiguration> foundSkills = new();
+                foreach (var e in Inventory.Equipments.GetAllValues())
+                {
+                    if (e is IHasSkill ss)
+                    {
+                        foundSkills.Add(ss.GetSkillData);
+                    }
+                }
+                return foundSkills.ToArray();
+            }
+        } 
+
+        public IWeapon[] GetWeapons
+        {
+            get
+            {
+                List<IWeapon> weaps = new();
+                foreach (var e in Inventory.Equipments.GetAllValues())
+                {
+                    if (e is IWeapon ww)
+                    {
+                        weaps.Add(ww);                        
+                    }
+                }
+                return weaps.ToArray();
+            }
+        }
+
+        public SerializedStatModConfig[] GetCurrentMods
+        {
+            get
+            {
+                var list = new List<SerializedStatModConfig>();
+                foreach (var equip in Inventory.Equipments.GetAllValues())
+                {
+                    if (equip.StatMods != null)
+                    {
+                        list.AddRange(equip.StatMods);
+                    }
+                }
+                return list.ToArray();
+            }
+        }
+
+
+        private void InventoryModelUpdated(IEnumerable<IItem> obj)
+        {
+            
+            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner,this));
+        }
+
+        #endregion
+
+
+        #region managed  - sub to view and model events rhere
+        public override void StartController()
+        {
+            Inventory.OnInventoryChange += InventoryModelUpdated;
+            Inventory.OnEquipsChange += InventoryModelUpdated;
+        }
+
+        public override void ControllerUpdate(float delta)
+        {
+
+        }
+
+        public override void StopController()
+        {
+            Inventory.OnInventoryChange += InventoryModelUpdated;
+            Inventory.OnEquipsChange -= InventoryModelUpdated;
+            if (InventoryView != null)
+            {
+                InventoryView.InventoryChanged -= OnInvenoryChangedUI;
+            }
+        }
+
+        public override void FixedControllerUpdate(float fixedDelta)
+        {
+        }
+        #endregion
+ 
+    }
+
+
+}

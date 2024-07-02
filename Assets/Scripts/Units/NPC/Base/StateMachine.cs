@@ -6,10 +6,10 @@ using UnityEngine.AI;
 namespace Arcatech.AI
 {
     [Serializable]
-    public class StateMachine : IManagedComponent
+    public class StateMachine : IManagedController
     {
         #region handler
-        public void UpdateInDelta(float deltaTime)
+        public void ControllerUpdate(float deltaTime)
         {
             if (ControlledUnit.LockUnit) return;
             CurrentState.UpdateState(this);
@@ -17,7 +17,7 @@ namespace Arcatech.AI
             TimeInState += deltaTime;
             if (wasSelectedUnitUpdated) OnUpdatedUnit();
         }
-        public void StartComp()
+        public void StartController()
         {
             var eyes = new GameObject("SphereCaster");
             eyes.transform.SetPositionAndRotation(ControlledUnit.transform.position, ControlledUnit.transform.rotation);
@@ -26,11 +26,13 @@ namespace Arcatech.AI
 
             EyesEmpty = eyes.transform;
         }
-        public bool IsReady { get => true; }
-
-        public void StopComp()
+        public void StopController()
         {
 
+        }
+        public void FixedControllerUpdate(float fixedDelta)
+        {
+           
         }
 
         #endregion
@@ -69,8 +71,6 @@ namespace Arcatech.AI
         public event StateMachineEvent<ReferenceUnitType> RequestFocusSM;
         public event StateMachineEvent AggroRequestedSM;
         public event StateMachineEvent RotationRequestedSM;
-
-        public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent; // unused
 
         public NavMeshAgent NMAgent { get; }
         [HideInInspector] public Transform[] PatrolPoints;

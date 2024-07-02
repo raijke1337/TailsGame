@@ -90,45 +90,7 @@ namespace Arcatech
     #endregion
 
 
-    #region interfaces
 
-
-    public interface IHasEffects
-    {
-        public event EffectsManagerEvent BaseControllerEffectEvent;
-    }
-
-    public interface ITakesTriggers
-    {
-        void ApplyEffect(StatsEffect effect);
-    }
-
-    public interface IManagedComponent : IManaged
-    {
-        bool IsReady { get; }
-    }
-    public interface IManaged
-    {
-        void UpdateInDelta(float deltaTime);
-        void StartComp();
-        void StopComp();
-    }
-
-
-    public interface IHasOwner
-    { 
-        DummyUnit Owner { get; } 
-    }
-
-
-    public interface INeedsEmpties
-    { ItemEmpties Empties { get; } }
-
-
-
-
-
-    #endregion
 
 
 }

@@ -8,12 +8,12 @@ namespace Arcatech.UI
     public class EquipsPanel : InventoryItemsHolder
     {
         [SerializeField] protected SerializedDictionary<EquipmentType, ItemTileComponent> EquipsTiles;
-        public override ItemTileComponent AddTileContent(InventoryItem content)
+        public override ItemTileComponent AddTileContent(Item content)
         {
             if (content == null) return null;
             try
             {
-                var tile = EquipsTiles[content.ItemType];
+                var tile = EquipsTiles[content.Type];
                 tile.Item = content;
                 return tile;
             }
@@ -25,12 +25,12 @@ namespace Arcatech.UI
 
         }
 
-        public override ItemTileComponent RemoveTileContent(InventoryItem content)
+        public override ItemTileComponent RemoveTileContent(Item content)
         {
             if (content == null) return null;
             try
             {
-                var t = EquipsTiles[content.ItemType];
+                var t = EquipsTiles[content.Type];
                 t.Clear();
                 return t;
             }

@@ -5,11 +5,11 @@ namespace Arcatech.Triggers
 
     public class CheckItemTrigger : CheckConditionTrigger
     {
-        public Item RequiredItem;
+        public ItemSO RequiredItem;
 
         protected override bool CheckTheCondition()
         {
-            return GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent.HasItem(RequiredItem.ID, out _);
+            return DataManager.Instance.PlayerHasItem(RequiredItem);
         }
    
     }

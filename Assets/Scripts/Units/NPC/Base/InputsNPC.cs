@@ -50,7 +50,7 @@ namespace Arcatech.Units.Inputs
         public override void ControllerUpdate(float delta)
         {
             if (_stateMachine == null) return;
-            _stateMachine.UpdateInDelta(delta);
+            _stateMachine.ControllerUpdate(delta);
             CurrentState = _stateMachine.CurrentState;
 
             base.ControllerUpdate(delta);
@@ -110,7 +110,7 @@ namespace Arcatech.Units.Inputs
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (!DebugMessage || _stateMachine == null || CurrentState == null) return;
+            if ( _stateMachine == null || CurrentState == null) return;
             // state gizmos
             Gizmos.color = CurrentState.StateGizmoColor;
             Gizmos.DrawSphere(_stateMachine.EyesEmpty.position, 0.1f);
@@ -139,7 +139,7 @@ namespace Arcatech.Units.Inputs
         {
             if (start)
             {
-                _stateMachine.StartComp();
+                _stateMachine.StartController();
                 _stateMachine.AgressiveActionRequestSM += Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM += Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM += Fsm_GetFocusUnitSM;
@@ -148,7 +148,7 @@ namespace Arcatech.Units.Inputs
             }
             else
             {
-                _stateMachine.StopComp();
+                _stateMachine.StopController();
                 _stateMachine.AgressiveActionRequestSM -= Fsm_AgressiveActionRequestSM;
                 _stateMachine.PlayerSpottedSM -= Fsm_PlayerSpottedSM;
                 _stateMachine.RequestFocusSM -= Fsm_GetFocusUnitSM;

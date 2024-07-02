@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 namespace Arcatech.Managers
 {
-    public class LoadedManagers : ManagedControllerBase
+    public class LoadedManagers : MonoBehaviour, IManagedController
     {
         public SkillsPlacerManager SkillsPlacerManager { get; private set; }
         public TriggersManager TriggersProjectilesManager { get; private set; }
@@ -16,7 +16,7 @@ namespace Arcatech.Managers
         public IsoCameraController CameraController { get; private set; }
 
 
-        private LoadedManagerBase[] _managers;
+        private IManagedController[] _managers;
         LevelType _currentLvlType;
         // private SceneContainer _lvl;
 
@@ -42,7 +42,7 @@ namespace Arcatech.Managers
                     CameraController = Instantiate(GameManager.Instance.GetGameCameraPrefab);
                 }          
 
-                _managers = new LoadedManagerBase[6];
+                _managers = new IManagedController[6];
 
                 _managers[0] = LevelManager; // init level blocks 
                 _managers[1] = TriggersProjectilesManager; // load spawned and pre-placed triggers
@@ -53,7 +53,7 @@ namespace Arcatech.Managers
             }
             else
             {
-                _managers = new LoadedManagerBase[3] { LevelManager, UnitsManager, GameInterfaceManager };
+                _managers = new IManagedController[3] { LevelManager, UnitsManager, GameInterfaceManager };
             }
             foreach (var m in _managers)
             {
@@ -65,7 +65,7 @@ namespace Arcatech.Managers
         }
 
 
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
             foreach (var m in _managers)
             {
@@ -74,7 +74,7 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
             foreach (var m in _managers)
             {
@@ -83,7 +83,7 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void StopController()
+        public virtual void StopController()
         {
             if (_currentLvlType == LevelType.Game || _currentLvlType == LevelType.Scene)
             {
@@ -92,7 +92,7 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void StartController()
+        public virtual void StartController()
         {
         }
     }

@@ -17,7 +17,7 @@ namespace Arcatech.Units
         //used by room ctrl
         public event SimpleEventsHandler<NPCUnit> OnUnitAttackedEvent;
         [SerializeField] private LevelRewardTrigger _dropPrefab;
-        [SerializeField] private Item _drop; 
+        [SerializeField] private ItemSO _drop; 
 
 
         [Space, SerializeField] protected EnemyStatsConfig _enemyStatsConfig;

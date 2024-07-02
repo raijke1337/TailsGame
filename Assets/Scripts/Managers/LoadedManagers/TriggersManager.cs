@@ -9,19 +9,19 @@ using System.Linq;
 using UnityEngine;
 namespace Arcatech.Managers
 {
-    public class TriggersManager : LoadedManagerBase
+    public class TriggersManager : MonoBehaviour, IManagedController
     {
 
         EventBinding<StatsEffectTriggerEvent> _triggersBinding;
 
         #region LoadedManager
-        public override void StartController()
+        public virtual void StartController()
         {
             _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
             _applied = new Dictionary<StatsEffect, List<DummyUnit>>();
             EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
         }
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
             if (_projectiles == null) return;
             foreach (var p in _projectiles.ToList())
@@ -29,12 +29,12 @@ namespace Arcatech.Managers
                 p.UpdateInDelta(delta);
             }
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
 
         }
 
-        public override void StopController()
+        public virtual void StopController()
         {
             _applied.Clear();
             EventBus<StatsEffectTriggerEvent>.Deregister(_triggersBinding);
@@ -46,10 +46,10 @@ namespace Arcatech.Managers
         private Dictionary<StatsEffect, List<DummyUnit>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-            if (DebugMessage)
-            {
-                Debug.Log($"receive event {obj.AppliedEffects}, to {obj.Target.GetUnitName}");
-            }
+            //if (DebugMessage)
+            //{
+            //    Debug.Log($"receive event {obj.AppliedEffects}, to {obj.Target.GetUnitName}");
+            //}
             // a new set of instances is created for each use of applicatior
 
             foreach (StatsEffect eff in obj.AppliedEffects)
@@ -170,10 +170,7 @@ namespace Arcatech.Managers
                         //Debug.LogError($"Trigger {config} from {source.GetID} to {target.GetID} did not apply!");
                         break;
                 }
-                if (DebugMessage)
-                {
-                    Debug.Log($"applying effect {effect} to {finaltgt}");
-                }
+
                 finaltgt.ApplyEffect(effect);
                 return;
             }
@@ -181,10 +178,7 @@ namespace Arcatech.Managers
 
             if (finaltgt == null)
             {
-                if (DebugMessage)
-                {
-                    Debug.Log($"fail to apply {effect}");
-                }
+
                 return ;
             }
             

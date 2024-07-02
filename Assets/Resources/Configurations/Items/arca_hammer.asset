@@ -12,20 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
   m_Name: arca_hammer
   m_EditorClassIdentifier: 
-  ID: hammer_base
+  ID:
+    Part1: 3595835231
+    Part2: 1154536627
+    Part3: 3073233847
+    Part4: 4119592182
   Description: {fileID: 11400000, guid: b590a6e0a6bf74d46bb59accddbe389b, type: 2}
-  ItemType: 1
+  MaxStack: 1
+  Type: 1
   ItemPrefab: {fileID: 5188941293757656330, guid: 51161367717f82f488065e8932e4c042,
     type: 3}
   StatMods: []
   Skill: {fileID: 11400000, guid: 8dd1834734bb08c45bfe56e7d3f23668, type: 2}
-  Effects:
-    Sounds:
-      _serializedList: []
-    Effects:
-      _serializedList: []
   Cost: {fileID: 11400000, guid: 3e16c6159b022aa42b84adf2c29bab32, type: 2}
   UseEffects:
   - {fileID: 11400000, guid: da8487356a1a11a4e8e801098949d317, type: 2}
   - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
   DrawStrategy: {fileID: 11400000, guid: 00c3eeea7d325d1498271fbf5c7cc775, type: 2}
+  Effects:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList: []

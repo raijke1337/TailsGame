@@ -7,12 +7,12 @@ using UnityEngine;
 namespace Arcatech.Scenes.Cameras
 {
     [RequireComponent(typeof(Camera))]
-    public class IsoCameraController : LoadedManagerBase
+    public class IsoCameraController : MonoBehaviour, IManagedController
     {
         private AimingComponent _playerAimingComponent;
         private Vector3 _cameraTargetPoint;
 
-
+        [SerializeField] bool DebugMessage = false;
         [Header("Camera settings")]
         [SerializeField] private Camera _camera;
         [SerializeField] private Vector3 _desiredOffsetFromPlayer = Vector3.zero;
@@ -38,7 +38,7 @@ namespace Arcatech.Scenes.Cameras
         private bool isStarted = false;
 
         #region managed
-        public override void StartController()
+        public void StartController()
         {
             _camera = GetComponent<Camera>();
             if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetAimingComponent;
@@ -49,13 +49,13 @@ namespace Arcatech.Scenes.Cameras
             isStarted = true;
         }
 
-        public override void ControllerUpdate(float delta)
+        public void ControllerUpdate(float delta)
         {
             if (!isStarted) return;
             if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
             {
                 _cameraTargetGizmoColor = Color.green;
-                if (ShowDebug)                
+                if (DebugMessage)                
                 {
                     Debug.Log($"Switching camera target to far look");
                 }
@@ -65,7 +65,7 @@ namespace Arcatech.Scenes.Cameras
             else
             {
                 _cameraTargetGizmoColor = Color.yellow;
-                if (ShowDebug)
+                if (DebugMessage)
                 {
                     Debug.Log($"Switching camera target to close look");
                 }
@@ -77,11 +77,11 @@ namespace Arcatech.Scenes.Cameras
             SphereCastForHiding();
 
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public void FixedControllerUpdate(float fixedDelta)
         {
             if (!isStarted) return;
         }
-        public override void StopController()
+        public void StopController()
         {
             isStarted = false;
             StopAllCoroutines();

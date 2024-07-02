@@ -57,7 +57,6 @@ namespace Arcatech.Managers
                     Vector3 place = new Vector3(x, y, z);
                     var unit = Instantiate(prefab, place, Quaternion.identity, this.transform);
                     units.Add(unit);
-                    if (DebugMessage) Debug.Log($"placed {unit.name} at {place}");
                 }
             }
 

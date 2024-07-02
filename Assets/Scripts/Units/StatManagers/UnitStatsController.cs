@@ -1,5 +1,6 @@
 using Arcatech.EventBus;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +17,17 @@ namespace Arcatech.Stats
         [SerializeField, Tooltip("How often the component reports on all stats")] float _freqUpdates = 0.3f;
         private CountDownTimer _updatesCooldownTimer;
 
+        public UnitStatsController(SerializedStatModConfig[] startingstats, DummyUnit dummyUnit) : base(dummyUnit)
+        {
+            _stats = new Dictionary<BaseStatType, StatValueContainer>();
+            var vals = Enum.GetValues(typeof(BaseStatType));
+            foreach (var typ in vals)
+            {
+                _stats[(BaseStatType)typ] = new StatValueContainer();
+            }
+            AddMods(startingstats);
+
+        }
 
         public UnitStatsController AddMods (SerializedStatModConfig[] mods)
         {
@@ -49,17 +61,6 @@ namespace Arcatech.Stats
 
         #region setup
 
-
-        public UnitStatsController PopulateDictionary()
-        {
-            _stats = new Dictionary<BaseStatType, StatValueContainer>();
-            var vals = Enum.GetValues(typeof(BaseStatType));
-            foreach (var typ in vals)
-            {
-                _stats[(BaseStatType)typ] = new StatValueContainer();
-            }
-            return this;
-        }
         #region managed
 
         public override void StartController()
@@ -69,23 +70,20 @@ namespace Arcatech.Stats
                 stat.Initialize(stat.GetMax);
                 stat.CachedValue = stat.GetCurrent;
             }
-            _isReady = true;
             _updatesCooldownTimer = new CountDownTimer(_freqUpdates);
             _updatesCooldownTimer.OnTimerStopped += () =>
             {
-                StartCoroutine(ReportUpdatedStats());
+                Owner.StartCoroutine(ReportUpdatedStats());
                 _updatesCooldownTimer.Start();
             };
 
-            StartCoroutine(ReportUpdatedStats());
+            Owner.StartCoroutine(ReportUpdatedStats());
         }
 
         
 
         public override void ControllerUpdate(float delta)
         {
-            if (!_isReady) return;
-
             foreach (var stat in _stats)
             {
                 stat.Value.UpdateInDelta(delta);
@@ -94,7 +92,6 @@ namespace Arcatech.Stats
 
         public override void StopController()
         {
-            _isReady = false;
         }
 
         public override void FixedControllerUpdate(float fixedDelta)

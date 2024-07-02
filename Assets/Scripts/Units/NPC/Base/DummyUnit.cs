@@ -10,19 +10,18 @@ using UnityEngine.Events;
 namespace Arcatech.Units
 {
 
-    [RequireComponent(typeof(UnitInventoryComponent),typeof(UnitStatsController))]
     public class DummyUnit : BaseUnit
     {
-        [Space, SerializeField, Self] protected UnitInventoryComponent _inventory;
+        [Space, SerializeField] protected UnitInventoryController _inventory;
         [SerializeField] protected UnitItemsSO defaultEquips;
         [SerializeField] protected ItemEmpties itemEmpties;
         [SerializeField] protected DrawItemsStrategy defaultItemsDrawStrat;
 
-        [Space, SerializeField, Self] protected UnitStatsController _stats;
+        [Space, SerializeField,] protected UnitStatsController _stats;
         [SerializeField] protected BaseStatsConfig defaultStats;
 
 
-        public UnitInventoryComponent GetInventoryComponent => _inventory;
+        public UnitInventoryController GetInventoryComponent => _inventory;
 
         public override string GetUnitName { get; protected set; }
 
@@ -33,14 +32,15 @@ namespace Arcatech.Units
 
             GetUnitName = defaultStats.DisplayName;
 
-            _inventory.LoadSerializedItems(SelectSerializedItemsConfig(), this)
-                .SetItemEmpties(itemEmpties)
-                .DrawItems(defaultItemsDrawStrat)
+
+
+            _inventory = new UnitInventoryController(SelectSerializedItemsConfig(), itemEmpties, this);
+            _inventory.DrawItems(defaultItemsDrawStrat)
                 .StartController();
 
-            _stats.PopulateDictionary().
-                AddMods(defaultStats.InitialStats)
-                .AddMods(_inventory.GetCurrentMods)
+            _stats = new UnitStatsController(defaultStats.InitialStats, this);
+
+            _stats.AddMods(_inventory.GetCurrentMods)
                 .StartController();
 
             _stats.StatsUpdatedEvent += RaiseStatChangeEvent;
@@ -83,11 +83,13 @@ namespace Arcatech.Units
 
 
         #region inventory
+        // move all event triggers to event bus system
+        // that incluides invenotry updates from picking up items/
 
-        public virtual void AddItem(Item item, bool equip)
-        {
-            _inventory.OnplayerPickedUpItem(item, equip);
-        }
+        //public virtual void AddItem(ItemSO item, bool equip)
+        //{
+        //    _inventory.OnplayerPickedUpItem(item, equip);
+        //}
 
         protected virtual UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {

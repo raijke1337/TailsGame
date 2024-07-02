@@ -15,8 +15,9 @@ using UnityEngine.Events;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(GroundDetectorPlatformCollider))]
-    public abstract class ControlInputsBase : ManagedControllerBase
+    public abstract class ControlInputsBase : MonoBehaviour, IManagedController
     {
+        [SerializeField] public bool DebugMessage = false;
         protected const float zeroF = 0f;
         public ControlledUnit Unit { get; set; }
         [SerializeField, Self] protected Rigidbody _rb;
@@ -66,7 +67,7 @@ namespace Arcatech.Units
         #region ManagedController
 
 
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
             if (LockInputs) return;
             lastDelta = delta;
@@ -75,19 +76,17 @@ namespace Arcatech.Units
 
 
         }
-        public override void StartController()
+        public virtual void StartController()
         {
             ControllerBindings(true);
-            _isReady = true;
 
         }
-        public override void StopController()
+        public virtual void StopController()
         {
             ControllerBindings(false);
-            _isReady = false;
         }
 
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
             if (_groundedPlatform.IsGrounded)
             {

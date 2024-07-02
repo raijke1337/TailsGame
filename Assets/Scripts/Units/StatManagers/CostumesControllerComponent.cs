@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    public class CostumesControllerComponent : ManagedControllerBase
+    public class CostumesControllerComponent : MonoBehaviour
     {
         [SerializeField] private List<SkinnedMeshRenderer> _parts;
 
@@ -22,24 +22,6 @@ namespace Arcatech.Units
             }
         }
 
-        public override void FixedControllerUpdate(float fixedDelta)
-        {
-
-        }
-        public override void StartController()
-        {
-            
-        }
-
-        public override void StopController()
-        {
-            
-        }
-
-        public override void ControllerUpdate(float delta)
-        {
-            
-        }
     }
 
 }

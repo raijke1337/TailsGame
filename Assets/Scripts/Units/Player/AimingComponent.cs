@@ -7,7 +7,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Arcatech.Units.Inputs
 {
-    public class AimingComponent : ManagedControllerBase
+    public class AimingComponent : MonoBehaviour, IManagedController
     {
         #region setup
         private Camera _camera;
@@ -69,19 +69,19 @@ namespace Arcatech.Units.Inputs
 
 
         #region managed
-        public override void StartController()
+        public void StartController()
         {
             _aimPlane = new Plane(Vector3.down, planeY);
 
             _target = transform.forward;
             _camera = Camera.main;
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public void FixedControllerUpdate(float fixedDelta)
         {
 
         }
 
-        public override void ControllerUpdate(float delta)
+        public void ControllerUpdate(float delta)
         {
 
             if (transform.position.y != prevY)
@@ -129,7 +129,7 @@ namespace Arcatech.Units.Inputs
 
 
 
-        public override void StopController()
+        public void StopController()
         {
 
         }

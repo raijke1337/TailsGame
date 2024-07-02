@@ -1,4 +1,5 @@
 using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Stats;
 using Arcatech.Triggers;
@@ -13,9 +14,37 @@ namespace Arcatech.Units
     public class WeaponController : ManagedControllerBase, ICombatActions
     {
         protected Dictionary<UnitActionType, IWeapon> _weapons;
-        UnitStatsController _stats;
+        protected UnitStatsController _stats;
 
-        private UnitInventoryComponent _inv;
+        private UnitInventoryController _inv;
+
+        private EventBinding<InventoryUpdateEvent> bind;
+
+
+        public WeaponController(UnitStatsController stats, UnitInventoryController inv, DummyUnit dummyUnit) : base(dummyUnit)
+        {
+            _stats = stats;
+            _inv = inv;
+            bind = new EventBinding<InventoryUpdateEvent>(OnInventoryUpdate);
+            UpdateWeapons(_inv);
+    
+        }
+
+        private void OnInventoryUpdate(InventoryUpdateEvent obj)
+        {
+            UpdateWeapons(_inv);
+        }
+
+        void UpdateWeapons(UnitInventoryController i)
+        {
+            _weapons = new();
+            foreach (var weapon in i.GetWeapons)
+            {
+                _weapons[weapon.UseActionType] = weapon;
+                _weapons[weapon.UseActionType].AssignStrategy();
+            }
+        }
+
 
         #region interface
         public bool TryUseAction(UnitActionType action)
@@ -33,31 +62,14 @@ namespace Arcatech.Units
             return false;
         }
 
-        public IUsesStats SetStats(UnitStatsController s)
-        {
-            _stats = s;
-            return this;
-        }
 
         #endregion
-
-        public WeaponController UpdateWeapons(IWeapon[] all)
-        {
-            _weapons = new();
-            foreach (var weapon in all)
-            {
-                _weapons[weapon.UseActionType] = weapon;
-                _weapons[weapon.UseActionType].AssignStrategy();
-            }
-
-            return this;
-        }
 
 
         #region managed
         public override void StartController()
         {
-
+            EventBus<InventoryUpdateEvent>.Register(bind);
         }
         public override void ControllerUpdate(float delta)
         {
@@ -71,13 +83,7 @@ namespace Arcatech.Units
 
         public override void StopController()
         {
-
-        }
-
-        public IUsesStats SetInventory(UnitInventoryComponent comp)
-        {
-            _inv = comp;
-            return this;
+            EventBus<InventoryUpdateEvent>.Deregister(bind);
         }
 
         #endregion

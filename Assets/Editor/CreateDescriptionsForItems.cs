@@ -11,7 +11,7 @@ public class CreateDescriptionsForItems : MonoBehaviour
     private static void FindScriptableObjects()
     {
         var sk = Resources.FindObjectsOfTypeAll<SerializedSkillConfiguration>();
-        var items = Resources.FindObjectsOfTypeAll<Item>();
+        var items = Resources.FindObjectsOfTypeAll<ItemSO>();
         string prefix = "desc_";
         string sk_prefix = "skill_";
         string i_prefix = "item_";

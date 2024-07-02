@@ -7,7 +7,7 @@ using System.Collections;
 using UnityEngine;
 namespace Arcatech.Managers
 {
-    public class GameInterfaceManager : LoadedManagerBase
+    public class GameInterfaceManager : MonoBehaviour, IManagedController
     {
         [SerializeField] private TargetPanel _tgtPan;
         [SerializeField] private PlayerUnitPanel _playerPan;
@@ -23,7 +23,7 @@ namespace Arcatech.Managers
 
 
         #region managed
-        public override void StartController()
+        public virtual void StartController()
         {
 
 
@@ -53,12 +53,12 @@ namespace Arcatech.Managers
 
         }
 
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
 
         }
 
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
 
         }
@@ -67,7 +67,7 @@ namespace Arcatech.Managers
             EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
         }
-        public override void StopController()
+        public virtual void StopController()
         {
             EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
@@ -88,20 +88,20 @@ namespace Arcatech.Managers
                 _text.CurrentDialogue = text;
                 if (text.Options.Count > 0)
                 {
-                    GameManager.Instance.OnPlayerPaused(true);
+                    EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isShown));
                 }
             }    
             else
             {
                 //_playerPan.LoadedDialogue(text, isShown);
                 _text.gameObject.SetActive(isShown);
-                GameManager.Instance.OnPlayerPaused(false);
+                EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isShown));
             }
 
         }
         private void OnDialogueCompletedInTextWindow()
         {
-            GameManager.Instance.OnPlayerPaused(false);
+            EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(false));
             _text.gameObject.SetActive(false);
         }
 
@@ -130,12 +130,11 @@ namespace Arcatech.Managers
         public void OnPauseRequesShowPanelAndPause(bool isPause)
         {
             _pause.SetActive(isPause);
-            GameManager.Instance.OnPlayerPaused(isPause);
+                    EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isPause));
         }
 
         public void GameOver()
         {
-            GameManager.Instance.OnPlayerPaused(true);
             _ded.SetActive(true);
         }
         public void ToMain()

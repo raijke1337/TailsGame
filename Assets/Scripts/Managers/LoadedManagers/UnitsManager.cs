@@ -11,7 +11,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 namespace Arcatech.Managers
 {
-    public class UnitsManager : LoadedManagerBase
+    public class UnitsManager : MonoBehaviour, IManagedController
     {
 
         private PlayerUnit _player;
@@ -50,7 +50,7 @@ namespace Arcatech.Managers
 
 
         #region managed
-        public override void StartController()
+        public virtual void StartController()
         {
             if (_effects == null)
             {
@@ -66,22 +66,15 @@ namespace Arcatech.Managers
             }
 
             _player = FindObjectOfType<PlayerUnit>();
-            if (_player == null)
-            {
-                if (ShowDebug) Debug.Log($"No player found in scene {this}");
-            }
-            else
-            {
+            if (_player != null)
+            { 
                 SetupUnit(_player, true);
             }
 
             var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
-            if (_rooms.Length == 0)
+            if (_rooms.Length != 0)
             {
-                if (ShowDebug) Debug.LogWarning($"No rooms with enemies found");
-            }
-            else
-            {
+
                 _npcGroups = new List<RoomUnitsGroup>();
                 foreach (var room in _rooms)
                 {
@@ -97,7 +90,7 @@ namespace Arcatech.Managers
             }
 
         }
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
 
             if (_isUnitsLocked) return;
@@ -113,7 +106,7 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
             if (_isUnitsLocked) return;
 
@@ -128,7 +121,7 @@ namespace Arcatech.Managers
             }
         }
 
-        public override void StopController()
+        public virtual void StopController()
         {
 
             _player.DisableUnit();
@@ -166,7 +159,6 @@ namespace Arcatech.Managers
 
         private void HandleUnitDeath(BaseUnit unit)
         {
-            if (ShowDebug) Debug.Log($"{unit} died");
                 unit.DisableUnit();
             unit.LockUnit = true;
             

@@ -43,6 +43,14 @@ namespace Arcatech.EventBus
 
     }
 
+    public struct PlayerPauseEvent : IEvent
+    {
+        public bool Value { get; }
+        public PlayerPauseEvent(bool v) => Value = v;
+    }
+
+
+
 
 
 }

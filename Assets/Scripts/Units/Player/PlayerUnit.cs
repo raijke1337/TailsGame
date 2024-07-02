@@ -28,10 +28,12 @@ namespace Arcatech.Units
             ToggleCamera(true);
         }
         public bool PlayerArmed
-        { get
+        {
+            get
             {
-                return _inventory.IsItemEquipped(EquipmentType.MeleeWeap, out _) || _inventory.IsItemEquipped(EquipmentType.RangedWeap, out _);
-        } }
+                return _inventory.GetWeapons.Length > 0;
+            }
+        }
 
         protected override void RaiseStatChangeEvent(StatChangedEvent ev)
         {
@@ -50,7 +52,7 @@ namespace Arcatech.Units
             }
             else
             {
-                return DataManager.Instance.GetCurrentPlayerItems;
+                return DataManager.Instance.GetPlayerSaveEquips;
             }
 
         }
@@ -99,15 +101,15 @@ namespace Arcatech.Units
             return ReferenceUnitType.Player;
         }
 
-        public override void AddItem(Item item, bool equip)
-        {
-            base.AddItem(item,equip);
-            _animator.SetTrigger("ItemPickup");
-            if (_inputs.DebugMessage)
-            {
-                Debug.Log($"Player picked up item {item}");
-            }
-        }
+        //public override void AddItem(ItemSO item, bool equip)
+        //{
+        //    base.AddItem(item,equip);
+        //    _animator.SetTrigger("ItemPickup");
+        //    if (_inputs.DebugMessage)
+        //    {
+        //        Debug.Log($"Player picked up item {item}");
+        //    }
+        //}
     }
 
     #endregion

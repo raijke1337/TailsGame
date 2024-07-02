@@ -9,13 +9,9 @@ using UnityEngine;
 namespace Arcatech.Units
 {
     [Serializable]
-    public abstract class BaseController : IManagedComponent, IHasOwner
+    public abstract class BaseController : IManagedController
     {
-        public DummyUnit Owner { get; }
-
-        private bool _isReady = false;
-
-        public event SimpleEventsHandler<bool, IManagedComponent> ComponentChangedStateToEvent;
+        public DummyUnit Owner { get; protected set; }
 
         public BaseController(DummyUnit owner)
         {
@@ -23,51 +19,17 @@ namespace Arcatech.Units
         }
 
 
-        protected void StateChangeCallback(bool ready, IManagedComponent comp)
-        {
-            ComponentChangedStateToEvent?.Invoke(ready, comp);
-        }
-
-        public virtual bool IsReady
-        {
-            get => _isReady;
-            protected set
-            {
-                _isReady = value;
-                StateChangeCallback(value, this);
-            }
-        }
 
         public abstract void ApplyEffect(StatsEffect effect);
 
         #region managed
-        public abstract void UpdateInDelta(float deltaTime);
-        public abstract void StartComp();
-        public abstract void StopComp();
-        #endregion
-
-
-        #region Effects
-
-        // todo move this stuff to an events bus system as watched
-
-        public event EffectsManagerEvent BaseControllerEffectEvent;
-        protected void EffectEventCallback(EffectRequestPackage pack) => BaseControllerEffectEvent?.Invoke(pack);
+        public abstract void StartController();
+        public abstract void ControllerUpdate(float delta);
+        public abstract void FixedControllerUpdate(float fixedDelta);
+        public abstract void StopController();
 
         #endregion
 
-
-
-        #region projectile spawn
-
-        public event SimpleEventsHandler<ProjectileComponent> BaseControllerProjectileEvent;
-
-        protected void SpawnProjectileCallBack(ProjectileComponent proj)
-        {
-            BaseControllerProjectileEvent?.Invoke(proj);
-        }
-
-        #endregion
 
 
     }

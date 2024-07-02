@@ -1,9 +1,13 @@
+using Arcatech;
 using System;
 using UnityEngine;
-
-[Serializable]
-public abstract class ScriptableObjectID : ScriptableObject
+namespace Arcatech
 {
-    public string ID;
-}
+    [Serializable]
+    public abstract class ScriptableObjectID : ScriptableObject
+    {
+        public SerializableGuid ID = SerializableGuid.NewGuid();
+    }
 
+
+}

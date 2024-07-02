@@ -271,10 +271,6 @@ GameObject:
   - component: {fileID: 4352188766816210169}
   - component: {fileID: 1106022451855181113}
   - component: {fileID: 8743729188238178463}
-  - component: {fileID: 6327298415893521332}
-  - component: {fileID: 1730829326349353107}
-  - component: {fileID: 7264907082405173801}
-  - component: {fileID: 2577090860626456485}
   m_Layer: 0
   m_Name: PlayerTails
   m_TagString: Player
@@ -385,6 +381,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Side: 0
+  _baseAnimator: {fileID: 9100000, guid: b44497980440ea74cb484f8b5ec9f0bf, type: 2}
+  _animator: {fileID: 633146174127125324}
   defaultEquips: {fileID: 11400000, guid: 00b9c3121edc84543aa3f98d4e0881de, type: 2}
   itemEmpties:
     ItemPositions:
@@ -401,17 +399,13 @@ MonoBehaviour:
         Value: {fileID: 5399646265573967874}
       - Key: 255
         Value: {fileID: 0}
-  defaultStats: {fileID: 11400000, guid: 82d9e0125322d9941bed0e073c81adf7, type: 2}
-  movementStats: {fileID: 11400000, guid: cf36fb33e9c878b488c78a2266989e12, type: 2}
   defaultItemsDrawStrat: {fileID: 11400000, guid: f9a3c0c1ca07cd741b68cc5fd770285a,
     type: 2}
-  _baseAnimator: {fileID: 9100000, guid: b44497980440ea74cb484f8b5ec9f0bf, type: 2}
-  _animator: {fileID: 633146174127125324}
-  _inventory: {fileID: 1730829326349353107}
-  _stats: {fileID: 6327298415893521332}
+  defaultStats: {fileID: 11400000, guid: 82d9e0125322d9941bed0e073c81adf7, type: 2}
+  _weapons:
+    DebugMessage: 0
+  movementStats: {fileID: 11400000, guid: cf36fb33e9c878b488c78a2266989e12, type: 2}
   _inputs: {fileID: 1910410889340383960}
-  _weapons: {fileID: 7264907082405173801}
-  _skills: {fileID: 2577090860626456485}
   _faceCam: {fileID: 3246190761616418527}
 --- !u!114 &1910410889340383960
 MonoBehaviour:
@@ -447,7 +441,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c22e51e907d374c8f6cab2cfeec0ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
   _parts:
   - {fileID: 1269286909699980562}
   - {fileID: 8977089337870941768}
@@ -467,7 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e07e63b09fbe22408cd9b2ce0a8da22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
 --- !u!114 &1106022451855181113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -552,59 +544,6 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 8
---- !u!114 &6327298415893521332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612417970087076613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4666ec636544a64479f0ea0b2352f5a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
-  _freqUpdates: 0.3
---- !u!114 &1730829326349353107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612417970087076613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7effe2a39cbdd2644a9826cd28d478b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
---- !u!114 &7264907082405173801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612417970087076613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 953033af469d2e74fa07b370f303e205, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
---- !u!114 &2577090860626456485
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612417970087076613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0084393d74a95848879ffd6cdc1a8aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
 --- !u!1 &4778100117996528101
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Arcatech.Level
 {
 
-    public class LevelBlockDecorPrefabComponent : ManagedControllerBase
+    public class LevelBlockDecorPrefabComponent : MonoBehaviour, IManagedController
     {
         [SerializeField,Tooltip("1 will spawn")] protected List<LevelBlockDecorPrefabComponent> ObligatoryDecors;
         [Space,SerializeField,Tooltip ("1 may spawn")] protected List<LevelBlockDecorPrefabComponent> PossibleDecors;
@@ -15,7 +15,7 @@ namespace Arcatech.Level
 
         private List<LevelBlockDecorPrefabComponent> _loadedDecors;
 
-        public override void StartController()
+        public virtual void StartController()
         {
             _yRotations = new float[] { 0, 90, 180, 270 };
 
@@ -65,18 +65,18 @@ namespace Arcatech.Level
 
         }
 
-        public override void StopController()
+        public virtual void StopController()
         {
             foreach (var d in _loadedDecors)
             {
                 d.StopController();
             }
         }
-        public override void FixedControllerUpdate(float fixedDelta)
+        public virtual void FixedControllerUpdate(float fixedDelta)
         {
 
         }
-        public override void ControllerUpdate(float delta)
+        public virtual void ControllerUpdate(float delta)
         {
             if (_loadedDecors == null) return;
             foreach (var d in _loadedDecors)

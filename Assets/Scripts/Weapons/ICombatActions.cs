@@ -3,7 +3,7 @@
     /// <summary>
     /// for controller components
     /// </summary>
-    public interface ICombatActions : IUsesStats
+    public interface ICombatActions : IManagedController
     {
         public bool TryUseAction (UnitActionType action);
     }

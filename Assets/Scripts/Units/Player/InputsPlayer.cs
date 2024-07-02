@@ -33,13 +33,8 @@ namespace Arcatech.Units.Inputs
             _aim = GetComponent<AimingComponent>();
             _aim.StartController();
             _costume = GetComponent<CostumesControllerComponent>();
-            _costume.StartController();
-
-
-
             transform.LookAt(transform.forward);
 
-           // _gameInterfaceManager = GameManager.Instance.GetGameControllers.GameInterfaceManager;
         }
         public override void ControllerUpdate(float delta)
         {
@@ -48,7 +43,6 @@ namespace Arcatech.Units.Inputs
             base.ControllerUpdate(delta);
             DoAiming(delta);
             _aim.ControllerUpdate(delta);
-            _costume.ControllerUpdate(delta);
 
         }
         public override void StopController()
@@ -56,7 +50,6 @@ namespace Arcatech.Units.Inputs
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             // not init for non game levels
             _aim.StopController();
-            _costume.StopController();
         }
 
         #endregion

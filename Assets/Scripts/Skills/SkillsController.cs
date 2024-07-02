@@ -8,31 +8,22 @@ using UnityEngine;
 
 namespace Arcatech.Skills
 {
-    public class SkillsController : ManagedControllerBase, ICombatActions, INeedsOwner
+    public class SkillsController : ManagedControllerBase, ICombatActions
     {
 
         protected Dictionary<UnitActionType, ISkill> _skills;
-        UnitStatsController _stats;
-        UnitInventoryComponent _inventory;
 
-
-        public SkillsController SetSkills(SerializedSkillConfiguration[] ss)
+        public SkillsController (UnitInventoryController inv, DummyUnit ow) : base (ow)
         {
             _skills = new();
-            foreach (var skill in ss)
+            foreach (var skill in inv.GetSkillConfigs)
             {
                 _skills[skill.UnitActionType] = new SkillObjectForControls(skill);
             }
-            return this;
         }
 
         #region  interface
                
-        public IUsesStats SetStats(UnitStatsController s)
-        {
-            _stats = s;
-            return this;
-        }
 
         public bool TryUseAction(UnitActionType action)
         { 
@@ -66,10 +57,5 @@ namespace Arcatech.Skills
             //throw new NotImplementedException();
         }
 
-        public IUsesStats SetInventory(UnitInventoryComponent comp)
-        {
-            _inventory = comp;
-            return this;
-        }
     }
 }

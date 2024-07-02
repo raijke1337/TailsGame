@@ -4,26 +4,22 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    [RequireComponent(typeof(WeaponController), typeof(SkillsController))]
     public abstract class ArmedUnit : DummyUnit
     {
 
 
-        [SerializeField, Self] protected WeaponController _weapons;
-        [SerializeField, Self] protected SkillsController _skills;
+        [SerializeField] protected WeaponController _weapons;
+        [SerializeField] protected SkillsController _skills;
 
         public override void StartControllerUnit()
         {
             base.StartControllerUnit();
 
-            _weapons.UpdateWeapons(_inventory.GetWeapons)
-                .SetInventory(_inventory)
-                .SetStats(_stats)
-                .StartController();
+            _weapons = new WeaponController(_stats,_inventory, this);
+            _weapons.StartController();
 
-            _skills.SetSkills(_inventory.GetSkillConfigs)
-                .SetStats(_stats)
-                .StartController();
+            _skills = new SkillsController(_inventory, this);
+            _skills.StartController();
 
         }
 

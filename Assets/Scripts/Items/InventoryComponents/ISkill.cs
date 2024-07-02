@@ -3,7 +3,7 @@
 namespace Arcatech.Items
 {
 
-    public interface ISkill : IUsableItem, IHasOwner
+    public interface ISkill : IUsableItem
     { 
     
     }

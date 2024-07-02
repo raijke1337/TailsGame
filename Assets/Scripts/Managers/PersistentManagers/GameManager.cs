@@ -1,9 +1,11 @@
 //using Newtonsoft.Json;
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Scenes;
 using Arcatech.Scenes.Cameras;
 using Arcatech.UI;
 using Arcatech.Units;
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -28,11 +30,11 @@ namespace Arcatech.Managers
         [SerializeField] private PlayerUnit PlayerPrefab;
         [SerializeField] private MenuPrefabControllerComp _mainMenuPrefab;
 
-        [Space,SerializeField] private LoadedManagers GameControllersPrefab;
+        [Space, SerializeField] private LoadedManagers GameControllersPrefab;
         [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
         [SerializeField] private IsoCameraController gameCameraPrefab;
 
-       
+
         private LoadedManagers _gameControllers;
 
         public LoadedManagers GetGameControllers => _gameControllers;
@@ -42,6 +44,8 @@ namespace Arcatech.Managers
 
         private void OnEnable()
         {
+            Bindings(true);
+
             _dataManager = DataManager.Instance;
             SceneManager.sceneLoaded += SwitchedScenesCleanUp;
 #if UNITY_EDITOR
@@ -53,7 +57,6 @@ namespace Arcatech.Managers
             Assert.IsNotNull(_mainMenuPrefab);
 
             // for quicker load into debug level 
-
 #endif
             int sceneIndex = SceneManager.GetActiveScene().buildIndex;
             _currentLevel = _dataManager.GetSceneContainer(sceneIndex);
@@ -79,6 +82,10 @@ namespace Arcatech.Managers
                 _gameControllers.FixedControllerUpdate(Time.fixedDeltaTime);
             }
         }
+        private void OnDisable()
+        {
+            Bindings(false);
+        }
 
         #endregion
 
@@ -99,13 +106,13 @@ namespace Arcatech.Managers
         private bool _equipsDone = false;
         private SceneContainer _cachedGameLevel;
         public void RequestLoadSceneFromContainer(SceneContainer sc)
-        {          
+        {
             switch (sc.LevelType)
             {
                 default:
                     DoLoadScene(sc.SceneLoaderIndex);
                     break;
-                case LevelType.Game:                  
+                case LevelType.Game:
                     if (sc == _noEquipsLevel)
                     {
                         _cachedGameLevel = sc;
@@ -125,7 +132,7 @@ namespace Arcatech.Managers
                     }
 
                     break;
-            }            
+            }
         }
 
         private void DoLoadScene(int index)
@@ -160,10 +167,15 @@ namespace Arcatech.Managers
         public void OnFinishedEquips()
         {
             _equipsDone = true;
-            _dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent);
 
+            //_dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent);
+            // this will be called directly by the mvc with inventory update events
+            //
             RequestLoadSceneFromContainer(_cachedGameLevel);
         }
+
+
+
 
         private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
         {
@@ -176,42 +188,64 @@ namespace Arcatech.Managers
             }
 
         }
-
-
-
-
         #endregion
 
 
+
+
+
+
         #region game events
-        public void OnPlayerPaused(bool isPausing)
+        private void Bindings(bool isStart)
         {
-            _gameControllers.UnitsManager.UnitsLocked = isPausing; // shoukld stop player inputs
+            if (isStart)
+            {
+                _pauseBind = new EventBinding<PlayerPauseEvent>(OnPlayerPaused);
+                _levelBind = new EventBinding<LevelCompletedEvent>(OnLevelCompleteTrigger);
+
+                EventBus<PlayerPauseEvent>.Register(_pauseBind);
+                EventBus<LevelCompletedEvent>.Register(_levelBind);
+            }
+            else
+            {
+                EventBus<PlayerPauseEvent>.Deregister(_pauseBind);
+                EventBus<LevelCompletedEvent>.Deregister(_levelBind);
+            }
         }
 
 
-        public void OnLevelCompleteTrigger(SceneContainer unlock)
-        {
-            _dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent); // update save data with picked up items
+        #region pause handling
 
+        EventBinding<PlayerPauseEvent> _pauseBind;
+        private void OnPlayerPaused(PlayerPauseEvent isPausing)
+        {
+            _gameControllers.UnitsManager.UnitsLocked = isPausing.Value;
+            // shoukld stop player inputs
+        }
+        #endregion
+
+        #region level complete
+        EventBinding<LevelCompletedEvent> _levelBind;
+
+        private void OnLevelCompleteTrigger(LevelCompletedEvent obj)
+        {
             if (_gameControllers != null)
             {
                 _gameControllers.StopController();
             }
-
-            if (unlock == null)
+            if (obj.CompletedLevel.NextLevel == null)
             {
                 Debug.Log($"Level complete trigger has no next lv assigned, returning to main");
                 OnReturnToMain();
             }
             else
             {
-                _dataManager.AddUnlockedLevelToSave(unlock);
-                RequestLoadSceneFromContainer(unlock);
+                RequestLoadSceneFromContainer(obj.CompletedLevel.NextLevel);
             }
-
-
         }
+        #endregion
+        #endregion
+
 
         public void OnReturnToMain()
         {
@@ -238,7 +272,6 @@ namespace Arcatech.Managers
 #endif
         }
 
-        #endregion
 
 
     }

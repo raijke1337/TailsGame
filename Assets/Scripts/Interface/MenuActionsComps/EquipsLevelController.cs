@@ -52,7 +52,7 @@ namespace Arcatech.Managers
                 Debug.LogError($"Player unit not found!");
             }
             _player.StartControllerUnit();
-            _menuContainer.InitialInventoryDisplay(_player.GetInventoryComponent);
+            //_menuContainer.InitialInventoryDisplay(_player.GetInventoryComponent);
 
         }
 

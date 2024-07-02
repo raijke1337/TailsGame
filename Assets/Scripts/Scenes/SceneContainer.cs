@@ -13,6 +13,6 @@ namespace Arcatech.Scenes
         public SimpleText Description;
         public AudioClip Music;
         public bool IsUnlockedByDefault;
-        //public SceneContainer NextLevel;
+        public SceneContainer NextLevel;
     }
 }

@@ -7,7 +7,7 @@ namespace Arcatech.Triggers
 {
     public class LevelRewardTrigger : BaseLevelEventTrigger
     {
-        public Item Content { get
+        public ItemSO Content { get
             {
                 return _item;
             }
@@ -21,7 +21,7 @@ namespace Arcatech.Triggers
 
 
 
-        [SerializeField] protected Item _item;
+        [SerializeField] protected ItemSO _item;
         [SerializeField] protected Transform _itemSpot;
         [SerializeField] protected BaseEquippableItemComponent _genericItemDisplayPrefab;
         private BaseEquippableItemComponent _model;
@@ -55,7 +55,7 @@ namespace Arcatech.Triggers
                 place = transform;
             }
 
-            if (Content is Equip e)
+            if (Content is EquipSO e)
             {
                 _model = Instantiate(e.ItemPrefab, place);
             }
