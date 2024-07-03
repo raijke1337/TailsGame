@@ -7,23 +7,18 @@ namespace Arcatech.Items
 {
     public class MeleeWeaponUseStrategy : BaseWeaponUseStrategy
     {
-        private WeaponTriggerComponent _trigger;
-        public override SerializedStatsEffectConfig[] EffectConfigs { get; }        
+        protected WeaponTriggerComponent Trigger { get; }
         StatsEffect[] currentUseEffects; // to prevent double application
 
-
-
-        public MeleeWeaponUseStrategy(MeleeWeaponComponent weapon, SerializedStatsEffectConfig[] effects, DummyUnit owner)
+        public MeleeWeaponUseStrategy(MeleeWeaponComponent weapon, DummyUnit owner, SerializedStatsEffectConfig[] effects) : base (owner, effects)
         {
-            _trigger = weapon.Trigger;
-            EffectConfigs = effects;
-            _owner = owner;
-            _trigger.UnitHitEvent += HandleBaseUnitHitEvent;
+            Trigger = weapon.Trigger;
+            Trigger.UnitHitEvent += HandleBaseUnitHitEvent;
         }
 
         private void HandleBaseUnitHitEvent(DummyUnit target)
         {
-            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, _owner, true,currentUseEffects));
+            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner,  true, Trigger.transform, currentUseEffects));
         }
 
         public override void WeaponUsedStateEnter()
@@ -36,15 +31,13 @@ namespace Arcatech.Items
             {
                 currentUseEffects[i] = new StatsEffect(EffectConfigs[i]);
             }
-            _trigger.ToggleCollider(true);
+            Trigger.ToggleCollider(true);
         }
 
         public override void WeaponUsedStateExit()
         {
-            _trigger.ToggleCollider(false);
-        }
-
-        
+            Trigger.ToggleCollider(false);
+        }        
     }
 
 

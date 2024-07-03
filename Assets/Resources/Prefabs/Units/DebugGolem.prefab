@@ -1108,9 +1108,7 @@ GameObject:
   - component: {fileID: 122197050836451525}
   - component: {fileID: 491683572243449218}
   - component: {fileID: 280783704676542858}
-  - component: {fileID: 1708883941682006631}
-  - component: {fileID: 6833249091888742906}
-  - component: {fileID: 409233289977240399}
+  - component: {fileID: 404283523716592744}
   m_Layer: 0
   m_Name: DebugGolem
   m_TagString: Enemy
@@ -1228,21 +1226,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!114 &1708883941682006631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6282177902539391458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4666ec636544a64479f0ea0b2352f5a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
-  _freqUpdates: 0.3
---- !u!114 &6833249091888742906
+--- !u!114 &404283523716592744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1257,27 +1241,13 @@ MonoBehaviour:
   Side: 1
   _baseAnimator: {fileID: 9100000, guid: 1b5923699c461194fb3ec6011d5d02b9, type: 2}
   _animator: {fileID: 6232462435574115886}
-  _inventory: {fileID: 409233289977240399}
   defaultEquips: {fileID: 0}
   itemEmpties:
     ItemPositions:
       _serializedList: []
-  defaultItemsDrawStrat: {fileID: 0}
-  _stats: {fileID: 1708883941682006631}
-  defaultStats: {fileID: 0}
---- !u!114 &409233289977240399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6282177902539391458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d852823302d1e26469ecb04f35ba8135, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DebugMessage: 0
+  defaultItemsDrawStrat: {fileID: 11400000, guid: f9a3c0c1ca07cd741b68cc5fd770285a,
+    type: 2}
+  defaultStats: {fileID: 11400000, guid: aa050d370950d914684ca237e9e31ff0, type: 2}
 --- !u!1 &6282183787786567646
 GameObject:
   m_ObjectHideFlags: 0

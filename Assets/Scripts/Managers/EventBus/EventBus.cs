@@ -11,7 +11,6 @@ namespace Arcatech.EventBus
 
         public static void Raise(T @event)
         {
-            Debug.Log($"raise event {typeof(T)}");
             foreach (var binding in bindings)
             {
                 binding.OnEvent.Invoke(@event);
@@ -21,7 +20,6 @@ namespace Arcatech.EventBus
 
         static void Clear()
         {
-            Debug.Log($"Clearing {typeof(T).Name} bindings");
             bindings.Clear();
         }
     }

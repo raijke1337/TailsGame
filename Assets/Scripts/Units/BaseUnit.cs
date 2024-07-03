@@ -9,6 +9,7 @@ using Arcatech.Units.Stats;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 
 namespace Arcatech.Units
 {
@@ -49,7 +50,7 @@ namespace Arcatech.Units
         
         public virtual void StartControllerUnit() // this is run by unit manager
         {
-
+            Debug.Log($"Starting unit {this}");
             _animator.runtimeAnimatorController = _baseAnimator;
             _animator.Play("Idle");
  

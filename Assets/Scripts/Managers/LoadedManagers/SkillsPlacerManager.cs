@@ -37,22 +37,11 @@ namespace Arcatech.Managers
 
         public void ServeSkillRequest(SkillProjectileComponent comp, BaseUnit source, Transform where)
         {
-
-            // receive the same proj as projectiles manager but do the specific handling
-
-            effectsManager.ServeEffectsRequest(new EffectRequestPackage
-                (comp.GetEffects.GetRandomSound(EffectMoment.OnStart),
-                comp.GetEffects.GetRandomEffect(EffectMoment.OnStart),
-                null, where));
-
             if (comp is BoosterSkillInstanceComponent bs)
             {
                 source.UnitDodge(bs);
-            }
-            
-
-
-            // here we already get the projectile gameobject with everything set up...
+            }         
+                        // here we already get the projectile gameobject with everything set up...
 
 
             comp.TriggerEnterEvent += (t, t2) => HandleSkillTriggerEvent(t, t2, comp);
@@ -69,11 +58,6 @@ namespace Arcatech.Managers
                 switch (state)
                 {
                     case SkillState.Placer:
-                        effectsManager.ServeEffectsRequest(new EffectRequestPackage
-    (comp.GetEffects.GetRandomSound(EffectMoment.OnCollision),
-    comp.GetEffects.GetRandomEffect(EffectMoment.OnCollision),
-    null, col.transform));
-
                         comp.AdvanceStage();
                         break;
                     case SkillState.AoE:

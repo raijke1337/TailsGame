@@ -1,6 +1,7 @@
 ﻿using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using UnityEngine;
 
 namespace Arcatech.EventBus
 {
@@ -27,18 +28,20 @@ namespace Arcatech.EventBus
 
     public struct StatsEffectTriggerEvent : IEvent
     {
-        public StatsEffectTriggerEvent(DummyUnit target, DummyUnit source, bool isEnteringTrigger, StatsEffect[] appliedEffects)
+        public StatsEffectTriggerEvent(DummyUnit target, DummyUnit source, bool isEnteringTrigger, Transform place, StatsEffect[] appliedEffects)
         {
             Target = target;
             Source = source;
             IsEnteringTrigger = isEnteringTrigger;
             AppliedEffects = appliedEffects;
+            Place = place;
         }
 
         public DummyUnit Target { get; }
         public DummyUnit Source { get; }
         public bool IsEnteringTrigger { get; }
         public StatsEffect[] AppliedEffects { get; }
+        public Transform Place { get; }
 
 
     }

@@ -37,7 +37,7 @@ namespace Arcatech.Skills
 
         public IUsableItem AssignStrategy()
         {
-            _strat = new ProjectileSkillStrategy(_settings.SkillProjectileConfig.ProjectilePrefab);
+            //_strat = new ProjectileSkillStrategy(_settings.SkillProjectileConfig.ProjectilePrefab);
             return this; 
         }
         public void UseItem()

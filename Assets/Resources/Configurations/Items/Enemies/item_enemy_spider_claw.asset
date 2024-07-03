@@ -12,17 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
   m_Name: item_enemy_spider_claw
   m_EditorClassIdentifier: 
-  ID: spider_claw
+  ID:
+    Part1: 2197119371
+    Part2: 1226970565
+    Part3: 1940884908
+    Part4: 788476421
   Description: {fileID: 0}
-  ItemType: 1
-  Item: {fileID: 6803315406574239959, guid: bacc8a76c2d8d514592c6a02e717c351, type: 3}
+  MaxStack: 1
+  Type: 0
+  ItemPrefab: {fileID: 6803315406574239959, guid: bacc8a76c2d8d514592c6a02e717c351,
+    type: 3}
+  StatMods: []
   Skill: {fileID: 11400000, guid: 462567c6c9bf47047ba06793bf8421f8, type: 2}
+  Cost: {fileID: 0}
+  UseEffects: []
+  DrawStrategy: {fileID: 0}
   Effects:
     Sounds:
       _serializedList: []
     Effects:
       _serializedList: []
-  AnimatorController: {fileID: 9100000, guid: a31e9fe7cb45b184097a264bfce31269, type: 2}
-  WeaponCooldown: 0
-  WeaponHitTriggers:
-  - {fileID: 11400000, guid: cc4db5a73042554438af220d89750b27, type: 2}

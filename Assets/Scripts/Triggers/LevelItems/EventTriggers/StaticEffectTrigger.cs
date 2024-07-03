@@ -14,10 +14,13 @@ namespace Arcatech.Triggers
             base.Awake();
             _currentEffects = new StatsEffect[Triggers.Length]; 
         }
+
         protected override void OnTriggerEnter(Collider other)
         {
-            
-
+            if (other.gameObject.TryGetComponent <PlayerUnit>(out var p))
+            {
+                TriggerCallback(p, true);
+            }
         }
         protected override void TriggerCallback(DummyUnit unit, bool entering)
         {
@@ -27,7 +30,7 @@ namespace Arcatech.Triggers
                 {
                     _currentEffects[i] = new StatsEffect(Triggers[i]);
                 }
-                EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(unit,null,entering,_currentEffects));
+                EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(unit,null,entering,unit.transform, _currentEffects));
             }
         }// send signal itself
     }

@@ -11,12 +11,6 @@ namespace Arcatech.Triggers
             StatType = cfg.ChangedStat;
             PerSecondChange = cfg.OverTimeValue;
         }
-        public StatsMod(BaseStatType statType, float initialValue, float overTimeValue)
-        {
-            InitialValue = initialValue;
-            StatType = statType;
-            PerSecondChange = overTimeValue;
-        }
 
         public float InitialValue { get; set; }
         public Sprite Icon { get; }

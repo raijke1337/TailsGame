@@ -1,80 +1,53 @@
-﻿using Arcatech.Units;
+﻿using Arcatech.EventBus;
+using Arcatech.Triggers;
+using Arcatech.Units;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
-    public class ProjectileComponent : MonoBehaviour , IProjectile
+    public class ProjectileComponent : MonoBehaviour
     {
+        public DummyUnit Owner { get; set; }
+        public int RemainingHits;
+        public float Lifetime;
+        public float Speed;
+        StatsEffect[] Effects; 
 
-        #region managed
-
-        public bool IsSetup { get; protected set; } = false;
-        public BaseUnit Owner { get; set; }
-        private ProjectileSettingsPackage _projData;
-        public EquipmentType SpawnPlace { get; protected set; }
-
-        public ProjectileSettingsPackage GetProjectileSettings => _projData;
-
-        public virtual void Setup(SerializedProjectileConfiguration set, BaseUnit owner)
+        public void AddEffects(SerializedStatsEffectConfig[] cfgs)
         {
-            _projData = new ProjectileSettingsPackage(set);
-            Owner = owner;
-            IsSetup = true;
-            SpawnPlace = set.SpawnPlace;
-        }
-        public void UpdateInDelta(float deltaTime)
-        {
-            transform.position += _projData.ProjectileSpeed * deltaTime * transform.forward;
-            _projData.TimeToLive -= deltaTime;
-            if (_projData.TimeToLive <= 0)
+            Effects = new StatsEffect[cfgs.Length];
+            for (int i = 0; i < Effects.Length; i++)
             {
-                Destroy(gameObject);
+                Effects[i] = new StatsEffect(cfgs[i]);
             }
         }
-        #endregion
 
-        #region controls
-        public int Decrement(int times)
+        private void Update()
         {
-            _projData.ProjectilePenetration -= times;
-            return _projData.ProjectilePenetration;
+            transform.position += Speed * Time.deltaTime * transform.forward;
+            Lifetime -= Time.deltaTime;
+
+            if ( Lifetime < 0 )
+            { Destroy(gameObject); }
+
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.TryGetComponent<DummyUnit>(out var u) && u != Owner)
+            {
+                EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(u,Owner,true,transform,Effects));
+                RemainingHits--;
+                if (RemainingHits == 0) { transform.parent = other.transform; }
+            }
+            if (other.CompareTag("SolidItem"))
+            {
+                RemainingHits = 0;
+            }
+            if (RemainingHits == 0)
+            {
+                Speed = 0;
+            }
         }
 
-        public void StopProjectile(Transform parent)
-        {
-            // stuck if hits a static or has no penetration
-            _projData.ProjectileSpeed = 0;
-            _projData.ProjectilePenetration = 0;
-            transform.SetParent(parent, true);
-        }
-
-        #endregion
-
-
-
-        protected void OnTriggerEnter(Collider other)
-        {
-            //Debug.Log($"projectile {this.name} hit {other.name}");
-            ProjectileEnteredTriggerEvent?.Invoke(other, this);
-        }
-
-
-
-        public virtual void OnDestroy()
-        {
-            ProjectileExpiredEvent?.Invoke(this);
-        }
-
-        public event SimpleEventsHandler<Collider, ProjectileComponent> ProjectileEnteredTriggerEvent;
-
-        public event SimpleEventsHandler<ProjectileComponent> ProjectileExpiredEvent;
     }
-
-
-    public interface IProjectile
-    {
-    
-    
-    }
-
 }

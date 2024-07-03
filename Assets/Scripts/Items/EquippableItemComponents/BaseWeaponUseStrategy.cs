@@ -5,8 +5,13 @@ namespace Arcatech.Items
 {
     public abstract class BaseWeaponUseStrategy : IWeaponUseStrategy
     {
-        public abstract SerializedStatsEffectConfig[] EffectConfigs { get; }
-        protected DummyUnit _owner;
+        public BaseWeaponUseStrategy(DummyUnit unit, SerializedStatsEffectConfig[] effs)
+        {
+            Owner = unit;
+            EffectConfigs = effs;
+        }
+        public SerializedStatsEffectConfig[] EffectConfigs { get; }
+        protected DummyUnit Owner;
         public abstract void WeaponUsedStateEnter();
         public abstract void WeaponUsedStateExit();
     }

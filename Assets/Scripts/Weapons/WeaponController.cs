@@ -52,7 +52,7 @@ namespace Arcatech.Units
             if (_weapons.ContainsKey(action))
             {
                 var cost =  _weapons[action].GetCost;
-                if (_stats.TryApplyCost(cost))
+                if (cost == null || _stats.TryApplyCost(cost))
                 {
                     _inv.DrawItems(_weapons[action].DrawStrategy);
                     _weapons[action].UseItem();

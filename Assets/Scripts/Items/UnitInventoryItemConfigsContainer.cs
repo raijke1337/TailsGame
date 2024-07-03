@@ -15,17 +15,28 @@ namespace Arcatech.Items
         [SerializeField] public List<ItemSO> Inventory;
 
         // used to load items from save
-        public UnitInventoryItemConfigsContainer(UnitInventoryItemConfigsContainer refe)
+        public UnitInventoryItemConfigsContainer(UnitInventoryItemConfigsContainer cfg)
         {
-            Equipment = new List<ItemSO>(refe.Equipment);
-            Inventory = new List<ItemSO>(refe.Inventory);
+            Equipment = new List<ItemSO>();
+            Inventory = new List<ItemSO>();
+            if (cfg != null)
+            {
+                Equipment.AddRange(cfg.Equipment);
+                Inventory.AddRange(cfg.Inventory);
+            }
         }
 
         // used for default inventory load
         public UnitInventoryItemConfigsContainer(UnitItemsSO cfg)
         {
-            Equipment = new List<ItemSO>(cfg.Equipment);
-            Inventory = new List<ItemSO>(cfg.Inventory);
+
+            Equipment = new List<ItemSO>();
+            Inventory = new List<ItemSO>();
+            if (cfg != null)
+            {
+                Equipment.AddRange(cfg.Equipment);
+                Inventory.AddRange(cfg.Inventory);
+            }
         }
         // used to pack save data
         public UnitInventoryItemConfigsContainer(List<Item> equipment, List<Item> inventory)

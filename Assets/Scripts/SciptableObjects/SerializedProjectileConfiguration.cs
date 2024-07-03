@@ -1,5 +1,7 @@
+using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Items
 {
@@ -7,36 +9,27 @@ namespace Arcatech.Items
     public class SerializedProjectileConfiguration : ScriptableObject
     {
 
-        public ProjectileComponent ProjectilePrefab;
-        public EquipmentType SpawnPlace;
-        public float TimeToLive;
-        public float ProjectileSpeed;
+        [SerializeField] ProjectileComponent ProjectilePrefab;
+        [SerializeField] float TimeToLive;
+        [SerializeField] float ProjectileSpeed;
+        [Range(1, 10), Tooltip("How many enemies will be hit by this projectile"),SerializeField] int ProjectilePenetration;
 
-        [Range(1, 999), Tooltip("How many enemies will be hit by this projectile")] public int ProjectilePenetration;
-    }
-
-
-
-
-
-    public class ProjectileSettingsPackage
-    {
-        public EquipmentType SpawnPlace;
-        public float TimeToLive;
-        public float ProjectileSpeed;
-        public ProjectileComponent ProjectilePrefab;
-        public int ProjectilePenetration;
-
-        public ProjectileSettingsPackage(SerializedProjectileConfiguration cfg)
+        public ProjectileComponent ProduceProjectile(DummyUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
         {
-            SpawnPlace = cfg.SpawnPlace;
-            TimeToLive = cfg.TimeToLive;
-            ProjectileSpeed = cfg.ProjectileSpeed;
-            ProjectilePenetration = cfg.ProjectilePenetration;
-            ProjectilePrefab = cfg.ProjectilePrefab;
+            var proj = Instantiate(ProjectilePrefab);
+            proj.Owner = owner;
+            proj.transform.forward = owner.transform.forward;
+            proj.transform.SetPositionAndRotation(place.position, place.rotation);
+            proj.Lifetime = TimeToLive;
+            proj.RemainingHits = ProjectilePenetration; 
+            proj.Speed = ProjectileSpeed;
+
+            proj.AddEffects(effects);
+
+            return proj;
 
         }
-    }
 
+    }
 
 }

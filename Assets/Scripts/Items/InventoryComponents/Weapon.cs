@@ -41,29 +41,7 @@ namespace Arcatech.Items
             }
             DrawStrategy = cfg.DrawStrategy;
         }
-        //public override IEquippable SetupProperties()
-        //{
-        //    base.SetupProperties();
-        //    if (Config is WeaponSO ww)
-        //    {
-        //        _weaponGameobject = DisplayItem as BaseWeaponComponent;
 
-        //        _cost = ww.Cost;
-        //        _storedTriggerSettings = new List<SerializedStatsEffectConfig>(ww.UseEffects);
-
-        //        switch (Type)
-        //        {
-        //            case EquipmentType.MeleeWeap:
-        //                UseActionType = UnitActionType.Melee;
-        //                break;
-        //            case EquipmentType.RangedWeap:
-        //                UseActionType = UnitActionType.Ranged;
-        //                break;
-        //        }
-        //        DrawStrategy = ww.DrawStrategy;
-        //    }
-        //    return this;
-        //}
         public void UseItem()
         {
             _strat.WeaponUsedStateEnter();
@@ -74,11 +52,10 @@ namespace Arcatech.Items
             switch (Type)
             {
                 case EquipmentType.MeleeWeap:
-                    _strat = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, _storedTriggerSettings.ToArray(), Owner);
+                    _strat = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, Owner,_storedTriggerSettings.ToArray());
                     break;
                 case EquipmentType.RangedWeap:
-
-                    Debug.Log($"No ranged weapon use strat for {this}");
+                    _strat = new RangedWeaponUseStrategy(_weaponGameobject as RangedWeaponComponent, Owner,_storedTriggerSettings.ToArray());
                     break;
             }
             return this;

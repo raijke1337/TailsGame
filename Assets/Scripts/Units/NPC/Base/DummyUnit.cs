@@ -19,10 +19,6 @@ namespace Arcatech.Units
 
         [Space, SerializeField,] protected UnitStatsController _stats;
         [SerializeField] protected BaseStatsConfig defaultStats;
-
-
-        public UnitInventoryController GetInventoryComponent => _inventory;
-
         public override string GetUnitName { get; protected set; }
 
         public override void StartControllerUnit()
@@ -83,13 +79,6 @@ namespace Arcatech.Units
 
 
         #region inventory
-        // move all event triggers to event bus system
-        // that incluides invenotry updates from picking up items/
-
-        //public virtual void AddItem(ItemSO item, bool equip)
-        //{
-        //    _inventory.OnplayerPickedUpItem(item, equip);
-        //}
 
         protected virtual UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {
@@ -102,7 +91,7 @@ namespace Arcatech.Units
 
         public virtual void ApplyEffect(StatsEffect eff)
         {
-            _stats.AddEffect(eff);
+            _stats.TryAddEffect(eff);
         }
         public event UnityAction<DummyUnit> BaseUnitDiedEvent = delegate { };
 

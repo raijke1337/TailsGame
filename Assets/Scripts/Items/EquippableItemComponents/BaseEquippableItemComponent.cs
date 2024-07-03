@@ -1,16 +1,11 @@
 ﻿using Arcatech.Units;
+using KBCore.Refs;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
-    public class BaseEquippableItemComponent : MonoBehaviour
+    public class BaseEquippableItemComponent : ValidatedMonoBehaviour
     {
-        protected BaseUnit _owner;
-        public BaseEquippableItemComponent SetOwner (BaseUnit owner)
-        {
-            _owner = owner;
-            return this;
-        }
 
     }
 }

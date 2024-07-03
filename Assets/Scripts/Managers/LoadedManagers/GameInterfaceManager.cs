@@ -15,10 +15,8 @@ namespace Arcatech.Managers
         [SerializeField] private GameObject _ded;
         [SerializeField] private GameObject _pause;
 
-        [Space, SerializeField] private CartoonFX.CFXR_ParticleText _textPrefab;
 
 
-        EventBinding<DrawDamageEvent> _drawDamageBind;
         EventBinding<StatChangedEvent> _statChangedBind;
 
 
@@ -35,8 +33,6 @@ namespace Arcatech.Managers
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
 
-                _drawDamageBind = new EventBinding<DrawDamageEvent>(DrawDamageNumber);
-                EventBus<DrawDamageEvent>.Register(_drawDamageBind);
 
                 _statChangedBind = new EventBinding<StatChangedEvent>(UpdatePlayerBars);
                 EventBus<StatChangedEvent>.Register(_statChangedBind);
@@ -64,12 +60,10 @@ namespace Arcatech.Managers
         }
         private void OnDisable()
         {
-            EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
         }
         public virtual void StopController()
         {
-            EventBus<DrawDamageEvent>.Deregister(_drawDamageBind);
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
         }
         #endregion
@@ -112,10 +106,6 @@ namespace Arcatech.Managers
 
  
         #region UI events from event bus
-        private void DrawDamageNumber (DrawDamageEvent data)
-        {
-            Debug.Log($"Draw damage number! {data.Unit.transform}"); 
-        }
 
         private void UpdatePlayerBars(StatChangedEvent @event)
         {

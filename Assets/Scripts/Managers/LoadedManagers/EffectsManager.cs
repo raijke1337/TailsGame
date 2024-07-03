@@ -20,7 +20,18 @@ namespace Arcatech.Managers
         {
             SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
             _drawDamageEventBind = new EventBinding<DrawDamageEvent>(PlaceDamageText);
+            _placeParticleEventBind = new EventBinding<VFXRequest>(PlaceParticle);
+
             EventBus<DrawDamageEvent>.Register(_drawDamageEventBind);
+            EventBus<VFXRequest>.Register(_placeParticleEventBind);
+
+        }
+
+        private void PlaceParticle(VFXRequest request)
+        {
+            if (request.Effect == null) return;
+            var ef = Instantiate(request.Effect, request.Place.position, request.Place.rotation);
+            if (request.Parent != null) { ef.transform.SetParent(request.Parent.transform, true); }
         }
 
         private void PlaceDamageText(DrawDamageEvent @event)
@@ -41,47 +52,11 @@ namespace Arcatech.Managers
         [SerializeField] private AudioSource _musicPrefab;
         [Header("Effect prefabs")]
         [SerializeField] private CFXR_ParticleText _particleTextPrefab;
-        private EventBinding<DrawDamageEvent> _drawDamageEventBind;
-        
+        private EventBinding<DrawDamageEvent> _drawDamageEventBind;       
+        private EventBinding<VFXRequest> _placeParticleEventBind;       
 
         private AudioSource _musicObj;
 
-
-        public void ServeEffectsRequest(EffectRequestPackage pack)
-        {
-
-
-            if (pack.Sound != null)
-            {
-                PlaceSound(pack.Sound,pack.Place);
-              //  Debug.Log($"Serving effect request {pack.Sound} at {pack.Place}");
-            }
-            if (pack.Effect != null)
-            {
-                // Debug.Log($"Serving effect request {pack.Effect} at {pack.Place}");
-                PlaceParticle(pack.Effect,pack.Place,pack.Parent);
-            }
-        }
-
-
-        private void PlaceSound(AudioClip clip, Transform place)
-        {
-            var s = Instantiate(_audioPrefab, place.position, Quaternion.identity, transform);
-            s.clip = clip;
-            //s.volume *= SoundMixerManager.Instance.GetSFXVolume;
-
-            s.Play();
-
-            Destroy(s.gameObject, s.clip.length);
-        }
-        private void PlaceParticle(CFXR_Effect eff, Transform place, Transform parent = null)
-        {
-            var p = Instantiate(eff, place.position, place.rotation);
-            if (parent != null)
-            {
-                p.transform.SetParent(parent, true);
-            }
-        }
 
         private void PlayMusic(AudioClip clip)
         {
@@ -97,6 +72,16 @@ namespace Arcatech.Managers
         {
             StopAllCoroutines();
             if (_musicObj != null) Destroy(_musicObj.gameObject);
+
+
+        }
+
+        private void OnDisable()
+        {
+
+            EventBus<DrawDamageEvent>.Deregister(_drawDamageEventBind);
+
+            EventBus<VFXRequest>.Deregister(_placeParticleEventBind);
         }
 
     }

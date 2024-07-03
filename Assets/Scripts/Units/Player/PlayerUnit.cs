@@ -38,6 +38,7 @@ namespace Arcatech.Units
         protected override void RaiseStatChangeEvent(StatChangedEvent ev)
         {
             EventBus<StatChangedEvent>.Raise(ev);
+            base.RaiseStatChangeEvent(ev);
         }
 
 

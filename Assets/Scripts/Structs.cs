@@ -1,5 +1,6 @@
 
 using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Skills;
 using Arcatech.Texts;
 using Arcatech.Triggers;
@@ -29,7 +30,7 @@ namespace Arcatech
 
 
     public delegate void SkillRequestedEvent(SkillProjectileComponent data, BaseUnit source, Transform where);
-    public delegate void EffectsManagerEvent(EffectRequestPackage effectRequestPackage);
+    
 
 
     /// <summary>
@@ -119,16 +120,17 @@ namespace Arcatech.AI
 
 namespace Arcatech.Effects
 {
-    public struct EffectRequestPackage
+    public struct VFXRequest : IEvent
     {
-        public AudioClip Sound { get; }
+        public VFXRequest(CFXR_Effect effect, Transform place,Transform parent = null)
+        {
+            Effect = effect;
+            Parent = parent;
+            Place = place;
+        }
+
         public CFXR_Effect Effect { get; }
         public Transform Parent { get; }
         public Transform Place { get; }
-        public EffectRequestPackage(AudioClip s, CFXR_Effect e, Transform p, Transform w)
-        {
-            Sound = s; Effect = e; Parent = p; Place = w;
-        }
-
     }
 }

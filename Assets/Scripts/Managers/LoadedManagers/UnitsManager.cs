@@ -8,6 +8,7 @@ using Arcatech.Units.Inputs;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Arcatech.Managers
 {
@@ -72,9 +73,8 @@ namespace Arcatech.Managers
             }
 
             var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
-            if (_rooms.Length != 0)
+            if (_rooms.Length != 0) // rooms are set up
             {
-
                 _npcGroups = new List<RoomUnitsGroup>();
                 foreach (var room in _rooms)
                 {
@@ -86,6 +86,14 @@ namespace Arcatech.Managers
                     {
                         SetupUnit(unit, true);
                     }
+                }
+            }
+            else // just units
+            {
+                foreach (DummyUnit u in FindObjectsOfType<DummyUnit>())
+                {
+                    if (!(u is PlayerUnit))
+                    SetupUnit(u, true);
                 }
             }
 

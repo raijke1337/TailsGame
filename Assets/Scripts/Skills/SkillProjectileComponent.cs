@@ -16,8 +16,6 @@ namespace Arcatech.Skills
         {
             _cfg = cfg;
             GetEffects = new EffectsCollection(cfg.Effects);
-            base.Setup(cfg.SkillProjectileConfig,owner);
-
         }
 
         public EffectsCollection GetEffects { get; private set; }
@@ -61,10 +59,9 @@ namespace Arcatech.Skills
             _collider.radius = _cfg.PlacerRadius;
         }
 
-        public override void OnDestroy()
+        public  void OnDestroy()
         {
             SkillDestroyedEvent?.Invoke(this);
-            base.OnDestroy();
         }
 
         private int _framesAoe = 0;

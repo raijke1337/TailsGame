@@ -23,11 +23,7 @@ namespace Arcatech.Managers
         }
         public virtual void ControllerUpdate(float delta)
         {
-            if (_projectiles == null) return;
-            foreach (var p in _projectiles.ToList())
-            {
-                p.UpdateInDelta(delta);
-            }
+
         }
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
@@ -46,210 +42,61 @@ namespace Arcatech.Managers
         private Dictionary<StatsEffect, List<DummyUnit>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-            //if (DebugMessage)
-            //{
-            //    Debug.Log($"receive event {obj.AppliedEffects}, to {obj.Target.GetUnitName}");
-            //}
-            // a new set of instances is created for each use of applicatior
-
+            if (obj.AppliedEffects == null) return; // happens sometimes because collidertoggle was not properly run on a weapon - TODO
             foreach (StatsEffect eff in obj.AppliedEffects)
             {
+
+                // determine target
+                DummyUnit targetToApply = DetermineTarget(obj,eff);
+
+                if (targetToApply == null) return;
+
+                // check if target already had the effect instance applied
+
+
                 if (_applied.TryGetValue(eff, out var r))
                 {
                     // effect in list
 
-                    if (r.Contains(obj.Target)) return; // target in list
+                    if (r.Contains(targetToApply)) return; // target in list
                     else
                     {
                         // target not in list
-                        ApplyTriggerEffect(eff, obj.Target, obj.Source);
+                        targetToApply.ApplyEffect(eff);
                         r.Add(obj.Target);
                     }
                 }
                 // effect not in list just do normally
                 else
                 {
-                    _applied[eff] = new List<DummyUnit>();
-                    _applied[eff].Add(obj.Target);
-                    ApplyTriggerEffect(eff, obj.Target, obj.Source);
+                    targetToApply.ApplyEffect(eff);
+                    _applied[eff] = new List<DummyUnit>() { targetToApply };
                 }
+                EventBus<VFXRequest>.Raise(new VFXRequest(eff.GetEffects.GetRandomEffect(EffectMoment.OnCollision),obj.Place));
             }
         }
-
-
-        private void ApplyTriggerEffect(StatsEffect effect, DummyUnit target, DummyUnit source)
+        DummyUnit DetermineTarget (StatsEffectTriggerEvent ev, StatsEffect eff)
         {
-            DummyUnit finaltgt = null;
-            if (source is null)
+            switch (eff.Target)
             {
-                // static trigger (trap, health pack etc)
-                switch (effect.Target)
-                {
-                    case TriggerTargetType.TargetsEnemies:
-                        if (target is PlayerUnit player)
-                        {
-                            finaltgt = player;
-                        }
-                        break;
-                    case TriggerTargetType.TargetsUser:
-                        break;
-                    case TriggerTargetType.TargetsAllies:
-                        break;
-                }
+                case TriggerTargetType.TargetsEnemies:
+                    if (ev.Source == null || ev.Source.Side != ev.Target.Side)
+                    {
+                        return ev.Target;
+                    }
+                    break;
+                case TriggerTargetType.TargetsUser:
+                    return ev.Source;
+
+                case TriggerTargetType.TargetsAllies:
+                    if (ev.Source.Side == ev.Target.Side && ev.Source != ev.Target)
+                    {
+                        return ev.Target;
+                    }
+                    break;
             }
-
-
-            if (source is NPCUnit)
-            {
-                switch (effect.Target)
-                {
-                    case TriggerTargetType.TargetsEnemies:
-                        if (target is PlayerUnit player)
-                        {
-                            finaltgt = player;
-                        }
-                        break;
-                    case TriggerTargetType.TargetsUser:
-                        if (target == source)
-                        {
-                            finaltgt = source;
-                        }
-                        break;
-                    case TriggerTargetType.TargetsAllies:
-                        if (target != source && target.Side == source.Side)
-                        {
-                            finaltgt = target;
-                        }
-                        break;
-                }
-            }
-            if (source is PlayerUnit)
-            {
-                switch (effect.Target)
-                {
-                    case TriggerTargetType.TargetsEnemies:
-                        if (target is NPCUnit enemy)
-                        {
-                            finaltgt = enemy;
-                        }
-                        break;
-                    case TriggerTargetType.TargetsUser:
-                        finaltgt = source;
-                        break;
-                    case TriggerTargetType.TargetsAllies:
-                        if (target != source && target.Side == source.Side)
-                        {
-                            finaltgt = target;
-                        }
-                        break;
-                }
-            }
-            if (!(source is PlayerUnit) && !(source is NPCUnit)) // traps , could keep null maybe? dont like it
-            {
-                switch (effect.Target)
-                {
-                    case TriggerTargetType.TargetsEnemies:
-                        if (target is PlayerUnit player)
-                        {
-                            finaltgt = player;
-                        }
-                        break;
-                    case TriggerTargetType.TargetsUser:
-                        if (target == source)
-                        {
-
-                        }
-                        break;
-                    case TriggerTargetType.TargetsAllies:
-                        if (target != source && target is NPCUnit) // maybe use for aoe support npc abilities
-                        {
-                            finaltgt = target;
-                        }
-                        break;
-                    default:
-                        //Debug.LogError($"Trigger {config} from {source.GetID} to {target.GetID} did not apply!");
-                        break;
-                }
-
-                finaltgt.ApplyEffect(effect);
-                return;
-            }
-
-
-            if (finaltgt == null)
-            {
-
-                return ;
-            }
-            
+            return null;
         }
-
-
-        #endregion
-
-
-
-        #region projectiles
-
-        private List<ProjectileComponent> _projectiles = new List<ProjectileComponent>();
-
-
-        public void RegisterExistingProjectile (ProjectileComponent p)
-        {
-            if (_projectiles == null)
-            {
-                _projectiles = new List<ProjectileComponent>();
-            }
-            _projectiles.Add(p);
-
-            p.ProjectileEnteredTriggerEvent += ProjectileHit;
-            p.ProjectileExpiredEvent += ProjectileExpired;
-
-            PositionProjectile(p);
-
-
-
-            //Debug.Log($"{p} was registered and is set up properly: {p.IsSetup}");
-        }
-
-        private void PositionProjectile (ProjectileComponent spawned)
-        {
-            //var Owner = spawned.Owner;
-
-            //spawned.transform.SetPositionAndRotation(Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.position,
-            //    Owner.GetEmpties.ItemPositions[spawned.GetProjectileSettings.SpawnPlace].transform.rotation);
-
-            //spawned.transform.forward = Owner.transform.forward;
-        }
-
-
-
-        private void ProjectileExpired(ProjectileComponent arg)
-        {
-           // Debug.Log($"{arg} reported expiry");
-            arg.ProjectileEnteredTriggerEvent -= ProjectileHit;
-            arg.ProjectileExpiredEvent -= ProjectileExpired;
-            _projectiles.Remove(arg);
-        }
-
-        private void ProjectileHit(Collider col, ProjectileComponent proj)
-        {
-          //  Debug.Log($"Projectile {proj} hit {col}");
-            if (col.gameObject.CompareTag("SolidItem"))
-            {
-                
-                proj.StopProjectile(col.transform);
-                return;
-            }
-            if (col.TryGetComponent(out BaseUnit hit) && hit.Side != proj.Owner.Side)
-            {
-                if (proj.Decrement(1) <= 0)
-                {
-                    proj.StopProjectile(col.transform);
-                }
-            }
-        }
-
 
         #endregion
     }

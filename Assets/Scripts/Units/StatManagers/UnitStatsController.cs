@@ -38,28 +38,28 @@ namespace Arcatech.Stats
             return this;
         }
 
-        public UnitStatsController AddEffect (StatsEffect eff)
+        public bool TryAddEffect (StatsEffect eff)
         {
             if (_stats.TryGetValue(eff.StatType,out var c))
             {
                 c.ApplyStatsEffect(eff);
+                RaiseEvent(eff.StatType);
+                return true;
             }
-            RaiseEvent(eff.StatType);
-            return this;
+            return false;
         }
 
         public bool TryApplyCost (StatsEffect cost)
         {
             var cont = _stats[cost.StatType];
-            bool OK = cont.GetCurrent >= cost.InitialValue;
+            bool OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
             if (OK)
             {
                 cont.ApplyStatsEffect(cost);
+                RaiseEvent (cost.StatType);
             }
             return OK;
         }
-
-        #region setup
 
         #region managed
 
@@ -71,16 +71,16 @@ namespace Arcatech.Stats
                 stat.CachedValue = stat.GetCurrent;
             }
             _updatesCooldownTimer = new CountDownTimer(_freqUpdates);
-            _updatesCooldownTimer.OnTimerStopped += () =>
-            {
-                Owner.StartCoroutine(ReportUpdatedStats());
-                _updatesCooldownTimer.Start();
-            };
+            _updatesCooldownTimer.OnTimerStopped += RefreshTimer;
 
             Owner.StartCoroutine(ReportUpdatedStats());
         }
 
-        
+        private void RefreshTimer()
+        {
+            Owner.StartCoroutine(ReportUpdatedStats());
+            _updatesCooldownTimer.Start();
+        }
 
         public override void ControllerUpdate(float delta)
         {
@@ -88,6 +88,7 @@ namespace Arcatech.Stats
             {
                 stat.Value.UpdateInDelta(delta);
             }
+            _updatesCooldownTimer.Tick(delta);
         }
 
         public override void StopController()
@@ -99,11 +100,10 @@ namespace Arcatech.Stats
             
         }
         #endregion
-        #endregion
-
         private IEnumerator ReportUpdatedStats()
         {
             yield return null;
+            Debug.Log($"updated stats in {Owner}");
             foreach (var stat in _stats.Keys)
             {
                 RaiseEvent(stat);   

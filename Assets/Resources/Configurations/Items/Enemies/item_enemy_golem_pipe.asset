@@ -12,17 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e098c56bd168dfa4281bd9457b00fded, type: 3}
   m_Name: item_enemy_golem_pipe
   m_EditorClassIdentifier: 
-  ID: golem_pipe
+  ID:
+    Part1: 2462167912
+    Part2: 1265333178
+    Part3: 4045119929
+    Part4: 1646609865
   Description: {fileID: 0}
-  ItemType: 1
-  Item: {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824, type: 3}
+  MaxStack: 1
+  Type: 0
+  ItemPrefab: {fileID: 8545622227303113929, guid: b242fe0c11bd0e34d806837eda6e6824,
+    type: 3}
+  StatMods: []
   Skill: {fileID: 0}
+  Cost: {fileID: 11400000, guid: 31c3767a29bb3a24c8c190d90223a6cd, type: 2}
+  UseEffects:
+  - {fileID: 0}
+  - {fileID: 0}
+  DrawStrategy: {fileID: 11400000, guid: 00c3eeea7d325d1498271fbf5c7cc775, type: 2}
   Effects:
     Sounds:
       _serializedList: []
     Effects:
       _serializedList: []
-  AnimatorController: {fileID: 9100000, guid: 1b5923699c461194fb3ec6011d5d02b9, type: 2}
-  WeaponCooldown: 0.5
-  WeaponHitTriggers:
-  - {fileID: 11400000, guid: a16d54ce3c1181047b22659dfc2cdaf6, type: 2}
