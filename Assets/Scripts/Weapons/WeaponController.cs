@@ -18,16 +18,15 @@ namespace Arcatech.Units
 
         private UnitInventoryController _inv;
 
-        private EventBinding<InventoryUpdateEvent> bind;
+        private EventBinding<InventoryUpdateEvent> bindInv;
 
 
         public WeaponController(UnitStatsController stats, UnitInventoryController inv, DummyUnit dummyUnit) : base(dummyUnit)
         {
             _stats = stats;
             _inv = inv;
-            bind = new EventBinding<InventoryUpdateEvent>(OnInventoryUpdate);
-            UpdateWeapons(_inv);
-    
+            bindInv = new EventBinding<InventoryUpdateEvent>(OnInventoryUpdate);
+            UpdateWeapons(_inv);    
         }
 
         private void OnInventoryUpdate(InventoryUpdateEvent obj)
@@ -41,7 +40,6 @@ namespace Arcatech.Units
             foreach (var weapon in i.GetWeapons)
             {
                 _weapons[weapon.UseActionType] = weapon;
-                _weapons[weapon.UseActionType].AssignStrategy();
             }
         }
 
@@ -55,8 +53,7 @@ namespace Arcatech.Units
                 if (cost == null || _stats.TryApplyCost(cost))
                 {
                     _inv.DrawItems(_weapons[action].DrawStrategy);
-                    _weapons[action].UseItem();
-                    return true;
+                     return  _weapons[action].TryUseItem();   
                 }
             }
             return false;
@@ -69,11 +66,12 @@ namespace Arcatech.Units
         #region managed
         public override void StartController()
         {
-            EventBus<InventoryUpdateEvent>.Register(bind);
+            EventBus<InventoryUpdateEvent>.Register(bindInv);
         }
         public override void ControllerUpdate(float delta)
         {
-
+            foreach (var w in _weapons.Values)
+            { w.DoUpdates(delta); }
         }
 
         public override void FixedControllerUpdate(float fixedDelta)
@@ -83,7 +81,7 @@ namespace Arcatech.Units
 
         public override void StopController()
         {
-            EventBus<InventoryUpdateEvent>.Deregister(bind);
+            EventBus<InventoryUpdateEvent>.Deregister(bindInv);
         }
 
         #endregion

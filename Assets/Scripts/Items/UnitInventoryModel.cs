@@ -50,13 +50,7 @@ namespace Arcatech.Items
         public void Clear() => Inventory.Clear();
         public bool AddItem(Item i) => Inventory.TryAdd(i);
         public bool RemoveItem(Item i) => Inventory.TryRemove(i);
-        //public int CombineItems(int sourceInd, int targInd)
-        //{
-        //    var total = Inventory[sourceInd].Quantity + Inventory[targInd].Quantity;
-        //    Inventory[targInd].Quantity = total;
-        //    RemoveItem(Inventory[sourceInd]);
-        //    return total;
-        //}
+
     }
 
 

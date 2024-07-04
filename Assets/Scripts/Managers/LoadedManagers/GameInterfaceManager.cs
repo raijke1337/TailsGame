@@ -1,6 +1,8 @@
 using Arcatech.EventBus;
+using Arcatech.Items;
 using Arcatech.Texts;
 using Arcatech.UI;
+using Arcatech.Units;
 using KBCore.Refs;
 using System;
 using System.Collections;
@@ -15,9 +17,8 @@ namespace Arcatech.Managers
         [SerializeField] private GameObject _ded;
         [SerializeField] private GameObject _pause;
 
-
-
         EventBinding<StatChangedEvent> _statChangedBind;
+        EventBinding<InventoryUpdateEvent> _inventoryChangedBind;
 
 
         #region managed
@@ -33,21 +34,25 @@ namespace Arcatech.Managers
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
 
-
                 _statChangedBind = new EventBinding<StatChangedEvent>(UpdatePlayerBars);
+                _inventoryChangedBind = new EventBinding<InventoryUpdateEvent>(UpdateIcons);
+
+
                 EventBus<StatChangedEvent>.Register(_statChangedBind);
+                EventBus<InventoryUpdateEvent>.Register(_inventoryChangedBind);
+
 
             }
             else
             {
                 _playerPan.gameObject.SetActive(false);
-                //_tgtPan.IsNeeded = false;
                 _text.gameObject.SetActive(false);
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow; // dialogues also hap[pen in scene levels
                 _ded.SetActive(false);
             }
 
         }
+
 
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
@@ -61,10 +66,13 @@ namespace Arcatech.Managers
         private void OnDisable()
         {
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
+
+            EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
         }
         public virtual void StopController()
         {
             EventBus<StatChangedEvent>.Deregister(_statChangedBind);
+            EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
         }
         #endregion
 
@@ -112,6 +120,13 @@ namespace Arcatech.Managers
             _playerPan.ShowStat(@event.StatType, @event.Container);
         }
 
+        private void UpdateIcons(InventoryUpdateEvent obj)
+        {
+            if (obj.Unit is PlayerUnit)
+            {
+                _playerPan.ShowIcons(obj.Inventory);
+            }
+        }
         #endregion
 
 

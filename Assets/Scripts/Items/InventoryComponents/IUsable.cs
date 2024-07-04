@@ -1,9 +1,10 @@
-﻿namespace Arcatech.Items
+﻿using Arcatech.UI;
+
+namespace Arcatech.Items
 {
-    public interface IUsableItem : ICostedItem, IActionTypeItem
+    public interface IUsableItem : ICostedItem, IActionTypeItem, IIconContent
     {
-        public void UseItem();
-        public IUsableItem AssignStrategy();
+        public bool TryUseItem();
     }
 
    

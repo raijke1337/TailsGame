@@ -6,8 +6,8 @@ namespace Arcatech.Items
 {
     public class MeleeWeaponComponent : BaseWeaponComponent
     {
-
         [SerializeField,Child] public WeaponTriggerComponent Trigger;
+
     }
 
 }

@@ -1,6 +1,5 @@
 using Arcatech.Effects;
 using Arcatech.EventBus;
-using CartoonFX;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +7,21 @@ namespace Arcatech.Managers
 {
     public class EffectsManager : MonoBehaviour
     {
+        [Header("Sound prefabs")]
+        [SerializeField] private AudioSource _audioPrefab;
+        [SerializeField] private AudioSource _musicPrefab;
+        [Header("Effect prefabs")]
+        [SerializeField] private DamageTextContainer _particleTextPrefab;
+        
+
+
+
+        private EventBinding<DrawDamageEvent> _drawDamageEventBind;
+        private EventBinding<VFXRequest> _placeParticleEventBind;
+        private AudioSource _musicObj;
+
+
+
         #region singleton
         public static EffectsManager Instance;
         private void Awake()
@@ -36,27 +50,17 @@ namespace Arcatech.Managers
 
         private void PlaceDamageText(DrawDamageEvent @event)
         {
-            Debug.Log($"Place damage text {@event.Damage} at {@event.Unit.transform.position}");
+            var txt = Instantiate(_particleTextPrefab,@event.Unit.transform.position + (Vector3.up * 2),Quaternion.identity);
+
+            txt.PlayNumbers((int)@event.Damage);
         }
+
+
 
         private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
         {
             PlayMusic(GameManager.Instance.GetCurrentLevelData.Music);
         }
-
-
-
-
-        [Header("Sound prefabs")]
-        [SerializeField] private AudioSource _audioPrefab;
-        [SerializeField] private AudioSource _musicPrefab;
-        [Header("Effect prefabs")]
-        [SerializeField] private CFXR_ParticleText _particleTextPrefab;
-        private EventBinding<DrawDamageEvent> _drawDamageEventBind;       
-        private EventBinding<VFXRequest> _placeParticleEventBind;       
-
-        private AudioSource _musicObj;
-
 
         private void PlayMusic(AudioClip clip)
         {
@@ -78,9 +82,7 @@ namespace Arcatech.Managers
 
         private void OnDisable()
         {
-
             EventBus<DrawDamageEvent>.Deregister(_drawDamageEventBind);
-
             EventBus<VFXRequest>.Deregister(_placeParticleEventBind);
         }
 

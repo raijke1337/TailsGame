@@ -54,7 +54,7 @@ MonoBehaviour:
   _cursors:
     _serializedList:
     - Key: 0
-      Value: {fileID: 2800000, guid: 5988a2020badc834c96521b52b6a08f5, type: 3}
+      Value: {fileID: 2800000, guid: 3060b4531d8510a47a2385717381231b, type: 3}
   _fonts:
     _serializedList:
     - Key: 0
@@ -136,8 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ce7180ba862ff743bf93394949f205f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 2427215869165501267, guid: 1a0fb2d3e5ee7944eb9720f0d09391c3,
-    type: 3}
+  PlayerPrefab: {fileID: 0}
   _mainMenuPrefab: {fileID: 1630084988138368169, guid: 68e960355551af84788cdb8581df6493,
     type: 3}
   GameControllersPrefab: {fileID: 3545365360258105453, guid: 5e1d6557f7501624cb62275e687b34ef,
@@ -167,6 +166,8 @@ MonoBehaviour:
     type: 3}
   _musicPrefab: {fileID: 4184976033158668723, guid: 3cf3edcb8e8fa8e498b5afe6285ce1e9,
     type: 3}
+  _particleTextPrefab: {fileID: -1364766221019919504, guid: 09037bedced6fd8479db8016dab0c016,
+    type: 3}
 --- !u!114 &8102464925495723807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,7 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed7b160ebd48de43b0a2daff4e9e902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dictSO: []
 --- !u!114 &4576216533406728223
 MonoBehaviour:
   m_ObjectHideFlags: 0

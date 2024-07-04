@@ -29,7 +29,7 @@ namespace Arcatech.Skills
         { 
             if (_skills.ContainsKey(action))
             {
-                _skills[action].UseItem();
+                _skills[action].TryUseItem();
                 return true;
             }
             return false;

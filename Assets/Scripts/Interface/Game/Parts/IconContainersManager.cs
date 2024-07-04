@@ -1,4 +1,6 @@
+using Arcatech.Items;
 using Arcatech.Skills;
+using com.cyborgAssets.inspectorButtonPro;
 using KBCore.Refs;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,17 +10,32 @@ namespace Arcatech.UI
     {
 
         [SerializeField] private IconContainerUIScript _iconPrefab;
+        private Dictionary<IIconContent, IconContainerUIScript> _icons = new();
 
-        private List<IconContainerUIScript> _icons;
-
-        public void TrackSkillIcon(SkillObjectForControls skill)
+        public void TrackIcon(IIconContent content)
         {
-            var icon = Instantiate(_iconPrefab, transform);
-            _icons ??= new List<IconContainerUIScript>();
-            _icons.Add(icon);
-            icon.LoadedSkill = skill;
+            if (_icons.ContainsKey(content))
+            {
+                _icons[content].UpdateIcon(content);
+            }
+
+            else
+            {
+                _icons[content] = Instantiate(_iconPrefab, this.transform);
+                _icons[content].UpdateIcon(content);
+            }
         }
 
+
+#if UNITY_EDITOR
+        [Space,SerializeField] WeaponSO loadedIcon;
+        [ProButton]
+        public void Debug_LoadIcon()
+        {
+            Weapon w = new Weapon(loadedIcon, null);
+            TrackIcon(w);
+        }
+#endif
 
     }
 }

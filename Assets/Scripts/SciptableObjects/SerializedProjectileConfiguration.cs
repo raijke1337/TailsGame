@@ -16,10 +16,10 @@ namespace Arcatech.Items
 
         public ProjectileComponent ProduceProjectile(DummyUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
         {
-            var proj = Instantiate(ProjectilePrefab);
+            var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;
             proj.transform.forward = owner.transform.forward;
-            proj.transform.SetPositionAndRotation(place.position, place.rotation);
+
             proj.Lifetime = TimeToLive;
             proj.RemainingHits = ProjectilePenetration; 
             proj.Speed = ProjectileSpeed;

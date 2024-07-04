@@ -58,6 +58,7 @@ namespace Arcatech
             if (IsRunning && Time > 0)
             {
                 Time -= delta;
+                
             }
             if (IsRunning && Time <= 0)
             {

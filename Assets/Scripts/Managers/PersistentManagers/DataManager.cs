@@ -140,6 +140,11 @@ namespace Arcatech.Managers
 
         private void OnInventoryUpdate(InventoryUpdateEvent arg)
         {
+            if (_loadedSave == null)
+            {
+                return;
+            }
+            // for debug use
             if (arg.Unit is PlayerUnit)
             {
                 _loadedSave.UpdateInventory(arg.Inventory.PackPlayerData());

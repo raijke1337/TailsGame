@@ -13,7 +13,7 @@ namespace Arcatech.Units
     [RequireComponent(typeof(InputsPlayer))]
     public class PlayerUnit : ControlledUnit
     {
-        [SerializeField, Child] protected FaceCameraCOntrroller _faceCam;
+        [SerializeField, Child] protected Camera _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
 
         

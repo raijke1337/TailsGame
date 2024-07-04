@@ -11,7 +11,7 @@ namespace Arcatech.Stats
 {
     public class UnitStatsController : ManagedControllerBase
     {
-        private Dictionary<BaseStatType, StatValueContainer> _stats { get; set;  }
+        private Dictionary<BaseStatType, StatValueContainer> stats { get; set;  }
         public event UnityAction<StatChangedEvent> StatsUpdatedEvent = delegate { };
 
         [SerializeField, Tooltip("How often the component reports on all stats")] float _freqUpdates = 0.3f;
@@ -19,11 +19,11 @@ namespace Arcatech.Stats
 
         public UnitStatsController(SerializedStatModConfig[] startingstats, DummyUnit dummyUnit) : base(dummyUnit)
         {
-            _stats = new Dictionary<BaseStatType, StatValueContainer>();
+            stats = new Dictionary<BaseStatType, StatValueContainer>();
             var vals = Enum.GetValues(typeof(BaseStatType));
             foreach (var typ in vals)
             {
-                _stats[(BaseStatType)typ] = new StatValueContainer();
+                stats[(BaseStatType)typ] = new StatValueContainer();
             }
             AddMods(startingstats);
 
@@ -33,14 +33,14 @@ namespace Arcatech.Stats
         {
             foreach (var cfg in mods)
             {
-                _stats[cfg.ChangedStat].ApplyStatsMod(new StatsMod(cfg));
+                stats[cfg.ChangedStat].ApplyStatsMod(new StatsMod(cfg));
             }
             return this;
         }
 
         public bool TryAddEffect (StatsEffect eff)
         {
-            if (_stats.TryGetValue(eff.StatType,out var c))
+            if (stats.TryGetValue(eff.StatType,out var c))
             {
                 c.ApplyStatsEffect(eff);
                 RaiseEvent(eff.StatType);
@@ -51,7 +51,7 @@ namespace Arcatech.Stats
 
         public bool TryApplyCost (StatsEffect cost)
         {
-            var cont = _stats[cost.StatType];
+            var cont = stats[cost.StatType];
             bool OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
             if (OK)
             {
@@ -65,12 +65,13 @@ namespace Arcatech.Stats
 
         public override void StartController()
         {
-            foreach (var stat in _stats.Values)
+            foreach (var stat in stats.Values)
             {
                 stat.Initialize(stat.GetMax);
                 stat.CachedValue = stat.GetCurrent;
             }
             _updatesCooldownTimer = new CountDownTimer(_freqUpdates);
+            _updatesCooldownTimer.Start();
             _updatesCooldownTimer.OnTimerStopped += RefreshTimer;
 
             Owner.StartCoroutine(ReportUpdatedStats());
@@ -84,7 +85,7 @@ namespace Arcatech.Stats
 
         public override void ControllerUpdate(float delta)
         {
-            foreach (var stat in _stats)
+            foreach (var stat in stats)
             {
                 stat.Value.UpdateInDelta(delta);
             }
@@ -103,16 +104,15 @@ namespace Arcatech.Stats
         private IEnumerator ReportUpdatedStats()
         {
             yield return null;
-            Debug.Log($"updated stats in {Owner}");
-            foreach (var stat in _stats.Keys)
+            foreach (var stat in stats.Keys)
             {
                 RaiseEvent(stat);   
             }
         }
         private void RaiseEvent(BaseStatType stat)
         {
-            StatsUpdatedEvent.Invoke(new StatChangedEvent(stat, _stats[stat]));
-            _stats[stat].CachedValue = _stats[stat].GetCurrent;
+            StatsUpdatedEvent.Invoke(new StatChangedEvent(stat, stats[stat]));
+            stats[stat].CachedValue = stats[stat].GetCurrent;
         }
 
 

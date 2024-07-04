@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5731720389832902055}
   - component: {fileID: 6351615846559526220}
+  - component: {fileID: 1272945149939566920}
   m_Layer: 3
   m_Name: Floor 9x9
   m_TagString: Untagged
@@ -54,11 +55,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a37112ab1666184cb1534e24499cb5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
   ObligatoryDecors: []
   PossibleDecors: []
   _chance: 0
   _rotates: 0
+--- !u!114 &1272945149939566920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8143115889037441043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fc2b01bde6d3c14d92735c5c06855df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Renderers: []
+  Position: {x: 0, y: 0, z: 0}
+  Materials: []
+  InitialAlpha: 0
 --- !u!1001 &216708112593075249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1139,6 +1155,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6580082604301660980, guid: 4d7ae82aadb865e49945a223107a2dcb,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1778cf78ab7c60f42bf93c9b23a754fc, type: 2}
     - target: {fileID: 9035582357037654692, guid: 4d7ae82aadb865e49945a223107a2dcb,
         type: 3}
       propertyPath: m_Name

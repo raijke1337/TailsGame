@@ -43,6 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 979451970447391360}
   - component: {fileID: 726043566997034929}
+  - component: {fileID: 9178673229775706429}
   m_Layer: 3
   m_Name: Bridge 3x9
   m_TagString: Untagged
@@ -81,11 +82,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a37112ab1666184cb1534e24499cb5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMessage: 0
   ObligatoryDecors: []
   PossibleDecors: []
   _chance: 0
   _rotates: 0
+--- !u!114 &9178673229775706429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7677131699517521345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fc2b01bde6d3c14d92735c5c06855df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Renderers: []
+  Position: {x: 0, y: 0, z: 0}
+  Materials: []
+  InitialAlpha: 0
 --- !u!1001 &125893160951043611
 PrefabInstance:
   m_ObjectHideFlags: 0

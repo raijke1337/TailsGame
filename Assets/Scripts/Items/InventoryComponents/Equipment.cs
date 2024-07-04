@@ -18,7 +18,7 @@ namespace Arcatech.Items
             StatMods = cfg.StatMods;
             GetSkillData = cfg.Skill;
             DisplayItem.gameObject.SetActive(false);
-            Debug.Log($"setup equipment{this}");
+          //  Debug.Log($"setup equipment{this}");
         }               
         
         public void SetItemEmpty(Transform pos)

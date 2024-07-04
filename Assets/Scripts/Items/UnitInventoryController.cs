@@ -21,16 +21,8 @@ namespace Arcatech.Items
         private UnitInventoryModel Inventory;
 
 
-
-
         #region setup
 
-
-        public UnitInventoryController SetItemEmpties(ItemEmpties e)
-        {
-            _empties = e;
-            return this;
-        }
 
         public UnitInventoryController SetModelView (IUnitInventoryView view)
         {
@@ -52,7 +44,7 @@ namespace Arcatech.Items
             return new UnitInventoryItemConfigsContainer(eq,inv);
         }
 
-
+         
         #endregion
 
         private void OnInvenoryChangedUI()
@@ -74,6 +66,7 @@ namespace Arcatech.Items
         {
             Inventory = new UnitInventoryModel(cfg, dummyUnit);
             _empties= em;
+            dummyUnit.StartCoroutine(DelayedUpdate());
         }
 
         public UnitInventoryController DrawItems(IDrawItemStrategy strategy)
@@ -141,14 +134,17 @@ namespace Arcatech.Items
                 return list.ToArray();
             }
         }
-
-
         private void InventoryModelUpdated(IEnumerable<IItem> obj)
-        {
-            
+        {            
             EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner,this));
         }
 
+        
+        private IEnumerator DelayedUpdate()
+        {
+            yield return null;
+            InventoryModelUpdated(Inventory.Equipments.GetAllValues());
+        }
         #endregion
 
 

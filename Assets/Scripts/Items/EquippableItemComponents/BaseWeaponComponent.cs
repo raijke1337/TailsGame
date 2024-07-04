@@ -8,7 +8,6 @@ namespace Arcatech.Items
 
     public abstract class BaseWeaponComponent : BaseEquippableItemComponent
     {
-        
 
     }
 

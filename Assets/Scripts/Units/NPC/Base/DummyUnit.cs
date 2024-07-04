@@ -100,7 +100,10 @@ namespace Arcatech.Units
             switch (ev.StatType)
             {
                 case BaseStatType.Health:
-                    EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, ev.Container.GetCurrent - ev.Container.CachedValue));
+                    if (ev.Container.GetCurrent < ev.Container.CachedValue)
+                    {
+                        EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, ev.Container.GetCurrent - ev.Container.CachedValue));
+                    }                    
                     if (ev.Container.GetCurrent <= 0f)
                     {
                         BaseUnitDiedEvent.Invoke(this);

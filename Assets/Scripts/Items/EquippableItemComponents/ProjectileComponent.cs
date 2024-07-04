@@ -8,9 +8,9 @@ namespace Arcatech.Items
     public class ProjectileComponent : MonoBehaviour
     {
         public DummyUnit Owner { get; set; }
-        public int RemainingHits;
-        public float Lifetime;
-        public float Speed;
+        [HideInInspector] public int RemainingHits;
+        [HideInInspector] public float Lifetime;
+        [HideInInspector] public float Speed;
         StatsEffect[] Effects; 
 
         public void AddEffects(SerializedStatsEffectConfig[] cfgs)

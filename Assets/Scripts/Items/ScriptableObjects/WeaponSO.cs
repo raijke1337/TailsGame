@@ -10,7 +10,13 @@ namespace Arcatech.Items
     [Serializable, CreateAssetMenu(fileName = "New Weapon Item", menuName = "Items/Weapon Item")]
     public class WeaponSO : EquipSO
     {
+        [Header("Use settings")]
+        public int Charges;
+        public float ChargeRestoreTime;
+        public float InternalCooldown;
         public SerializedStatsEffectConfig Cost;
+
+        [Space]
         public SerializedStatsEffectConfig[] UseEffects;
         public DrawItemsStrategy DrawStrategy;
         public SerializedEffectsCollection Effects;

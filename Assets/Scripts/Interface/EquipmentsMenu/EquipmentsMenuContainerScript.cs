@@ -47,6 +47,8 @@ namespace Arcatech.UI
         }
         public void RefreshView(UnitInventoryModel model)
         {
+            Debug.Log($"load {model} into {this}");
+
             _inventoryModel = model;
             //clean up
             foreach (var tile in _equipsTiles.Values)

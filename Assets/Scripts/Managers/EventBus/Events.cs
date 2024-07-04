@@ -1,4 +1,5 @@
-﻿using Arcatech.Stats;
+﻿using Arcatech.Items;
+using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
@@ -52,7 +53,18 @@ namespace Arcatech.EventBus
         public PlayerPauseEvent(bool v) => Value = v;
     }
 
+    public struct IUsableUpdatedEvent : IEvent
+    {
+        public IUsableUpdatedEvent(IUsableItem used, DummyUnit user)
+        {
+            Used = used;
+            User = user;
+        }
 
+        public IUsableItem Used { get; }
+        public DummyUnit User { get; }
+
+    }
 
 
 

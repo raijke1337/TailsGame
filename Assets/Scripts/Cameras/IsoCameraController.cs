@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Scenes.Cameras
 {
-    [RequireComponent(typeof(Camera))]
     public class IsoCameraController : MonoBehaviour, IManagedController
     {
         private AimingComponent _playerAimingComponent;
@@ -24,7 +23,7 @@ namespace Arcatech.Scenes.Cameras
         [SerializeField, Tooltip("the position of raycast target on the player")] Vector3 _targetAimOffset = Vector3.zero;
 
 
-        [SerializeField] LayerMask _layerMask;
+       // [SerializeField] string _fadingTag;
         [Range(0, 1f), SerializeField] float _targetFadedAlpha = 0.33f;
         [SerializeField] bool _keepShadows = true;
         [SerializeField] float _fadeSpeed = 0.5f;

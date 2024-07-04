@@ -40,7 +40,7 @@ namespace Arcatech.UI
 
         public void UpdateValue(StatValueContainer c)
         {
-            Color flash = Color.white;
+            Color flash = new Color(0, 0, 0, 0); // transparent white
             if (c.GetCurrent > c.CachedValue) // heal
             {
                 flash = _colors.PositiveColor;
