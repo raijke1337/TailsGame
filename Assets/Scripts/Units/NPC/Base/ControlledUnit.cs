@@ -17,8 +17,8 @@ namespace Arcatech.Units
         public abstract void DoRotation(float delta);
 
         #endregion
-
-
+        [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
+        protected bool UnitOnGround { get => _groundedPlatform.IsGrounded; }
 
 
         public override void StartControllerUnit()
@@ -98,13 +98,12 @@ namespace Arcatech.Units
                     }
                     break;
                 case UnitActionType.Jump:
+                    DoJump();
                     break;
             }
         }
-
-
+        protected abstract void DoJump();
         protected abstract bool IdleConditions();
-        protected abstract bool UnitInAir();
 
 
     

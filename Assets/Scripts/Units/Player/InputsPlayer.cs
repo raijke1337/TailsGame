@@ -149,7 +149,7 @@ namespace Arcatech.Units.Inputs
 
         private void OnMovementAction(Vector2 dir)
         {
-            //AdjustInputsVector(_playerInputReader.InputDirection);
+           // AdjustInputsVector(_playerInputReader.InputDirection);
         }
 
         private void OnAimAction(Vector2 point)

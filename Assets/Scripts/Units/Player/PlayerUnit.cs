@@ -21,12 +21,8 @@ namespace Arcatech.Units
 
         #region player movement
         [Header("Player movement settings")]
-        [SerializeField] float _smoothTime = 0.2f;
-
-
-
+        [SerializeField] float _smoothTime = 0.5f;
         protected const float zeroF = 0f;
-
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
         public override void StartControllerUnit()
@@ -36,118 +32,105 @@ namespace Arcatech.Units
             _playerInp = _inputs as InputsPlayer;
             ToggleCamera(true);
         }
-        protected override void SetupStateMachine()
+        public override void RunUpdate(float delta)
         {
-            UnitStateMachine = new ArcaStateMachine();
-            var locom = new UnarmedLocomotionState (this, _animator);
-            var idle = new UnarmedIdleState(this, _animator);
+            base.RunUpdate(delta);
 
-            UnitStateMachine.AddAnyTransition(idle, new FuncPredicate(IdleConditions));
+                Vector3 AD = _adj.Isoright * _playerInp.InputVector.x;
+                Vector3 WS = _adj.Isoforward * _playerInp.InputVector.y;
 
-            UnitStateMachine.AddTransition(idle, locom, new FuncPredicate();
+            movementVector = AD + WS;
 
-            UnitStateMachine.ForceState(idle);
-
-
-
-        }
-
-        #region predicates
-        protected bool _unitMoving = false;
-        protected override bool IdleConditions()
-        {
-            return animationVector.sqrMagnitude == zeroF;
-        }
-
-        protected override bool UnitInAir()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        #endregion
-
-
-
-
-        #region movement
-
-        Vector2 inputsVector;
-
-        Vector3 animationVector = Vector3.zero;
-        Vector3 _dampingVelocity;
-        Vector3 _dampingRotation;
-
-        public override void DoHorizontalMovement(float delta)
-        {
-            // movement
-            Vector3 AD = _adj.Isoright * _playerInp.InputVector.x;
-            Vector3 WS = _adj.Isoforward * _playerInp.InputVector.y;
-            var _rotatedInputsVector = AD + WS;
-
-            if (_rotatedInputsVector.magnitude > zeroF)
-            {
-                var velocity = _rotatedInputsVector * (_inputs.GetMovementStatValue(MovementStatType.MoveSpeed) * delta);
-                _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
-
-                UpdateAnimatorVector(velocity);
-
-                DampAnimationVector(animationVector);
-            }
-            else
-            {
-                var velocity = _rotatedInputsVector * (_inputs.GetMovementStatValue(MovementStatType.MoveSpeed) * delta);
-                _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
-
-                DampAnimationVector(Vector3.zero);
-                _rb.velocity = new Vector3(zeroF, _rb.velocity.y, zeroF);
-
-                UpdateAnimatorVector(velocity);            
-            }
-            //animation 
-            AnimateMovement();
-        }
-        void UpdateAnimatorVector(Vector3 movement)
-        {
             var playerFwd = transform.forward;
             var playerRght = transform.right;
-            movement.Normalize();
+
             // Dot product of two vectors determines how much they are pointing in the same direction.
             // If the vectors are normalized (transform.forward and right are)
             // then the value will be between -1 and +1.
-            var x = Vector3.Dot(playerRght, movement);
-            var z = Vector3.Dot(playerFwd, movement);
-            animationVector.x = x;
-            animationVector.y = movement.y; // vertical for fall animations
-            animationVector.z = z;
-        }
-        private void DampAnimationVector(Vector3 target)
-        {
-            // if in air, return TODO
-            animationVector = Vector3.SmoothDamp(animationVector, target, ref _dampingVelocity, _smoothTime);
-        }
+            var x = Vector3.Dot(playerRght, Vector3.Normalize(movementVector));
+            var z = Vector3.Dot(playerFwd, Vector3.Normalize(movementVector));
+            Vector3 newAnim = new Vector3(x, 0, z);
+            animationVector = newAnim;
 
-        void AnimateMovement()
-        {
             _animator.SetFloat("VerticalMove", _rb.velocity.y);
-
             _animator.SetFloat("ForwardMove", animationVector.z);
             _animator.SetFloat("SideMove", animationVector.x);
+            _animator.SetFloat("Rotation", _playerInp.Aiming.GetRotationToTarget);
+        }
+        Vector3 SmoothDampVector(in Vector3 current, Vector3 target)
+        {
+           // Debug.Log($"Damp from {current} to {target}");
+            return Vector3.SmoothDamp(current, target, ref movementDampingVelocity, _smoothTime);
+        }
+
+
+        #region state machine
+        protected override void SetupStateMachine()
+        {
+            UnitStateMachine = new ArcaStateMachine();
+
+            var locom = new UnarmedLocomotionState(this, _animator);
+            var idle = new UnarmedIdleState(this, _animator);
+            var rotation = new StandingRotationState(this, _animator, 0.2f);
+            var inAir = new InAirState(_groundedPlatform, this, _animator);
+
+            UnitStateMachine.AddAnyTransition(inAir, new FuncPredicate(InAirCondition));
+            UnitStateMachine.AddAnyTransition(idle, new FuncPredicate(IdleConditions));
+            UnitStateMachine.AddAnyTransition(locom, new FuncPredicate(MovingCondition));
+
+
+            UnitStateMachine.AddTransition(idle, rotation, new FuncPredicate(RotationCondition));
+
+            UnitStateMachine.ForceState(idle);
+        }
+
+        #region predicates
+        bool InAirCondition()
+        {
+            return !_groundedPlatform.IsGrounded;
+        }
+        protected override bool IdleConditions()
+        {
+            return UnitStateMachine.StateExpired && _groundedPlatform.IsGrounded && movementVector.magnitude < 0.1f && _playerInp.Aiming.GetDotProduct >= _playerInp.RotationTreschold;
+        }
+        bool RotationCondition()
+        {
+            return UnitStateMachine.StateExpired && _groundedPlatform.IsGrounded && _playerInp.InputVector.magnitude == zeroF && _playerInp.Aiming.GetDotProduct < _playerInp.RotationTreschold;
+        }
+        bool MovingCondition()
+        {
+            return UnitStateMachine.StateExpired && _groundedPlatform.IsGrounded && movementVector.magnitude > 0;
+        }
+
+        #endregion
+
+        #region movement
+        Vector3 movementVector;
+        Vector3 movementDampingVelocity;
+        Vector3 animationVector;
+        public override void DoHorizontalMovement(float delta)
+        {
+            var velocity = movementVector * (_inputs.GetMovementStatValue(MovementStatType.MoveSpeed) * delta);
+            _rb.velocity = velocity;
         }
         public override void DoRotation(float d)
         {
-            if (inputsVector.magnitude == zeroF && _playerInp.Aiming.GetDotProduct < _playerInp.RotationTreschold)
+            transform.LookAt(_playerInp.Aiming.GetLookTarget);
+        }
+        #endregion
+        #region jump
+
+        protected override void DoJump()
+        {
+            if (_groundedPlatform.IsGrounded)
             {
-                _animator.SetFloat("Rotation", _playerInp.Aiming.GetRotationToTarget);
-                transform.LookAt(Vector3.SmoothDamp(transform.position, _playerInp.Aiming.GetLookTarget, ref _dampingRotation, _smoothTime));
-            }
-            else
-            {
-                transform.LookAt(Vector3.SmoothDamp(transform.position, _playerInp.Aiming.GetLookTarget, ref _dampingRotation, _smoothTime));
-                _animator.SetFloat("Rotation", 0);
+                _rb.velocity = transform.forward + transform.up;
+                _rb.AddForce((transform.forward + transform.up) * movementStats.Stats[MovementStatType.JumpForce].Start, ForceMode.Impulse);
             }
         }
         #endregion
 
+        #endregion
         #region inventory
         public bool PlayerArmed => _inventory.GetWeapons.Length > 0;
 
@@ -179,7 +162,7 @@ namespace Arcatech.Units
         public void ComboWindowStart()
         {
             _animator.SetBool("AdvancingCombo", true);
-           // _playerController.IsInMeleeCombo = true;
+            // _playerController.IsInMeleeCombo = true;
         }
         public void ComboWindowEnd()
         {
@@ -213,17 +196,6 @@ namespace Arcatech.Units
         }
 
 
-
-
-        //public override void AddItem(ItemSO item, bool equip)
-        //{
-        //    base.AddItem(item,equip);
-        //    _animator.SetTrigger("ItemPickup");
-        //    if (_inputs.DebugMessage)
-        //    {
-        //        Debug.Log($"Player picked up item {item}");
-        //    }
-        //}
     }
     #endregion
     #endregion

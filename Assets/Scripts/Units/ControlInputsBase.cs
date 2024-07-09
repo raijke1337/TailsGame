@@ -14,7 +14,7 @@ using UnityEngine.Events;
 
 namespace Arcatech.Units
 {
-    [RequireComponent(typeof(GroundDetectorPlatformCollider))]
+
     public abstract class ControlInputsBase : MonoBehaviour, IManagedController
     {
         [SerializeField] public bool DebugMessage = false;
@@ -65,17 +65,13 @@ namespace Arcatech.Units
         public float GetMovementStatValue(MovementStatType t) => _stats[t].GetCurrent;
 
         #region ManagedController
-
-
         public virtual void ControllerUpdate(float delta)
         {
-            if (LockInputs) return;
             lastDelta = delta;
             //_animator.SetFloat("AirTime", _groundedPlatform.AirTime);
         }
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
-            if (LockInputs) return;
             //if (_groundedPlatform.IsGrounded)
             //{
             //    UpdateAnimatorVector(DoHorizontalMovement(fixedDelta));
@@ -97,27 +93,6 @@ namespace Arcatech.Units
         protected abstract ControlInputsBase ControllerBindings(bool start);
 
 
-        #region movement and jumping
-
-        [SerializeField, Self] protected GroundDetectorPlatformCollider _groundedPlatform;
-
-        protected void DoJump()
-        {
-            _rb.velocity = transform.forward + transform.up;
-            _rb.AddForce((transform.forward + transform.up) * _stats[MovementStatType.JumpForce].GetCurrent, ForceMode.Impulse);
-            _groundedPlatform.OffTheGroundEvent += HandleLanding;
-        }
-
-        private void HandleLanding(bool startjump)
-        {
-            if (!startjump)
-            {
-                _groundedPlatform.OffTheGroundEvent -= HandleLanding;
-                _animator.SetTrigger("JumpEnd");
-            }
-        }
-        #endregion
-
         #region animations
         [SerializeField, Self] protected Animator _animator;
         public bool IsInMeleeCombo = false;
@@ -130,34 +105,34 @@ namespace Arcatech.Units
             _animator.SetFloat("SideMove", 0f);
             _animator.SetFloat("Rotation", 0);
         }
-        protected virtual void AnimateCombatActivity(UnitActionType type)
-        {
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-            switch (type)
-            {
-                case UnitActionType.Melee:
-                    _animator.SetTrigger("MeleeAttack");
-                    break;
-                case UnitActionType.Ranged:
-                    _animator.SetTrigger("RangedAttack");
-                    break;
-                case UnitActionType.DodgeSkill:
-                    _animator.SetTrigger("Dodge");
-                    break;
-                case UnitActionType.MeleeSkill:
-                    _animator.SetTrigger("MeleeSpecial");
-                    break;
-                case UnitActionType.RangedSkill:
-                    _animator.SetTrigger("RangedSpecial");
-                    break;
-                case UnitActionType.ShieldSkill:
-                    _animator.SetTrigger("ShieldSpecial");
-                    break;
-                case UnitActionType.Jump:
-                    _animator.SetTrigger("JumpStart");
-                    break;
-            }
-        }
+        //protected virtual void AnimateCombatActivity(UnitActionType type)
+        //{
+        //    if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
+        //    switch (type)
+        //    {
+        //        case UnitActionType.Melee:
+        //            _animator.SetTrigger("MeleeAttack");
+        //            break;
+        //        case UnitActionType.Ranged:
+        //            _animator.SetTrigger("RangedAttack");
+        //            break;
+        //        case UnitActionType.DodgeSkill:
+        //            _animator.SetTrigger("Dodge");
+        //            break;
+        //        case UnitActionType.MeleeSkill:
+        //            _animator.SetTrigger("MeleeSpecial");
+        //            break;
+        //        case UnitActionType.RangedSkill:
+        //            _animator.SetTrigger("RangedSpecial");
+        //            break;
+        //        case UnitActionType.ShieldSkill:
+        //            _animator.SetTrigger("ShieldSpecial");
+        //            break;
+        //        case UnitActionType.Jump:
+        //            _animator.SetTrigger("JumpStart");
+        //            break;
+        //    }
+        //}
         protected virtual void AnimateStagger()
         {
             _animator.SetTrigger("TakeDamage");
@@ -178,22 +153,13 @@ namespace Arcatech.Units
 
         protected virtual void RequestCombatAction(UnitActionType type)
         {
-            if (LockInputs || !_groundedPlatform.IsGrounded) return;
+            if (LockInputs ) return;
 
             if (DebugMessage)
             {
                 Debug.Log($"Do combat action {type}");
             }
-
-            switch (type)
-            {
-                case UnitActionType.Jump:
-                    DoJump();
-                    break;
-                default:
-                    UnitActionRequestedEvent.Invoke(type);
-                    break;
-            }
+            UnitActionRequestedEvent.Invoke(type);
         }
 
     }

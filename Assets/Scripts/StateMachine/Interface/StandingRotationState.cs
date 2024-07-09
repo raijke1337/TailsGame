@@ -4,37 +4,32 @@ using UnityEngine;
 
 namespace Arcatech.StateMachine
 {
-    public class UnarmedLocomotionState : BaseState
+    public class StandingRotationState : BaseState
     {
-        public UnarmedLocomotionState(ControlledUnit unit, Animator playerAnimator) : base(unit, playerAnimator)
-        {
-        }
-
-        public override void FixedUpdate(float d)
-        {
-            unit.DoHorizontalMovement(d);
-            unit.DoRotation(d);
-        }
-
-        public override void HandleCombatAction(UnitActionType action)
+        public StandingRotationState(ControlledUnit inputs, Animator playerAnimator, float maxTimeInState = 0) : base(inputs, playerAnimator, maxTimeInState)
         {
             
         }
 
+        public override void FixedUpdate(float d)
+        {
+            unit.DoRotation(d);
+            
+        }
+
+        public override void HandleCombatAction(UnitActionType action)
+        {
+
+        }
         public override void OnEnterState()
         {
-            unit.DoRotation(1f);
-            playerAnimator.CrossFade(UnarmedLocomotionHash, crossFadeDuration);
+            playerAnimator.CrossFade(UnarmedRotationStandingHash, crossFadeDuration);
+            TimeLeft = playerAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
         }
 
         public override void OnLeaveState()
         {
 
-        }
-
-        public override void Update(float d)
-        {
-            base.Update(d);
         }
     }
 

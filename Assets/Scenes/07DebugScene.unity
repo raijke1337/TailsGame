@@ -1735,6 +1735,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: arca MovingTile simple 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4319772638206410687, guid: da7d7a8821e953040820bbb77b7da298,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7763331016710459063, guid: da7d7a8821e953040820bbb77b7da298,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3617,6 +3622,33 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 607736840}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &736636718 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3980672794048965017, guid: f928f72835079444e8e44a400649271f,
+    type: 3}
+  m_PrefabInstance: {fileID: 745040914}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &736636723
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736636718}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3, y: 0.125, z: 3}
+  m_Center: {x: 1.5, y: -0.0625, z: 1.5}
 --- !u!4 &736656983 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5046848546403227077, guid: 589f6cb4dfbeb4b49a340d9c25d63c17,
@@ -3775,13 +3807,18 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 134708257843435051, guid: f928f72835079444e8e44a400649271f,
         type: 3}
+      propertyPath: moveTo.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 134708257843435051, guid: f928f72835079444e8e44a400649271f,
+        type: 3}
       propertyPath: moveTo.y
-      value: -6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 134708257843435051, guid: f928f72835079444e8e44a400649271f,
         type: 3}
       propertyPath: moveTo.z
-      value: -4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 134708257843435051, guid: f928f72835079444e8e44a400649271f,
         type: 3}
@@ -3793,10 +3830,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: arca MovingTile Bronze 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3980672794048965017, guid: f928f72835079444e8e44a400649271f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7453526577874966673, guid: f928f72835079444e8e44a400649271f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.4660053
+      value: -4.5
       objectReference: {fileID: 0}
     - target: {fileID: 7453526577874966673, guid: f928f72835079444e8e44a400649271f,
         type: 3}
@@ -3806,7 +3848,7 @@ PrefabInstance:
     - target: {fileID: 7453526577874966673, guid: f928f72835079444e8e44a400649271f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.343713
+      value: 4.843713
       objectReference: {fileID: 0}
     - target: {fileID: 7453526577874966673, guid: f928f72835079444e8e44a400649271f,
         type: 3}
@@ -3846,7 +3888,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3980672794048965017, guid: f928f72835079444e8e44a400649271f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 736636723}
   m_SourcePrefab: {fileID: 100100000, guid: f928f72835079444e8e44a400649271f, type: 3}
 --- !u!1001 &745323523
 PrefabInstance:
@@ -4992,10 +5038,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: arca MovingTile simple 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1323430294609025326, guid: 5ae1f8a661ab0364d9505aaabfd89ad4,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2647378215389177500, guid: 5ae1f8a661ab0364d9505aaabfd89ad4,
         type: 3}
       propertyPath: moveTo.y
-      value: -8
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 2647378215389177500, guid: 5ae1f8a661ab0364d9505aaabfd89ad4,
         type: 3}
@@ -5158,7 +5209,7 @@ PrefabInstance:
     - target: {fileID: 4646819736617686078, guid: 614ab0932fd7a3046883cba79e512a2b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4
+      value: 0.39999986
       objectReference: {fileID: 0}
     - target: {fileID: 4646819736617686078, guid: 614ab0932fd7a3046883cba79e512a2b,
         type: 3}
@@ -5168,7 +5219,7 @@ PrefabInstance:
     - target: {fileID: 4646819736617686078, guid: 614ab0932fd7a3046883cba79e512a2b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 3.9999998
       objectReference: {fileID: 0}
     - target: {fileID: 4646819736617686078, guid: 614ab0932fd7a3046883cba79e512a2b,
         type: 3}
@@ -6372,6 +6423,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: arca MovingTile Bronze 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3980672794048965017, guid: fe981fa163ceac0408bce1bab017d2b0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7453526577874966673, guid: fe981fa163ceac0408bce1bab017d2b0,
         type: 3}
@@ -9195,20 +9251,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 471108880158900297, guid: 68fe89f5aead03d4fa985edb3203e7f5,
+    - target: {fileID: 3679989756617116995, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
-      propertyPath: _baseAnimator
-      value: 
-      objectReference: {fileID: 9100000, guid: a55a17f5793b3ef43b7e92d0e2b5844d, type: 2}
-    - target: {fileID: 633146174127125324, guid: 68fe89f5aead03d4fa985edb3203e7f5,
+      propertyPath: m_Mass
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3679989756617116995, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: a55a17f5793b3ef43b7e92d0e2b5844d, type: 2}
-    - target: {fileID: 3246190761616418527, guid: 68fe89f5aead03d4fa985edb3203e7f5,
-        type: 3}
-      propertyPath: Target
-      value: 
+      propertyPath: m_Constraints
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 4612417970087076613, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
@@ -9218,7 +9269,7 @@ PrefabInstance:
     - target: {fileID: 7892887345337866563, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.29799986
       objectReference: {fileID: 0}
     - target: {fileID: 7892887345337866563, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
@@ -9228,7 +9279,7 @@ PrefabInstance:
     - target: {fileID: 7892887345337866563, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 3.6817129
       objectReference: {fileID: 0}
     - target: {fileID: 7892887345337866563, guid: 68fe89f5aead03d4fa985edb3203e7f5,
         type: 3}
@@ -9265,12 +9316,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1730829326349353107, guid: 68fe89f5aead03d4fa985edb3203e7f5, type: 3}
-    - {fileID: 3246190761616418527, guid: 68fe89f5aead03d4fa985edb3203e7f5, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 4335143393927956325, guid: 68fe89f5aead03d4fa985edb3203e7f5, type: 3}
-    - {fileID: 5049617369856870658, guid: 68fe89f5aead03d4fa985edb3203e7f5, type: 3}
+    - target: {fileID: 8743729188238178463, guid: 68fe89f5aead03d4fa985edb3203e7f5,
+        type: 3}
+      propertyPath: _groundDist
+      value: 0.2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68fe89f5aead03d4fa985edb3203e7f5, type: 3}
@@ -13756,9 +13808,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 2142933549}
   - {fileID: 864040997}
-  - {fileID: 1511340913}
   - {fileID: 1143147295}
   - {fileID: 2024547017}
   - {fileID: 306033839}
   - {fileID: 1721314016}
   - {fileID: 523373104}
+  - {fileID: 1511340913}

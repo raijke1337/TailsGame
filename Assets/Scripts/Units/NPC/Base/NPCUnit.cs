@@ -67,6 +67,16 @@ namespace Arcatech.Units
         {
             throw new System.NotImplementedException();
         }
+
+        protected override bool IdleConditions()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override void DoJump()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }

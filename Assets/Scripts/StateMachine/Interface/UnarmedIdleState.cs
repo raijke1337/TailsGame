@@ -12,17 +12,14 @@ namespace Arcatech.StateMachine
 
         public override void OnEnterState()
         {
-            base.OnEnterState();
             playerAnimator.CrossFade(UnarnedStandingIdleHash, crossFadeDuration);
         }
         public override void FixedUpdate(float d)
         {
-            
         }
         public override void Update(float d)
         {
-            base.Update(d);
-            unit.DoRotation(d);
+
         }
 
         public override void HandleCombatAction(UnitActionType action)
@@ -34,6 +31,7 @@ namespace Arcatech.StateMachine
         {
 
         }
+
     }
 
 }

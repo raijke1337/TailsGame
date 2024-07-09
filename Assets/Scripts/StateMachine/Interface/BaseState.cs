@@ -7,47 +7,41 @@ namespace Arcatech.StateMachine
 {
     public abstract class BaseState : IState
     {
-        public event Action StateTimeOutEvent = delegate { };
-        protected void StateTimeoutCallback() => StateTimeOutEvent?.Invoke();
 
         public abstract void FixedUpdate(float d);
         public abstract void HandleCombatAction(UnitActionType action);
-        public virtual void OnEnterState()
-        {
-            Debug.Log($"{unit.name} enter state {this}");
-        }
+        public abstract void OnEnterState();
         public abstract void OnLeaveState();
         public virtual void Update(float d)
         {
-            if (stateExitTimer == null) return;
-            stateExitTimer.Tick(d);
+            if (TimeLeft > 0) TimeLeft -= d;
         }
 
         protected const float crossFadeDuration = 0.1f;
         protected readonly ControlledUnit unit;
         protected readonly Animator playerAnimator;
-        protected CountDownTimer stateExitTimer;
+        public float TimeLeft { get; protected set; }
 
-        protected BaseState(ControlledUnit inputs, Animator playerAnimator,float maxTimeInState = 0)
+        protected BaseState(ControlledUnit unit, Animator playerAnimator,float timeInState = 0)
         {
-            this.unit = inputs;
+            this.unit = unit;
             this.playerAnimator = playerAnimator;
-            if (maxTimeInState > 0)
-            {
-                stateExitTimer = new CountDownTimer(maxTimeInState);
-                stateExitTimer.Start();
-            }
+            TimeLeft = timeInState;
         }
 
         public static readonly int UnarnedStandingIdleHash =
-            Animator.StringToHash("UnarmedIdle");
+            Animator.StringToHash("UnarmedIdle");        
+        public static readonly int UnarmedRotationStandingHash =
+            Animator.StringToHash("UnarmedRotationStanding");
         public static readonly int UnarmedLocomotionHash =
             Animator.StringToHash("UnarmedLocomotion");
         public static readonly int Melee2hAttackingHash =
             Animator.StringToHash("Melee2hAttacking");
         public static readonly int AirStateHash =
-            Animator.StringToHash("InAirState");
+            Animator.StringToHash("JumpState");
     }
+
+
 
 }
 
