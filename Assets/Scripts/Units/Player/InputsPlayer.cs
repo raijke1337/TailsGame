@@ -10,8 +10,8 @@ namespace Arcatech.Units.Inputs
     {
 
         [SerializeField, Anywhere] PlayerInputReaderObject _playerInputReader;
+        public Vector2 InputVector => _playerInputReader.InputDirection;
 
-        private IsoCamAdjust _adj;
         [SerializeField,Self] private AimingComponent _aim;
         public AimingComponent Aiming => _aim;
         private CostumesControllerComponent _costume;
@@ -24,24 +24,19 @@ namespace Arcatech.Units.Inputs
             base.StartController();
 
             if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-
-            _adj ??= new IsoCamAdjust();
-
             _playerInputReader.EnablePlayerInputs();
 
 
             _aim = GetComponent<AimingComponent>();
             _aim.StartController();
             _costume = GetComponent<CostumesControllerComponent>();
-            transform.LookAt(transform.forward);
-
+            transform.LookAt(transform.forward);            
         }
         public override void ControllerUpdate(float delta)
         {
             if (_aim == null) return;
-
             base.ControllerUpdate(delta);
-            DoAiming(delta);
+            //DoAiming(delta);
             _aim.ControllerUpdate(delta);
 
         }
@@ -54,119 +49,6 @@ namespace Arcatech.Units.Inputs
 
         #endregion
 
-        #region controls
-
-
-        private void OnMountButton()
-        {
-            // nyi
-        }
-
-        private void OnPauseButton()
-        {
-            Debug.Log($"Pause button NYI");
-        }
-
-        private void OnShieldSkill()
-        {            
-            RequestCombatAction(UnitActionType.ShieldSkill);
-        }
-        private void OnRangedSkill()
-        {
-            RequestCombatAction(UnitActionType.RangedSkill);
-        }
-
-        private void OnMeleeSkill()
-        {
-            RequestCombatAction(UnitActionType.MeleeSkill);
-        }
-
-        private void OnJumpAction()
-        {
-            RequestCombatAction(UnitActionType.Jump);
-        }
-
-        private void OnDodgeSkill()
-        {
-            RequestCombatAction(UnitActionType.DodgeSkill);
-        }
-
-        private void OnMovementAction(Vector2 dir)
-        {
-            AdjustMovementVector(_playerInputReader.InputDirection);
-        }
-
-        private void OnAimAction(Vector2 point)
-        {
-            //throw new System.NotImplementedException();
-        }
-
-        private void OnRangedAction()
-        {
-            RequestCombatAction(UnitActionType.Ranged);
-        }
-
-        private void OnMeleeAction()
-        {
-            RequestCombatAction(UnitActionType.Melee);
-        }
-
-        #endregion
-
-
-
-
-        #region movement
-        [Header("Movement settings")]
-
-
-        [SerializeField] float _smoothTime = 0.2f;
-        private float _velocity;
-        Vector3 _adjustedMovement;
-
-        protected void AdjustMovementVector(Vector2 horizontal)
-        {
-            Vector3 AD = _adj.Isoright * horizontal.x;
-            Vector3 WS = _adj.Isoforward * horizontal.y;
-             _adjustedMovement = AD + WS;
-        }
-        protected override Vector3 DoHorizontalMovement(float delta)
-        {
-            if (_adjustedMovement.magnitude > zeroF)
-            {
-                var result = ApplyHorizontalMovement(_adjustedMovement);
-                DampAnimatorSpeedFloat(_adjustedMovement.magnitude);
-                return result;
-            }
-            else
-            {
-                var result = ApplyHorizontalMovement(_adjustedMovement);
-                DampAnimatorSpeedFloat(zeroF);
-                _rb.velocity = new Vector3(zeroF, _rb.velocity.y, zeroF);
-                return result;
-            }
-        }
-        Vector3 ApplyHorizontalMovement(Vector3 adjDir)
-        {
-            var velocity = adjDir * (_stats[MovementStatType.MoveSpeed].GetCurrent * Time.fixedDeltaTime);
-            _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
-            return velocity;
-
-        }
-
-
-        private void DampAnimatorSpeedFloat(float target)
-        {
-            AnimatorSpeedFloat = Mathf.SmoothDamp(AnimatorSpeedFloat, target, ref _velocity, _smoothTime);
-        }
-
-
-        public float PlayerInputsCross { get; private set; }
-        public float PlayerInputsDot { get; private set; }
-        public float AnimatorSpeedFloat { get; private set; }
-        #endregion
-
-
 
 
         #region aiming
@@ -176,38 +58,10 @@ namespace Arcatech.Units.Inputs
         float _minAngleToPlayRotation = 0.9f;
         public float RotationTreschold => _minAngleToPlayRotation;
 
-        [SerializeField]
-        float _dampTime = 0.1f;
-
-        protected Vector3 _sDampVel;
-        protected virtual void DoAiming(float delta)
-        {
-            PlayerInputsDot = _aim.GetDotProduct;
-            PlayerInputsCross = _aim.GetRotationToTarget;
-            if (_adjustedMovement.magnitude == zeroF)
-            {
-                if (PlayerInputsDot < _minAngleToPlayRotation)
-                {
-                    transform.LookAt(Vector3.SmoothDamp(transform.position, _aim.GetLookTarget, ref _sDampVel, _dampTime));
-                }
-            }
-            else
-            {
-                transform.LookAt(Vector3.SmoothDamp(transform.position, _aim.GetLookTarget, ref _sDampVel, _dampTime));
-            }
-
-        }
 
         #endregion
 
-
-
-
-
-        //protected override void ShieldBreakEventCallback()
-        //{
-        //    _costume.OnBreak();
-        //}
+        #region inputs section
 
         protected override void OnLockInputs(bool isLock)
         {
@@ -254,5 +108,66 @@ namespace Arcatech.Units.Inputs
 
             return this;
         }
+        #endregion
+
+        #region controls handling
+
+
+        private void OnMountButton()
+        {
+            // nyi
+        }
+
+        private void OnPauseButton()
+        {
+            Debug.Log($"Pause button NYI");
+        }
+
+        private void OnShieldSkill()
+        {
+            RequestCombatAction(UnitActionType.ShieldSkill);
+        }
+        private void OnRangedSkill()
+        {
+            RequestCombatAction(UnitActionType.RangedSkill);
+        }
+
+        private void OnMeleeSkill()
+        {
+            RequestCombatAction(UnitActionType.MeleeSkill);
+        }
+
+        private void OnJumpAction()
+        {
+            RequestCombatAction(UnitActionType.Jump);
+        }
+
+        private void OnDodgeSkill()
+        {
+            RequestCombatAction(UnitActionType.DodgeSkill);
+        }
+
+        private void OnMovementAction(Vector2 dir)
+        {
+            //AdjustInputsVector(_playerInputReader.InputDirection);
+        }
+
+        private void OnAimAction(Vector2 point)
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        private void OnRangedAction()
+        {
+            RequestCombatAction(UnitActionType.Ranged);
+        }
+
+        private void OnMeleeAction()
+        {
+            RequestCombatAction(UnitActionType.Melee);
+        }
+
+        #endregion
+
     }
 }

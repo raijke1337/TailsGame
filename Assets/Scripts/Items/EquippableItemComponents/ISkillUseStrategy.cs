@@ -1,11 +1,10 @@
 ﻿using Arcatech.Skills;
 using Arcatech.Units;
 
-namespace Arcatech.Items
+namespace Arcatech
 {
-    public interface ISkillUseStrategy : IStrategy
+    public interface IUseStrategy : IStrategy
     {
-        SkillProjectileComponent Prefab { get; }
         void SkillUseStateEnter();
         void SkillUseStateExit();
     }

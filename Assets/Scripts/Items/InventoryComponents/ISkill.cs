@@ -1,11 +1,11 @@
-﻿using Arcatech.Skills;
+﻿using Arcatech.Items;
+using Arcatech.Skills;
 
-namespace Arcatech.Items
+namespace Arcatech.Skills
 {
 
-    public interface ISkill : IUsableItem
-    { 
-    
+    public interface ISkill : IUsable
+    {
     }
 
    

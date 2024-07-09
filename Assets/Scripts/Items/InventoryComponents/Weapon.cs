@@ -110,7 +110,7 @@ namespace Arcatech.Items
 
         }
 
-        public void DoUpdates(float delta)
+        public void DoUpdate(float delta)
         {
             foreach (var timer in _chargesTimers.ToArray())
             {

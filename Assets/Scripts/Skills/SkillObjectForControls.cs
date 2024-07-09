@@ -1,4 +1,5 @@
 ﻿using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Texts;
 using Arcatech.Triggers;
@@ -19,47 +20,86 @@ namespace Arcatech.Skills
     {
         public DummyUnit Owner { get ; set; }
 
-        private SerializedSkillConfiguration _settings;
+        private SerializedSkillConfiguration config;
 
-        public StatsEffect GetCost => new(_settings.CostTrigger);
+        public UnitActionType UseActionType => config.UnitActionType;
+        public StatsEffect GetCost => new(config.CostTrigger);
 
-        public UnitActionType UseActionType => throw new NotImplementedException();
+        //private BaseSkillUsageStrategy _strat;
 
+        int _charges;
+        float _chargeCd;
+        float _currCd = 0;
 
+        Queue<CountDownTimer> _chargesTimers;
 
-        private BaseSkillUsageStrategy _strat;
-
-        public SkillObjectForControls(SerializedSkillConfiguration settings)
+        public SkillObjectForControls(SerializedSkillConfiguration settings, DummyUnit owner)
         { 
-            _settings = settings;
-        }
-        public SkillObjectForControls SetOwner(DummyUnit owner)
-        {
+            config = settings;
             Owner = owner;
-            return this;
+          //  _strat = new ProjectileSkillStrat(owner.GetSkillTransform(config.UnitActionType),owner, this);
+
+
+            _charges = config.Charges;
+            _chargeCd = config.ChargeRestore;
+            _chargesTimers = new Queue<CountDownTimer>();
         }
 
-        public IUsableItem AssignStrategy()
-        {
-            //_strat = new ProjectileSkillStrategy(_settings.SkillProjectileConfig.ProjectilePrefab);
-            return this; 
-        }
         public bool TryUseItem()
         {
-            Debug.Log($"use skill {_settings.Description.Title}");
-            _strat.SkillUseStateEnter();
-            return true;
+            if (_chargesTimers.Count >= _charges)
+            {
+                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
+                return false;
+            }
+            if (_currCd > 0)
+            {
+                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
+                return false;
+            }
+            else
+            {
+                var timer = new CountDownTimer(_chargeCd);
+
+                _chargesTimers.Enqueue(timer);
+                timer.Start();
+                timer.OnTimerStopped += RemoveTimer;
+                _currCd = 0.1f; // placeholder 
+                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
+
+
+                //  _strat.SkillUseStateEnter(); // replaced with line below
+                config.ProduceProjectile(Owner, Owner.GetSkillTransform(UseActionType), config.Triggers);
+
+                return true;
+            }
         }
 
+        private void RemoveTimer()
+        {
+            _chargesTimers.Dequeue();
+            EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
 
+        }
+
+        public void DoUpdate(float delta)
+        {
+            foreach (var timer in _chargesTimers.ToArray())
+            {
+                timer.Tick(delta);
+            }
+            _currCd -= delta;
+        }
 
         #region UI
-        public Sprite Icon => throw new NotImplementedException();
 
-        public float CurrentNumber => throw new NotImplementedException();
 
-        public float MaxNumber => throw new NotImplementedException();
-        public event UnityAction<IIconContent> ContentUpdatedEvent;
+        public Sprite Icon => config.Description.Picture;
+
+        public float CurrentNumber => _charges - _chargesTimers.Count;
+
+        public float MaxNumber => _charges;
+
         #endregion
     }
 

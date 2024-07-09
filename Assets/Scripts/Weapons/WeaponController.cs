@@ -71,7 +71,7 @@ namespace Arcatech.Units
         public override void ControllerUpdate(float delta)
         {
             foreach (var w in _weapons.Values)
-            { w.DoUpdates(delta); }
+            { w.DoUpdate(delta); }
         }
 
         public override void FixedControllerUpdate(float fixedDelta)

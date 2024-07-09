@@ -7,7 +7,7 @@ namespace Arcatech.AI
     public class SwitchRangeByActionTypeAction : Action
     {
         public UnitActionType DesiredType;
-        public override void Act(StateMachine controller)
+        public override void Act(EnemyStateMachine controller)
         {
             controller.OnSwapRanges(DesiredType);
         }

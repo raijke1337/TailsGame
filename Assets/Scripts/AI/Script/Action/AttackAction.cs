@@ -6,7 +6,7 @@ namespace Arcatech.AI
     public class AttackAction : Action
     {
         public UnitActionType CombatActionType;
-        public override void Act(StateMachine controller)
+        public override void Act(EnemyStateMachine controller)
         {
             controller.OnAttackRequest(CombatActionType);
         }

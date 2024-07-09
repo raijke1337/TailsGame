@@ -2,6 +2,7 @@
 using Arcatech.Items;
 using Arcatech.Texts;
 using Arcatech.Triggers;
+using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Skills
 {
@@ -9,21 +10,34 @@ namespace Arcatech.Skills
     public class SerializedSkillConfiguration : ScriptableObject
     {
 
-        public ExtendedText Description;
-        public UnitActionType UnitActionType;
+        [Header("Text")]public ExtendedText Description;
+        [Space] public SerializedProjectileConfiguration Projectile;
 
+        [Space,Header("Combat action")]public UnitActionType UnitActionType;
+        public TriggerTargetType ActivatingTrigger;
+        public SerializedStatsEffectConfig CostTrigger;
+        public SerializedStatsEffectConfig[] Triggers;
 
-        [Space, Range(1, 10)] public int Charges;
+        [Range(1, 10)] public int Charges;
         [Range(1, 10)] public int ChargeRestore;
-        [Space] public SerializedStatsEffectConfig CostTrigger;
-        [Space] public SerializedProjectileConfiguration SkillProjectileConfig;
+        [Range (1,100)]public float AoE;
 
-        [Range(0.1f, 10f)] public float PlacerRadius;
-        [Range(0.1f, 10f)] public float AoERadius;
-        [Space, Range(0.01f, 5f)] public float AoETime;
+        [Header("Effects")]
+        public SerializedEffectsCollection Effects;
 
-        [Space] public SerializedStatsEffectConfig[] Triggers;
-        [Space] public SerializedEffectsCollection Effects;
+        public SkillProjectileComponent ProduceProjectile(DummyUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
+        {
+            var proj = Projectile.ProduceProjectile(owner, place, effects);
+            if (proj is SkillProjectileComponent sk)
+            {
+                sk.ActivatingTrigger = ActivatingTrigger;
+                sk.SkillAreaOfEffect = AoE;
+                sk.VFX = new EffectsCollection(Effects);
+                return sk;
+            }
+            else return null;
+
+        }
 
 
     }

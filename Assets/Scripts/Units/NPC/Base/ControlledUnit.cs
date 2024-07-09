@@ -2,15 +2,24 @@
 using Arcatech.Units.Stats;
 using KBCore.Refs;
 using UnityEngine;
-
+using Arcatech.StateMachine;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase))]
     public abstract class ControlledUnit : ArmedUnit
     {
         [SerializeField] protected MovementStatsConfig movementStats;
-
         [SerializeField, Self] protected ControlInputsBase _inputs;
+
+        #region state machine
+        [SerializeField] protected ArcaStateMachine UnitStateMachine;
+        public abstract void DoHorizontalMovement(float delta);
+        public abstract void DoRotation(float delta);
+
+        #endregion
+
+
+
 
         public override void StartControllerUnit()
         {
@@ -19,15 +28,16 @@ namespace Arcatech.Units
             _inputs.PopulateDictionary().
                 SetMovementStats(movementStats)
                 .StartController();
-
-                _inputs.UnitActionRequestedEvent += HandleUnitAction;                
-
-
+                _inputs.UnitActionRequestedEvent += HandleUnitAction;             
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
                 LockUnit = false;
             }
+            SetupStateMachine();
         }
+
+        protected abstract void SetupStateMachine();
+
         public override void DisableUnit()
         {
             base.DisableUnit();
@@ -39,15 +49,14 @@ namespace Arcatech.Units
         {
             base.RunFixedUpdate(delta);
             _inputs.FixedControllerUpdate(delta);
+            UnitStateMachine.Update(delta);
         }
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
             _inputs.ControllerUpdate(delta);
-
+            UnitStateMachine.FixedUpdate(delta);
         }
-
-
         protected void HandleUnitAction(UnitActionType obj)
         {
             switch (obj)
@@ -93,6 +102,14 @@ namespace Arcatech.Units
             }
         }
 
+
+        protected abstract bool IdleConditions();
+        protected abstract bool UnitInAir();
+
+
+    
+    
+    
     }
 
 

@@ -17,13 +17,13 @@ namespace Arcatech.AI
         public Color StateGizmoColor = Color.gray;
 
         // state is updated every frame by statecontroler
-        public void UpdateState(StateMachine controller)
+        public void UpdateState(EnemyStateMachine controller)
         {
             DoActions(controller);
             CheckTransitions(controller);
         }
 
-        private void DoActions(StateMachine controller)
+        private void DoActions(EnemyStateMachine controller)
         {
             foreach (var action in actions)
             {
@@ -31,7 +31,7 @@ namespace Arcatech.AI
             }
         }
 
-        private void CheckTransitions(StateMachine controller)
+        private void CheckTransitions(EnemyStateMachine controller)
         {
             foreach (var tr in transitions)
             {

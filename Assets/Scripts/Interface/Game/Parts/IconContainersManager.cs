@@ -1,6 +1,6 @@
 using Arcatech.Items;
 using Arcatech.Skills;
-using com.cyborgAssets.inspectorButtonPro;
+//using com.cyborgAssets.inspectorButtonPro;
 using KBCore.Refs;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +29,7 @@ namespace Arcatech.UI
 
 #if UNITY_EDITOR
         [Space,SerializeField] WeaponSO loadedIcon;
-        [ProButton]
+       // [ProButton]
         public void Debug_LoadIcon()
         {
             Weapon w = new Weapon(loadedIcon, null);

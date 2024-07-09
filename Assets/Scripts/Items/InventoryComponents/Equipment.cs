@@ -16,8 +16,10 @@ namespace Arcatech.Items
         {
             DisplayItem = GameObject.Instantiate(cfg.ItemPrefab);
             StatMods = cfg.StatMods;
-            GetSkillData = cfg.Skill;
+            GetSkill = new SkillObjectForControls(cfg.Skill, Owner);
             DisplayItem.gameObject.SetActive(false);
+
+
           //  Debug.Log($"setup equipment{this}");
         }               
         
@@ -29,18 +31,6 @@ namespace Arcatech.Items
             DisplayItem.transform.SetParent(pos.transform);
         }
 
-        //public virtual IEquippable SetupProperties()
-        //{
-        //    if (Config is EquipSO so)
-        //    {
-        //        DisplayItem = GameObject.Instantiate(so.ItemPrefab);
-        //        StatMods = so.StatMods;
-        //        GetSkillData = so.Skill;
-        //        DisplayItem.gameObject.SetActive(false);
-        //        Debug.Log($"setup equipment{this}");
-        //    }
-        //    return this;
-        //}
 
         public bool ItemShown
         {
@@ -53,7 +43,7 @@ namespace Arcatech.Items
 
         public BaseEquippableItemComponent DisplayItem { get; protected set; }
         public SerializedStatModConfig[] StatMods { get; protected set; }
-        public SerializedSkillConfiguration GetSkillData { get; protected set; }
+        public ISkill GetSkill { get; protected set; }
 
     }
 }

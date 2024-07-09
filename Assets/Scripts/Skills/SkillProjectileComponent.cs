@@ -1,4 +1,5 @@
 using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
@@ -6,84 +7,90 @@ using UnityEngine;
 
 namespace Arcatech.Skills
 {
-    [RequireComponent(typeof(SphereCollider))]
-    public class SkillProjectileComponent : ProjectileComponent
+    
+    public class SkillProjectileComponent : ProjectileComponent    {
 
-    {
-
-        private SerializedSkillConfiguration _cfg;
-        public virtual void Setup(SerializedSkillConfiguration cfg, BaseUnit owner)
-        {
-            _cfg = cfg;
-            GetEffects = new EffectsCollection(cfg.Effects);
-        }
-
-        public EffectsCollection GetEffects { get; private set; }
-
-        public SerializedStatsEffectConfig[] GetEffectCfgs => _cfg.Triggers;
 
 
         protected SkillState CurrentState = SkillState.Placer;
-        public SimpleEventsHandler<Collider, SkillState> TriggerEnterEvent;
-        public SimpleEventsHandler<SkillProjectileComponent> SkillDestroyedEvent;
-        protected SphereCollider _collider;
+        public TriggerTargetType ActivatingTrigger { get; set; }
+        [HideInInspector]public float SkillAreaOfEffect;
+        public EffectsCollection VFX { get; set; }
 
+        SphereCollider _aoe;
 
-        public void AdvanceStage()
-        {
-            CurrentState += 1;
-            _framesAoe = 0;
-            _collider.enabled = false;
-
-            _collider.radius = _cfg.AoERadius;
-
-            _collider.enabled = true; // this should trigger a second collision
-            gameObject.name = "Effect" + _cfg.Description.Title;
-        }
-        private void OnTriggerEnter(Collider other)
-        {
-            //_framesAoe = 0;
-            TriggerEnterEvent?.Invoke(other, CurrentState);
-        }
-
-        private void Awake()
-        {
-            _collider = GetComponent<SphereCollider>();
-            _collider.isTrigger = true;
-
-
-        }
         private void Start()
         {
-            gameObject.name = "Placer" + _cfg.Description.Title;
-            _collider.radius = _cfg.PlacerRadius;
+            name = "Placer " + name;
         }
 
-        public  void OnDestroy()
+        protected override void OnTriggerEnter(Collider other)
         {
-            SkillDestroyedEvent?.Invoke(this);
+            switch (CurrentState)
+            {
+                case SkillState.Placer:
+                    if (other.CompareTag("SolidItem")) // might happen with ranged projectiles
+                    {
+                        Advance();
+                    }
+                    else if (other.TryGetComponent<DummyUnit>(out DummyUnit hit))
+                    {
+                        switch (ActivatingTrigger)
+                        {
+                            case TriggerTargetType.TargetsEnemies:
+                                if (Owner.Side != hit.Side)
+                                {
+                                    Advance();
+                                }
+                                break;
+                            case TriggerTargetType.TargetsUser:
+                                if (Owner == hit)
+                                {
+                                    Advance();
+                                }
+                                break;
+                            case TriggerTargetType.TargetsAllies:
+                                if (Owner == hit || hit.Side == Owner.Side)
+                                {
+                                    Advance();
+                                }
+                                break;
+                        }
+                    }
+                    break;
+                case SkillState.AoE:
+                    Advance();
+                    break;
+            }
         }
-
-        private int _framesAoe = 0;
-
-        private void Update()
+        void Advance()
         {
-            if (CurrentState == SkillState.AoE)
+            RemainingHits = 0;
+
+            switch (CurrentState)
             {
-                _framesAoe++;
+                case SkillState.Placer:
+                    CurrentState = SkillState.AoE;
+                    Debug.Log($"skill {name} collide");
+
+                    name = "Effect " + name;
+                    _aoe = gameObject.AddComponent<SphereCollider>();
+                    _aoe.isTrigger = true;
+                    _aoe.radius = SkillAreaOfEffect;
+
+                    EventBus<VFXRequest>.Raise(new VFXRequest(VFX.GetRandomEffect(EffectMoment.OnCollision), transform));
+
+                    break;
+                case SkillState.AoE:
+                    Debug.Log($"register aoe hit in {this}");
+                    Destroy(gameObject, 0.1f);
+                    break;
             }
-            if (_framesAoe >= 5)
+            if (RemainingHits == 0)
             {
-                Destroy(gameObject);
+                Speed = 0;
             }
         }
-
-
-        #region gizmo
-
-
-        #endregion
-
 
     }
 

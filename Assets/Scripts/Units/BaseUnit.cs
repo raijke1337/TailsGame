@@ -29,7 +29,7 @@ namespace Arcatech.Units
 
         public bool IsUnitAlive { get; protected set; } = true;
 
-
+        protected Rigidbody _rb;
 
         #region lockUnit
         private bool _locked = false;
@@ -50,10 +50,8 @@ namespace Arcatech.Units
         
         public virtual void StartControllerUnit() // this is run by unit manager
         {
-            Debug.Log($"Starting unit {this}");
-            _animator.runtimeAnimatorController = _baseAnimator;
-            _animator.Play("Idle");
- 
+            _rb = GetComponent<Rigidbody>();
+            Debug.Log($"Starting unit {this}"); 
         }
 
         public virtual void DisableUnit()
@@ -62,17 +60,8 @@ namespace Arcatech.Units
         }
 
 
-        public virtual void RunUpdate(float delta)
-        {
-            if (LockUnit) return;
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-        }
-
-        public virtual void RunFixedUpdate(float delta)
-        {
-            if (LockUnit) return;
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-        }
+        public abstract void RunUpdate(float delta);
+        public abstract void RunFixedUpdate(float delta);
 
         #endregion
 
@@ -80,7 +69,6 @@ namespace Arcatech.Units
 
         public void UnitDodge(BoosterSkillInstanceComponent bs)
         {
-           // if (LockUnit || _inputs.LockInputs) return;
             Debug.Log($"whoosh!");
         }
     }

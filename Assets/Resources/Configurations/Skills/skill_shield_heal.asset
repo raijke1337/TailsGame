@@ -13,17 +13,15 @@ MonoBehaviour:
   m_Name: skill_shield_heal
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: cce98fde753307049b90a1ca1d3c9c04, type: 2}
-  SpawnPlace: 3
+  Projectile: {fileID: 11400000, guid: 54d82b392cbeb794cb390438c5cc3783, type: 2}
+  UnitActionType: 5
+  ActivatingTrigger: 1
+  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
+  Triggers:
+  - {fileID: 11400000, guid: 3be7dcbef1106da4e92c3e9e7b4c76a6, type: 2}
   Charges: 1
   ChargeRestore: 10
-  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
-  SkillProjectileConfig: {fileID: 11400000, guid: 54d82b392cbeb794cb390438c5cc3783,
-    type: 2}
-  PlacerRadius: 0.5
-  AoERadius: 0.5
-  AoETime: 0.01
-  Triggers:
-  - {fileID: 0}
+  AoE: 2
   Effects:
     Sounds:
       _serializedList: []

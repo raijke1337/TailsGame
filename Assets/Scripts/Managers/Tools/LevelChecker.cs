@@ -1,4 +1,4 @@
-using com.cyborgAssets.inspectorButtonPro;
+
 using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
@@ -7,7 +7,6 @@ namespace Arcatech.Level
 
     public class LevelChecker : MonoBehaviour
     {
-        [ProButton]
         public void RemoveStrayNavmeshes()
         {
             var list = GetComponentsInChildren<NavMeshSurface>();
@@ -22,7 +21,6 @@ namespace Arcatech.Level
                 Debug.Log("Added navmesh surface to level object");
             }
         }
-        [ProButton]
         public void CheckTags()
         {
             var list = GetComponentsInChildren<Transform>();

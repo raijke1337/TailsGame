@@ -1,9 +1,9 @@
 ﻿namespace Arcatech.Items
 {
-    public interface IWeapon : IUsableItem
+    public interface IWeapon : IUsable
     {
         public IDrawItemStrategy DrawStrategy { get; }
-        void DoUpdates(float delta);
+
 
 
     }

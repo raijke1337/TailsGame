@@ -1,4 +1,4 @@
-﻿namespace Arcatech.Units
+﻿namespace Arcatech
 {
     public interface IStrategy { }
 

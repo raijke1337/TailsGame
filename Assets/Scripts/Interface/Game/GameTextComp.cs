@@ -1,5 +1,5 @@
 using Arcatech.Texts;
-using com.cyborgAssets.inspectorButtonPro;
+//using com.cyborgAssets.inspectorButtonPro;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -85,7 +85,7 @@ namespace Arcatech
 
 
         [SerializeField] DialoguePart DebugDialogue;
-        [ProButton]
+       // [ProButton]
         public void DebugLoadDialogue()
         {
             if (DebugDialogue!=null)

@@ -11,7 +11,7 @@ namespace Arcatech.Items
         [HideInInspector] public int RemainingHits;
         [HideInInspector] public float Lifetime;
         [HideInInspector] public float Speed;
-        StatsEffect[] Effects; 
+        protected StatsEffect[] Effects; 
 
         public void AddEffects(SerializedStatsEffectConfig[] cfgs)
         {
@@ -31,7 +31,7 @@ namespace Arcatech.Items
             { Destroy(gameObject); }
 
         }
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent<DummyUnit>(out var u) && u != Owner)
             {

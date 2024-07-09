@@ -14,21 +14,30 @@ namespace Arcatech.Units
         {
             if (collision.gameObject.CompareTag("MovingPlatform"))
             {
+                platform = collision.transform;
+                transform.SetParent(platform);
                 // land on top
-                if (collision.GetContact(0).normal.y > 0.5f)
-                {
-                    platform = collision.transform;
-                    transform.SetParent(platform);
-                }
+                //if (collision.GetContact(0).normal.y > 0.5f)
+                //{
+
+                //}
             }
         }
 
         private void OnCollisionExit(Collision collision)
         {
-            if (collision.gameObject.CompareTag("MovingPlatform"))
+            if (!collision.gameObject.CompareTag("MovingPlatform"))
             {
                 transform.SetParent(null);
                 platform = null;
+            }
+            else
+            {
+                if (collision.gameObject != platform.gameObject)
+                {
+                    platform = collision.transform;
+                    transform.SetParent(platform);
+                }
             }
         }
 

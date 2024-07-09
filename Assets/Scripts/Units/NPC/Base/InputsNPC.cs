@@ -24,7 +24,7 @@ namespace Arcatech.Units.Inputs
         [SerializeField] protected State CurrentState;
 
         protected NavMeshAgent _navMeshAg;
-        [Space, SerializeField] protected StateMachine _stateMachine;
+        [Space, SerializeField] protected EnemyStateMachine _stateMachine;
 
         [SerializeField] protected EnemyStatsConfig EnemyStats;
 
@@ -42,7 +42,7 @@ namespace Arcatech.Units.Inputs
 
             //_navMeshAg.speed = _statsCtrl.AssessStat(BaseStatType.MoveSpeed).GetCurrent;
             _navMeshAg.stoppingDistance = EnemyStats.AttackRange;
-            _stateMachine = new StateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
+            _stateMachine = new EnemyStateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
 
             _stateMachine.SetPatrolPoints(patrolPoints);
         }
@@ -130,10 +130,6 @@ namespace Arcatech.Units.Inputs
 
         }
 
-        protected override Vector3 DoHorizontalMovement(float delta)
-        {
-            return Vector3.zero;
-        }
 
         protected override ControlInputsBase ControllerBindings(bool start)
         {

@@ -1,10 +1,12 @@
-﻿using Arcatech.UI;
+﻿using Arcatech.Items;
+using Arcatech.UI;
 
-namespace Arcatech.Items
+namespace Arcatech
 {
-    public interface IUsableItem : ICostedItem, IActionTypeItem, IIconContent
+    public interface IUsable : ICosted, IActionTypeItem, IIconContent
     {
         public bool TryUseItem();
+        void DoUpdate(float delta);
     }
 
    

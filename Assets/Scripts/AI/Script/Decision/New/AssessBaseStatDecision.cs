@@ -13,7 +13,7 @@ namespace Arcatech.AI
         public ReferenceUnitType CheckedUnit;
         public BaseStatType CheckedStat;
 
-        public override bool Decide(StateMachine controller)
+        public override bool Decide(EnemyStateMachine controller)
         {
             //    BaseUnit ch;
             //    switch (CheckedUnit)

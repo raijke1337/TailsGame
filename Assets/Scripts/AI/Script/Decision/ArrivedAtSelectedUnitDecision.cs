@@ -6,7 +6,7 @@ namespace Arcatech.AI
     [CreateAssetMenu(menuName = "AIConfig/Decision/ArrivedAtDestination")]
     public class ArrivedAtSelectedUnitDecision : Decision
     {
-        public override bool Decide(StateMachine controller)
+        public override bool Decide(EnemyStateMachine controller)
         {
             return controller.CheckIsInStoppingRange();
         }

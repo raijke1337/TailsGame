@@ -167,10 +167,6 @@ namespace Arcatech.Managers
         public void OnFinishedEquips()
         {
             _equipsDone = true;
-
-            //_dataManager.UpdateCurrentPlayerItems(_gameControllers.UnitsManager.GetPlayerUnit.GetInventoryComponent);
-            // this will be called directly by the mvc with inventory update events
-            //
             RequestLoadSceneFromContainer(_cachedGameLevel);
         }
 
@@ -179,6 +175,7 @@ namespace Arcatech.Managers
 
         private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
         {
+
             _gameControllers = Instantiate(GameControllersPrefab);
             _gameControllers.StartController(_currentLevel.LevelType);
 

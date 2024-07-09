@@ -2,6 +2,7 @@ using AYellowpaper.SerializedCollections.Editor.Data;
 using AYellowpaper.SerializedCollections.Editor.States;
 using AYellowpaper.SerializedCollections.KeysGenerators;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace AYellowpaper.SerializedCollections.Editor
     public class SerializedDictionaryInstanceDrawer
     {
         private const float MinKeyValueLabelWidth = 40f;
-
+        
         private FieldInfo _fieldInfo;
         private ReorderableList _unexpandedList;
         private SingleEditingData _singleEditingData;
@@ -202,8 +203,7 @@ namespace AYellowpaper.SerializedCollections.Editor
             while (toCheck != null && toCheck != typeof(object))
             {
                 var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-                if (generic == cur)
-                {
+                if (generic == cur) {
                     return toCheck;
                 }
                 toCheck = toCheck.BaseType;
@@ -304,7 +304,7 @@ namespace AYellowpaper.SerializedCollections.Editor
 
         private (DisplayType displayType, bool canToggleListDrawer) CreateDisplaySettings(SerializedProperty property, Type type)
         {
-            bool hasCustomEditor = SCEditorUtility.HasDrawerForType(type);
+            bool hasCustomEditor = SCEditorUtility.HasDrawerForProperty(property, type);
             bool isGenericWithChildren = property.propertyType == SerializedPropertyType.Generic && property.hasVisibleChildren;
             bool isArray = property.isArray && property.propertyType != SerializedPropertyType.String;
             bool canToggleListDrawer = isArray || (isGenericWithChildren && hasCustomEditor);
@@ -342,7 +342,7 @@ namespace AYellowpaper.SerializedCollections.Editor
 
             UpdateAfterInput();
         }
-
+        
         private void OnDrawUnexpandedHeader(Rect rect)
         {
             EditorGUI.BeginProperty(rect, _label, ListProperty);
@@ -353,7 +353,7 @@ namespace AYellowpaper.SerializedCollections.Editor
             GUI.Label(detailsRect, _shortDetailsContent, detailsStyle);
 
             EditorGUI.EndProperty();
-
+            
             UpdateAfterInput();
         }
 

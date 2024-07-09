@@ -5,7 +5,7 @@ namespace Arcatech.AI
     [CreateAssetMenu(menuName = "AIConfig/Action/Move To:/Focus Unit")]
     public class MoveToFocusUnitAction : Action
     {
-        public override void Act(StateMachine controller)
+        public override void Act(EnemyStateMachine controller)
         {
             //if (controller.NMAgent.isStopped == true) controller.NMAgent.isStopped = false; 
             controller.NMAgent.Resume();

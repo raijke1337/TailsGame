@@ -8,7 +8,7 @@ namespace Arcatech.AI
     {
         public float DesiredRange;
         public Vector3 CheckedPosition;
-        public override bool Decide(StateMachine controller)
+        public override bool Decide(EnemyStateMachine controller)
         {
             return (Vector3.Distance(controller.ControlledUnit.transform.position,CheckedPosition) <= DesiredRange);
         }

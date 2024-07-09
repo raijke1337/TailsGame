@@ -1,4 +1,5 @@
 ﻿using Arcatech.Items;
+using Arcatech.Skills;
 using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units;
@@ -43,9 +44,21 @@ namespace Arcatech.EventBus
         public bool IsEnteringTrigger { get; }
         public StatsEffect[] AppliedEffects { get; }
         public Transform Place { get; }
-
-
     }
+
+    public struct SpawnSkillEvent : IEvent
+    {
+        public ISkill Skill;
+        public DummyUnit Caster;
+        public Transform Place;
+        public SpawnSkillEvent(ISkill skill, DummyUnit caster, Transform place)
+        {
+            Skill = skill;
+            Caster = caster;
+            Place = place;
+        }
+    }
+
 
     public struct PlayerPauseEvent : IEvent
     {
@@ -55,13 +68,12 @@ namespace Arcatech.EventBus
 
     public struct IUsableUpdatedEvent : IEvent
     {
-        public IUsableUpdatedEvent(IUsableItem used, DummyUnit user)
+        public IUsableUpdatedEvent(IUsable used, DummyUnit user)
         {
             Used = used;
             User = user;
         }
-
-        public IUsableItem Used { get; }
+        public IUsable Used { get; }
         public DummyUnit User { get; }
 
     }

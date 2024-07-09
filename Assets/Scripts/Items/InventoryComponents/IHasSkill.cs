@@ -7,7 +7,7 @@ namespace Arcatech.Items
     /// </summary>
     public interface IHasSkill
     {
-        public SerializedSkillConfiguration GetSkillData { get; }
+        public ISkill GetSkill { get; }
     }
 
    

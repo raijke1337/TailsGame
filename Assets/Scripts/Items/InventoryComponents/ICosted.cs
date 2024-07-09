@@ -1,8 +1,8 @@
 ﻿using Arcatech.Triggers;
 
-namespace Arcatech.Items
+namespace Arcatech
 {
-    public interface ICostedItem
+    public interface ICosted
     {
         public StatsEffect GetCost { get; }
     }

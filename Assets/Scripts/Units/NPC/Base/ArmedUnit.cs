@@ -18,7 +18,7 @@ namespace Arcatech.Units
             _weapons = new WeaponController(_stats,_inventory, this);
             _weapons.StartController();
 
-            _skills = new SkillsController(_inventory, this);
+            _skills = new SkillsController(_stats, _inventory, this);
             _skills.StartController();
 
         }

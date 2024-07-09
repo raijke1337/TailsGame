@@ -5,7 +5,7 @@ namespace Arcatech.AI
     [CreateAssetMenu(menuName = "AIConfig/Decision/StateExpired")]
     public class StateExpiredDecision : Decision
     {
-        public override bool Decide(StateMachine controller)
+        public override bool Decide(EnemyStateMachine controller)
         {
             return (controller.TimeInState >= controller.CurrentState.StateExpiryTime);
         }

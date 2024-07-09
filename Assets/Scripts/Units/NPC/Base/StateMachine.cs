@@ -6,7 +6,7 @@ using UnityEngine.AI;
 namespace Arcatech.AI
 {
     [Serializable]
-    public class StateMachine : IManagedController
+    public class EnemyStateMachine : IManagedController
     {
         #region handler
         public void ControllerUpdate(float deltaTime)
@@ -79,7 +79,7 @@ namespace Arcatech.AI
         public Transform EyesEmpty { get; private set; } // used for sphere casting to look
 
         #region setups
-        public StateMachine(NavMeshAgent agent, EnemyStatsConfig stats, State init, State dummy, ControlledUnit unit)
+        public EnemyStateMachine(NavMeshAgent agent, EnemyStatsConfig stats, State init, State dummy, ControlledUnit unit)
         {
             NMAgent = agent;
             GetEnemyStats = stats;

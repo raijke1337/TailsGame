@@ -28,16 +28,6 @@ namespace Arcatech
 
     public delegate void ConditionCheckEvents (CheckConditionTrigger condition, bool currentState);
 
-
-    public delegate void SkillRequestedEvent(SkillProjectileComponent data, BaseUnit source, Transform where);
-    
-
-
-    /// <summary>
-    /// moved to events bus
-    /// </summary>
-    //public delegate void SimpleTriggerEvent(BaseUnit target, bool isEnter);
-    //public delegate void TriggerEvent(BaseUnit target, BaseUnit source, bool isEnter, StatsEffect eff);
     #endregion
 
     #region structs 

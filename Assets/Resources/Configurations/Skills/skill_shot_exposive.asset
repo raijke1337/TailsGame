@@ -13,17 +13,16 @@ MonoBehaviour:
   m_Name: skill_shot_exposive
   m_EditorClassIdentifier: 
   Description: {fileID: 11400000, guid: e67681dcedf8d6c488dadf93299468c6, type: 2}
-  SpawnPlace: 2
+  Projectile: {fileID: 11400000, guid: 41f50b15f8e253649aa5f282d608a3b0, type: 2}
+  UnitActionType: 4
+  ActivatingTrigger: 0
+  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
+  Triggers:
+  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
+  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
   Charges: 1
   ChargeRestore: 5
-  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
-  SkillProjectileConfig: {fileID: 11400000, guid: 41f50b15f8e253649aa5f282d608a3b0,
-    type: 2}
-  PlacerRadius: 0.1
-  AoERadius: 4
-  AoETime: 0.1
-  Triggers:
-  - {fileID: 0}
+  AoE: 6
   Effects:
     Sounds:
       _serializedList: []
@@ -31,4 +30,4 @@ MonoBehaviour:
       _serializedList:
       - Key: 0
         Value:
-        - {fileID: 4021103657954561941, guid: c02a418a0c7268747831aac8a967a01e, type: 3}
+        - {fileID: 2883620193154939874, guid: 95cbf08037e972a4fb9fe2472122a38e, type: 3}

@@ -6,7 +6,7 @@ namespace Arcatech.AI
     public class SetFocusToAction : Action
     {
         public ReferenceUnitType DesiredType;
-        public override void Act(StateMachine controller)
+        public override void Act(EnemyStateMachine controller)
         {
             controller.OnSetFocus(DesiredType);
         }

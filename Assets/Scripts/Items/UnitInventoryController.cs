@@ -87,16 +87,16 @@ namespace Arcatech.Items
             return this;
         }
 
-        public SerializedSkillConfiguration[] GetSkillConfigs
+        public ISkill[] GetSkills
         {
             get
             {
-                List<SerializedSkillConfiguration> foundSkills = new();
+                List<ISkill> foundSkills = new();
                 foreach (var e in Inventory.Equipments.GetAllValues())
                 {
-                    if (e is IHasSkill ss)
+                    if (e.GetSkill != null)
                     {
-                        foundSkills.Add(ss.GetSkillData);
+                        foundSkills.Add(e.GetSkill);
                     }
                 }
                 return foundSkills.ToArray();

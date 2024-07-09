@@ -27,7 +27,6 @@ namespace Arcatech.Items
             proj.AddEffects(effects);
 
             return proj;
-
         }
 
     }

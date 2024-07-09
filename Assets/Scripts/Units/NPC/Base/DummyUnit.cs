@@ -28,8 +28,6 @@ namespace Arcatech.Units
 
             GetUnitName = defaultStats.DisplayName;
 
-
-
             _inventory = new UnitInventoryController(SelectSerializedItemsConfig(), itemEmpties, this);
             _inventory.DrawItems(defaultItemsDrawStrat)
                 .StartController();
@@ -54,8 +52,6 @@ namespace Arcatech.Units
 
         public override void RunUpdate(float delta)
         {
-            base.RunUpdate(delta);
-
             if (LockUnit) return;
             _stats.ControllerUpdate(delta);
             _inventory.ControllerUpdate(delta);
@@ -63,8 +59,6 @@ namespace Arcatech.Units
 
         public override void RunFixedUpdate(float delta)
         {
-            base.RunFixedUpdate(delta);
-
             _stats.FixedControllerUpdate(delta);
             _inventory.FixedControllerUpdate(delta);
 
@@ -83,6 +77,22 @@ namespace Arcatech.Units
         protected virtual UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {
             return new UnitInventoryItemConfigsContainer(defaultEquips);
+        }
+        public Transform GetSkillTransform (UnitActionType action)
+        {
+            switch (action)
+            {
+                case UnitActionType.DodgeSkill:
+                    return itemEmpties.ItemPositions[ItemPlaceType.BoosterEmpty];
+                case UnitActionType.MeleeSkill:
+                    return itemEmpties.ItemPositions[ItemPlaceType.MeleeEmpty];
+                case UnitActionType.RangedSkill:
+                    return itemEmpties.ItemPositions[ItemPlaceType.RangedEmpty];
+                case UnitActionType.ShieldSkill:
+                    return itemEmpties.ItemPositions[ItemPlaceType.ShieldEmpty];
+                default:
+                    return null;
+            }
         }
 
         #endregion
