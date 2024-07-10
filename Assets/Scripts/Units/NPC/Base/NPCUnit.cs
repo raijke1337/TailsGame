@@ -53,27 +53,9 @@ namespace Arcatech.Units
 
         }
 
-        public override void DoHorizontalMovement(float delta)
-        {
-            throw new System.NotImplementedException();
-        }
 
-        public override void DoRotation(float d)
-        {
-            throw new System.NotImplementedException();
-        }
 
         protected override void SetupStateMachine()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override bool IdleConditions()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void DoJump()
         {
             throw new System.NotImplementedException();
         }

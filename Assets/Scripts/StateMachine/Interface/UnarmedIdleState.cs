@@ -1,12 +1,13 @@
 ﻿// a predicate is a function that tests a condition and then returns a bool
 using Arcatech.Units;
+using ECM.Components;
 using UnityEngine;
 
 namespace Arcatech.StateMachine
 {
     public class UnarmedIdleState : BaseState
     {
-        public UnarmedIdleState(ControlledUnit inputs, Animator playerAnimator, float maxTimeInState = 0) : base(inputs, playerAnimator, maxTimeInState)
+        public UnarmedIdleState(CharacterMovement movement, ControlledUnit unit, Animator playerAnimator) : base(movement, unit, playerAnimator)
         {
         }
 

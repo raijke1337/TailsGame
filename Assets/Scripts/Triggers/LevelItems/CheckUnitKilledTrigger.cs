@@ -10,7 +10,7 @@ public class CheckUnitKilledTrigger : CheckConditionTrigger
 
     protected override bool CheckTheCondition()
     {
-        return !_unit.IsUnitAlive;
+        return true; // TODO
     }
 
 }

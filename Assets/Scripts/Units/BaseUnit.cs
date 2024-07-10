@@ -18,18 +18,12 @@ namespace Arcatech.Units
 
     public abstract class BaseUnit : ValidatedMonoBehaviour
     {
+        protected const float zeroF = 0f;
         [Header("Unit settings")]
         public Side Side;       
-
-        [SerializeField] protected RuntimeAnimatorController _baseAnimator;
         [SerializeField,Self] protected Animator _animator;
-
         public abstract string GetUnitName { get; protected set; }
         public abstract ReferenceUnitType GetUnitType();
-
-        public bool IsUnitAlive { get; protected set; } = true;
-
-        protected Rigidbody _rb;
 
         #region lockUnit
         private bool _locked = false;
@@ -42,7 +36,12 @@ namespace Arcatech.Units
             set
             {
                 _locked = value;
+                OnLockUnit(_locked);
             }
+        }
+        protected virtual void OnLockUnit(bool  locked)
+        {
+            Debug.Log($"lock unit {name} {locked}");
         }
 
         #endregion
@@ -50,7 +49,6 @@ namespace Arcatech.Units
         
         public virtual void StartControllerUnit() // this is run by unit manager
         {
-            _rb = GetComponent<Rigidbody>();
             Debug.Log($"Starting unit {this}"); 
         }
 
@@ -65,11 +63,5 @@ namespace Arcatech.Units
 
         #endregion
 
-
-
-        public void UnitDodge(BoosterSkillInstanceComponent bs)
-        {
-            Debug.Log($"whoosh!");
-        }
     }
 }

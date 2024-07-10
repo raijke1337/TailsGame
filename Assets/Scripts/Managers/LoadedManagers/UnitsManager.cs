@@ -19,36 +19,24 @@ namespace Arcatech.Managers
         public PlayerUnit GetPlayerUnit { get => _player; }
         private List<RoomUnitsGroup> _npcGroups;
 
-        
-
-
         private EffectsManager _effects;
         private SkillsPlacerManager _skills;
         private TriggersManager _trigger;
 
-        private bool _isUnitsLocked;
-        public bool UnitsLocked
+        public void LockUnits(bool IsLock)
         {
-            get => _isUnitsLocked;
-            set
+            _player.LockUnit = IsLock;
+            if (_npcGroups != null)
             {
-                _player.LockUnit = value;
-                if (_npcGroups != null)
+                foreach (var g in _npcGroups)
                 {
-                    foreach (var g in _npcGroups)
+                    foreach (var n in g.GetAllUnits)
                     {
-                        foreach (var n in g.GetAllUnits)
-                        {
-                            n.LockUnit = value;
-                        }
+                        n.LockUnit = IsLock;
                     }
                 }
-
-                _isUnitsLocked = value;
             }
         }
-
-
 
         #region managed
         public virtual void StartController()
@@ -100,8 +88,7 @@ namespace Arcatech.Managers
         }
         public virtual void ControllerUpdate(float delta)
         {
-
-            if (_isUnitsLocked) return;
+            if (_player.LockUnit) return;
 
             _player.RunUpdate(delta);
             if (_npcGroups == null) return;
@@ -116,7 +103,7 @@ namespace Arcatech.Managers
 
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
-            if (_isUnitsLocked) return;
+            if (_player.LockUnit) return;
 
             _player.RunFixedUpdate(fixedDelta);
             if (_npcGroups == null) return;
@@ -172,7 +159,7 @@ namespace Arcatech.Managers
             
             if (unit is PlayerUnit)
             {
-                UnitsLocked = true;
+                LockUnits(true);
                 GameManager.Instance.OnPlayerDead();
             }
 

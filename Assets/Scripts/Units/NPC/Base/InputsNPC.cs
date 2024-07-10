@@ -31,9 +31,9 @@ namespace Arcatech.Units.Inputs
 
         #endregion
         #region managed
-        public override void StartController()
+        public void StartController()
         {
-            base.StartController();
+            //base.StartController();
             if (patrolPoints.Count == 0)
             {
                 patrolPoints.Add(transform);
@@ -47,13 +47,13 @@ namespace Arcatech.Units.Inputs
             _stateMachine.SetPatrolPoints(patrolPoints);
         }
 
-        public override void ControllerUpdate(float delta)
+        public  void ControllerUpdate(float delta)
         {
             if (_stateMachine == null) return;
             _stateMachine.ControllerUpdate(delta);
             CurrentState = _stateMachine.CurrentState;
 
-            base.ControllerUpdate(delta);
+           // base.ControllerUpdate(delta);
 
         }
 
@@ -122,14 +122,6 @@ namespace Arcatech.Units.Inputs
             Gizmos.color = Color.white;
             Gizmos.DrawWireSphere(_stateMachine.NMAgent.transform.position, _stateMachine.GetEnemyStats.LookRange); // look sphere range is used to call nearby allies into combat
         }
-
-
-
-        protected override void OnLockInputs(bool isLock)
-        {
-
-        }
-
 
         protected override ControlInputsBase ControllerBindings(bool start)
         {

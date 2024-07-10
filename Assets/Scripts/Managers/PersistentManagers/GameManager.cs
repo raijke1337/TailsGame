@@ -216,7 +216,7 @@ namespace Arcatech.Managers
         EventBinding<PlayerPauseEvent> _pauseBind;
         private void OnPlayerPaused(PlayerPauseEvent isPausing)
         {
-            _gameControllers.UnitsManager.UnitsLocked = isPausing.Value;
+            _gameControllers.UnitsManager.LockUnits(isPausing.Value);
             // shoukld stop player inputs
         }
         #endregion

@@ -38,7 +38,6 @@ namespace Arcatech.StateMachine
         {
             fromAnyState.Add(new StateTransition(GetOrAddNode(to).State, cond));
         }
-        public bool StateExpired => currentState.State.TimeLeft <= 0f;
         #endregion
 
         ITransition GetTransition()

@@ -15,146 +15,27 @@ using UnityEngine.Events;
 namespace Arcatech.Units
 {
 
-    public abstract class ControlInputsBase : MonoBehaviour, IManagedController
+    public abstract class ControlInputsBase : MonoBehaviour
     {
         [SerializeField] public bool DebugMessage = false;
-
+        public Vector3 InputsMovementVector { get; protected set; }
+        public Vector3 InputsLookVector { get; protected set; }
         public ControlledUnit Unit { get; set; }
-        [SerializeField, Self] protected Rigidbody _rb;
-        protected Dictionary<MovementStatType, StatValueContainer> _stats { get; set; }
 
-        private bool _inputsLocked;
-        [SerializeField] public bool LockInputs
-        {
-            get
-            {
-                return _inputsLocked;
-            }
-            set
-            {
-                OnLockInputs(value);
-                _inputsLocked = value;
-
-                ZeroAnimatorFloats();
-                //AnimateMovement();
-            }
-        }// todo ?
-        protected abstract void OnLockInputs(bool isLock);
-
-        protected float lastDelta;
-
-
-        public ControlInputsBase PopulateDictionary()
-        {
-            _stats = new Dictionary<MovementStatType, StatValueContainer>();
-            var vals = Enum.GetValues(typeof(MovementStatType));
-            foreach (var typ in vals)
-            {
-                _stats[(MovementStatType)typ] = null;
-            }
-            return this;
-        }
-        public ControlInputsBase SetMovementStats(MovementStatsConfig cfg)
-        {
-            foreach (var stat in cfg.Stats.Keys)
-            {
-                _stats[stat] = new StatValueContainer(cfg.Stats[stat]);
-            }
-            return this;
-        }
-        public float GetMovementStatValue(MovementStatType t) => _stats[t].GetCurrent;
-
-        #region ManagedController
-        public virtual void ControllerUpdate(float delta)
-        {
-            lastDelta = delta;
-            //_animator.SetFloat("AirTime", _groundedPlatform.AirTime);
-        }
-        public virtual void FixedControllerUpdate(float fixedDelta)
-        {
-            //if (_groundedPlatform.IsGrounded)
-            //{
-            //    UpdateAnimatorVector(DoHorizontalMovement(fixedDelta));
-            //    AnimateMovement();
-            //}
-        }
-
-        public virtual void StartController()
+        protected virtual void OnEnable()
         {
             ControllerBindings(true);
         }
-        public virtual void StopController()
+        protected virtual void OnDisable()
         {
             ControllerBindings(false);
         }
-
-
-        #endregion
         protected abstract ControlInputsBase ControllerBindings(bool start);
-
-
-        #region animations
-        [SerializeField, Self] protected Animator _animator;
-        public bool IsInMeleeCombo = false;
-        Vector2 animVect;
-
-        protected virtual void ZeroAnimatorFloats()
-        {
-            _animator.SetBool("Moving", false);
-            _animator.SetFloat("ForwardMove", 0f);
-            _animator.SetFloat("SideMove", 0f);
-            _animator.SetFloat("Rotation", 0);
-        }
-        //protected virtual void AnimateCombatActivity(UnitActionType type)
-        //{
-        //    if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-        //    switch (type)
-        //    {
-        //        case UnitActionType.Melee:
-        //            _animator.SetTrigger("MeleeAttack");
-        //            break;
-        //        case UnitActionType.Ranged:
-        //            _animator.SetTrigger("RangedAttack");
-        //            break;
-        //        case UnitActionType.DodgeSkill:
-        //            _animator.SetTrigger("Dodge");
-        //            break;
-        //        case UnitActionType.MeleeSkill:
-        //            _animator.SetTrigger("MeleeSpecial");
-        //            break;
-        //        case UnitActionType.RangedSkill:
-        //            _animator.SetTrigger("RangedSpecial");
-        //            break;
-        //        case UnitActionType.ShieldSkill:
-        //            _animator.SetTrigger("ShieldSpecial");
-        //            break;
-        //        case UnitActionType.Jump:
-        //            _animator.SetTrigger("JumpStart");
-        //            break;
-        //    }
-        //}
-        protected virtual void AnimateStagger()
-        {
-            _animator.SetTrigger("TakeDamage");
-        }
-
-        #endregion
-        public void ToggleBusyControls_AnimationEvent(int state)
-        {
-            if (DebugMessage)
-            {
-                Debug.Log($"Animation event busy controls! {state}");
-            }
-            LockInputs = state != 0;
-        }
-
-
         public event Action<UnitActionType> UnitActionRequestedEvent = delegate { };
+
 
         protected virtual void RequestCombatAction(UnitActionType type)
         {
-            if (LockInputs ) return;
-
             if (DebugMessage)
             {
                 Debug.Log($"Do combat action {type}");

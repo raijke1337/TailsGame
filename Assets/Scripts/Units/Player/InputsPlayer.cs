@@ -1,7 +1,10 @@
-using Arcatech.Managers;
 using Arcatech.Scenes.Cameras;
+using ECM.Common;
+using ECM.Controllers;
 using KBCore.Refs;
 using UnityEngine;
+using UnityEngine.Windows;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace Arcatech.Units.Inputs
 {
@@ -10,62 +13,43 @@ namespace Arcatech.Units.Inputs
     {
 
         [SerializeField, Anywhere] PlayerInputReaderObject _playerInputReader;
-        public Vector2 InputVector => _playerInputReader.InputDirection;
-
         [SerializeField,Self] private AimingComponent _aim;
         public AimingComponent Aiming => _aim;
-        private CostumesControllerComponent _costume;
+        private IsoCamAdjust _adj;
+
 
         #region managedctrl
 
-        public override void StartController()
+        protected override void OnEnable()
         {
+            base.OnEnable();
+            _adj ??= new IsoCamAdjust();
 
-            base.StartController();
-
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
             _playerInputReader.EnablePlayerInputs();
-
-
             _aim = GetComponent<AimingComponent>();
-            _aim.StartController();
-            _costume = GetComponent<CostumesControllerComponent>();
-            transform.LookAt(transform.forward);            
+            _aim?.StartController();
+            transform.LookAt(transform.forward);
         }
-        public override void ControllerUpdate(float delta)
+        protected override void OnDisable()
         {
-            if (_aim == null) return;
-            base.ControllerUpdate(delta);
-            //DoAiming(delta);
-            _aim.ControllerUpdate(delta);
-
+            base.OnDisable();
+            _aim?.StopController();
         }
-        public override void StopController()
+        private void Update()
         {
-            if (GameManager.Instance.GetCurrentLevelData.LevelType != LevelType.Game) return;
-            // not init for non game levels
-            _aim.StopController();
-        }
+            _aim?.ControllerUpdate(Time.deltaTime);
 
+            Vector3 AD = _adj.Isoright * _playerInputReader.InputDirection.x;
+            Vector3 WS = _adj.Isoforward * _playerInputReader.InputDirection.z;
+
+            InputsMovementVector = AD + WS;
+
+            InputsLookVector = _aim.GetDirectionToTarget;
+        }
         #endregion
 
 
-
-        #region aiming
-
-        [Header("Aiming settings")]
-        [SerializeField,Tooltip("If value is less, play rotation animation and rotate player")]
-        float _minAngleToPlayRotation = 0.9f;
-        public float RotationTreschold => _minAngleToPlayRotation;
-
-
-        #endregion
-
-        #region inputs section
-
-        protected override void OnLockInputs(bool isLock)
-        {
-        }
+       #region inputs section
 
         protected override ControlInputsBase ControllerBindings(bool start)
         {

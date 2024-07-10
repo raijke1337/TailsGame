@@ -290,17 +290,7 @@ namespace Arcatech.Scenes.Cameras
 
 
         private Color _cameraTargetGizmoColor;
-        private void OnDrawGizmos()
-        {
 
-            if (_camera == null) return;
-            Gizmos.color = _cameraTargetGizmoColor;
-            Gizmos.DrawWireSphere(_cameraTargetPoint, 0.15f);
-            Gizmos.DrawWireSphere(_playerAimingComponent.GetLookTarget, 0.1f);
-            Gizmos.DrawLine(_playerAimingComponent.transform.position, 
-                _playerAimingComponent.transform.position + _playerAimingComponent.GetNormalizedDirectionToTaget);
-
-        }
     }
 
 

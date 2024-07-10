@@ -12,7 +12,6 @@ namespace Arcatech.StateMachine
         void OnEnterState();
         void OnLeaveState();
         void HandleCombatAction(UnitActionType action);
-        float TimeLeft { get; }
     }
 
 }

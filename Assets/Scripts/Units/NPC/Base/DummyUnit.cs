@@ -6,6 +6,7 @@ using Arcatech.Units.Stats;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Arcatech.Units
 {
@@ -129,12 +130,12 @@ namespace Arcatech.Units
 
         protected virtual void HandleDamage(float value)
         {
-            _animator.SetTrigger("TakeDamage");
+            Debug.Log($"{name} took {value} dmg");
         }
 
         protected virtual void HandleDeath()
         {
-            _animator.SetTrigger("Death");
+            Debug.Log($"{name} died");
         }
 
 

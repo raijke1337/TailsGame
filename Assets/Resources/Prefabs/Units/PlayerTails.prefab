@@ -201,6 +201,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7892887345337866563}
   - component: {fileID: 3679989756617116995}
+  - component: {fileID: 1557374948248902069}
+  - component: {fileID: 3387820889685750459}
   - component: {fileID: 633146174127125324}
   - component: {fileID: 255217675987035512}
   - component: {fileID: 471108880158900297}
@@ -208,7 +210,7 @@ GameObject:
   - component: {fileID: 5283087494177499262}
   - component: {fileID: 4352188766816210169}
   - component: {fileID: 1106022451855181113}
-  - component: {fileID: 8743729188238178463}
+  - component: {fileID: 3283989193387792625}
   m_Layer: 0
   m_Name: PlayerTails
   m_TagString: Player
@@ -244,7 +246,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -258,9 +260,51 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 126
+  m_Interpolate: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &1557374948248902069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612417970087076613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eae04a4fe514bf4789aec1bdb93100b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxLateralSpeed: 10
+  _maxRiseSpeed: 20
+  _maxFallSpeed: 20
+  _useGravity: 1
+  _gravity: {x: 0, y: -30, z: 0}
+  _slideOnSteepSlope: 0
+  _slopeLimit: 45
+  _slideGravityMultiplier: 2
+  _snapToGround: 1
+  _snapStrength: 0.5
+--- !u!114 &3387820889685750459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4612417970087076613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad2beb1f5ff1d146b5668716966d9ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _groundLimit: 60
+  _stepOffset: 0.5
+  _ledgeOffset: 0
+  _castDistance: 0.5
+  _triggerInteraction: 1
 --- !u!95 &633146174127125324
 Animator:
   serializedVersion: 5
@@ -302,7 +346,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1.9
+  m_Height: 1.85
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &471108880158900297
@@ -318,7 +362,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Side: 0
-  _baseAnimator: {fileID: 9100000, guid: a55a17f5793b3ef43b7e92d0e2b5844d, type: 2}
   _animator: {fileID: 633146174127125324}
   defaultEquips: {fileID: 11400000, guid: 00b9c3121edc84543aa3f98d4e0881de, type: 2}
   itemEmpties:
@@ -342,10 +385,11 @@ MonoBehaviour:
   _weapons:
     DebugMessage: 0
   movementStats: {fileID: 11400000, guid: cf36fb33e9c878b488c78a2266989e12, type: 2}
+  movement: {fileID: 1557374948248902069}
+  _rb: {fileID: 3679989756617116995}
   _inputs: {fileID: 1910410889340383960}
-  _groundedPlatform: {fileID: 8743729188238178463}
   _faceCam: {fileID: 6195898166004764537}
-  _smoothTime: 0.05
+  _minAngleToPlayRotation: 0.9
 --- !u!114 &1910410889340383960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,12 +403,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DebugMessage: 0
-  _rb: {fileID: 0}
-  _animator: {fileID: 633146174127125324}
-  IsInMeleeCombo: 0
   _playerInputReader: {fileID: 11400000, guid: c5f0d6e24b96f5143956c9299b3ee2b4, type: 2}
   _aim: {fileID: 4352188766816210169}
-  _minAngleToPlayRotation: 0.9
 --- !u!114 &5283087494177499262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,7 +504,7 @@ MonoBehaviour:
   - {fileID: 8651630983082586166}
   - {fileID: 6174641194171123443}
   - {fileID: 1598024985415013640}
---- !u!114 &8743729188238178463
+--- !u!114 &3283989193387792625
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -476,10 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88afeca78f5cb0d4a9680b85b905b664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundDist: 0.1
-  _groundMask:
-    serializedVersion: 2
-    m_Bits: 8
+  _platformsTag: MovingPlatform
 --- !u!1 &4778100117996528101
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,7 +26,13 @@ public class PlayerInputReaderObject : ScriptableObject, IGameActions
     public event UnityAction PausePressed = delegate { };
 
 
-    public Vector2 InputDirection => _controls.Game.WASD.ReadValue<Vector2>();
+    public Vector3 InputDirection
+    {get
+        {
+            Vector2 read = _controls.Game.WASD.ReadValue<Vector2>();
+            return new Vector3(read.x,0f,read.y);
+        }
+    }
     public Vector2 AimPoint => _controls.Game.Aim.ReadValue<Vector2>();
 
 
