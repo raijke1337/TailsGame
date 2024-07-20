@@ -65,46 +65,55 @@ public class PlayerInputReaderObject : ScriptableObject, IGameActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        Jump.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            Jump.Invoke();
     }
     public void OnMainAttack(InputAction.CallbackContext context)
     {
-        Melee.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            Melee.Invoke();
     }
 
     public void OnRangedAttack(InputAction.CallbackContext context)
     {
-        Ranged.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            Ranged.Invoke();
     }
 
 
     public void OnPause(InputAction.CallbackContext context)
     {
-        PausePressed.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            PausePressed.Invoke();
     }
 
     public void OnUseMeleeSkill(InputAction.CallbackContext context)
     {
-        MeleeSpec.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            MeleeSpec.Invoke();
     }
 
     public void OnUseRangedSkill(InputAction.CallbackContext context)
     {
-        RangedSpec.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            RangedSpec.Invoke();
     }
 
     public void OnUseShieldSkill(InputAction.CallbackContext context)
     {
-        ShieldSpec.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            ShieldSpec.Invoke();
     }
 
     public void OnUseDodgeSkill(InputAction.CallbackContext context)
     {
-        DodgeSpec.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            DodgeSpec.Invoke();
     }
     public void OnMount(InputAction.CallbackContext context)
     {
-        MountAction.Invoke();
+        if (context.phase == InputActionPhase.Performed)
+            MountAction.Invoke();
     }
     #endregion
 }

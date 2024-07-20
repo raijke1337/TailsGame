@@ -44,7 +44,7 @@ namespace ECM.Components
         [Tooltip("Enable / disable character's custom gravity." +
                  "If enabled the character will be affected by this gravity force.")]
         [SerializeField]
-        private bool _useGravity = false;
+        private bool _useGravity = true;
 
         [Tooltip("The gravity applied to this character.")]
         [SerializeField]

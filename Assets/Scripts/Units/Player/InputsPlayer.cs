@@ -8,7 +8,7 @@ using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace Arcatech.Units.Inputs
 {
-    [RequireComponent(typeof(AimingComponent),typeof(CostumesControllerComponent))]
+    [RequireComponent(typeof(AimingComponent))]
     public class InputsPlayer : ControlInputsBase
     {
 
@@ -28,7 +28,6 @@ namespace Arcatech.Units.Inputs
             _playerInputReader.EnablePlayerInputs();
             _aim = GetComponent<AimingComponent>();
             _aim?.StartController();
-            transform.LookAt(transform.forward);
         }
         protected override void OnDisable()
         {
@@ -38,13 +37,6 @@ namespace Arcatech.Units.Inputs
         private void Update()
         {
             _aim?.ControllerUpdate(Time.deltaTime);
-
-            Vector3 AD = _adj.Isoright * _playerInputReader.InputDirection.x;
-            Vector3 WS = _adj.Isoforward * _playerInputReader.InputDirection.z;
-
-            InputsMovementVector = AD + WS;
-
-            InputsLookVector = _aim.GetDirectionToTarget;
         }
         #endregion
 
@@ -133,12 +125,16 @@ namespace Arcatech.Units.Inputs
 
         private void OnMovementAction(Vector2 dir)
         {
-           // AdjustInputsVector(_playerInputReader.InputDirection);
+
+            Vector3 AD = _adj.Isoright * _playerInputReader.InputDirection.x;
+            Vector3 WS = _adj.Isoforward * _playerInputReader.InputDirection.z;
+
+            InputsMovementVector = AD + WS;
         }
 
         private void OnAimAction(Vector2 point)
         {
-            //throw new System.NotImplementedException();
+            InputsLookVector = _aim.GetDirectionToTarget;
         }
 
         private void OnRangedAction()

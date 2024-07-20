@@ -1,5 +1,6 @@
 ﻿using Arcatech.Triggers;
 using Arcatech.Units;
+using UnityEngine.Events;
 
 namespace Arcatech.Items
 {
@@ -8,6 +9,7 @@ namespace Arcatech.Items
         SerializedStatsEffectConfig[] EffectConfigs { get; }
         void WeaponUsedStateEnter();
         void WeaponUsedStateExit();
+        public event UnityAction<IWeapon> UsedItemEvent;
     }
 
 }

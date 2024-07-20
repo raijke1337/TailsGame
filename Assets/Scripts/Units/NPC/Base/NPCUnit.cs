@@ -54,10 +54,9 @@ namespace Arcatech.Units
         }
 
 
-
-        protected override void SetupStateMachine()
+        protected override void HandleUnitAction(UnitActionType obj)
         {
-            throw new System.NotImplementedException();
+
         }
     }
 

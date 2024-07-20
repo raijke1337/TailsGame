@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5313588278401412090}
   - component: {fileID: 2311598143179787529}
   - component: {fileID: -2913353290521053954}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: arca MovingTile simple 1
   m_TagString: MovingPlatform
   m_Icon: {fileID: 0}
@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e3fa3c98b1aaa48bab5494ebb74085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveTo: {x: 0, y: 0, z: 0}
-  movetime: 0
+  moveTo: {x: 0, y: -7, z: 0}
+  movetime: 4
   ease: 7
 --- !u!23 &5492030298531595649
 MeshRenderer:
@@ -71,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5531b3394fa3b98428d15819ad2b8d61, type: 2}
+  - {fileID: 2100000, guid: d7587e1166cd65a459f0bffa30b29cba, type: 2}
   - {fileID: 2100000, guid: a8c1c114b2f624346aa5d77647dfbfd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -147,6 +147,6 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 126
   m_CollisionDetection: 0

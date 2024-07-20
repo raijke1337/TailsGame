@@ -10,10 +10,11 @@ namespace Arcatech.Items
         protected WeaponTriggerComponent Trigger { get; }
         StatsEffect[] currentUseEffects; // to prevent double application
 
-        public MeleeWeaponUseStrategy(MeleeWeaponComponent weapon, DummyUnit owner, SerializedStatsEffectConfig[] effects) : base (owner, effects)
+        public MeleeWeaponUseStrategy(MeleeWeaponComponent weapon, DummyUnit owner, SerializedStatsEffectConfig[] effects, IWeapon w) : base (owner, effects, w)
         {
             Trigger = weapon.Trigger;
             Trigger.UnitHitEvent += HandleBaseUnitHitEvent;
+            Trigger.ToggleCollider(false);
         }
 
         private void HandleBaseUnitHitEvent(DummyUnit target)
@@ -31,7 +32,7 @@ namespace Arcatech.Items
             {
                 currentUseEffects[i] = new StatsEffect(EffectConfigs[i]);
             }
-            Trigger.ToggleCollider(true);
+            Trigger.ToggleCollider(true); 
         }
 
         public override void WeaponUsedStateExit()

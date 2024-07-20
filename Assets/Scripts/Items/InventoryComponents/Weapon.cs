@@ -1,13 +1,8 @@
 ﻿using Arcatech.EventBus;
-using Arcatech.Items;
 using Arcatech.Triggers;
-using Arcatech.UI;
 using Arcatech.Units;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Arcatech.Items
 {
@@ -20,10 +15,8 @@ namespace Arcatech.Items
         public StatsEffect GetCost { get => new(_cost); }
         public IDrawItemStrategy DrawStrategy { get; protected set; }
         public UnitActionType UseActionType { get; protected set; }
-
-
-
-        protected IWeaponUseStrategy _strat;
+        public IWeaponUseStrategy UseStrategy { get; protected set; }
+        
 
         int _charges;
         float _chargeCd;
@@ -60,10 +53,10 @@ namespace Arcatech.Items
             switch (Type)
             {
                 case EquipmentType.MeleeWeap:
-                    _strat = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, Owner, _storedTriggerSettings.ToArray());
+                    UseStrategy = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, Owner, _storedTriggerSettings.ToArray(),this);
                     break;
                 case EquipmentType.RangedWeap:
-                    _strat = new RangedWeaponUseStrategy(_weaponGameobject as RangedWeaponComponent, Owner, _storedTriggerSettings.ToArray());
+                    UseStrategy = new RangedWeaponUseStrategy(_weaponGameobject as RangedWeaponComponent, Owner, _storedTriggerSettings.ToArray(),this);
                     break;
             }
 
@@ -95,7 +88,7 @@ namespace Arcatech.Items
                 timer.Start();
                 timer.OnTimerStopped += RemoveTimer;
 
-                _strat.WeaponUsedStateEnter();
+                UseStrategy.WeaponUsedStateEnter();
                 _currCd = _useCd;
                 EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
 

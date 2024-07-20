@@ -7,7 +7,7 @@ namespace Arcatech.Items
     {
         RangedWeaponComponent weapon;
 
-        public RangedWeaponUseStrategy(RangedWeaponComponent weapon, DummyUnit owner, SerializedStatsEffectConfig[] effects) : base(owner, effects) {
+        public RangedWeaponUseStrategy(RangedWeaponComponent weapon, DummyUnit owner, SerializedStatsEffectConfig[] effects, IWeapon w) : base(owner, effects,w) {
         
             this.weapon = weapon;
         }
