@@ -8,17 +8,18 @@ namespace Arcatech.Managers
 {
     public class SkillsPlacerManager : MonoBehaviour, IManagedController
     {
+        ///obsolete
 
 
-        EventBinding<SpawnSkillEvent> skillPlaceBind;
+        //EventBinding<SpawnSkillEvent> skillPlaceBind;
 
 
 
         #region ManagerBase
         public virtual void StartController()
         {
-            skillPlaceBind = new EventBinding<SpawnSkillEvent>(ServeSkillRequest);
-            EventBus< SpawnSkillEvent>.Register(skillPlaceBind);
+            //skillPlaceBind = new EventBinding<SpawnSkillEvent>(ServeSkillRequest);
+            //EventBus<SpawnSkillEvent>.Register(skillPlaceBind);
         }
 
         public virtual void ControllerUpdate(float delta)
@@ -31,17 +32,17 @@ namespace Arcatech.Managers
         }
         public virtual void StopController()
         {
-            EventBus<SpawnSkillEvent>.Deregister(skillPlaceBind);
+           // EventBus<SpawnSkillEvent>.Deregister(skillPlaceBind);
         }
 
         #endregion
 
 
-        public void ServeSkillRequest(SpawnSkillEvent ev)
-        {
+        //public void ServeSkillRequest(SpawnSkillEvent ev)
+        //{
 
-            Debug.Log($"serve skill reqeust ");
-        }
+        //    Debug.Log($"serve skill reqeust ");
+        //}
 
     }
 

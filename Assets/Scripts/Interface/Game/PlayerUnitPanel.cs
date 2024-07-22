@@ -15,12 +15,12 @@ namespace Arcatech.UI
         [SerializeField,Child] protected IconContainersManager _icons;
         [SerializeField,Child] protected BarsContainersManager _bars;
 
-        EventBinding<IUsableUpdatedEvent> bindIcons;
+        EventBinding<UpdateIconEvent> bindIcons;
 
         private void Awake()
         {
-            bindIcons = new EventBinding<IUsableUpdatedEvent>(RefreshIcon);
-            EventBus<IUsableUpdatedEvent>.Register(bindIcons);
+            bindIcons = new EventBinding<UpdateIconEvent>(RefreshIcon);
+            EventBus<UpdateIconEvent>.Register(bindIcons);
         }
 
 
@@ -33,7 +33,7 @@ namespace Arcatech.UI
                 _icons.TrackIcon(weapon);
             }
         }
-        private void RefreshIcon(IUsableUpdatedEvent obj)
+        private void RefreshIcon(UpdateIconEvent obj)
         {
             if (obj.User is PlayerUnit)
             {
@@ -45,7 +45,7 @@ namespace Arcatech.UI
 
         private void OnDisable()
         {
-            EventBus<IUsableUpdatedEvent>.Deregister(bindIcons);
+            EventBus<UpdateIconEvent>.Deregister(bindIcons);
         }
 
     }

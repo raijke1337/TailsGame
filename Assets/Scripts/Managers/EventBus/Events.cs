@@ -2,7 +2,9 @@
 using Arcatech.Skills;
 using Arcatech.Stats;
 using Arcatech.Triggers;
+using Arcatech.UI;
 using Arcatech.Units;
+using CartoonFX;
 using UnityEngine;
 
 namespace Arcatech.EventBus
@@ -30,7 +32,7 @@ namespace Arcatech.EventBus
 
     public struct StatsEffectTriggerEvent : IEvent
     {
-        public StatsEffectTriggerEvent(DummyUnit target, DummyUnit source, bool isEnteringTrigger, Transform place, StatsEffect[] appliedEffects)
+        public StatsEffectTriggerEvent(BaseUnit target, BaseUnit source, bool isEnteringTrigger, Transform place, StatsEffect[] appliedEffects)
         {
             Target = target;
             Source = source;
@@ -39,26 +41,23 @@ namespace Arcatech.EventBus
             Place = place;
         }
 
-        public DummyUnit Target { get; }
-        public DummyUnit Source { get; }
+        public BaseUnit Target { get; }
+        public BaseUnit Source { get; }
         public bool IsEnteringTrigger { get; }
         public StatsEffect[] AppliedEffects { get; }
         public Transform Place { get; }
     }
-
-    public struct SpawnSkillEvent : IEvent
+    public struct VFXEvent : IEvent
     {
-        public ISkill Skill;
-        public DummyUnit Caster;
+        public CFXR_Effect Effect;
         public Transform Place;
-        public SpawnSkillEvent(ISkill skill, DummyUnit caster, Transform place)
+
+        public VFXEvent(CFXR_Effect effect, Transform place)
         {
-            Skill = skill;
-            Caster = caster;
+            Effect = effect;
             Place = place;
         }
     }
-
 
     public struct PlayerPauseEvent : IEvent
     {
@@ -66,15 +65,16 @@ namespace Arcatech.EventBus
         public PlayerPauseEvent(bool v) => Value = v;
     }
 
-    public struct IUsableUpdatedEvent : IEvent
+    public struct UpdateIconEvent : IEvent
     {
-        public IUsableUpdatedEvent(IUsable used, DummyUnit user)
+        public UpdateIconEvent(IIconContent used, BaseUnit user)
         {
             Used = used;
             User = user;
         }
-        public IUsable Used { get; }
-        public DummyUnit User { get; }
+        public IIconContent Used { get; }
+        public BaseUnit User { get; }
+
 
     }
 

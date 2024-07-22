@@ -12,17 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83aad102a44ceec42a80ff29b1f9a9de, type: 3}
   m_Name: skill_shot_exposive
   m_EditorClassIdentifier: 
+  UseStrategy: {fileID: 11400000, guid: 526f81a8b1de6f04a81ddd67726ca7ae, type: 2}
   Description: {fileID: 11400000, guid: e67681dcedf8d6c488dadf93299468c6, type: 2}
-  Projectile: {fileID: 11400000, guid: 41f50b15f8e253649aa5f282d608a3b0, type: 2}
-  UnitActionType: 4
-  ActivatingTrigger: 0
-  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
-  Triggers:
-  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
-  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
-  Charges: 1
-  ChargeRestore: 5
-  AoE: 6
   Effects:
     Sounds:
       _serializedList: []
@@ -31,3 +22,5 @@ MonoBehaviour:
       - Key: 0
         Value:
         - {fileID: 2883620193154939874, guid: 95cbf08037e972a4fb9fe2472122a38e, type: 3}
+  UnitActionType: 4
+  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}

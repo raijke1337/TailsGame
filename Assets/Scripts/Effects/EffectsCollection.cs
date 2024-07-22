@@ -43,13 +43,19 @@ namespace Arcatech.Effects
             }
             else return null;
         }
-        public CFXR_Effect GetRandomEffect (EffectMoment m)
+        public bool TryGetEffect (EffectMoment m, out CFXR_Effect eff)
         {
             if (_effdict.TryGetValue(m, out var clips))
             {
-                return clips[UnityEngine.Random.Range(0, clips.Length)];
+                eff = clips[UnityEngine.Random.Range(0,clips.Length)];
+                return true;
             }
-            else return null;
+            else
+            {
+                eff = null;
+                return false;
+
+            }
         }
 
 

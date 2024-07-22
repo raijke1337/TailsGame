@@ -1,6 +1,15 @@
-﻿namespace Arcatech
+﻿using Arcatech.Units;
+
+namespace Arcatech
 {
-    public interface IStrategy { }
+    public interface IUsablesStrategy : IStrategy
+    {
+        BaseUnit Owner { get; }
+        bool TryUseItem(out BaseUnitAction action);
+        void Update(float delta);
+    }
 
-
+    public interface IStrategy
+    {
+    }
 }

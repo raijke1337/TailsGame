@@ -14,7 +14,7 @@ namespace Arcatech.Items
         [SerializeField] float ProjectileSpeed;
         [Range(1, 10), Tooltip("How many enemies will be hit by this projectile"),SerializeField] int ProjectilePenetration;
 
-        public ProjectileComponent ProduceProjectile(DummyUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
+        public ProjectileComponent ProduceProjectile(BaseUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;

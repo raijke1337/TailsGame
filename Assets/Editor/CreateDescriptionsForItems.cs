@@ -10,7 +10,7 @@ public class CreateDescriptionsForItems : MonoBehaviour
     [MenuItem("Tools/Arcatech/Create and assign descriptions for weapon and skill configs")]
     private static void FindScriptableObjects()
     {
-        var sk = Resources.FindObjectsOfTypeAll<SerializedSkillConfiguration>();
+        var sk = Resources.FindObjectsOfTypeAll<SerializedSkill>();
         var items = Resources.FindObjectsOfTypeAll<ItemSO>();
         string prefix = "desc_";
         string sk_prefix = "skill_";

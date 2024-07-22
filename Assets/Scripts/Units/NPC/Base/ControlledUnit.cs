@@ -12,7 +12,6 @@ namespace Arcatech.Units
         [SerializeField, Header("Inputs")] 
         protected MovementStatsConfig movementStats;
         [Self, SerializeField] protected ControlInputsBase _inputs;
-        [SerializeField] protected ActionsHandler _unitActions;
         [SerializeField, Self] protected MovementControllerComponent _movement;
         public override void StartControllerUnit()
         {
@@ -23,7 +22,6 @@ namespace Arcatech.Units
                 LockUnit = false;
                 
             }
-            _unitActions = new ActionsHandler(this, movementStats.JumpAction);
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
         }
         public override void DisableUnit()
@@ -31,29 +29,93 @@ namespace Arcatech.Units
             base.DisableUnit();
             _inputs.UnitActionRequestedEvent -= HandleUnitAction;
         }
-        // protected abstract void SetupStateMachine();
 
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
+
+            currentAction?.Update(delta);
+            if (_lock) return;
+
             _movement.SetMoveDirection(_inputs.InputsMovementVector);
             _movement.LookDirection = (_inputs.InputsLookVector);
         }
 
+        bool _lock;
+        protected bool LockMovement
+        {
+            get => _lock;
+            set
+            {
+                if (value)
+                {
+                    _movement.SetMoveDirection(Vector3.zero);
+                }
+                _lock = value;
+            }
+        }
 
+
+        #region actions
+
+        BaseUnitAction currentAction;
+        void DoActionLogic(BaseUnitAction act)
+        {
+            if (currentAction != null)
+            {
+                // case - combo
+                currentAction.OnComplete -= CurrentAction_OnComplete;
+            }
+
+            currentAction = act;
+            LockMovement = currentAction.LocksInputs;
+            currentAction.DoAction(this);
+            currentAction.OnComplete += CurrentAction_OnComplete;
+        }
+
+        private void CurrentAction_OnComplete()
+        {
+            currentAction.OnComplete -= CurrentAction_OnComplete;
+            currentAction = null;
+            _lock = false;
+        }
 
         protected virtual void HandleUnitAction(UnitActionType obj)
         {
+            BaseUnitAction a;
             switch (obj)
             {
                 case UnitActionType.Jump:
+                    transform.parent = null;
                     _movement.DoJump();
-                    _unitActions.OnCommand(obj);
+                    DoActionLogic(movementStats.JumpAction.ProduceAction(this));                    
                     break;
-                default:
-                    _unitActions.OnCommand(obj);
+                case UnitActionType.Melee:
+                    if (_weapons.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.Ranged:
+                    if (_weapons.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.DodgeSkill:
+                    if (_skills.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.MeleeSkill:
+                    if (_skills.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.RangedSkill:
+                    if (_skills.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.ShieldSkill:
+                    if (_skills.TryUseAction(obj, out a)) DoActionLogic(a);
+                    break;
+                case UnitActionType.None:
+                    Debug.LogError($"action type not set for something in {this}");
                     break;
             }
+
+            
+            #endregion
+
         }
     }
 }

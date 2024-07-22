@@ -18,7 +18,7 @@ namespace Arcatech.Managers
         public virtual void StartController()
         {
             _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
-            _applied = new Dictionary<StatsEffect, List<DummyUnit>>();
+            _applied = new Dictionary<StatsEffect, List<BaseUnit>>();
             EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
         }
         public virtual void ControllerUpdate(float delta)
@@ -39,7 +39,7 @@ namespace Arcatech.Managers
 
         #region triggers
 
-        private Dictionary<StatsEffect, List<DummyUnit>> _applied;
+        private Dictionary<StatsEffect, List<BaseUnit>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
             if (obj.AppliedEffects == null) return; // happens sometimes because collidertoggle was not properly run on a weapon - TODO
@@ -47,7 +47,7 @@ namespace Arcatech.Managers
             {
 
                 // determine target
-                DummyUnit targetToApply = DetermineTarget(obj,eff);
+                DummyUnit targetToApply = DetermineTarget(obj,eff) as DummyUnit;
 
                 if (targetToApply == null) return;
 
@@ -70,12 +70,17 @@ namespace Arcatech.Managers
                 else
                 {
                     targetToApply.ApplyEffect(eff);
-                    _applied[eff] = new List<DummyUnit>() { targetToApply };
+                    _applied[eff] = new List<BaseUnit>() { targetToApply };
                 }
-                EventBus<VFXRequest>.Raise(new VFXRequest(eff.GetEffects.GetRandomEffect(EffectMoment.OnCollision),obj.Place));
+
+                if (eff.GetEffects.TryGetEffect(EffectMoment.OnCollision, out var e))
+                {
+                    EventBus<VFXRequest>.Raise(new VFXRequest(e, obj.Place));
+                }
+
             }
         }
-        DummyUnit DetermineTarget (StatsEffectTriggerEvent ev, StatsEffect eff)
+        BaseUnit DetermineTarget (StatsEffectTriggerEvent ev, StatsEffect eff)
         {
             switch (eff.Target)
             {

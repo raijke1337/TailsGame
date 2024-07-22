@@ -20,7 +20,7 @@ namespace Arcatech
 
         }
 
-        public void Start()
+        public Timer Start()
         {
             Time = initialTime;
             if (!IsRunning)
@@ -28,6 +28,7 @@ namespace Arcatech
                 IsRunning = true;
                 OnTimerStarted.Invoke();
             }
+            return this;
         }
 
         public void Stop()

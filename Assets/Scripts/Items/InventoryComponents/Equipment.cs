@@ -6,9 +6,6 @@ using System;
 using UnityEngine;
 namespace Arcatech.Items
 {
-
-
-    [Serializable]
     public class Equipment : Item, IEquippable
     {
 
@@ -16,10 +13,8 @@ namespace Arcatech.Items
         {
             DisplayItem = GameObject.Instantiate(cfg.ItemPrefab);
             StatMods = cfg.StatMods;
-            GetSkill = new SkillObjectForControls(cfg.Skill, Owner);
+            GetSkill = cfg.Skill.CreateSkill(ow, DisplayItem);
             DisplayItem.gameObject.SetActive(false);
-
-
           //  Debug.Log($"setup equipment{this}");
         }               
         
@@ -44,6 +39,5 @@ namespace Arcatech.Items
         public BaseEquippableItemComponent DisplayItem { get; protected set; }
         public SerializedStatModConfig[] StatMods { get; protected set; }
         public ISkill GetSkill { get; protected set; }
-
     }
 }

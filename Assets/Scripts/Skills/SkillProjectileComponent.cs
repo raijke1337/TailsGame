@@ -15,8 +15,6 @@ namespace Arcatech.Skills
         protected SkillState CurrentState = SkillState.Placer;
         public TriggerTargetType ActivatingTrigger { get; set; }
         [HideInInspector]public float SkillAreaOfEffect;
-        public EffectsCollection VFX { get; set; }
-
         SphereCollider _aoe;
 
         private void Start()
@@ -78,7 +76,7 @@ namespace Arcatech.Skills
                     _aoe.isTrigger = true;
                     _aoe.radius = SkillAreaOfEffect;
 
-                    EventBus<VFXRequest>.Raise(new VFXRequest(VFX.GetRandomEffect(EffectMoment.OnCollision), transform));
+                   // EventBus<VFXRequest>.Raise(new VFXRequest(VFX.TryGetEffect(EffectMoment.OnCollision), transform));
 
                     break;
                 case SkillState.AoE:

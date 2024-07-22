@@ -20,7 +20,8 @@ namespace Arcatech.Level
         }
         void DoMove()
         {
-            transform.DOMove(start + moveTo, movetime).
+            var rb = GetComponent<Rigidbody>();
+            rb.DOMove(start + moveTo, movetime).
                 SetEase(ease).
                 SetLoops(-1, LoopType.Yoyo);
         }

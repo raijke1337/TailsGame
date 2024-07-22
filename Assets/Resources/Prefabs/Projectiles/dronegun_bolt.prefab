@@ -131,6 +131,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9346ab8c49e0ee445876426d4fae8bf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Penetration: 0
+  RemainingHits: 0
+  Lifetime: 0
   Speed: 0
-  Expiry: 0
+  VFX:
+    Sounds:
+      _serializedList: []
+    Effects:
+      _serializedList:
+      - Key: 0
+        Value:
+        - {fileID: 5039004643809507552, guid: 3c31d66b60dfc844eb2b46e238fabd47, type: 3}

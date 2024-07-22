@@ -12,6 +12,6 @@ namespace Arcatech.Items
     {
         public BaseEquippableItemComponent ItemPrefab;
         public SerializedStatModConfig[] StatMods;
-        public SerializedSkillConfiguration Skill;
+        public SerializedSkill Skill;
     }
 }

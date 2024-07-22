@@ -885,6 +885,8 @@ namespace ECM.Components
         {
             groundDetection.ResetGroundInfo();
 
+          //  transform.parent = null;
+
             isSliding = false;
 
             isOnPlatform = false;
@@ -953,6 +955,7 @@ namespace ECM.Components
                 isOnPlatform = true;
                 platformVelocity = otherRigidbody.GetPointVelocity(groundPoint);
                 platformAngularVelocity = Vector3.Project(otherRigidbody.angularVelocity, up);
+               // transform.SetParent(otherRigidbody.transform);
             }
             else
             {

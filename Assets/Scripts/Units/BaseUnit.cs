@@ -62,6 +62,10 @@ namespace Arcatech.Units
         public abstract void RunFixedUpdate(float delta);
 
         #endregion
+        public void ForceUnitAction(BaseUnitAction act)
+        {
+            act.DoAction(this);
+        }
 
     }
 }

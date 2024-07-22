@@ -16,14 +16,6 @@ namespace Arcatech.Items
         public IDrawItemStrategy DrawStrategy { get; protected set; }
         public UnitActionType UseActionType { get; protected set; }
         public IWeaponUseStrategy UseStrategy { get; protected set; }
-        
-
-        int _charges;
-        float _chargeCd;
-        float _useCd;
-        float _currCd = 0;
-
-        Queue<CountDownTimer> _chargesTimers;
 
 
 
@@ -44,82 +36,29 @@ namespace Arcatech.Items
                     break;
             }
             DrawStrategy = cfg.DrawStrategy;
-
-            _chargeCd = cfg.ChargeRestoreTime;
-            _charges = cfg.Charges;
-            _useCd = cfg.InternalCooldown;
-
-
-            switch (Type)
-            {
-                case EquipmentType.MeleeWeap:
-                    UseStrategy = new MeleeWeaponUseStrategy(_weaponGameobject as MeleeWeaponComponent, Owner, _storedTriggerSettings.ToArray(),this);
-                    break;
-                case EquipmentType.RangedWeap:
-                    UseStrategy = new RangedWeaponUseStrategy(_weaponGameobject as RangedWeaponComponent, Owner, _storedTriggerSettings.ToArray(),this);
-                    break;
-            }
-
-
-            _chargesTimers = new Queue<CountDownTimer>(_charges);
-
+            UseStrategy = cfg.WeaponUseStrategy.ProduceStrategy(Owner, cfg,_weaponGameobject);
         }
 
-
-        public bool TryUseItem()
+        public bool TryUseItem(out BaseUnitAction act)
         {
-            if (_chargesTimers.Count >= _charges)
-            {
-              //  Debug.Log("Fail to use weapon - no charges");
-                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
-                return false;
-            }
-            if (_currCd > 0)
-            {
-               // Debug.Log("Fail to use weapon - internal cd");
-                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
-                return false;
-            }
-            else
-            {
-                var timer = new CountDownTimer(_chargeCd);
-                
-                _chargesTimers.Enqueue(timer);
-                timer.Start();
-                timer.OnTimerStopped += RemoveTimer;
-
-                UseStrategy.WeaponUsedStateEnter();
-                _currCd = _useCd;
-                EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
-
-                return true;
-            }
-        }
-
-        private void RemoveTimer()
-        {
-            _chargesTimers.Dequeue();
-            EventBus<IUsableUpdatedEvent>.Raise(new IUsableUpdatedEvent(this, Owner));
-
+            bool ok = UseStrategy.TryUseItem(out act);
+            return ok;
         }
 
         public void DoUpdate(float delta)
         {
-            foreach (var timer in _chargesTimers.ToArray())
-            {
-                timer.Tick(delta);
-            }
-            _currCd -= delta;
+            UseStrategy.Update(delta);
+            EventBus<UpdateIconEvent>.Raise(new UpdateIconEvent(this, Owner));
         }
-
 
         #region UI
 
         public Sprite Icon => Config.Description.Picture;
 
-        public float CurrentNumber => _charges - _chargesTimers.Count;
+        public float CurrentNumber => UseStrategy.CurrentNumber;
 
-        public float MaxNumber => _charges;
+        public float MaxNumber => UseStrategy.MaxNumber;
+
 
         #endregion
     }

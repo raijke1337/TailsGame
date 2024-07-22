@@ -30,16 +30,17 @@ namespace Arcatech.Skills
         #region  interface
 
 
-        public bool TryUseAction(UnitActionType action)
+        public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
         {
             if (_skills.ContainsKey(action))
             {
                 var cost = _skills[action].GetCost;
                 if (cost == null || stats.TryApplyCost(cost))
                 {
-                    return _skills[action].TryUseItem();
+                    return _skills[action].TryUseItem(out onUse);
                 }
             }
+            onUse = null;
             return false;
         }
         #endregion

@@ -12,17 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83aad102a44ceec42a80ff29b1f9a9de, type: 3}
   m_Name: skill_melee_spin
   m_EditorClassIdentifier: 
+  UseStrategy: {fileID: 11400000, guid: f6da304c3d51ea44bbf9f0e6f6b63bdf, type: 2}
   Description: {fileID: 11400000, guid: 58bbb780d5801b449a458373d6a5172f, type: 2}
-  Projectile: {fileID: 11400000, guid: 54d82b392cbeb794cb390438c5cc3783, type: 2}
-  UnitActionType: 3
-  ActivatingTrigger: 1
-  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}
-  Triggers:
-  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
-  - {fileID: 11400000, guid: d2f30b845bb87364b920f8edeec4d5f2, type: 2}
-  Charges: 2
-  ChargeRestore: 5
-  AoE: 1
   Effects:
     Sounds:
       _serializedList: []
@@ -31,3 +22,5 @@ MonoBehaviour:
       - Key: 2
         Value:
         - {fileID: 4269991490120169665, guid: b73e6023e7b399046969434a9a3b1c77, type: 3}
+  UnitActionType: 3
+  CostTrigger: {fileID: 11400000, guid: dd89ded1069e76d49b01f7d34fadfd0d, type: 2}

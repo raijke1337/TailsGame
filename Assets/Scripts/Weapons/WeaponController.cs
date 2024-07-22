@@ -17,7 +17,6 @@ namespace Arcatech.Units
         protected UnitStatsController _stats;
 
         private UnitInventoryController _inv;
-
         private EventBinding<InventoryUpdateEvent> bindInv;
 
 
@@ -45,20 +44,22 @@ namespace Arcatech.Units
 
 
         #region interface
-        public bool TryUseAction(UnitActionType action)
+        public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
         {
             if (_weapons.ContainsKey(action))
             {
-                var cost =  _weapons[action].GetCost;
-                if (cost == null || _stats.TryApplyCost(cost))
+                var cost = _weapons[action].GetCost;
+                bool ok = _weapons[action].TryUseItem(out onUse);
+                if (ok && _stats.TryApplyCost(cost))
                 {
                     _inv.DrawItems(_weapons[action].DrawStrategy);
-                     return  _weapons[action].TryUseItem();   
+                    return true;
                 }
+                return false;
             }
+            onUse = null;
             return false;
         }
-
 
         #endregion
 

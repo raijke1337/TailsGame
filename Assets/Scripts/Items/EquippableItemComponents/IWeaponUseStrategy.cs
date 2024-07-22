@@ -1,15 +1,13 @@
 ﻿using Arcatech.Triggers;
+using Arcatech.UI;
 using Arcatech.Units;
 using UnityEngine.Events;
 
 namespace Arcatech.Items
 {
-    public interface IWeaponUseStrategy : IStrategy
+    public interface IWeaponUseStrategy : IUsablesStrategy, IIconContent
     {
-        SerializedStatsEffectConfig[] EffectConfigs { get; }
-        void WeaponUsedStateEnter();
-        void WeaponUsedStateExit();
-        public event UnityAction<IWeapon> UsedItemEvent;
+        
     }
 
 }

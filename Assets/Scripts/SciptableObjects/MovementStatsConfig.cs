@@ -11,7 +11,7 @@ namespace Arcatech.Units.Stats
     public class MovementStatsConfig : ScriptableObjectID
     {
         public SerializedDictionary<MovementStatType, SimpleContainerConfig> Stats;
-        public BaseUnitAction JumpAction;
+        [SerializeField] public SerializedUnitAction JumpAction;
     }
 
 

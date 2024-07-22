@@ -11,9 +11,7 @@ namespace Arcatech.Items
     public class WeaponSO : EquipSO
     {
         [Header("Use settings")]
-        public int Charges;
-        public float ChargeRestoreTime;
-        public float InternalCooldown;
+        public SerializedWeaponUseStrategy WeaponUseStrategy;
         public SerializedStatsEffectConfig Cost;
 
         [Space]
