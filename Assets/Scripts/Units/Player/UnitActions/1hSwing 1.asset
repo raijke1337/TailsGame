@@ -9,9 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2e8c8060ed1ef54eb08c360c8da7f26, type: 3}
+  m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
   m_Name: 1hSwing 1
   m_EditorClassIdentifier: 
-  _locksInputs: 1
-  Next: {fileID: 11400000, guid: 792804709e483e5498207226af0e582a, type: 2}
-  AnimationName: 1H-RH@Attack01
+  _locksMovement: 1
+  _animationName: 1H-RH@Attack01
+  _nextAct:
+    _nextAnim: {fileID: 11400000, guid: 792804709e483e5498207226af0e582a, type: 2}
+    _chainWindowStart: 0.2
+    _chainWindowEnd: 0.8

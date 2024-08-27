@@ -23,12 +23,15 @@ namespace Arcatech.Items
 
         public override bool TryUseItem(out BaseUnitAction action)
         {
-            bool ok =  base.TryUseItem(out action);
-            
+            bool ok = CheckTimersAndCharges();
+            action = null;
+
             if (ok)
             {
                 // TODO
                 ProjectilePrefab.ProduceProjectile(Owner, WeaponComponent.transform, Config.UseEffects);
+                action = Action.ProduceAction(Owner);
+                ChargesLogicOnUse();
             }
             return ok;
         }

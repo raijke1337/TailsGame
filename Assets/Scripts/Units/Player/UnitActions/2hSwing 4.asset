@@ -9,9 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2e8c8060ed1ef54eb08c360c8da7f26, type: 3}
+  m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
   m_Name: 2hSwing 4
   m_EditorClassIdentifier: 
-  _locksInputs: 1
-  Next: {fileID: 0}
-  AnimationName: 2HLong@Attack04
+  _locksMovement: 1
+  _animationName: 2HLong@Attack04
+  _nextAct:
+    _nextAnim: {fileID: 0}
+    _chainWindowStart: 0
+    _chainWindowEnd: 0

@@ -16,7 +16,6 @@ namespace Arcatech.Items
 
     public class MeleeWeaponStrategy : WeaponStrategy
     {
-
         StatsEffect[] currentUseEffects; // to prevent double application
         void ResetEffects()
         {
@@ -25,10 +24,7 @@ namespace Arcatech.Items
                 currentUseEffects[i] = new StatsEffect(Config.UseEffects[i]);
             }
         }
-
-
         protected WeaponTriggerComponent Trigger;
-
         public MeleeWeaponStrategy(SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
         {
             Trigger = (comp as MeleeWeaponComponent).Trigger;
@@ -38,30 +34,43 @@ namespace Arcatech.Items
         }
         public override bool TryUseItem(out BaseUnitAction action)
         {
-            bool ok =  base.TryUseItem(out action);
-            if (ok)
+            bool ok = CheckTimersAndCharges();
+            action = null;
+            if (!ok) return false;
+
+            // case first attack
+            if (_currentAction == null || _currentAction.IsComplete)
             {
+                action = Action.ProduceAction(Owner);
                 ResetEffects();
                 Trigger.ToggleCollider(true);
+                _currentAction = action;
+                ChargesLogicOnUse();
+                Debug.Log($"Doing first attack");
+                return true;
             }
-            else
+            //case chain
+            if (_currentAction != null && !_currentAction.IsComplete)
             {
-                if (action.NextAction != null)
+                if (_currentAction.CanAdvance(out var n))
                 {
+                    action = n;
+                    _currentAction = n;
                     ResetEffects();
-                    action = action.NextAction;
+                    Trigger.ToggleCollider(true);
+                    ChargesLogicOnUse();
+                    Debug.Log($"Doing chain attack");
+                    return true;
                 }
+                else return false;
             }
-            return ok;
+            Debug.Log($"Can't attack");
+            return false;
         }
-        protected override void OnActionsComplete()
+        protected void OnActionsComplete()
         {
             Trigger.ToggleCollider(false);
-            base.OnActionsComplete();
         }
-
-
-
         private void HandleBaseUnitHitEvent(DummyUnit target)
         {
             EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner, true, Trigger.transform, currentUseEffects));

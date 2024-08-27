@@ -1,4 +1,5 @@
-﻿using Arcatech.UI;
+﻿using Arcatech.AI;
+using Arcatech.UI;
 using Arcatech.Units;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Arcatech.Items
         CountDownTimer _internalCdTimer;
         int _remainingCharges;
 
-        
+        protected BaseUnitAction _currentAction;
 
         public WeaponStrategy (SerializedUnitAction act,DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd,BaseWeaponComponent comp)
         {
@@ -40,37 +41,44 @@ namespace Arcatech.Items
             _internalCdTimer.Start();
         }
 
-        public virtual bool TryUseItem(out BaseUnitAction action)
+        protected bool CheckTimersAndCharges()
         {
-            action = Action.ProduceAction(Owner);
-            if (!_internalCdTimer.IsReady || !action.IsDone ) return false;
+            if (!_internalCdTimer.IsReady) return false;
             else
             {
                 if (_remainingCharges > 0)
                 {
-                    var t = new CountDownTimer(ChargeReload);
-                    _internalCdTimer.Start();
-                    t.Start();
-                    _chargesTimers.Enqueue(t);
-                    _remainingCharges--;
-                    t.OnTimerStopped += ReplenishCharge;
                     return true;
                 }
             }
             return false;
         }
-
         private void ReplenishCharge()
         {
             _chargesTimers.Peek().OnTimerStopped -= ReplenishCharge;
             _chargesTimers.Dequeue();
             _remainingCharges++;
         }
-
-        protected virtual void OnActionsComplete()
+        protected void ChargesLogicOnUse()
         {
-            Debug.Log($"finished using {this}");
+            var t = new CountDownTimer(ChargeReload);
+            _internalCdTimer.Start();
+            t.Start();
+            _chargesTimers.Enqueue(t);
+            _remainingCharges--;
+            t.OnTimerStopped += ReplenishCharge;
         }
+
+        public virtual bool TryUseItem(out BaseUnitAction action)
+        {
+            action = Action.ProduceAction(Owner);
+            if (CheckTimersAndCharges())
+            {
+                ChargesLogicOnUse(); return true;
+            }
+            else return false;
+        }
+
 
 
         public virtual void Update(float delta)

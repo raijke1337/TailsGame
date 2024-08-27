@@ -7,7 +7,7 @@ namespace Arcatech.Units
     {
         public void DoAction(BaseUnit user);
         public event UnityAction OnComplete;
-        public bool LocksInputs { get; }
+        public bool LockMovement { get; }
     }
 
 }

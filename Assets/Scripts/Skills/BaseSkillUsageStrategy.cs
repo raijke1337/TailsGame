@@ -44,7 +44,7 @@ namespace Arcatech.Skills
         public bool TryUseItem(out BaseUnitAction action)
         {
             action = Action.ProduceAction(Owner);
-            if (!_internalCdTimer.IsReady || !action.IsDone) return false;
+            if (!_internalCdTimer.IsReady || !action.IsComplete) return false;
             else
             {
                 if (_remainingCharges > 0)

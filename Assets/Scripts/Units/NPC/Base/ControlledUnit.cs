@@ -61,14 +61,14 @@ namespace Arcatech.Units
         BaseUnitAction currentAction;
         void DoActionLogic(BaseUnitAction act)
         {
-            if (currentAction != null)
-            {
-                // case - combo
-                currentAction.OnComplete -= CurrentAction_OnComplete;
-            }
+            //if (currentAction != null)
+            //{
+            //    // case - combo
+            //    currentAction.OnComplete -= CurrentAction_OnComplete;
+            //}
 
             currentAction = act;
-            LockMovement = currentAction.LocksInputs;
+            LockMovement = currentAction.LockMovement;
             currentAction.DoAction(this);
             currentAction.OnComplete += CurrentAction_OnComplete;
         }
@@ -77,7 +77,7 @@ namespace Arcatech.Units
         {
             currentAction.OnComplete -= CurrentAction_OnComplete;
             currentAction = null;
-            _lock = false;
+            LockMovement = false;
         }
 
         protected virtual void HandleUnitAction(UnitActionType obj)
