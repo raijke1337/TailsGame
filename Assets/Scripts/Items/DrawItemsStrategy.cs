@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    [CreateAssetMenu(fileName = "New Items placement IStrategy", menuName = "Strategy/Items placement")]
+    [CreateAssetMenu(fileName = "New Items placement IStrategy", menuName = "Items/Draw strategy")]
     public class DrawItemsStrategy : ScriptableObject, IDrawItemStrategy
     {
         public Dictionary<EquipmentType, ItemPlaceType> GetPlaces => _dict;

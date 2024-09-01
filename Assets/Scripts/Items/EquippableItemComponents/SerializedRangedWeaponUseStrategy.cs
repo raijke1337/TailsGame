@@ -1,27 +1,39 @@
-﻿using Arcatech.Triggers;
+﻿using Arcatech.Actions;
+using Arcatech.Triggers;
 using Arcatech.Units;
+using System.Collections;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
-    [CreateAssetMenu(fileName = "Ranged Weapon Use Strategy", menuName = "Strategy/Ranged Weapon Use")]
+    [CreateAssetMenu(fileName = "Ranged Weapon Use Strategy", menuName = "Items/Weapon usage strategy/Ranged Weapon Use")]
     public class SerializedRangedWeaponUseStrategy : SerializedWeaponUseStrategy
     {
-        [SerializeField] SerializedProjectileConfiguration Projectile;
+       // [SerializeField] protected SerializedProjectileConfiguration Projectile;
         public override WeaponStrategy ProduceStrategy(DummyUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
-            return new RangedWeaponStrategy(Projectile, Action, unit, cfg, TotalCharges, ChargeRestoreTime, InternalCooldown, comp);
+            return new RangedWeaponStrategy(ActionResult, Action, unit, cfg, TotalCharges, ChargeRestoreTime, InternalCooldown, comp);
         }
     }
     public class RangedWeaponStrategy : WeaponStrategy
     {
-        SerializedProjectileConfiguration ProjectilePrefab { get; }
-        public RangedWeaponStrategy(SerializedProjectileConfiguration proj, SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
+        public RangedWeaponStrategy(SerializedActionResult[] results, SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
         {
-            ProjectilePrefab = proj; 
+            if (results != null)
+            {
+                r = new ActionResult[results.Length];
+                for (int i = 0; i < results.Length; i++)
+                {
+                    r[i] = results[i].GetActionResult();
+                }
+            }
+
         }
 
-        public override bool TryUseItem(out BaseUnitAction action)
+        // protected SerializedProjectileConfiguration ProjectilePrefab { get; }
+
+        IActionResult[] r;
+        public override bool TryUseUsable(out BaseUnitAction action)
         {
             bool ok = CheckTimersAndCharges();
             action = null;
@@ -29,12 +41,35 @@ namespace Arcatech.Items
             if (ok)
             {
                 // TODO
-                ProjectilePrefab.ProduceProjectile(Owner, WeaponComponent.transform, Config.UseEffects);
                 action = Action.ProduceAction(Owner);
-                ChargesLogicOnUse();
+                DoShots();
             }
             return ok;
         }
-    }
+        protected virtual void DoShots()
+        {
+            Owner.StartCoroutine(ShootingCoroutine());
+        }
 
+        protected IEnumerator ShootingCoroutine(int shots = 1)
+        {
+            while (shots > 0)
+            {
+                if (_remainingCharges > 0)
+                {
+                    foreach (var re in r)
+                    {
+                        re.ProduceResult(Owner, null, WeaponComponent.transform);
+                    }
+                    ChargesLogicOnUse();
+                    yield return new WaitForSeconds(0.03f); 
+                }
+                else
+                {
+                    break;
+                }
+            }
+            yield return null;
+        }
+    }
 }

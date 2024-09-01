@@ -614,6 +614,7 @@ namespace ECM.Controllers
             // 'Pause' grounding, allowing character to safely leave the 'ground'
 
             movement.DisableGrounding();
+
         }
 
         /// <summary>

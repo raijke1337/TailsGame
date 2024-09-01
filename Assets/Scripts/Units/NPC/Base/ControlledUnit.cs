@@ -13,6 +13,12 @@ namespace Arcatech.Units
         protected MovementStatsConfig movementStats;
         [Self, SerializeField] protected ControlInputsBase _inputs;
         [SerializeField, Self] protected MovementControllerComponent _movement;
+
+        [Header("Aiming settings")]
+        [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
+        protected float _minCrossYToRotate = 5f;
+
+
         public override void StartControllerUnit()
         {
             base.StartControllerUnit();
@@ -39,6 +45,10 @@ namespace Arcatech.Units
 
             _movement.SetMoveDirection(_inputs.InputsMovementVector);
             _movement.LookDirection = (_inputs.InputsLookVector);
+            if (Vector3.Cross(transform.forward, _inputs.InputsLookVector).y > _minCrossYToRotate && _inputs.InputsMovementVector.sqrMagnitude == 0f)
+            {
+                _animator.SetTrigger("DoStandingRotation");
+            }
         }
 
         bool _lock;
@@ -61,14 +71,15 @@ namespace Arcatech.Units
         BaseUnitAction currentAction;
         void DoActionLogic(BaseUnitAction act)
         {
-            //if (currentAction != null)
-            //{
-            //    // case - combo
-            //    currentAction.OnComplete -= CurrentAction_OnComplete;
-            //}
+            _movement.LookDirection = (_inputs.InputsLookVector);
 
+            if (currentAction!= null && currentAction != act)
+            {
+                CurrentAction_OnComplete();
+            }
             currentAction = act;
             LockMovement = currentAction.LockMovement;
+           // Debug.Log($"Start action {currentAction}");
             currentAction.DoAction(this);
             currentAction.OnComplete += CurrentAction_OnComplete;
         }
@@ -76,6 +87,7 @@ namespace Arcatech.Units
         private void CurrentAction_OnComplete()
         {
             currentAction.OnComplete -= CurrentAction_OnComplete;
+           // Debug.Log($"Finish action {currentAction}");
             currentAction = null;
             LockMovement = false;
         }

@@ -41,13 +41,13 @@ namespace Arcatech.Items
 
         public bool TryUseItem(out BaseUnitAction act)
         {
-            bool ok = UseStrategy.TryUseItem(out act);
+            bool ok = UseStrategy.TryUseUsable(out act);
             return ok;
         }
 
         public void DoUpdate(float delta)
         {
-            UseStrategy.Update(delta);
+            UseStrategy.UpdateUsable(delta);
             EventBus<UpdateIconEvent>.Raise(new UpdateIconEvent(this, Owner));
         }
 

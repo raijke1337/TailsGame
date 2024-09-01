@@ -2,7 +2,7 @@ using Arcatech.Effects;
 using UnityEngine;
 namespace Arcatech.Triggers
 {
-    [CreateAssetMenu(fileName = "New Serialized Stats effect", menuName = "Configurations/Stats/Stat Effect", order = 2)]
+    [CreateAssetMenu(fileName = "New Serialized Stats change effect", menuName = "Actions/Stat Change trigger cfg")]
     public class SerializedStatsEffectConfig : SerializedStatModConfig
     {
 

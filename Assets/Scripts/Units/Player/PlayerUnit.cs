@@ -15,9 +15,7 @@ namespace Arcatech.Units
 
         [SerializeField, Child] protected Camera _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
-        [Header("Aiming settings")]
-        [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
-        float _minAngleToPlayRotation = 0.9f;
+
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
@@ -26,6 +24,8 @@ namespace Arcatech.Units
             base.StartControllerUnit();
             ToggleCamera(true);
         }
+
+
 
         #region inventory
         public bool PlayerArmed => _inventory.GetWeapons.Length > 0;

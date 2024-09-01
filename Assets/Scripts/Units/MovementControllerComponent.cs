@@ -31,34 +31,52 @@ namespace Arcatech.Units
             // Dot product of two vectors determines how much they are pointing in the same direction.
             // If the vectors are normalized (transform.forward and right are)
             // then the value will be between -1 and +1.
-            var x = Vector3.Dot(right, Vector3.Normalize(_rb.velocity));
-            var z = Vector3.Dot(fwd, Vector3.Normalize(_rb.velocity));
 
-            animator.SetFloat("ForwardMove", z);
-            animator.SetFloat("SideMove", x);
+            Vector2 dot;
+            if (moveDirection.magnitude > 0f)
+            {
+                var x = Vector3.Dot(right, Vector3.Normalize(_rb.velocity));
+                var z = Vector3.Dot(fwd, Vector3.Normalize(_rb.velocity));
 
+                dot.x = x;
+                dot.y = z;
+
+                animator.SetFloat("ForwardMove", z);
+                animator.SetFloat("SideMove", x);
+                animator.SetBool("isMoving", true);
+            }
+
+            else
+            {
+                animator.SetFloat("ForwardMove", 0);
+                animator.SetFloat("SideMove", 0);
+                animator.SetBool("isMoving", false);
+            }
             animator.SetFloat("VerticalMove", _rb.velocity.y);
-            animator.SetFloat("Rotation", Vector3.Cross(fwd,LookDirection).y);
-            
-            animator.SetBool("isMoving",(_rb.velocity.sqrMagnitude!= 0));
 
+            animator.SetFloat("Rotation", Vector3.Cross(fwd, LookDirection).y);
 
             if (!movement.isGrounded)
             {
+                landOK = false;
                 AirTime += Time.fixedDeltaTime;
                 animator.SetFloat("AirTime", AirTime);
             }
             if (movement.isGrounded)
             {
-                if (!movement.wasGrounded)
+                if (!movement.wasGrounded || !landOK)
                 {
                     animator.SetTrigger("Land");
+                    landOK = true; 
                 }
                 AirTime = 0f;
                 animator.SetFloat("AirTime", AirTime);
             }
 
         }
+        bool landOK = true;
+
+
         protected override void HandleInput()
         {
 

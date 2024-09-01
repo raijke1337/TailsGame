@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
+  m_Name: chain lightning proje
+  m_EditorClassIdentifier: 
+  ProjectilePrefab: {fileID: 648527123774877334, guid: 85e91a04af065114ab7f59d0bc1c4318,
+    type: 3}
+  TimeToLive: 1
+  ProjectileSpeed: 50
+  ProjectilePenetration: 3
+  UnitCollisionResult:
+  - {fileID: 11400000, guid: 1bee762937c53014182666042b85acbb, type: 2}
+  - {fileID: 11400000, guid: 91ca95838d54c384fa92a0f09b049bac, type: 2}
+  ExpirationCollisionResult: []

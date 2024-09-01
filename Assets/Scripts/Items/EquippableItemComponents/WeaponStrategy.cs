@@ -15,13 +15,13 @@ namespace Arcatech.Items
         protected BaseWeaponComponent WeaponComponent { get; }
         protected SerializedUnitAction Action { get; }
 
-        int MaxCharges { get; }
-        float ChargeReload { get; }
-        float InternalDelay { get; }
+        protected int MaxCharges { get; }
+        protected float ChargeReload { get; }
+        protected float InternalDelay { get; }
 
         Queue<CountDownTimer> _chargesTimers;
         CountDownTimer _internalCdTimer;
-        int _remainingCharges;
+        protected int _remainingCharges { get; private set; }
 
         protected BaseUnitAction _currentAction;
 
@@ -69,7 +69,7 @@ namespace Arcatech.Items
             t.OnTimerStopped += ReplenishCharge;
         }
 
-        public virtual bool TryUseItem(out BaseUnitAction action)
+        public virtual bool TryUseUsable(out BaseUnitAction action)
         {
             action = Action.ProduceAction(Owner);
             if (CheckTimersAndCharges())
@@ -81,7 +81,7 @@ namespace Arcatech.Items
 
 
 
-        public virtual void Update(float delta)
+        public virtual void UpdateUsable(float delta)
         {
             foreach (var t in _chargesTimers.ToList()) 
             { 

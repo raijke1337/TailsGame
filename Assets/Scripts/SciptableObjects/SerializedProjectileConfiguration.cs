@@ -1,3 +1,4 @@
+using Arcatech.Actions;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
@@ -14,7 +15,10 @@ namespace Arcatech.Items
         [SerializeField] float ProjectileSpeed;
         [Range(1, 10), Tooltip("How many enemies will be hit by this projectile"),SerializeField] int ProjectilePenetration;
 
-        public ProjectileComponent ProduceProjectile(BaseUnit owner, Transform place, SerializedStatsEffectConfig[] effects)
+        [SerializeField] SerializedActionResult[] UnitCollisionResult;  
+        [SerializeField] SerializedActionResult[] ExpirationCollisionResult;  
+
+        public ProjectileComponent ProduceProjectile(BaseUnit owner, Transform place)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;
@@ -24,7 +28,7 @@ namespace Arcatech.Items
             proj.RemainingHits = ProjectilePenetration; 
             proj.Speed = ProjectileSpeed;
 
-            proj.AddEffects(effects);
+            proj.SetResult(UnitCollisionResult,ExpirationCollisionResult);
 
             return proj;
         }

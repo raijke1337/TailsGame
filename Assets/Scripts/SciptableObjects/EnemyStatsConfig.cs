@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Arcatech.AI
 {
-    [CreateAssetMenu(fileName = "New EnemyStats", menuName = "Configurations/EnemyStats", order = 2)]
+    [CreateAssetMenu(fileName = "New EnemyStats", menuName = "Configurations/Enemy behavior Stats", order = 2)]
     public class EnemyStatsConfig : ScriptableObjectID
     {
 

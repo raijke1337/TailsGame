@@ -208,7 +208,6 @@ GameObject:
   - component: {fileID: 5283087494177499262}
   - component: {fileID: 4352188766816210169}
   - component: {fileID: 1106022451855181113}
-  - component: {fileID: 1488583647747453953}
   - component: {fileID: 5478757170728673822}
   - component: {fileID: 3136634622025754844}
   - component: {fileID: 8911038474986482686}
@@ -261,7 +260,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!95 &633146174127125324
@@ -342,14 +341,13 @@ MonoBehaviour:
     type: 2}
   defaultStats: {fileID: 11400000, guid: 82d9e0125322d9941bed0e073c81adf7, type: 2}
   _weapons:
-    DebugMessage: 0
+    DebugMessage: 1
   _rb: {fileID: 3679989756617116995}
   movementStats: {fileID: 11400000, guid: cf36fb33e9c878b488c78a2266989e12, type: 2}
   _inputs: {fileID: 1910410889340383960}
-  _unitActions: {fileID: 1488583647747453953}
   _movement: {fileID: 5478757170728673822}
+  _minCrossYToRotate: 4
   _faceCam: {fileID: 6195898166004764537}
-  _minAngleToPlayRotation: 0.9
 --- !u!114 &1910410889340383960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,18 +462,6 @@ MonoBehaviour:
   - {fileID: 8651630983082586166}
   - {fileID: 6174641194171123443}
   - {fileID: 1598024985415013640}
---- !u!114 &1488583647747453953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612417970087076613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a40c484240eb3bb40b6d4ece6cf45c12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5478757170728673822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,7 +491,7 @@ MonoBehaviour:
   _extraJumpPower: 25
   _jumpPreGroundedToleranceTime: 0.15
   _jumpPostGroundedToleranceTime: 0.15
-  _maxMidAirJumps: 1
+  _maxMidAirJumps: 0
   _useRootMotion: 0
   _rootMotionRotation: 0
 --- !u!114 &3136634622025754844
@@ -526,7 +512,7 @@ MonoBehaviour:
   _useGravity: 1
   _gravity: {x: 0, y: -30, z: 0}
   _slideOnSteepSlope: 0
-  _slopeLimit: 45
+  _slopeLimit: 30
   _slideGravityMultiplier: 2
   _snapToGround: 1
   _snapStrength: 0.5

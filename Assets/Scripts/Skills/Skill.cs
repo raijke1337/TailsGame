@@ -1,16 +1,8 @@
-﻿using Arcatech.Effects;
-using Arcatech.EventBus;
+﻿using Arcatech.EventBus;
 using Arcatech.Items;
-using Arcatech.Texts;
 using Arcatech.Triggers;
-using Arcatech.UI;
 using Arcatech.Units;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem.Utilities;
 
 namespace Arcatech.Skills
 {
@@ -24,7 +16,7 @@ namespace Arcatech.Skills
 
         #endregion
 
-        protected BaseSkillUsageStrategy Strategy { get; }
+        protected SkillUsageStrategy Strategy { get; }
 
 
         public Skill(SerializedSkill settings, BaseUnit owner, BaseEquippableItemComponent item)
@@ -39,7 +31,7 @@ namespace Arcatech.Skills
 
         public bool TryUseItem(out BaseUnitAction onUse)
         {
-            bool ok = Strategy.TryUseItem(out onUse);
+            bool ok = Strategy.TryUseUsable(out onUse);
             return ok;
         }
 
@@ -47,7 +39,7 @@ namespace Arcatech.Skills
 
         public void DoUpdate(float delta)
         {
-            Strategy.Update(delta);
+            Strategy.UpdateUsable(delta);
             EventBus<UpdateIconEvent>.Raise(new UpdateIconEvent(this, Owner));
         }
 

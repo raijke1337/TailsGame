@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f08e67704a6574aa529c7571eb906b, type: 3}
+  m_Name: arca_crossbow_strat
+  m_EditorClassIdentifier: 
+  Action: {fileID: 11400000, guid: d8d288f46842803468a87a344d1bf839, type: 2}
+  ActionResult:
+  - {fileID: 11400000, guid: acc0e4f4afa013545b87e14b1f2d0140, type: 2}
+  TotalCharges: 9
+  ChargeRestoreTime: 3
+  InternalCooldown: 0.1
+  _shotsPerBurst: 3

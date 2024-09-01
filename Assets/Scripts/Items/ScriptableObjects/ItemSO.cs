@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Arcatech.Items
 {
-    [Serializable, CreateAssetMenu(fileName = "New Backpack Item", menuName = "Items/Backpack Item")]
+    [Serializable, CreateAssetMenu(fileName = "New Backpack Item", menuName = "Items/Just Item")]
     public class ItemSO : ScriptableObjectID
     {
         public ExtendedText Description;

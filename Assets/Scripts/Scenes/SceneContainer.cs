@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Arcatech.Scenes
 {
-    [CreateAssetMenu(fileName = "New level", menuName = "Level")]
+    [CreateAssetMenu(fileName = "New level", menuName = "Game stuff/Level")]
     public class SceneContainer : ScriptableObjectID
     {
         public int SceneLoaderIndex;

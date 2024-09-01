@@ -6,7 +6,7 @@ using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Skills
 {
-    [CreateAssetMenu(fileName = "New Skill Config", menuName = "Usables/Skill")]
+    [CreateAssetMenu(fileName = "New Skill Config", menuName = "Items/Skills/Skill")]
     public class SerializedSkill : ScriptableObject
     {
         [Header("Use strategy"),SerializeField] public SerializedSkillUseStrategy UseStrategy;

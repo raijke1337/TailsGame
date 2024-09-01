@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.Texts
 {
-    [CreateAssetMenu(fileName = "New Extended Description", menuName = "Description/Extended")]
+    [CreateAssetMenu(fileName = "New Extended Description", menuName = "Game Stuff/Description/Extended")]
     public class ExtendedText : SimpleText
     {
         public Sprite Picture;

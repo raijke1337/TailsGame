@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Arcatech.Texts
 {
-    [CreateAssetMenu(fileName = "New Dialogue part part", menuName = "Description/Dialogue")]
+    [CreateAssetMenu(fileName = "New Dialogue part part", menuName = "Game Stuff/Dialogues/Dialogue")]
     public class DialoguePart : ScriptableObject
     {
         public DialogueCharacter Character;

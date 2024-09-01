@@ -1,4 +1,5 @@
-﻿using Arcatech.Effects;
+﻿using Arcatech.Actions;
+using Arcatech.Effects;
 using Arcatech.EventBus;
 using Arcatech.Triggers;
 using Arcatech.Units;
@@ -12,63 +13,97 @@ namespace Arcatech.Items
         [HideInInspector] public int RemainingHits;
         [HideInInspector] public float Lifetime;
         [HideInInspector] public float Speed;
-        protected StatsEffect[] Effects;
+
         public SerializedEffectsCollection VFX;
         EffectsCollection _fx;
 
-        public void AddEffects(SerializedStatsEffectConfig[] cfgs)
+        IActionResult[] UnitCollisionResult; // explode (place aoe projectile) or apply effects
+        IActionResult[] ExpirationCollisionResult; // explode (place aoe projectile) or stop moving
+
+
+        public void SetResult(SerializedActionResult[] cfg, SerializedActionResult[] exp)
         {
-            Effects = new StatsEffect[cfgs.Length];
-            for (int i = 0; i < Effects.Length; i++)
+            UnitCollisionResult = new ActionResult[cfg.Length];
+            for (int i = 0; i < UnitCollisionResult.Length; i++)
             {
-                Effects[i] = new StatsEffect(cfgs[i]);
+                UnitCollisionResult[i] = cfg[i].GetActionResult();
+            }
+
+            ExpirationCollisionResult = new ActionResult[exp.Length];
+            for (int i = 0; i < ExpirationCollisionResult.Length; i++)
+            {
+                ExpirationCollisionResult[i] = exp[i].GetActionResult();
             }
         }
-
+        private void Start()
+        {
+            _fx = new EffectsCollection(VFX);
+            if (_fx.TryGetEffect(EffectMoment.OnStart, out var e))
+            {
+                EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
+            }
+        }
         private void Update()
         {
             transform.position += Speed * Time.deltaTime * transform.forward;
             Lifetime -= Time.deltaTime;
-
-            if ( Lifetime < 0 )
-            { Destroy(gameObject); }
-
+            if (Lifetime < 0)
+            {
+                Destroy(gameObject);
+            }
         }
-        private void OnEnable()
+
+
+        protected void OnDestroy()
         {
-            _fx = new EffectsCollection(VFX);
-
+            if (_fx.TryGetEffect(EffectMoment.OnExpiry, out var e))
+            {
+                EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
+            }
+            if (ExpirationCollisionResult.Length > 0)
+            {
+                foreach (var exp in ExpirationCollisionResult)
+                {
+                    exp.ProduceResult(Owner,null,transform);
+                }
+            }
         }
+
         protected virtual void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent<DummyUnit>(out var u) && u != Owner)
-            {
-                EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(u,Owner,true,transform,Effects));
+          //  Debug.Log($"{this} hit {other.gameObject}!");
 
-                RemainingHits--;
-                if (_fx.TryGetEffect(EffectMoment.OnCollision, out var e))
-                {
-                    EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
-                }
-                if (RemainingHits == 0) { transform.parent = other.transform; }
-            }
-            if (other.CompareTag("SolidItem"))
+            if (other.TryGetComponent<BaseUnit>(out var u))
             {
-                if (_fx.TryGetEffect(EffectMoment.OnExpiry, out var e))
+                // hit an enemy
+                if (u != Owner && u.Side != Owner.Side)
                 {
-                    EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
+                    RemainingHits--;
+
+                    if (UnitCollisionResult.Length > 0)
+                    {
+                        foreach (var uc in UnitCollisionResult)
+                        {
+                            uc.ProduceResult(Owner, u, transform);
+                        }
+                    }
+                    if (_fx.TryGetEffect(EffectMoment.OnCollision, out var e))
+                    {
+                        EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
+                    }
                 }
+            }
+            if (other.CompareTag("SolidItem") || other.gameObject.isStatic)
+            {
                 RemainingHits = 0;
             }
+
             if (RemainingHits == 0)
             {
-                if (_fx.TryGetEffect(EffectMoment.OnExpiry, out var e))
-                {
-                    EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
-                }
-                Speed = 0;
+                Destroy(gameObject);
             }
         }
+
 
     }
 }

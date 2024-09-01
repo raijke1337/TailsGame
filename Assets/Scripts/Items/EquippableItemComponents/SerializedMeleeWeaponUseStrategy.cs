@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Arcatech.Items
 {
-    [CreateAssetMenu (fileName = "Melee Weapon Use Strategy",menuName = "Strategy/Melee Weapon Use") ]
+    [CreateAssetMenu (fileName = "Melee Weapon Use Strategy",menuName = "Items/Weapon usage strategy/Melee Weapon Use") ]
     public class SerializedMeleeWeaponUseStrategy : SerializedWeaponUseStrategy
     {
         public override WeaponStrategy ProduceStrategy(DummyUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
-            return new MeleeWeaponStrategy(Action, unit, cfg, TotalCharges,ChargeRestoreTime,InternalCooldown, comp);
+            return new MeleeWeaponStrategy(Action, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
         }
     }
 
@@ -25,14 +25,16 @@ namespace Arcatech.Items
             }
         }
         protected WeaponTriggerComponent Trigger;
-        public MeleeWeaponStrategy(SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
+
+        public MeleeWeaponStrategy(SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
         {
             Trigger = (comp as MeleeWeaponComponent).Trigger;
             Trigger.UnitHitEvent += HandleBaseUnitHitEvent;
             Trigger.ToggleCollider(false);
             currentUseEffects = new StatsEffect[cfg.UseEffects.Length];
         }
-        public override bool TryUseItem(out BaseUnitAction action)
+
+        public override bool TryUseUsable(out BaseUnitAction action)
         {
             bool ok = CheckTimersAndCharges();
             action = null;
@@ -59,7 +61,7 @@ namespace Arcatech.Items
                     ResetEffects();
                     Trigger.ToggleCollider(true);
                     ChargesLogicOnUse();
-                    Debug.Log($"Doing chain attack");
+                   Debug.Log($"Doing chain attack");
                     return true;
                 }
                 else return false;

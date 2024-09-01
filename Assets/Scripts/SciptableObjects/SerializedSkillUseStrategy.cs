@@ -1,20 +1,26 @@
-﻿using Arcatech.Items;
+﻿using Arcatech.Actions;
+using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.Skills
 {
-    public abstract class SerializedSkillUseStrategy : ScriptableObject
+    [CreateAssetMenu(fileName = "New Skill use Logic", menuName = "Items/Skills/SkillUseLogic")]
+    public class SerializedSkillUseStrategy : ScriptableObject
     {
         [Header("Cooldowns")]
         public int Charges;
-        public int Reload;
-        public int CD;
-        public SerializedUnitAction OnUseAction;    
+        public float ChargeReload;
 
-        public virtual BaseSkillUsageStrategy ProduceStrategy(BaseUnit owner,SerializedSkill cfg, BaseEquippableItemComponent item)
+        [Space] public SerializedUnitAction OnUseAction;
+        public SerializedActionResult[] SkillResults;
+
+        public virtual SkillUsageStrategy ProduceStrategy(BaseUnit owner,SerializedSkill cfg, BaseEquippableItemComponent item)
         {
-            return new BaseSkillUsageStrategy(item,OnUseAction,owner,cfg,Charges,Reload,CD);
+            return new SkillUsageStrategy(SkillResults, item, OnUseAction,owner,cfg,Charges,ChargeReload);
         }
     }
+
+
+
 }

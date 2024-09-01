@@ -2,7 +2,7 @@
 using UnityEngine;
 namespace Arcatech.Triggers
 {
-    [CreateAssetMenu(fileName = "New Serialized Stat Mod", menuName = "Configurations/Stats/Stat mod", order = 1)]
+    [CreateAssetMenu(fileName = "New Serialized Stat Mod", menuName = "Items/Stats/Stat mod", order = 1)]
     public class SerializedStatModConfig : ScriptableObject
     {
         public Sprite Icon;
