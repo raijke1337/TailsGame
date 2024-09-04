@@ -25,10 +25,8 @@ namespace Arcatech.Actions
         public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
         {
             _p.ProduceProjectile(user, place);
-            Debug.Log($"Placed projectile {_p}");
         }
     }
-
 
 
 }

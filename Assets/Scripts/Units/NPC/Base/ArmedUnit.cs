@@ -1,4 +1,5 @@
-﻿using Arcatech.Skills;
+﻿using Arcatech.Items;
+using Arcatech.Skills;
 using KBCore.Refs;
 using UnityEngine;
 
@@ -42,8 +43,12 @@ namespace Arcatech.Units
             base.RunUpdate(delta);
             _skills.ControllerUpdate(delta);
             _weapons.ControllerUpdate(delta);
-
         }
+        public bool IsArmed (out IWeapon currentWeapon)
+        {
+            return _weapons.CheckUnitArmed(out currentWeapon);
+        }
+
     }
 
 

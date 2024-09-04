@@ -11,7 +11,7 @@ namespace Arcatech.Managers
         #region UI buttons
         public void OnDone()
         {
-            if (_player.PlayerArmed)
+            if (_player.IsArmed(out var _))
             {
                 GameManager.Instance.OnFinishedEquips();
             }

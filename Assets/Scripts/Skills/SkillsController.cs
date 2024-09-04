@@ -55,12 +55,10 @@ namespace Arcatech.Skills
 
         public override void FixedControllerUpdate(float fixedDelta)
         {
-            //throw new NotImplementedException();
         }
 
         public override void StopController()
         {
-            //throw new NotImplementedException();
         }
 
     }

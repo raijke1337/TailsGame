@@ -1,7 +1,6 @@
 ﻿using Arcatech.Actions;
 using Arcatech.Items;
 using Arcatech.Texts;
-using Arcatech.Triggers;
 using Arcatech.UI;
 using Arcatech.Units;
 using System.Collections.Generic;
@@ -16,8 +15,8 @@ namespace Arcatech.Skills
         SerializedUnitAction Action { get; }
         IActionResult[] SkillUsageResults;
 
-        protected BaseEquippableItemComponent Spawner;
-        ExtendedText _desc;
+        protected Transform Spawner;
+        readonly ExtendedText _desc;
 
 
 
@@ -31,7 +30,7 @@ namespace Arcatech.Skills
 
 
 
-        public SkillUsageStrategy(SerializedActionResult[] results, BaseEquippableItemComponent spawner, SerializedUnitAction useaction, BaseUnit unit, SerializedSkill cfg, int charges, float reload)
+        public SkillUsageStrategy(SerializedActionResult[] results, BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseUnit unit, SerializedSkill cfg, int charges, float reload)
         {
             SkillUsageResults = new ActionResult[results.Length];
             for (int i = 0; i < results.Length; i++)
@@ -49,13 +48,13 @@ namespace Arcatech.Skills
             _chargesTimers = new Queue<CountDownTimer>(charges);
             _internalCdTimer = new CountDownTimer(InternalDelay);
             _internalCdTimer.Start();
-            Spawner = spawner;
+            Spawner = item.Spawner;
         }
 
         public bool TryUseUsable(out BaseUnitAction action)
         {
             action = Action.ProduceAction(Owner);
-            if (!_internalCdTimer.IsReady || !action.IsComplete) return false;
+            if (!_internalCdTimer.IsReady) return false;
             else
             {
                 if (_remainingCharges > 0)
@@ -65,7 +64,7 @@ namespace Arcatech.Skills
                     t.Start();
                     _chargesTimers.Enqueue(t);
                     _remainingCharges--;
-                    t.OnTimerStopped += () => _chargesTimers.Dequeue();
+                    t.OnTimerStopped += OnTimerComplete;
                     DoSkillLogic();
                     return true;
                 }
@@ -90,9 +89,16 @@ namespace Arcatech.Skills
             _internalCdTimer?.Tick(delta);
         }
 
+        void OnTimerComplete()
+        {
+            _chargesTimers.Dequeue();
+            _remainingCharges++;
+            Mathf.Clamp(_remainingCharges, 0, MaxCharges); // just in case
+        }
+
         #region UI
         public Sprite Icon => _desc.Picture;
-        public float CurrentNumber => MaxCharges - _chargesTimers.Count;
+        public float CurrentNumber => _remainingCharges;
         public float MaxNumber => MaxCharges;
 
         #endregion

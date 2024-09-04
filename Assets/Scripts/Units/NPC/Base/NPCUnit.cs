@@ -50,13 +50,6 @@ namespace Arcatech.Units
                 drop.Content = _drop;
                 GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
             }
-
-        }
-
-
-        protected override void HandleUnitAction(UnitActionType obj)
-        {
-
         }
     }
 

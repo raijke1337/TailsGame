@@ -20,7 +20,7 @@ namespace Arcatech.Units
         [SerializeField] public bool DebugMessage = false;
         public Vector3 InputsMovementVector { get; protected set; }
         public Vector3 InputsLookVector { get; protected set; }
-        public ControlledUnit Unit { get; set; }
+        //public ControlledUnit Unit { get; set; }
 
         protected virtual void OnEnable()
         {

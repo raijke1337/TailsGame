@@ -51,11 +51,8 @@ namespace Arcatech.Items
         {
             // moveto inventory, move to equipped go here)
             // events from the view component
-            if (DebugMessage)
-            {
+            Debug.Log($"Something happened in inventory view");
 
-                Debug.Log($"Something happened in inventory view");
-            }
         }
 
 

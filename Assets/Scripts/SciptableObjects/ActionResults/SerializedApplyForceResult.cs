@@ -7,30 +7,26 @@ namespace Arcatech.Actions
     [CreateAssetMenu(fileName = "New apply force result ", menuName = "Actions/Action Result/ApplyForce", order = 2)]
     public class SerializedApplyForceResult : SerializedActionResult
     {
-        [SerializeField] Vector3 Force;
+        [SerializeField, Tooltip("Negative for backwards movement")] float Strength;
+        [SerializeField] float Duration;
         public override IActionResult GetActionResult()
         {
-            return new ApplyForceResult(Force);
+            return new ApplyForceResult(Strength, Duration);
         }
     }
 
     public class ApplyForceResult : ActionResult
     {
-        Vector3 _f;
-        public ApplyForceResult (Vector3 force)
+        float _imp;
+        float _t;
+        public ApplyForceResult (float impulse, float dur)
         {
-            _f = force;
+            _imp = impulse;
+            _t = dur;
         }
         public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
         {
-            if (user.TryGetComponent<CharacterMovement>(out var m))
-            {
-                var calc = user.transform.forward * _f.z;
-
-                m.ApplyImpulse(calc); // maybe TODO
-
-                Debug.Log($"Result: Apply force {calc} of to {user}");
-            }
+            user.ApplyForceResultToUnit(_imp, _t);  
         }
     }
 

@@ -13,9 +13,6 @@ using UnityEngine.Rendering;
 
 namespace Arcatech.Units
 {
-
-
-
     public abstract class BaseUnit : ValidatedMonoBehaviour
     {
         protected const float zeroF = 0f;
@@ -65,6 +62,13 @@ namespace Arcatech.Units
         public void ForceUnitAction(BaseUnitAction act)
         {
             act.DoAction(this);
+        }
+
+        public virtual void ApplyForceResultToUnit(float imp, float time)
+        {
+            Debug.Log($"Tried to apply impulse {imp} over {time} to {GetUnitName} but it has no movement controller component, using rb impulse");
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.AddForce(Vector3.forward * imp * 5f,ForceMode.Impulse);
         }
 
     }

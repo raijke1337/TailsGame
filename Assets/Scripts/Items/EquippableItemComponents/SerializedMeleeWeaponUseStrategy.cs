@@ -47,8 +47,9 @@ namespace Arcatech.Items
                 ResetEffects();
                 Trigger.ToggleCollider(true);
                 _currentAction = action;
+                _currentAction.OnComplete += DisableColliderOnCompletedSwing;
                 ChargesLogicOnUse();
-                Debug.Log($"Doing first attack");
+               // Debug.Log($"Doing first attack");
                 return true;
             }
             //case chain
@@ -56,12 +57,13 @@ namespace Arcatech.Items
             {
                 if (_currentAction.CanAdvance(out var n))
                 {
+                    DisableColliderOnCompletedSwing();
                     action = n;
                     _currentAction = n;
                     ResetEffects();
                     Trigger.ToggleCollider(true);
                     ChargesLogicOnUse();
-                   Debug.Log($"Doing chain attack");
+                  // Debug.Log($"Doing chain attack");
                     return true;
                 }
                 else return false;
@@ -69,10 +71,14 @@ namespace Arcatech.Items
             Debug.Log($"Can't attack");
             return false;
         }
-        protected void OnActionsComplete()
+
+        protected void DisableColliderOnCompletedSwing()
         {
-            Trigger.ToggleCollider(false);
+            _currentAction.OnComplete -= DisableColliderOnCompletedSwing;
+            SwitchCollider(false);
         }
+
+        public void SwitchCollider (bool state) => Trigger.ToggleCollider(state);
         private void HandleBaseUnitHitEvent(DummyUnit target)
         {
             EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner, true, Trigger.transform, currentUseEffects));

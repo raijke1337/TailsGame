@@ -28,7 +28,6 @@ namespace Arcatech.Units
 
 
         #region inventory
-        public bool PlayerArmed => _inventory.GetWeapons.Length > 0;
 
         protected override UnitInventoryItemConfigsContainer SelectSerializedItemsConfig()
         {

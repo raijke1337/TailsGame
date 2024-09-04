@@ -6,6 +6,7 @@ using Arcatech.Triggers;
 using KBCore.Refs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -19,6 +20,7 @@ namespace Arcatech.Units
         private UnitInventoryController _inv;
         private EventBinding<InventoryUpdateEvent> bindInv;
 
+        IWeapon _currentWeapon;
 
         public WeaponController(UnitStatsController stats, UnitInventoryController inv, DummyUnit dummyUnit) : base(dummyUnit)
         {
@@ -41,7 +43,23 @@ namespace Arcatech.Units
                 _weapons[weapon.UseActionType] = weapon;
             }
         }
-
+        public bool CheckUnitArmed (out IWeapon w)
+        {
+            if (_currentWeapon != null)
+            {
+                w = _currentWeapon;
+                return true;
+            }
+            else if (_weapons.Count > 0)
+            {
+                w = _weapons.First().Value; return true;
+            }
+            else 
+            {
+                w = null;
+                return false; 
+            }
+        }
 
         #region interface
         public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
@@ -52,6 +70,7 @@ namespace Arcatech.Units
                 bool ok = _weapons[action].TryUseItem(out onUse);
                 if (ok && _stats.TryApplyCost(cost))
                 {
+                    _currentWeapon = _weapons[action];
                     _inv.DrawItems(_weapons[action].DrawStrategy);
                     return true;
                 }

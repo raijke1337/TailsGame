@@ -7,9 +7,14 @@ namespace Arcatech.Units
     public class MovementControllerComponent : BaseCharacterController
     {
         Rigidbody _rb;
-        public Vector3 LookDirection { get; set; }
-        public float AirTime { get; protected set; } = 0f;
+
+        public float AirTime { get => _jumpUngroundedTimer; }
+        protected Vector3 lookDirection;
         public void SetMoveDirection(Vector3 dir) => moveDirection = dir;
+        public void SetLookDirection(Vector3 dir) =>lookDirection = dir;
+
+        #region jump
+        bool landOK = true;
         public void DoJump()
         {
             StartCoroutine(JumpToggle());
@@ -20,8 +25,62 @@ namespace Arcatech.Units
             yield return null;
             jump = false;
         }
+        #endregion
+        #region dash
 
+        CountDownTimer dashTimer;
+        Vector3 dodgeVector;
+        float maxDodgeSpeed;
+        public void ApplyPhysicalMovementResult(float impulse, float time)
+        {
+            dodgeVector = transform.forward;
+            maxDodgeSpeed = impulse;
 
+            Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
+            dodgeVector *= impulse;
+
+            if (dashTimer == null || dashTimer.IsReady)
+            {
+                Debug.Log($"New dodge");
+                dashTimer = new CountDownTimer(time);
+                dashTimer.OnTimerStopped += OnDashFinish;
+                dashTimer.Start();
+            }
+            else
+            {
+                Debug.Log($"Extend dodge");
+                OnDashFinish();
+                dashTimer.Reset(time);
+                dashTimer.OnTimerStopped += OnDashFinish;
+                dashTimer.Start();
+            }
+        }
+        void DoDashing()
+        {
+            movement.Move(dodgeVector, maxDodgeSpeed);
+            Debug.Log($"Doing dodge dir {dodgeVector}");
+
+            // cancel any vertical velocity while dashing on air (e.g. Cancel gravity)
+
+            if (!movement.isOnGround)
+            {
+                movement.velocity = Vector3.ProjectOnPlane(movement.velocity, transform.up);
+            }
+
+        }
+        void OnDashFinish()
+        {
+            Debug.Log($"Dodge finished");
+            dashTimer.OnTimerStopped -= OnDashFinish;
+            // Cancel dash momentum, if not grounded, preserve gravity
+
+            if (isGrounded)
+                movement.velocity = Vector3.zero;
+            else
+                movement.velocity = Vector3.Project(movement.velocity, transform.up);
+        }
+
+        #endregion
 
         protected override void Animate()
         {
@@ -54,12 +113,11 @@ namespace Arcatech.Units
             }
             animator.SetFloat("VerticalMove", _rb.velocity.y);
 
-            animator.SetFloat("Rotation", Vector3.Cross(fwd, LookDirection).y);
+            animator.SetFloat("Rotation", Vector3.Cross(fwd, lookDirection).y);
 
             if (!movement.isGrounded)
             {
                 landOK = false;
-                AirTime += Time.fixedDeltaTime;
                 animator.SetFloat("AirTime", AirTime);
             }
             if (movement.isGrounded)
@@ -69,22 +127,37 @@ namespace Arcatech.Units
                     animator.SetTrigger("Land");
                     landOK = true; 
                 }
-                AirTime = 0f;
                 animator.SetFloat("AirTime", AirTime);
             }
 
         }
-        bool landOK = true;
-
-
-        protected override void HandleInput()
+        protected override void Move()
         {
-
+            if (dashTimer != null && dashTimer.IsRunning)
+            {
+                DoDashing();
+            }
+            else
+            {
+                base.Move();
+            }
         }
-        // call separately
+
+        public override void Update()
+        {
+            dashTimer?.Tick(Time.deltaTime);
+            base.Update();
+        }
+
+        protected override void HandleInput() { }
+
+        // always rotate when moving
         protected override void UpdateRotation()
         {
-            RotateTowards(LookDirection);
+            if (moveDirection.sqrMagnitude > 0f)
+            {
+                RotateTowards(lookDirection);
+            }
         }
         public override void Awake()
         {

@@ -16,7 +16,7 @@ namespace Arcatech.Units
 
         [Header("Aiming settings")]
         [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
-        protected float _minCrossYToRotate = 5f;
+        protected float _minCrossYToRotate = 4f;
 
 
         public override void StartControllerUnit()
@@ -44,7 +44,8 @@ namespace Arcatech.Units
             if (_lock) return;
 
             _movement.SetMoveDirection(_inputs.InputsMovementVector);
-            _movement.LookDirection = (_inputs.InputsLookVector);
+            _movement.SetLookDirection(_inputs.InputsLookVector);
+
             if (Vector3.Cross(transform.forward, _inputs.InputsLookVector).y > _minCrossYToRotate && _inputs.InputsMovementVector.sqrMagnitude == 0f)
             {
                 _animator.SetTrigger("DoStandingRotation");
@@ -71,7 +72,7 @@ namespace Arcatech.Units
         BaseUnitAction currentAction;
         void DoActionLogic(BaseUnitAction act)
         {
-            _movement.LookDirection = (_inputs.InputsLookVector);
+            _movement.SetLookDirection(_inputs.InputsLookVector);
 
             if (currentAction!= null && currentAction != act)
             {
@@ -79,15 +80,19 @@ namespace Arcatech.Units
             }
             currentAction = act;
             LockMovement = currentAction.LockMovement;
-           // Debug.Log($"Start action {currentAction}");
             currentAction.DoAction(this);
             currentAction.OnComplete += CurrentAction_OnComplete;
         }
+        //doaction in applyforce leads to this
+        public override void ApplyForceResultToUnit(float impulse, float time)
+        {
+            _movement.ApplyPhysicalMovementResult(impulse, time);
+        }
+
 
         private void CurrentAction_OnComplete()
         {
             currentAction.OnComplete -= CurrentAction_OnComplete;
-           // Debug.Log($"Finish action {currentAction}");
             currentAction = null;
             LockMovement = false;
         }
