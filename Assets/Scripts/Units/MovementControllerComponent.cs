@@ -2,16 +2,20 @@ using ECM.Controllers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 namespace Arcatech.Units
 {
     public class MovementControllerComponent : BaseCharacterController
     {
         Rigidbody _rb;
 
+        [Header("Aiming settings")]
+        [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
+        protected float _minCrossYToRotate = 4f;
         public float AirTime { get => _jumpUngroundedTimer; }
-        protected Vector3 lookDirection;
-        public void SetMoveDirection(Vector3 dir) => moveDirection = dir;
-        public void SetLookDirection(Vector3 dir) =>lookDirection = dir;
+        protected Vector3 desiredLookDirection;
+        public void SetDesiredMoveDirection(Vector3 dir) => moveDirection = dir;
+        public void SetDesiredLookDirection(Vector3 dir) => desiredLookDirection = dir;
 
         #region jump
         bool landOK = true;
@@ -81,7 +85,7 @@ namespace Arcatech.Units
         }
 
         #endregion
-
+        bool isStandingRotating = false;
         protected override void Animate()
         {
             var fwd = transform.forward;
@@ -103,6 +107,7 @@ namespace Arcatech.Units
                 animator.SetFloat("ForwardMove", z);
                 animator.SetFloat("SideMove", x);
                 animator.SetBool("isMoving", true);
+                isStandingRotating = false;
             }
 
             else
@@ -110,10 +115,21 @@ namespace Arcatech.Units
                 animator.SetFloat("ForwardMove", 0);
                 animator.SetFloat("SideMove", 0);
                 animator.SetBool("isMoving", false);
+
+                if (Vector3.Cross(fwd, desiredLookDirection).y > _minCrossYToRotate && movement.isGrounded)
+                {
+                    animator.SetTrigger("DoStandingRotation");
+                    isStandingRotating = true;
+                }
+                if (Vector3.Cross(fwd, desiredLookDirection).y <= _minCrossYToRotate)
+                {
+                    isStandingRotating = false;
+                }
             }
             animator.SetFloat("VerticalMove", _rb.velocity.y);
+            animator.SetFloat("Rotation", Vector3.Cross(fwd, desiredLookDirection).y);
 
-            animator.SetFloat("Rotation", Vector3.Cross(fwd, lookDirection).y);
+
 
             if (!movement.isGrounded)
             {
@@ -154,9 +170,9 @@ namespace Arcatech.Units
         // always rotate when moving
         protected override void UpdateRotation()
         {
-            if (moveDirection.sqrMagnitude > 0f)
+            if (moveDirection.sqrMagnitude > 0f || isStandingRotating)
             {
-                RotateTowards(lookDirection);
+                RotateTowards(desiredLookDirection);
             }
         }
         public override void Awake()
@@ -165,5 +181,13 @@ namespace Arcatech.Units
             _rb = GetComponent<Rigidbody>();
         }
 
+
+        private void OnDrawGizmos()
+        {
+            if (moveDirection == null) return;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(transform.position, transform.position + desiredLookDirection);
+            Gizmos.DrawLine(transform.position, transform.position + moveDirection);
+        }
     }
 }

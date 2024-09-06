@@ -42,7 +42,7 @@ namespace Arcatech.Units.Inputs
 
             //_navMeshAg.speed = _statsCtrl.AssessStat(BaseStatType.MoveSpeed).GetCurrent;
             _navMeshAg.stoppingDistance = EnemyStats.AttackRange;
-            _stateMachine = new EnemyStateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
+            //_stateMachine = new EnemyStateMachine(_navMeshAg, EnemyStats, InitialState, DummyState, Unit);
 
             _stateMachine.SetPatrolPoints(patrolPoints);
         }
@@ -79,7 +79,7 @@ namespace Arcatech.Units.Inputs
         protected virtual void Fsm_GetFocusUnitSM(ReferenceUnitType type)
         {
             if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitsGroup.GetUnitForAI(type);
-            else if (type == ReferenceUnitType.Self) _stateMachine.FocusUnit = Unit;
+          //  else if (type == ReferenceUnitType.Self) _stateMachine.FocusUnit = Unit;
 
             if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
         }

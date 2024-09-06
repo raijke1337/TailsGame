@@ -1,10 +1,6 @@
 using Arcatech.Scenes.Cameras;
-using ECM.Common;
-using ECM.Controllers;
 using KBCore.Refs;
 using UnityEngine;
-using UnityEngine.Windows;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace Arcatech.Units.Inputs
 {

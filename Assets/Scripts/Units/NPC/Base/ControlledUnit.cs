@@ -14,9 +14,7 @@ namespace Arcatech.Units
         [Self, SerializeField] protected ControlInputsBase _inputs;
         [SerializeField, Self] protected MovementControllerComponent _movement;
 
-        [Header("Aiming settings")]
-        [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
-        protected float _minCrossYToRotate = 4f;
+
 
 
         public override void StartControllerUnit()
@@ -41,15 +39,11 @@ namespace Arcatech.Units
             base.RunUpdate(delta);
 
             currentAction?.Update(delta);
+
             if (_lock) return;
+            _movement.SetDesiredMoveDirection(_inputs.InputsMovementVector);
+            _movement.SetDesiredLookDirection(_inputs.InputsLookVector);
 
-            _movement.SetMoveDirection(_inputs.InputsMovementVector);
-            _movement.SetLookDirection(_inputs.InputsLookVector);
-
-            if (Vector3.Cross(transform.forward, _inputs.InputsLookVector).y > _minCrossYToRotate && _inputs.InputsMovementVector.sqrMagnitude == 0f)
-            {
-                _animator.SetTrigger("DoStandingRotation");
-            }
         }
 
         bool _lock;
@@ -60,7 +54,7 @@ namespace Arcatech.Units
             {
                 if (value)
                 {
-                    _movement.SetMoveDirection(Vector3.zero);
+                    _movement.SetDesiredMoveDirection(Vector3.zero);
                 }
                 _lock = value;
             }
@@ -72,7 +66,7 @@ namespace Arcatech.Units
         BaseUnitAction currentAction;
         void DoActionLogic(BaseUnitAction act)
         {
-            _movement.SetLookDirection(_inputs.InputsLookVector);
+            _movement.SetDesiredLookDirection(_inputs.InputsLookVector);
 
             if (currentAction!= null && currentAction != act)
             {

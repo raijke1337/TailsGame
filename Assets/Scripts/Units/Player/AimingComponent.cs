@@ -1,5 +1,6 @@
 using Arcatech.Managers;
 using Arcatech.UI;
+using Cinemachine.Utility;
 using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -119,6 +120,9 @@ namespace Arcatech.Units.Inputs
             }
 
             var vectorToTarget = _target - transform.position;
+            // new
+            vectorToTarget.ProjectOntoPlane(_aimPlane.normal);
+
             distanceToTarget = vectorToTarget.magnitude;
             _dotProduct = Vector3.Dot(transform.forward, GetNormalizedDirectionToTaget);
             _rotationToTarget = Vector3.Cross(transform.forward, GetNormalizedDirectionToTaget).y;

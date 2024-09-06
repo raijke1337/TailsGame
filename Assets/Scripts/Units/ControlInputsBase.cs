@@ -1,16 +1,5 @@
-using Arcatech.Effects;
-using Arcatech.Items;
-using Arcatech.Managers;
-using Arcatech.Skills;
-using Arcatech.Stats;
-using Arcatech.Triggers;
-using Arcatech.Units.Inputs;
-using Arcatech.Units.Stats;
-using KBCore.Refs;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Arcatech.Units
 {
@@ -36,10 +25,6 @@ namespace Arcatech.Units
 
         protected virtual void RequestCombatAction(UnitActionType type)
         {
-            if (DebugMessage)
-            {
-                Debug.Log($"Do combat action {type}");
-            }
             UnitActionRequestedEvent.Invoke(type);
         }
 
