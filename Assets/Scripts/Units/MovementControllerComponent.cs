@@ -11,11 +11,11 @@ namespace Arcatech.Units
 
         [Header("Aiming settings")]
         [SerializeField, Tooltip("If value is less, play rotation animation and rotate player")]
-        protected float _minCrossYToRotate = 4f;
+        protected float _minCrossYToRotate = 0.4f;
         public float AirTime { get => _jumpUngroundedTimer; }
         protected Vector3 desiredLookDirection;
         public void SetDesiredMoveDirection(Vector3 dir) => moveDirection = dir;
-        public void SetDesiredLookDirection(Vector3 dir) => desiredLookDirection = dir;
+        public void SetDesiredLookDirection(Vector3 dir) => desiredLookDirection = dir.normalized;
 
         #region jump
         bool landOK = true;
@@ -116,12 +116,14 @@ namespace Arcatech.Units
                 animator.SetFloat("SideMove", 0);
                 animator.SetBool("isMoving", false);
 
-                if (Vector3.Cross(fwd, desiredLookDirection).y > _minCrossYToRotate && movement.isGrounded)
+                var crossY = (Mathf.Abs(Vector3.Cross(fwd, desiredLookDirection).y));
+
+                if  (crossY > _minCrossYToRotate && movement.isGrounded)
                 {
                     animator.SetTrigger("DoStandingRotation");
                     isStandingRotating = true;
                 }
-                if (Vector3.Cross(fwd, desiredLookDirection).y <= _minCrossYToRotate)
+                if (crossY <= 0.01f) // finished rotation
                 {
                     isStandingRotating = false;
                 }
@@ -185,9 +187,10 @@ namespace Arcatech.Units
         private void OnDrawGizmos()
         {
             if (moveDirection == null) return;
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(transform.position, transform.position + desiredLookDirection);
+            Gizmos.color = Color.blue;
             Gizmos.DrawLine(transform.position, transform.position + moveDirection);
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position, transform.position + desiredLookDirection);
         }
     }
 }

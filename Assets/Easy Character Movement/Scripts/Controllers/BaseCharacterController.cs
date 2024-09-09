@@ -536,9 +536,16 @@ namespace ECM.Controllers
         /// <param name="direction">The target direction</param>
         /// <param name="onlyLateral">Should it be restricted to XZ only?</param>
 
-        public void RotateTowards(Vector3 direction, bool onlyLateral = true)
+        public void RotateTowards(Vector3 direction, bool onlyLateral = true,bool immediate = false)
         {
-            movement.Rotate(direction, angularSpeed, onlyLateral);
+            if (!immediate)
+            {
+                movement.Rotate(direction, angularSpeed, onlyLateral);
+            }
+            else
+            {
+                movement.RotateImmediate(direction, onlyLateral);
+            }
         }
 
         /// <summary>
