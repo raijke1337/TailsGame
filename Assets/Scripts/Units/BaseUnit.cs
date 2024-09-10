@@ -38,7 +38,7 @@ namespace Arcatech.Units
         }
         protected virtual void OnLockUnit(bool  locked)
         {
-            Debug.Log($"lock unit {name} {locked}");
+            //Debug.Log($"lock unit {name} {locked}");
         }
 
         #endregion
@@ -59,7 +59,7 @@ namespace Arcatech.Units
         public abstract void RunFixedUpdate(float delta);
 
         #endregion
-        public void ForceUnitAction(BaseUnitAction act)
+        public virtual void ForceUnitAction(BaseUnitAction act)
         {
             act.DoAction(this);
         }

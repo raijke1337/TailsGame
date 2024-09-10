@@ -4,6 +4,7 @@ using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units.Stats;
 using KBCore.Refs;
+using Unity.XR.OpenVR;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.Rendering.DebugUI;
@@ -20,6 +21,11 @@ namespace Arcatech.Units
 
         [Space, SerializeField,] protected UnitStatsController _stats;
         [SerializeField] protected BaseStatsConfig defaultStats;
+
+        [Space, Header("Actions"), SerializeField] protected SerializedUnitAction ActionOnDamage;
+        [SerializeField] protected SerializedUnitAction ActionOnDeath;
+
+        
         public override string GetUnitName { get; protected set; }
 
         public override void StartControllerUnit()
@@ -114,10 +120,12 @@ namespace Arcatech.Units
                     if (ev.Container.GetCurrent < ev.Container.CachedValue)
                     {
                         EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, ev.Container.GetCurrent - ev.Container.CachedValue));
+                        HandleDamage(ev.Container.GetCurrent - ev.Container.CachedValue);
                     }                    
                     if (ev.Container.GetCurrent <= 0f)
                     {
                         BaseUnitDiedEvent.Invoke(this);
+                        HandleDeath();
                     }
                     break;
                 case BaseStatType.Stamina:
@@ -130,12 +138,18 @@ namespace Arcatech.Units
 
         protected virtual void HandleDamage(float value)
         {
-            Debug.Log($"{name} took {value} dmg");
+            if (ActionOnDamage!= null)
+            {
+                ForceUnitAction(ActionOnDamage.ProduceAction(this));
+            }
         }
 
         protected virtual void HandleDeath()
         {
-            Debug.Log($"{name} died");
+            if (ActionOnDeath != null)
+            {
+                ForceUnitAction(ActionOnDeath.ProduceAction(this));
+            }
         }
 
 

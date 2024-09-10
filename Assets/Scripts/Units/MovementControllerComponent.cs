@@ -40,19 +40,19 @@ namespace Arcatech.Units
             dodgeVector = transform.forward;
             maxDodgeSpeed = impulse;
 
-            Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
+           // Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
             dodgeVector *= impulse;
 
             if (dashTimer == null || dashTimer.IsReady)
             {
-                Debug.Log($"New dodge");
+                //Debug.Log($"New dodge");
                 dashTimer = new CountDownTimer(time);
                 dashTimer.OnTimerStopped += OnDashFinish;
                 dashTimer.Start();
             }
             else
             {
-                Debug.Log($"Extend dodge");
+               // Debug.Log($"Extend dodge");
                 OnDashFinish();
                 dashTimer.Reset(time);
                 dashTimer.OnTimerStopped += OnDashFinish;
@@ -62,7 +62,7 @@ namespace Arcatech.Units
         void DoDashing()
         {
             movement.Move(dodgeVector, maxDodgeSpeed);
-            Debug.Log($"Doing dodge dir {dodgeVector}");
+           // Debug.Log($"Doing dodge dir {dodgeVector}");
 
             // cancel any vertical velocity while dashing on air (e.g. Cancel gravity)
 
@@ -74,7 +74,7 @@ namespace Arcatech.Units
         }
         void OnDashFinish()
         {
-            Debug.Log($"Dodge finished");
+         //   Debug.Log($"Dodge finished");
             dashTimer.OnTimerStopped -= OnDashFinish;
             // Cancel dash momentum, if not grounded, preserve gravity
 

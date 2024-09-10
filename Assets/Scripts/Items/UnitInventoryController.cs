@@ -68,6 +68,7 @@ namespace Arcatech.Items
 
         public UnitInventoryController DrawItems(IDrawItemStrategy strategy)
         {
+            if (strategy == null) return this; // case for destructrible items
             foreach (var e in Inventory.Equipments.GetAllValues())
             {
                 ItemPlaceType placeType = strategy.GetPlaces[e.Type];

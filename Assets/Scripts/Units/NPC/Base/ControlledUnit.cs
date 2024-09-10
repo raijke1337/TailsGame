@@ -94,6 +94,8 @@ namespace Arcatech.Units
         protected virtual void HandleUnitAction(UnitActionType obj)
         {
             BaseUnitAction a;
+
+            if (!_movement.isGrounded) return;
             switch (obj)
             {
                 case UnitActionType.Jump:

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Arcatech.Actions;
+using UnityEngine;
 
 namespace Arcatech.Units
 {
@@ -9,9 +10,11 @@ namespace Arcatech.Units
         [SerializeField] string _animationName;
         [SerializeField,Range(0f,1f)] protected float _exitTime;
         [SerializeField] NextActionSettings _nextAct;
+        [SerializeField] SerializedActionResult _onStart;
+        [SerializeField] SerializedActionResult _onFinish;
         public BaseUnitAction ProduceAction(BaseUnit unit)
         {
-            return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime);
+            return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime,_onStart,_onFinish);
         }
 
     }

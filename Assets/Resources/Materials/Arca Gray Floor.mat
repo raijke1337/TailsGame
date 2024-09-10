@@ -18,16 +18,15 @@ Material:
   - _RIMSPLITCOLOR_NOSPLIT
   - _USEADDITIONALLIGHTSDIFFUSE_ON
   - _USEHATCHINGCONSTANTSCALE_ON
-  - _USELIGHTRAMP_POSTERIZE
+  - _USELIGHTRAMP_DIFFUSERAMP
   - _USEPURESKETCH_ON
-  - _USESPECULAR_ON
   m_InvalidKeywords:
   - _EMISSION
   - _METALLICGLOSSMAP
   - _METALLICSPECGLOSSMAP
   - _NORMALMAP
   - _USESHADOWS_ON
-  m_LightmapFlags: 1
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -42,7 +41,7 @@ Material:
         m_Scale: {x: 4, y: 4}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 4c89e0f06b2b0c34ebb9b930314cf921, type: 3}
+        m_Texture: {fileID: 2800000, guid: d2a17467b2d68624c979b275aecc53b6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -78,11 +77,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _LightRampTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 0879f3c490781e446976f31a4083930f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 52fb9790650d0324c8b24cae56159844, type: 3}
+        m_Texture: {fileID: 2800000, guid: 22d65c5fee51e9246a5ce50954e78227, type: 3}
         m_Scale: {x: 4, y: 4}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -90,7 +89,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ff3070a2ede5bfd42b7586ee22925026, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PaperTexture:
@@ -154,7 +153,7 @@ Material:
     - _EmissionScaleUI: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.75
+    - _Glossiness: 0
     - _GlossyReflections: 1
     - _HalftoneEdgeOffset: 0.1
     - _HalftoneSmoothness: 0.3
@@ -162,7 +161,7 @@ Material:
     - _HalftoneToonAffect: 0
     - _HaltonePatternSize: 0
     - _IndirectLightAffectOnHatch: 0
-    - _IndirectLightStrength: 1
+    - _IndirectLightStrength: 0
     - _InverseMask: 0
     - _LightRampOffset: 0
     - _Lighten: 0
@@ -230,10 +229,10 @@ Material:
     - _UseDiffuseWarp: 0
     - _UseDiffuseWarpAsOverlay: 0
     - _UseDynamicOutline: 0
-    - _UseEmission: 1
+    - _UseEmission: 0
     - _UseEnvironmentRefletion: 0
     - _UseHatchingConstantScale: 1
-    - _UseLightRamp: 2
+    - _UseLightRamp: 1
     - _UseOutline: 0
     - _UsePureSketch: 1
     - _UseRimLight: 0
@@ -241,7 +240,7 @@ Material:
     - _UseScreenUvsSpecular: 0
     - _UseScreenUvsWarp: 0
     - _UseShadows: 1
-    - _UseSpecular: 1
+    - _UseSpecular: 0
     - _UseSpecularMask: 0
     - _WarpStrength: 0
     - _WarpTextureRotation: 0
@@ -250,7 +249,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.9607843, g: 0.65439755, b: 0.5425606, a: 1}
-    - _Color: {r: 0.6320754, g: 0.6320754, b: 0.6320754, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
