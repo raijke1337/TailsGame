@@ -16,6 +16,6 @@ namespace Arcatech.Actions
     // spawn particle effect
     public abstract class ActionResult : IActionResult
     {
-        public abstract void ProduceResult(BaseUnit user, BaseUnit target,Transform place);
+        public abstract void ProduceResult(BaseEntity user, BaseEntity target,Transform place);
     }
 }

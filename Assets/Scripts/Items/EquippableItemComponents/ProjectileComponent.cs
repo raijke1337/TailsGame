@@ -9,7 +9,7 @@ namespace Arcatech.Items
 {
     public class ProjectileComponent : MonoBehaviour
     {
-        public BaseUnit Owner { get; set; }
+        public BaseEntity Owner { get; set; }
         [HideInInspector] public int RemainingHits;
         [HideInInspector] public float Lifetime;
         [HideInInspector] public float Speed;
@@ -71,11 +71,11 @@ namespace Arcatech.Items
 
         protected virtual void OnTriggerEnter(Collider other)
         {
-          //  Debug.Log($"{this} hit {other.gameObject}!");
+            Debug.Log($"{this} hit {other.gameObject}!");
 
-            if (other.TryGetComponent<BaseUnit>(out var u))
+            if (other.TryGetComponent<BaseEntity>(out var u))
             {
-                // hit an enemy
+                // hit an entioty
                 if (u != Owner && u.Side != Owner.Side)
                 {
                     RemainingHits--;

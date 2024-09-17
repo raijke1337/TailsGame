@@ -24,7 +24,7 @@ namespace Arcatech.Actions
             _imp = impulse;
             _t = dur;
         }
-        public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
             user.ApplyForceResultToUnit(_imp, _t);  
         }

@@ -31,10 +31,7 @@ namespace Arcatech.Units
             _npcController.UnitsGroup = UnitsGroup;
         }
 
-        public override ReferenceUnitType GetUnitType()
-        {
-            return _enemyStatsConfig.UnitType;
-        }
+
 
         protected override void HandleDamage(float value)
         {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class CheckUnitKilledTrigger : CheckConditionTrigger
 {
-    [SerializeField] protected BaseUnit _unit;
+    [SerializeField] protected BaseEntity _unit;
 
     protected override bool CheckTheCondition()
     {

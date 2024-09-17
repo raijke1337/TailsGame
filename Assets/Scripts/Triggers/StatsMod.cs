@@ -7,16 +7,17 @@ namespace Arcatech.Triggers
         public StatsMod(SerializedStatModConfig cfg)
         {
             InitialValue = cfg.InitialValue;
-            Icon = cfg.Icon;
             StatType = cfg.ChangedStat;
-            PerSecondChange = cfg.OverTimeValue;
+            hash = cfg.Hash;
+        }
+        protected int hash;
+        public float InitialValue { get; set; }
+        public BaseStatType StatType { get; }
+        public virtual bool CheckCondition(float deltaTime)
+        {
+            return true;
         }
 
-        public float InitialValue { get; set; }
-        public Sprite Icon { get; }
-        public BaseStatType StatType { get; }
-        public float PerSecondChange { get; set; }
-        public virtual bool CheckCondition => true; // TODO: implement predicates check for conditions
 
     }
 

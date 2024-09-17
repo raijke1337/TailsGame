@@ -79,10 +79,15 @@ namespace Arcatech.Items
         }
 
         public void SwitchCollider (bool state) => Trigger.ToggleCollider(state);
-        private void HandleBaseUnitHitEvent(DummyUnit target)
+        private void HandleBaseUnitHitEvent(BaseEntity target)
         {
-            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner, true, Trigger.transform, currentUseEffects));
+            if (target != Owner)
+            {
+                Debug.Log($"Hit on {target} FIX ME PLS");
+               // EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner, WeaponComponent.Spawner.transform, currentUseEffects));
+            }
         }
+
     }
 
 

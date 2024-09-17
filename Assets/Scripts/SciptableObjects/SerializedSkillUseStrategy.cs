@@ -15,7 +15,7 @@ namespace Arcatech.Skills
         [Space] public SerializedUnitAction OnUseAction;
         public SerializedActionResult[] SkillResults;
 
-        public virtual SkillUsageStrategy ProduceStrategy(BaseUnit owner,SerializedSkill cfg, BaseEquippableItemComponent item)
+        public virtual SkillUsageStrategy ProduceStrategy(BaseEntity owner,SerializedSkill cfg, BaseEquippableItemComponent item)
         {
             return new SkillUsageStrategy(SkillResults, item, OnUseAction,owner,cfg,Charges,ChargeReload);
         }

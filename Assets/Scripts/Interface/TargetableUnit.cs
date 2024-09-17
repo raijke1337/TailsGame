@@ -3,7 +3,7 @@ using Arcatech.Units;
 using UnityEngine;
 namespace Arcatech.UI
 {
-    [RequireComponent(typeof(BaseUnit))]
+    [RequireComponent(typeof(BaseEntity))]
     public class TargetableUnit : BaseTargetableItem
     {
         public StatValueContainer GetHealthStat { get => _hp; }
@@ -11,7 +11,7 @@ namespace Arcatech.UI
 
         protected override void LookUpValuesOnActivation()
         {
-            if (TryGetComponent<BaseUnit>(out var u))
+            if (TryGetComponent<BaseEntity>(out var u))
             {
                 //_title = u.GetFullName;
                 //_hp = u.GetStats[BaseStatType.Health];

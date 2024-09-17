@@ -9,7 +9,7 @@ namespace Arcatech.Skills
     public class Skill : ISkill
     {
         #region interface
-        public BaseUnit Owner { get ; set; }
+        public BaseEntity Owner { get ; set; }
         protected SerializedSkill Config { get; }
         public UnitActionType UseActionType => Config.UnitActionType;
         public StatsEffect GetCost => new(Config.CostTrigger);
@@ -19,7 +19,7 @@ namespace Arcatech.Skills
         protected SkillUsageStrategy Strategy { get; }
 
 
-        public Skill(SerializedSkill settings, BaseUnit owner, BaseEquippableItemComponent item)
+        public Skill(SerializedSkill settings, BaseEntity owner, BaseEquippableItemComponent item)
         { 
 
             Config = settings;

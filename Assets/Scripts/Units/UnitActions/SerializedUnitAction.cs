@@ -12,7 +12,7 @@ namespace Arcatech.Units
         [SerializeField] NextActionSettings _nextAct;
         [SerializeField] SerializedActionResult _onStart;
         [SerializeField] SerializedActionResult _onFinish;
-        public BaseUnitAction ProduceAction(BaseUnit unit)
+        public BaseUnitAction ProduceAction(BaseEntity unit)
         {
             return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime,_onStart,_onFinish);
         }

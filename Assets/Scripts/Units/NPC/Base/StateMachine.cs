@@ -48,8 +48,8 @@ namespace Arcatech.AI
         public ControlledUnit ControlledUnit { get; }
         // set by inputs , bool for potential checks
         private bool wasSelectedUnitUpdated;
-        private BaseUnit _selectedUnit;
-        public BaseUnit SelectedUnit
+        private BaseEntity _selectedUnit;
+        public BaseEntity SelectedUnit
         {
             get { return _selectedUnit; }
             set

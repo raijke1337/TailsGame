@@ -18,7 +18,7 @@ namespace Arcatech.Skills
         [SerializeField] public SerializedStatsEffectConfig CostTrigger;
 
 
-        public Skill CreateSkill(BaseUnit owner, BaseEquippableItemComponent item)
+        public Skill CreateSkill(BaseEntity owner, BaseEquippableItemComponent item)
         {
             return new Skill(this,owner,item);
         }

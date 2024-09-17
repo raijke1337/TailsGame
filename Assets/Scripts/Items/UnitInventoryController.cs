@@ -1,15 +1,10 @@
 using Arcatech.EventBus;
-using Arcatech.Items;
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
-using KBCore.Refs;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Arcatech.Items
 {
@@ -134,7 +129,7 @@ namespace Arcatech.Items
         }
         private void InventoryModelUpdated(IEnumerable<IItem> obj)
         {            
-            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner,this));
+            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner as DummyUnit,this));
         }
 
         

@@ -18,7 +18,7 @@ namespace Arcatech.Managers
         public virtual void StartController()
         {
             _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
-            _applied = new Dictionary<StatsEffect, List<BaseUnit>>();
+            _applied = new Dictionary<StatsEffect, List<BaseEntity>>();
             EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
         }
         public virtual void ControllerUpdate(float delta)
@@ -39,22 +39,13 @@ namespace Arcatech.Managers
 
         #region triggers
 
-        private Dictionary<StatsEffect, List<BaseUnit>> _applied;
+        private Dictionary<StatsEffect, List<BaseEntity>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-            if (obj.AppliedEffects == null) return; // happens sometimes because collidertoggle was not properly run on a weapon - TODO
-            foreach (StatsEffect eff in obj.AppliedEffects)
-            {
+            Debug.Log($"Handling trigger event; {obj}");
+            var targetToApply = obj.Target;
 
-                // determine target
-                DummyUnit targetToApply = DetermineTarget(obj,eff) as DummyUnit;
-
-                if (targetToApply == null) return;
-
-                // check if target already had the effect instance applied
-
-
-                if (_applied.TryGetValue(eff, out var r))
+                if (_applied.TryGetValue(obj.Applied, out var r))
                 {
                     // effect in list
 
@@ -62,48 +53,28 @@ namespace Arcatech.Managers
                     else
                     {
                         // target not in list
-                        targetToApply.ApplyEffect(eff);
+                        targetToApply.ApplyEffect(obj.Applied);
                         r.Add(obj.Target);
+
+                    if (obj.Applied.OnApply!=null)
+                    {
+                        obj.Applied.OnApply.GetActionResult().ProduceResult(null, obj.Target, obj.Place); // play particles or maybe something else if needed
                     }
+                }
                 }
                 // effect not in list just do normally
                 else
                 {
-                    targetToApply.ApplyEffect(eff);
-                    _applied[eff] = new List<BaseUnit>() { targetToApply };
-                }
-
-                if (eff.GetEffects.TryGetEffect(EffectMoment.OnCollision, out var e))
+                    targetToApply.ApplyEffect(obj.Applied);
+                    _applied[obj.Applied] = new List<BaseEntity>() { targetToApply };
+                if (obj.Applied.OnApply != null)
                 {
-                    EventBus<VFXRequest>.Raise(new VFXRequest(e, obj.Place));
+                    obj.Applied.OnApply.GetActionResult().ProduceResult(null, obj.Target, obj.Place);
                 }
-
             }
         }
-        BaseUnit DetermineTarget (StatsEffectTriggerEvent ev, StatsEffect eff)
-        {
-            switch (eff.Target)
-            {
-                case TriggerTargetType.TargetsEnemies:
-                    if (ev.Source == null || ev.Source.Side != ev.Target.Side)
-                    {
-                        return ev.Target;
-                    }
-                    break;
-                case TriggerTargetType.TargetsUser:
-                    return ev.Source;
-
-                case TriggerTargetType.TargetsAllies:
-                    if (ev.Source.Side == ev.Target.Side && ev.Source != ev.Target)
-                    {
-                        return ev.Target;
-                    }
-                    break;
-            }
-            return null;
         }
 
         #endregion
     }
 
-}

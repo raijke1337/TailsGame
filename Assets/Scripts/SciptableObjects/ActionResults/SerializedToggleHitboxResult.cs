@@ -15,7 +15,7 @@ namespace Arcatech.Actions
     public class ToggleHitboxResult : ActionResult
     {
 
-        public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
             Debug.Log($"Result: Toggle hitbox NYI");
         }

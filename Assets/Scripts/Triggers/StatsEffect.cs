@@ -1,33 +1,43 @@
+using Arcatech.Actions;
 using Arcatech.Effects;
 using System;
+using UnityEngine;
 namespace Arcatech.Triggers
 {
 
     public class StatsEffect : StatsMod
     {
+        public SerializedActionResult OnApply { get; }
         public StatsEffect(SerializedStatsEffectConfig cfg) : base(cfg)
         {
-            OverTimeDuration = cfg.EffectDuration;
-            Target = cfg.TargetType;
-            GetEffects = new EffectsCollection(cfg.Effects);
-            RemainingTime = OverTimeDuration;
+            OnApply = cfg.OnApplyResult;
+            _totalDelta = cfg.OverTimeValue;
+            _totalTime = _timeLeft = cfg.OverTimeValueDuration;
+            hash += UnityEngine.Random.Range(0, 9999999);
         }
 
-        public int OverTimeDuration { get; }
-        public float RemainingTime;
+        float _timeLeft;
+        float _totalTime;
+        float _totalDelta;
+        float _lastDelta;
+        public override bool CheckCondition(float deltaTime)
+        {
+            _timeLeft -= deltaTime;
+            _lastDelta = deltaTime;
+            return _timeLeft > 0;
+        }
 
-       // public float TimeSinceTick { get; set; }
-
-        public TriggerTargetType Target { get; }
-
-        public EffectsCollection GetEffects { get; }
-
-        public override bool CheckCondition
+        public float FrameDelta
         {
             get
             {
-                return RemainingTime > 0;
+                return _totalDelta / _totalTime * _lastDelta;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Concat(StatType, " change ", InitialValue," + ", _totalDelta, " over ", _timeLeft);
         }
     }
 

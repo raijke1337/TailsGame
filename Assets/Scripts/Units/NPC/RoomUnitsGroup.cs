@@ -42,7 +42,7 @@ namespace Arcatech.AI
         }
 
 
-        private void RemoveUnitOnDeath(BaseUnit u)
+        private void RemoveUnitOnDeath(BaseEntity u)
         {
             if (u is NPCUnit unit)
             {
@@ -57,27 +57,27 @@ namespace Arcatech.AI
         public DummyUnit GetUnitForAI(ReferenceUnitType type)
         {
             DummyUnit res = null;
-            switch (type)
-            {
-                case ReferenceUnitType.Small:
-                    res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-                    break;
-                case ReferenceUnitType.Big:
-                    res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-                    break;
-                case ReferenceUnitType.Boss:
-                    res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-                    break;
-                case ReferenceUnitType.Self:
-                    Debug.LogWarning(type + " was somehow requested, this should not happen");
-                    break;
-                case ReferenceUnitType.Any:
-                    Debug.LogWarning(type + " NYI");
-                    break;
-                case ReferenceUnitType.Player:
-                    res = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
-                    break;
-            }
+            //switch (type)
+            //{
+            //    case ReferenceUnitType.Small:
+            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
+            //        break;
+            //    case ReferenceUnitType.Big:
+            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
+            //        break;
+            //    case ReferenceUnitType.Boss:
+            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
+            //        break;
+            //    case ReferenceUnitType.Self:
+            //        Debug.LogWarning(type + " was somehow requested, this should not happen");
+            //        break;
+            //    case ReferenceUnitType.Any:
+            //        Debug.LogWarning(type + " NYI");
+            //        break;
+            //    case ReferenceUnitType.Player:
+            //        res = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
+            //        break;
+            //}
             return res;
         }
     }

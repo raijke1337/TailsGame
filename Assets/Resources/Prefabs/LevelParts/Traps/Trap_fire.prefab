@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5766715391056136883}
   - component: {fileID: 1868567284525919541}
-  - component: {fileID: 1329378905752217381}
+  - component: {fileID: 1154444046510953576}
   m_Layer: 0
   m_Name: Trap_fire
   m_TagString: Untagged
@@ -56,7 +56,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.7, y: 0.7, z: 0.7}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &1329378905752217381
+--- !u!114 &1154444046510953576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,11 +65,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6972408744871752384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a591dcb79e2e5e44bb2edf50c69c67b7, type: 3}
+  m_Script: {fileID: 11500000, guid: 4576d274f70943841aa5bd731b925574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Triggers:
-  - {fileID: 11400000, guid: 2dc747868ab5da74398b1930400fc8f0, type: 2}
+  DestroyOnExit: 0
+  DestroyOnEnter: 0
+  ActionOnEntry:
+  - {fileID: 11400000, guid: 6acc2551fc9407444886c9807c72ac85, type: 2}
+  ActionOnExit: []
 --- !u!1001 &4858185959518456667
 PrefabInstance:
   m_ObjectHideFlags: 0

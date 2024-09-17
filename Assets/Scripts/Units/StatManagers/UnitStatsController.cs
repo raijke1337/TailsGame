@@ -4,6 +4,7 @@ using Arcatech.Units;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,7 +18,7 @@ namespace Arcatech.Stats
         [SerializeField, Tooltip("How often the component reports on all stats")] float _freqUpdates = 0.3f;
         private CountDownTimer _updatesCooldownTimer;
 
-        public UnitStatsController(SerializedStatModConfig[] startingstats, DummyUnit dummyUnit) : base(dummyUnit)
+        public UnitStatsController(SerializedStatModConfig[] startingstats, BaseEntity dummyUnit) : base(dummyUnit)
         {
             stats = new Dictionary<BaseStatType, StatValueContainer>();
             var vals = Enum.GetValues(typeof(BaseStatType));
@@ -38,7 +39,7 @@ namespace Arcatech.Stats
             return this;
         }
 
-        public bool TryAddEffect (StatsEffect eff)
+        public bool ApplyEffect (StatsEffect eff)
         {
             if (stats.TryGetValue(eff.StatType,out var c))
             {
@@ -51,13 +52,22 @@ namespace Arcatech.Stats
 
         public bool TryApplyCost (StatsEffect cost)
         {
-            var cont = stats[cost.StatType];
-            bool OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
-            if (OK)
+            bool OK;
+
+            if (cost == null)
             {
-                cont.ApplyStatsEffect(cost);
-                RaiseEvent (cost.StatType);
+                OK = true;
             }
+            else
+            {
+                var cont = stats[cost.StatType];
+                OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
+
+                if (OK)
+                {
+                    cont.ApplyStatsEffect(cost);
+                    RaiseEvent(cost.StatType);
+                } }
             return OK;
         }
 

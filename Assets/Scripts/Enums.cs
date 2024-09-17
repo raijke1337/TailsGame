@@ -45,9 +45,11 @@ public enum UnitActionType : byte
 
 public enum TriggerTargetType
 {
-    TargetsEnemies,
-    TargetsUser,
-    TargetsAllies
+    None,
+    OnlyUser,
+    AnyUnit,
+    AnyEnemy,
+    AnyAlly
 }
 
 

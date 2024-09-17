@@ -9,11 +9,11 @@ namespace Arcatech.Units
 {
     public class BaseUnitAction : IUnitAction
     {
-        public static BaseUnitAction BuildAction(BaseUnit u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult onstart, SerializedActionResult onfinish)
+        public static BaseUnitAction BuildAction(BaseEntity u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult onstart, SerializedActionResult onfinish)
         {
             return new BaseUnitAction(u, lck, next, anim, exit,onstart, onfinish);
         }
-        BaseUnitAction(BaseUnit u, bool locks, NextActionSettings next, string anim, float exitTime, SerializedActionResult onstart, SerializedActionResult onfinish)
+        BaseUnitAction(BaseEntity u, bool locks, NextActionSettings next, string anim, float exitTime, SerializedActionResult onstart, SerializedActionResult onfinish)
         {
             Actor = u;
             LockMovement = locks;
@@ -49,7 +49,7 @@ namespace Arcatech.Units
             this.onfinish = onfinish;
 
         }
-        protected BaseUnit Actor;
+        protected BaseEntity Actor;
         public bool LockMovement { get; protected set; }
         protected NextActionSettings Next { get; }
         public event UnityAction OnComplete = delegate { };
@@ -83,7 +83,7 @@ namespace Arcatech.Units
         }
 
 
-        public void DoAction(BaseUnit user)
+        public void DoAction(BaseEntity user)
         {
 
             var a = user.GetComponent<Animator>();
@@ -133,6 +133,6 @@ namespace Arcatech.Units
         {
             return (currentPercent >= _chainWindowStart && currentPercent <= _chainWindowEnd);
         }
-        public BaseUnitAction GetNextAction(BaseUnit unit) => _nextAnim.ProduceAction(unit);
+        public BaseUnitAction GetNextAction(BaseEntity unit) => _nextAnim.ProduceAction(unit);
     }
 }

@@ -81,7 +81,7 @@ namespace Arcatech.Units.Inputs
             if (type != ReferenceUnitType.Self) _stateMachine.FocusUnit = UnitsGroup.GetUnitForAI(type);
           //  else if (type == ReferenceUnitType.Self) _stateMachine.FocusUnit = Unit;
 
-            if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
+           // if (_stateMachine.FocusUnit != null) _stateMachine.FocusUnit.BaseUnitDiedEvent += Unsub;
         }
 
         //attack action logic is here
@@ -93,7 +93,7 @@ namespace Arcatech.Units.Inputs
         protected void Unsub(DummyUnit unit)
         {
             if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
-            unit.BaseUnitDiedEvent -= Unsub;
+           // unit.BaseUnitDiedEvent -= Unsub;
         }
         #endregion
 

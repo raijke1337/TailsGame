@@ -6,7 +6,7 @@ namespace Arcatech.Level
 {
     public class DoorOpensWhenUnitDies : MonoBehaviour
     {
-        public BaseUnit Unit;
+        public BaseEntity Unit;
         private Vector3 start;
         [SerializeField] private Vector3 end;
 
@@ -16,7 +16,7 @@ namespace Arcatech.Level
             //Unit.BaseUnitDiedEvent += Unit_BaseUnitDiedEvent;
         }
 
-        private void Unit_BaseUnitDiedEvent(BaseUnit arg)
+        private void Unit_BaseUnitDiedEvent(BaseEntity arg)
         {
             start = transform.position;
             StartCoroutine(MoveDown());

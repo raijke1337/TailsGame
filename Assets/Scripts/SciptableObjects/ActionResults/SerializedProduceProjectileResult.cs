@@ -22,7 +22,7 @@ namespace Arcatech.Actions
             _p = p;
         }
 
-        public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
             _p.ProduceProjectile(user, place);
         }

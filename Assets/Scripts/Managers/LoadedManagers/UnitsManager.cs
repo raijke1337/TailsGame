@@ -152,10 +152,9 @@ namespace Arcatech.Managers
         }
 
 
-        private void HandleUnitDeath(BaseUnit unit)
+        private void HandleUnitDeath(BaseEntity unit)
         {
-                unit.DisableUnit();
-            unit.LockUnit = true;
+            unit.DisableUnit();
             
             if (unit is PlayerUnit)
             {

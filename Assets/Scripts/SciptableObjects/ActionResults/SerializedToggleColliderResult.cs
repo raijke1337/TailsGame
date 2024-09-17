@@ -21,7 +21,7 @@ namespace Arcatech.Actions
             state = p;
         }
 
-        public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
             if (user is ArmedUnit ar && ar.IsArmed(out IWeapon w))
             {

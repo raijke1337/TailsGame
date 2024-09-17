@@ -1238,8 +1238,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c05a134e0cc37c644940f3fc3ac62cf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Side: 1
-  _baseAnimator: {fileID: 9100000, guid: 1b5923699c461194fb3ec6011d5d02b9, type: 2}
+  _showDebugs: 0
+  _unitSide: 1
+  defaultStats: {fileID: 11400000, guid: aa050d370950d914684ca237e9e31ff0, type: 2}
+  ActionOnDamage: {fileID: 0}
+  ActionOnDeath: {fileID: 0}
   _animator: {fileID: 6232462435574115886}
   defaultEquips: {fileID: 11400000, guid: 29e91470b4569bc40adf3be11e56f3bd, type: 2}
   itemEmpties:
@@ -1261,7 +1264,6 @@ MonoBehaviour:
         Value: {fileID: 0}
   defaultItemsDrawStrat: {fileID: 11400000, guid: f9a3c0c1ca07cd741b68cc5fd770285a,
     type: 2}
-  defaultStats: {fileID: 11400000, guid: aa050d370950d914684ca237e9e31ff0, type: 2}
 --- !u!1 &6282183787786567646
 GameObject:
   m_ObjectHideFlags: 0

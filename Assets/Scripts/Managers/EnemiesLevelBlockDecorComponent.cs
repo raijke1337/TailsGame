@@ -18,7 +18,7 @@ namespace Arcatech.Managers
         }
 
         #region decor logic
-        [SerializeField] protected SerializedDictionary<BaseUnit, int> _unitsToSpawn;
+        [SerializeField] protected SerializedDictionary<BaseEntity, int> _unitsToSpawn;
         protected BoxCollider _spawnArea;
 
 

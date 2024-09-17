@@ -12,7 +12,14 @@ namespace Arcatech.Items
         protected List<SerializedStatsEffectConfig> _storedTriggerSettings;
         private SerializedStatsEffectConfig _cost;
         protected BaseWeaponComponent _weaponGameobject;
-        public StatsEffect GetCost { get => new(_cost); }
+        public StatsEffect GetCost 
+            {
+                get
+            {
+                if (_cost != null) return new(_cost);
+                else return null;
+            }
+        }
         public IDrawItemStrategy DrawStrategy { get; protected set; }
         public UnitActionType UseActionType { get; protected set; }
         public IWeaponUseStrategy UseStrategy { get; protected set; }

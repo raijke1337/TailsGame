@@ -22,9 +22,9 @@ namespace Arcatech.EventBus
 
     public struct DrawDamageEvent : IEvent
     {
-        public BaseUnit Unit { get; }
+        public BaseEntity Unit { get; }
         public float Damage { get; }
-        public DrawDamageEvent (BaseUnit unit, float damage)
+        public DrawDamageEvent (BaseEntity unit, float damage)
         {
             Unit = unit; this.Damage = damage;
         }
@@ -32,20 +32,20 @@ namespace Arcatech.EventBus
 
     public struct StatsEffectTriggerEvent : IEvent
     {
-        public StatsEffectTriggerEvent(BaseUnit target, BaseUnit source, bool isEnteringTrigger, Transform place, StatsEffect[] appliedEffects)
+        public StatsEffectTriggerEvent(BaseEntity target, StatsEffect toApply, Transform place)
         {
             Target = target;
-            Source = source;
-            IsEnteringTrigger = isEnteringTrigger;
-            AppliedEffects = appliedEffects;
+            Applied = toApply;
             Place = place;
         }
 
-        public BaseUnit Target { get; }
-        public BaseUnit Source { get; }
-        public bool IsEnteringTrigger { get; }
-        public StatsEffect[] AppliedEffects { get; }
+        public BaseEntity Target { get; }
+        public StatsEffect Applied { get; }
         public Transform Place { get; }
+        public override string ToString()
+        {
+            return string.Concat(Applied," on ", Target?.GetUnitName, " at ", Place.position);
+        }
     }
     public struct VFXEvent : IEvent
     {
@@ -67,13 +67,13 @@ namespace Arcatech.EventBus
 
     public struct UpdateIconEvent : IEvent
     {
-        public UpdateIconEvent(IIconContent used, BaseUnit user)
+        public UpdateIconEvent(IIconContent used, BaseEntity user)
         {
             Used = used;
             User = user;
         }
         public IIconContent Used { get; }
-        public BaseUnit User { get; }
+        public BaseEntity User { get; }
 
 
     }

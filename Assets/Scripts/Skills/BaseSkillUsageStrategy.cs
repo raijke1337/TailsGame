@@ -11,7 +11,7 @@ namespace Arcatech.Skills
 {
     public  class SkillUsageStrategy : IUsablesStrategy    , IIconContent
     {
-        public BaseUnit Owner {get;protected set;}
+        public BaseEntity Owner {get;protected set;}
         SerializedUnitAction Action { get; }
         IActionResult[] SkillUsageResults;
 
@@ -30,7 +30,7 @@ namespace Arcatech.Skills
 
 
 
-        public SkillUsageStrategy(SerializedActionResult[] results, BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseUnit unit, SerializedSkill cfg, int charges, float reload)
+        public SkillUsageStrategy(SerializedActionResult[] results, BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseEntity unit, SerializedSkill cfg, int charges, float reload)
         {
             SkillUsageResults = new ActionResult[results.Length];
             for (int i = 0; i < results.Length; i++)

@@ -10,7 +10,7 @@ namespace Arcatech.Items
 {
     public class WeaponStrategy : IWeaponUseStrategy
     {
-        public BaseUnit Owner { get; }
+        public BaseEntity Owner { get; }
         public WeaponSO Config { get; }
         protected BaseWeaponComponent WeaponComponent { get; }
         protected SerializedUnitAction Action { get; }

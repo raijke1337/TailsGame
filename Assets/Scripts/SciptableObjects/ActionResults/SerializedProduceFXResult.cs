@@ -8,25 +8,30 @@ namespace Arcatech.Actions
     public class SerializedProduceFXResult : SerializedActionResult
     {
         [SerializeField] CFXR_Effect[] Effects;
+        [SerializeField] bool ParentParticles;
         public override IActionResult GetActionResult()
         {
-            return new ProduceFXResult(Effects);
+            return new ProduceFXResult(Effects, ParentParticles);
         }
     }
 
     public class ProduceFXResult : ActionResult
     {
         CFXR_Effect[] _effs;
-        public ProduceFXResult(CFXR_Effect[] effs)
+        bool parent;
+        public ProduceFXResult(CFXR_Effect[] effs, bool p)
         {
             _effs = effs;
+            parent = p;
         }
 
-        public override void ProduceResult(BaseUnit user, BaseUnit target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
+            Transform par = null;
+            if (parent) par = target.transform;
             foreach (var effect in _effs)
             {
-                GameObject.Instantiate(effect, place.position, place.rotation);
+                GameObject.Instantiate(effect, place.position, place.rotation,par);
             }
         }
     }

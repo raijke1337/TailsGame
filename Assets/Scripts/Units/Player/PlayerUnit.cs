@@ -11,7 +11,6 @@ namespace Arcatech.Units
     [RequireComponent(typeof(InputsPlayer))]
     public class PlayerUnit : ControlledUnit
     {
-        public override ReferenceUnitType GetUnitType() => ReferenceUnitType.Player;
 
         [SerializeField, Child] protected Camera _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;

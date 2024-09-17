@@ -18,7 +18,7 @@ namespace Arcatech.Items
         [SerializeField] SerializedActionResult[] UnitCollisionResult;  
         [SerializeField] SerializedActionResult[] ExpirationCollisionResult;  
 
-        public ProjectileComponent ProduceProjectile(BaseUnit owner, Transform place)
+        public ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;

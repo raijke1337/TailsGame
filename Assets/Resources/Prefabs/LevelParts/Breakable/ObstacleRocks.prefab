@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6262908033373984853}
-  - component: {fileID: 1834849874233560913}
   - component: {fileID: 2969185037941477804}
   - component: {fileID: 3324708304295823364}
+  - component: {fileID: 8532586997614502200}
   m_Layer: 0
   m_Name: ObstacleRocks
   m_TagString: Untagged
@@ -35,28 +35,6 @@ Transform:
   - {fileID: 1559643152368334142}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1834849874233560913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2378664594657177856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c05a134e0cc37c644940f3fc3ac62cf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Side: 1
-  _animator: {fileID: 3324708304295823364}
-  defaultEquips: {fileID: 0}
-  itemEmpties:
-    ItemPositions:
-      _serializedList: []
-  defaultItemsDrawStrat: {fileID: 0}
-  defaultStats: {fileID: 11400000, guid: 731359afeaebac84988c8901b44ff4fc, type: 2}
-  ActionOnDamage: {fileID: 11400000, guid: c6ec05a0f2a644e40a518aacd63d26cf, type: 2}
-  ActionOnDeath: {fileID: 11400000, guid: 2237ed11289a6734faab0b08121d8d01, type: 2}
 --- !u!65 &2969185037941477804
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -99,6 +77,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8532586997614502200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378664594657177856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d19ae2d5ac48ff749a9276375dcd95e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _showDebugs: 0
+  _unitSide: 1
+  defaultStats: {fileID: 11400000, guid: 731359afeaebac84988c8901b44ff4fc, type: 2}
+  ActionOnDamage: {fileID: 11400000, guid: c6ec05a0f2a644e40a518aacd63d26cf, type: 2}
+  ActionOnDeath: {fileID: 11400000, guid: 2237ed11289a6734faab0b08121d8d01, type: 2}
+  _animator: {fileID: 3324708304295823364}
 --- !u!1 &4229596096600978330
 GameObject:
   m_ObjectHideFlags: 0
