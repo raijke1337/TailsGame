@@ -50,7 +50,10 @@ namespace Arcatech.Managers
 
         private void PlaceDamageText(DrawDamageEvent @event)
         {
-            var txt = Instantiate(_particleTextPrefab,@event.Unit.transform.position + (Vector3.up * 2),Quaternion.identity);
+            Vector3 dirToCamera = Camera.main.transform.position - @event.Unit.transform.position;
+            Vector3 adjustedPosition = @event.Unit.transform.position + (Vector3.up * 2) + dirToCamera.normalized; // move towards camera 1
+
+            var txt = Instantiate(_particleTextPrefab,adjustedPosition,Quaternion.identity);
 
             txt.PlayNumbers((int)@event.Damage);
         }

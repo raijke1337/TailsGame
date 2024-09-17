@@ -26,7 +26,7 @@ namespace Arcatech.Units
         protected IEnumerator JumpToggle()
         {
             jump = true;
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             jump = false;
         }
         #endregion

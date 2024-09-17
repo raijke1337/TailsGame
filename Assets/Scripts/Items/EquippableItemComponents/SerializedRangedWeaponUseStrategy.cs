@@ -30,8 +30,6 @@ namespace Arcatech.Items
 
         }
 
-        // protected SerializedProjectileConfiguration ProjectilePrefab { get; }
-
         IActionResult[] r;
         public override bool TryUseUsable(out BaseUnitAction action)
         {
@@ -40,7 +38,6 @@ namespace Arcatech.Items
 
             if (ok)
             {
-                // TODO
                 action = Action.ProduceAction(Owner);
                 DoShots();
             }
@@ -57,8 +54,10 @@ namespace Arcatech.Items
             {
                 if (_remainingCharges > 0)
                 {
+                    shots--;
                     foreach (var re in r)
                     {
+
                         re.ProduceResult(Owner, null, WeaponComponent.transform);
                     }
                     ChargesLogicOnUse();

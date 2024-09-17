@@ -177,7 +177,9 @@ namespace Arcatech.Managers
         {
 
             _gameControllers = Instantiate(GameControllersPrefab);
-            _gameControllers.StartController(_currentLevel.LevelType);
+            _gameControllers.StartController(LevelType.Game);
+            Debug.Log($"Placeholder - starting level as GAME level");
+            //_gameControllers.StartController(_currentLevel.LevelType);
 
             if (arg0.buildIndex == _mainScene.SceneLoaderIndex)
             {

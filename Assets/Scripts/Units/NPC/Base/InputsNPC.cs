@@ -101,7 +101,7 @@ namespace Arcatech.Units.Inputs
 
         public void ForceCombat()
         {
-            _stateMachine.SelectedUnit = UnitsGroup.GetUnitForAI(ReferenceUnitType.Player);
+           // _stateMachine.SelectedUnit = UnitsGroup.GetUnitForAI(ReferenceUnitType.Player);
         }
 
         #endregion

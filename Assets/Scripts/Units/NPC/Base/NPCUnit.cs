@@ -40,6 +40,7 @@ namespace Arcatech.Units
         {
             _npcController.ForceCombat();
             OnUnitAttackedEvent?.Invoke(this);
+            base.HandleDamage(value);
         }
         public void ForceCombat() => _npcController.ForceCombat();
         protected override void HandleDeath()
@@ -50,6 +51,7 @@ namespace Arcatech.Units
                 drop.Content = _drop;
                 GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
             }
+            base.HandleDeath();
         }
     }
 

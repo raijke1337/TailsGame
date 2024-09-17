@@ -25,7 +25,16 @@ namespace Arcatech.Units
         [Space, Header("Actions"), SerializeField] protected SerializedUnitAction ActionOnDamage;
         [SerializeField] protected SerializedUnitAction ActionOnDeath;
 
-        
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            if (defaultStats == null)
+            {
+                Debug.LogError($"{this} needs assigned stats!");
+            }
+        }
+
         public override string GetUnitName { get; protected set; }
 
         public override void StartControllerUnit()
@@ -138,6 +147,8 @@ namespace Arcatech.Units
 
         protected virtual void HandleDamage(float value)
         {
+            Debug.Log($"{GetUnitName} took dmg {value}");
+
             if (ActionOnDamage!= null)
             {
                 ForceUnitAction(ActionOnDamage.ProduceAction(this));
@@ -146,6 +157,7 @@ namespace Arcatech.Units
 
         protected virtual void HandleDeath()
         {
+            Debug.Log($"{GetUnitName} died");
             if (ActionOnDeath != null)
             {
                 ForceUnitAction(ActionOnDeath.ProduceAction(this));

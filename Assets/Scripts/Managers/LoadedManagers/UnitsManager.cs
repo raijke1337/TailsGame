@@ -162,6 +162,7 @@ namespace Arcatech.Managers
                 LockUnits(true);
                 GameManager.Instance.OnPlayerDead();
             }
+            Destroy(unit.gameObject,2f);
 
         }
         #endregion

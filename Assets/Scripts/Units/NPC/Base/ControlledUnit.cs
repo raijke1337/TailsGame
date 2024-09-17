@@ -23,8 +23,7 @@ namespace Arcatech.Units
           
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
-                LockUnit = false;
-                
+                LockUnit = false;                
             }
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
         }

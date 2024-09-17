@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: on hit action
   m_EditorClassIdentifier: 
   _locksMovement: 0
-  _animationName: 
+  _animationName: Damage
   _exitTime: 0
   _nextAct:
     _nextAnim: {fileID: 0}
     _chainWindowStart: 0
     _chainWindowEnd: 0
+  _onStart: {fileID: 11400000, guid: dccc28aa23f52824face4f918767f504, type: 2}
+  _onFinish: {fileID: 0}
