@@ -5,11 +5,19 @@ using UnityEngine;
 namespace Arcatech.Triggers
 {
 
-    public class StatsEffect : StatsMod
+    public class StatsEffect
     {
+
+        public float InitialValue { get; set; }
+        public BaseStatType StatType { get; }
+        int hash;
         public SerializedActionResult OnApply { get; }
-        public StatsEffect(SerializedStatsEffectConfig cfg) : base(cfg)
+        public StatsEffect(SerializedStatsEffectConfig cfg)
         {
+            InitialValue = cfg.InitialValue;
+            StatType = cfg.ChangedStat;
+            hash = cfg.Hash;
+
             OnApply = cfg.OnApplyResult;
             _totalDelta = cfg.OverTimeValue;
             _totalTime = _timeLeft = cfg.OverTimeValueDuration;
@@ -20,7 +28,7 @@ namespace Arcatech.Triggers
         float _totalTime;
         float _totalDelta;
         float _lastDelta;
-        public override bool CheckCondition(float deltaTime)
+        public bool CheckCondition(float deltaTime)
         {
             _timeLeft -= deltaTime;
             _lastDelta = deltaTime;
@@ -39,6 +47,7 @@ namespace Arcatech.Triggers
         {
             return string.Concat(StatType, " change ", InitialValue," + ", _totalDelta, " over ", _timeLeft);
         }
+
     }
 
 }

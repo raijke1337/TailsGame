@@ -44,10 +44,14 @@ namespace Arcatech.Units
         #endregion
 
         #region stats
-        protected override void RaiseStatChangeEvent(StatChangedEvent ev)
+        protected override void UpdateStats()
         {
-            EventBus<StatChangedEvent>.Raise(ev);
-            base.RaiseStatChangeEvent(ev);
+            base.UpdateStats();
+            foreach (var pair in _stats.GetStatValues)
+            {
+                EventBus<PlayerStatsChangedUIEvent>.Raise(new PlayerStatsChangedUIEvent(pair.Key,pair.Value));
+            }
+             // used by player UI
         }
         #endregion
 

@@ -438,7 +438,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622e61fc5fe76184b9ab42d6741f8fd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Side: 0
+  _showDebugs: 0
+  _unitSide: 0
+  defaultStats: {fileID: 11400000, guid: 82d9e0125322d9941bed0e073c81adf7, type: 2}
+  statsUpdateFrequency: 0.1
+  ActionOnDamage: {fileID: 11400000, guid: aad65fa8c2bf20747aab7ac2214c7125, type: 2}
+  ActionOnDeath: {fileID: 11400000, guid: 0b8a8ee7cdc62a646a39b231248b013b, type: 2}
+  ActionOnStun: {fileID: 11400000, guid: f2f512d0267193c4692ef39181e44f00, type: 2}
   _animator: {fileID: 633146174127125324}
   defaultEquips: {fileID: 11400000, guid: 00b9c3121edc84543aa3f98d4e0881de, type: 2}
   itemEmpties:
@@ -458,13 +464,12 @@ MonoBehaviour:
         Value: {fileID: 0}
   defaultItemsDrawStrat: {fileID: 11400000, guid: f9a3c0c1ca07cd741b68cc5fd770285a,
     type: 2}
-  defaultStats: {fileID: 11400000, guid: 82d9e0125322d9941bed0e073c81adf7, type: 2}
-  ActionOnDamage: {fileID: 0}
-  ActionOnDeath: {fileID: 0}
   _weapons:
-    DebugMessage: 1
-  _rb: {fileID: 3679989756617116995}
+    DebugMessage: 0
+  _skills:
+    DebugMessage: 0
   movementStats: {fileID: 11400000, guid: cf36fb33e9c878b488c78a2266989e12, type: 2}
+  _rb: {fileID: 3679989756617116995}
   _inputs: {fileID: 1910410889340383960}
   _movement: {fileID: 5478757170728673822}
   _faceCam: {fileID: 6195898166004764537}

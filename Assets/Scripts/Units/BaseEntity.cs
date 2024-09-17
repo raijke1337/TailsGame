@@ -11,19 +11,21 @@ namespace Arcatech.Units
     public class BaseEntity : ValidatedMonoBehaviour
     {
         protected const float zeroF = 0f;
+        [Header("Entity")]
         [SerializeField] protected bool _showDebugs = false;
-        [Header("Entity settings")]
         [SerializeField] protected Side _unitSide;
-        [HideInInspector] public Side Side => _unitSide;
-
-        [Space, SerializeField] protected UnitStatsController _stats;
         [SerializeField] protected BaseStatsConfig defaultStats;
-
-        [Space, Header("Actions"), SerializeField] protected SerializedUnitAction ActionOnDamage;
+        [SerializeField] protected float statsUpdateFrequency = 0.1f;
+        protected UnitStatsController _stats;
+        [Space, SerializeField] protected SerializedUnitAction ActionOnDamage;
         [SerializeField] protected SerializedUnitAction ActionOnDeath;
+        [SerializeField] protected SerializedUnitAction ActionOnStun;
 
-        [SerializeField,Self] protected Animator _animator;
+        [SerializeField, Self] protected Animator _animator;
+
+
         public string GetUnitName { get => defaultStats.DisplayName; }
+        [HideInInspector] public Side Side => _unitSide;
 
         #region managed
 
@@ -40,8 +42,8 @@ namespace Arcatech.Units
             if (_showDebugs) Debug.Log($"Starting unit {this}");
             _stats = new UnitStatsController(defaultStats.InitialStats, this);
             _stats.StartController();
-
-            _stats.StatsUpdatedEvent += RaiseStatChangeEvent;
+            statsUpdateTimer = new CountDownTimer(statsUpdateFrequency);
+            statsUpdateTimer.Start();
         }
 
         public virtual void DisableUnit()
@@ -53,8 +55,18 @@ namespace Arcatech.Units
 
         public virtual void RunUpdate(float delta)
         {
-
             _stats.ControllerUpdate(delta);
+            if (statsUpdateTimer!=null)
+            {
+                statsUpdateTimer?.Tick(delta);
+                if (statsUpdateTimer.IsReady)
+                {
+                    UpdateStats();
+                    statsUpdateTimer.Reset();
+                    statsUpdateTimer.Start();
+                }
+            }
+
         }
         public virtual void RunFixedUpdate(float delta)
         {
@@ -63,41 +75,49 @@ namespace Arcatech.Units
 
         #endregion
         #region stats
+        CountDownTimer statsUpdateTimer;
+
+        protected virtual void UpdateStats()
+        {
+            var stats = _stats.GetStatValues;
+            foreach (var k in stats.Keys)
+            {
+                switch (k)
+                {
+                    case BaseStatType.Health:
+                        if (stats[k].GetCurrent == 0) HandleDeath();
+                        break;
+                    case BaseStatType.Stamina:
+                        if (stats[k].GetCurrent == 0) HandleStun();
+                        break;
+                    case BaseStatType.Energy:
+                        break;
+                }
+            }
+        }
 
         public virtual void ApplyEffect(StatsEffect eff)
         {
-            _stats.ApplyEffect(eff);
-        }
-        public event UnityAction<BaseEntity> BaseUnitDiedEvent = delegate { };
-
-        protected virtual void RaiseStatChangeEvent(StatChangedEvent ev)
-        {
-            switch (ev.StatType)
+            if (_stats.CanApplyEffect(eff, out var curr))
             {
-                case BaseStatType.Health:
-                    if (ev.Container.GetCurrent < ev.Container.CachedValue)
-                    {
-                        EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, ev.Container.GetCurrent - ev.Container.CachedValue));
-                        HandleDamage(ev.Container.GetCurrent - ev.Container.CachedValue);
-                    }
-                    if (ev.Container.GetCurrent <= 0f)
-                    {
-                        BaseUnitDiedEvent.Invoke(this);
-                        HandleDeath();
-                    }
-                    break;
-                case BaseStatType.Stamina:
-                    break;
-                case BaseStatType.Energy:
-                    break;
+                switch (eff.StatType)
+                {
+                    case BaseStatType.Health:
+                        if (eff.InitialValue < 0) EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, Mathf.Abs(eff.InitialValue)));
+                        if (curr == 0) HandleDeath();
+                        break;
+                    case BaseStatType.Stamina:
+                        if (curr == 0) HandleStun();
+                        break;
+                    case BaseStatType.Energy:
+                        break;
+                }
             }
-
         }
 
         protected virtual void HandleDamage(float value)
         {
             if (_showDebugs) Debug.Log($"{GetUnitName} took dmg {value}");
-
             if (ActionOnDamage != null)
             {
                 ForceUnitAction(ActionOnDamage.ProduceAction(this));
@@ -112,7 +132,16 @@ namespace Arcatech.Units
                 ForceUnitAction(ActionOnDeath.ProduceAction(this));
             }
         }
+        protected virtual void HandleStun()
+        {
+            if (_showDebugs) Debug.Log($"{GetUnitName} got stunned");
+            if (ActionOnStun != null)
+            {
+                ForceUnitAction(ActionOnStun.ProduceAction(this));
+            }
+        }
 
+        public event UnityAction<BaseEntity> BaseUnitDiedEvent = delegate { };
 
         #endregion
 

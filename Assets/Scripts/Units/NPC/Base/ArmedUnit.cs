@@ -8,7 +8,7 @@ namespace Arcatech.Units
     public abstract class ArmedUnit : DummyUnit
     {
 
-
+        [Space,Header ("Armed Unit")]
         [SerializeField] protected WeaponController _weapons;
         [SerializeField] protected SkillsController _skills;
 

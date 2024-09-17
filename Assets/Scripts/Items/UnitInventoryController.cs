@@ -112,6 +112,22 @@ namespace Arcatech.Items
             }
         }
 
+        public IEquippable[] GetAllEquips
+        {
+            get
+            {
+                List<IEquippable> eqs = new();
+                foreach (var e in Inventory.Equipments.GetAllValues())
+                {
+                    if (e is IEquippable ww)
+                    {
+                        eqs.Add(ww);
+                    }
+                }
+                return eqs.ToArray();
+            }
+        }
+
         public SerializedStatModConfig[] GetCurrentMods
         {
             get

@@ -17,7 +17,7 @@ namespace Arcatech.Managers
         [SerializeField] private GameObject _ded;
         [SerializeField] private GameObject _pause;
 
-        EventBinding<StatChangedEvent> _statChangedBind;
+        EventBinding<PlayerStatsChangedUIEvent> _statChangedBind;
         EventBinding<InventoryUpdateEvent> _inventoryChangedBind;
 
 
@@ -34,11 +34,11 @@ namespace Arcatech.Managers
                 _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
                 _ded.SetActive(false);
 
-                _statChangedBind = new EventBinding<StatChangedEvent>(UpdatePlayerBars);
+                _statChangedBind = new EventBinding<PlayerStatsChangedUIEvent>(UpdatePlayerBars);
                 _inventoryChangedBind = new EventBinding<InventoryUpdateEvent>(UpdateIcons);
 
 
-                EventBus<StatChangedEvent>.Register(_statChangedBind);
+                EventBus<PlayerStatsChangedUIEvent>.Register(_statChangedBind);
                 EventBus<InventoryUpdateEvent>.Register(_inventoryChangedBind);
 
 
@@ -65,13 +65,13 @@ namespace Arcatech.Managers
         }
         private void OnDisable()
         {
-            EventBus<StatChangedEvent>.Deregister(_statChangedBind);
+            EventBus<PlayerStatsChangedUIEvent>.Deregister(_statChangedBind);
 
             EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
         }
         public virtual void StopController()
         {
-            EventBus<StatChangedEvent>.Deregister(_statChangedBind);
+            EventBus<PlayerStatsChangedUIEvent>.Deregister(_statChangedBind);
             EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
         }
         #endregion
@@ -115,7 +115,7 @@ namespace Arcatech.Managers
  
         #region UI events from event bus
 
-        private void UpdatePlayerBars(StatChangedEvent @event)
+        private void UpdatePlayerBars(PlayerStatsChangedUIEvent @event)
         {
             _playerPan.ShowStat(@event.StatType, @event.Container);
         }

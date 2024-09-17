@@ -1,4 +1,6 @@
 ﻿using Arcatech.Items;
+using Arcatech.Triggers;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -6,11 +8,11 @@ namespace Arcatech.Units
 
     public class DummyUnit : BaseEntity
     {
-        [Space, SerializeField] protected UnitInventoryController _inventory;
-        [SerializeField] protected UnitItemsSO defaultEquips;
+        [Space,Header("Dummy Unit"), SerializeField] protected UnitItemsSO defaultEquips;
         [SerializeField] protected ItemEmpties itemEmpties;
         [SerializeField] protected DrawItemsStrategy defaultItemsDrawStrat;
 
+        protected UnitInventoryController _inventory;
 
         public override void StartControllerUnit()
         {
@@ -78,25 +80,23 @@ namespace Arcatech.Units
         {
             return new UnitInventoryItemConfigsContainer(defaultEquips);
         }
-        public Transform GetSkillTransform (UnitActionType action)
-        {
-            switch (action)
-            {
-                case UnitActionType.DodgeSkill:
-                    return itemEmpties.ItemPositions[ItemPlaceType.BoosterEmpty];
-                case UnitActionType.MeleeSkill:
-                    return itemEmpties.ItemPositions[ItemPlaceType.MeleeEmpty];
-                case UnitActionType.RangedSkill:
-                    return itemEmpties.ItemPositions[ItemPlaceType.RangedEmpty];
-                case UnitActionType.ShieldSkill:
-                    return itemEmpties.ItemPositions[ItemPlaceType.ShieldEmpty];
-                default:
-                    return null;
-            }
-        }
 
         #endregion
 
+/// <summary>
+/// shield check
+/// </summary>
+/// <param name="eff"></param>
+        public override void ApplyEffect(StatsEffect eff)
+        {
+            var shield = _inventory.GetAllEquips.FirstOrDefault(t => t.Type == EquipmentType.Shield);
+            if (shield != null)
+            {
+                Debug.Log($"Unit has a shield, damage reduction NYI");
+            }
+
+            base.ApplyEffect(eff);
+        }
 
 
     }

@@ -15,10 +15,11 @@ namespace Arcatech.Stats
         public float GetMax { get => _maxValue; }
         public float GetMin { get => _minValue; }
         public float GetPercent { get => _currentValue / _maxValue; }
-        public float CachedValue { get; set; } // to store changes between updates
+        public float CachedValue { get => _cachedValue; } // to store changes between updates
         #endregion
 
         private float _currentValue;
+        private float _cachedValue;
         private float _maxValue;
         private float _minValue = 0f;
         private bool _setup = false;
@@ -39,6 +40,7 @@ namespace Arcatech.Stats
             if (!_setup)
             {
                 _currentValue = Mathf.Clamp(startValue, _minValue, _maxValue);
+                _cachedValue = _currentValue;
                 _setup = true;
             }
         }
@@ -51,22 +53,26 @@ namespace Arcatech.Stats
         }
 
         #region mods
-        private List<StatsMod> _currentMods;
-        public void ApplyStatsMod(StatsMod mod)
+        private List<SerializedStatModConfig> _currentMods;
+        public void ApplyStatsMod(SerializedStatModConfig mod)
         {
-            _maxValue += mod.InitialValue;
+            _maxValue += mod.GetBaseValue;
             _currentMods.Add(mod);
         }
         void HandleMods(float d)
         {
             foreach (var mod in _currentMods.ToList())
             {
-                if (!mod.CheckCondition(d))
+                if (mod.CheckCondition(this))
                 {
-                    _maxValue-=mod.InitialValue;
-                    _currentMods.Remove(mod);
+                    _cachedValue = _currentValue;
+                    _currentValue = Mathf.Clamp(_currentValue + (mod.GetPerSecValue * d), _minValue, _maxValue);
                 }
             }
+        }
+        public void RemoveStatsMod(SerializedStatModConfig mod)
+        {
+            if (_currentMods.Contains(mod)) _currentMods.Remove(mod);
         }
 
         #endregion
@@ -76,6 +82,7 @@ namespace Arcatech.Stats
 
         public void ApplyStatsEffect(StatsEffect eff)
         {
+            _cachedValue = _currentValue;
             _currentValue = Mathf.Clamp(_currentValue + eff.InitialValue, _minValue, _maxValue);
             _currentEffects.Add(eff);
         }
@@ -90,6 +97,7 @@ namespace Arcatech.Stats
                 }
                 else
                 {
+                    _cachedValue = _currentValue;
                     _currentValue = Mathf.Clamp(_currentValue + eff.FrameDelta, _minValue, _maxValue);
                 }
             }

@@ -1,4 +1,5 @@
-﻿using Arcatech.EventBus;
+﻿using Arcatech.Actions;
+using Arcatech.EventBus;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
@@ -8,31 +9,31 @@ namespace Arcatech.Items
     [CreateAssetMenu (fileName = "Melee Weapon Use Strategy",menuName = "Items/Weapon usage strategy/Melee Weapon Use") ]
     public class SerializedMeleeWeaponUseStrategy : SerializedWeaponUseStrategy
     {
+
+       // [SerializeField] SerializedActionResult[] OnStartSwing;
+        [SerializeField] SerializedActionResult[] OnColliderHit;
+       // [SerializeField] SerializedActionResult[] OnEndSwing;
         public override WeaponStrategy ProduceStrategy(DummyUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
-            return new MeleeWeaponStrategy(Action, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
+            return new MeleeWeaponStrategy(OnColliderHit,Action, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
         }
     }
 
     public class MeleeWeaponStrategy : WeaponStrategy
     {
-        StatsEffect[] currentUseEffects; // to prevent double application
-        void ResetEffects()
-        {
-            for (int i = 0; i < currentUseEffects.Length; i++)
-            {
-                currentUseEffects[i] = new StatsEffect(Config.UseEffects[i]);
-            }
-        }
-        protected WeaponTriggerComponent Trigger;
-
-        public MeleeWeaponStrategy(SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
+        public MeleeWeaponStrategy(SerializedActionResult[] onHit, SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
         {
             Trigger = (comp as MeleeWeaponComponent).Trigger;
-            Trigger.UnitHitEvent += HandleBaseUnitHitEvent;
+            Trigger.SomethingHitEvent += HandleColliderHitEvent;
             Trigger.ToggleCollider(false);
-            currentUseEffects = new StatsEffect[cfg.UseEffects.Length];
+            _onHit = onHit;
         }
+
+        SerializedActionResult[] _onHit;
+
+        protected WeaponTriggerComponent Trigger;
+
+        public void SwitchCollider(bool state) => Trigger.ToggleCollider(state);
 
         public override bool TryUseUsable(out BaseUnitAction action)
         {
@@ -44,7 +45,6 @@ namespace Arcatech.Items
             if (_currentAction == null || _currentAction.IsComplete)
             {
                 action = Action.ProduceAction(Owner);
-                ResetEffects();
                 Trigger.ToggleCollider(true);
                 _currentAction = action;
                 _currentAction.OnComplete += DisableColliderOnCompletedSwing;
@@ -60,7 +60,6 @@ namespace Arcatech.Items
                     DisableColliderOnCompletedSwing();
                     action = n;
                     _currentAction = n;
-                    ResetEffects();
                     Trigger.ToggleCollider(true);
                     ChargesLogicOnUse();
                   // Debug.Log($"Doing chain attack");
@@ -78,13 +77,18 @@ namespace Arcatech.Items
             SwitchCollider(false);
         }
 
-        public void SwitchCollider (bool state) => Trigger.ToggleCollider(state);
-        private void HandleBaseUnitHitEvent(BaseEntity target)
+        private void HandleColliderHitEvent(Collider target)
         {
-            if (target != Owner)
+            if (target == Owner) return;
+            else
             {
-                Debug.Log($"Hit on {target} FIX ME PLS");
-               // EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, Owner, WeaponComponent.Spawner.transform, currentUseEffects));
+                if (target.TryGetComponent<BaseEntity>(out var e))
+                {
+                    foreach (var res in _onHit)
+                    {
+                        res.GetActionResult().ProduceResult(Owner, e, WeaponComponent.Spawner);
+                    }
+                }
             }
         }
 

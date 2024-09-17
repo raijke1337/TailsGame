@@ -71,7 +71,7 @@ namespace Arcatech.Items
 
         protected virtual void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"{this} hit {other.gameObject}!");
+            //Debug.Log($"{this} hit {other.gameObject}!");
 
             if (other.TryGetComponent<BaseEntity>(out var u))
             {

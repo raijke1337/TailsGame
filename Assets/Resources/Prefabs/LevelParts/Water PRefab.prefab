@@ -126,7 +126,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6599606908423526518}
   - component: {fileID: 7995835514356885436}
-  - component: {fileID: 3806885209146668265}
+  - component: {fileID: 4548365949628684815}
   m_Layer: 4
   m_Name: KOllider
   m_TagString: Untagged
@@ -170,7 +170,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 50, y: 1, z: 50}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3806885209146668265
+--- !u!114 &4548365949628684815
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -179,8 +179,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7361737163238717977}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a591dcb79e2e5e44bb2edf50c69c67b7, type: 3}
+  m_Script: {fileID: 11500000, guid: 4576d274f70943841aa5bd731b925574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Triggers:
-  - {fileID: 11400000, guid: a337cb062c3e69f4ea3aadb8badfb797, type: 2}
+  DestroyOnExit: 0
+  DestroyOnEnter: 0
+  ActionOnEntry:
+  - {fileID: 11400000, guid: e6707ba85a2d87c498e89fc1fe39f68a, type: 2}
+  ActionOnExit: []

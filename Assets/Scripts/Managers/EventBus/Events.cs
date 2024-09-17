@@ -10,13 +10,13 @@ using UnityEngine;
 namespace Arcatech.EventBus
 {
     public interface IEvent { }
-    public struct StatChangedEvent : IEvent
+    public struct PlayerStatsChangedUIEvent : IEvent
     {
         public BaseStatType StatType { get; }
         public StatValueContainer Container { get; }
-        public StatChangedEvent (BaseStatType statType, StatValueContainer container)
+        public PlayerStatsChangedUIEvent (BaseStatType statType, StatValueContainer container)
         { 
-        StatType = statType; Container = container;
+             StatType = statType; Container = container;
         }
     }
 

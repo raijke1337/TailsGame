@@ -9,7 +9,7 @@ namespace Arcatech.Items
     public class Weapon : Equipment, IWeapon
     {
 
-        protected List<SerializedStatsEffectConfig> _storedTriggerSettings;
+       // protected List<SerializedStatsEffectConfig> _storedTriggerSettings;
         private SerializedStatsEffectConfig _cost;
         protected BaseWeaponComponent _weaponGameobject;
         public StatsEffect GetCost 
@@ -31,7 +31,7 @@ namespace Arcatech.Items
             _weaponGameobject = DisplayItem as BaseWeaponComponent;
 
             _cost = cfg.Cost;
-            _storedTriggerSettings = new List<SerializedStatsEffectConfig>(cfg.UseEffects);
+           // _storedTriggerSettings = new List<SerializedStatsEffectConfig>(cfg.UseEffects);
 
             switch (Type)
             {

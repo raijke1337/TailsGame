@@ -18,19 +18,11 @@ namespace Arcatech.Actions
     }
     public class ApplyStatChangeEffectResult : ActionResult
     {
-        Dictionary <TriggerTargetType,StatsEffect[]> _effs; 
+        Dictionary <TriggerTargetType, SerializedStatsEffectConfig[]> _effs; 
         public ApplyStatChangeEffectResult(SerializedDictionary<TriggerTargetType, SerializedStatsEffectConfig[]> cfg)
         {
-            _effs = new();
-            foreach (var type in cfg.Keys)
-            {
-                StatsEffect[] effects = new StatsEffect[cfg[type].Length];
-                for (int i = 0; i < cfg[type].Length; i++)
-                {
-                    effects[i] = new StatsEffect(cfg[type][i]); 
-                }
-                _effs.Add(type, effects);
-            }
+            _effs = cfg;
+
         }
 
         public override void ProduceResult(BaseEntity user, BaseEntity target,Transform place)
@@ -48,27 +40,27 @@ namespace Arcatech.Actions
                     case TriggerTargetType.OnlyUser:
                         foreach (var e in _effs[type])
                         {
-                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(user as DummyUnit, e, place));
+                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(user, new StatsEffect(e), place));
                         }
                         break;
                     case TriggerTargetType.AnyUnit:
                         foreach (var e in _effs[type])
                         {
-                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target as DummyUnit, e, place));
+                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, new StatsEffect(e), place));
                         }
                         break;
                     case TriggerTargetType.AnyEnemy:
                         if (target.Side == user.Side) return;
                         foreach (var e in _effs[type])
                         {
-                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target as DummyUnit, e, place));
+                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, new StatsEffect(e), place));
                         }
                         break;
                     case TriggerTargetType.AnyAlly:
                         if (target.Side != user.Side) return;
                         foreach (var e in _effs[type])
                         {
-                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target as DummyUnit, e, place));
+                            EventBus<StatsEffectTriggerEvent>.Raise(new StatsEffectTriggerEvent(target, new StatsEffect(e), place));
                         }
                         break;
                 }

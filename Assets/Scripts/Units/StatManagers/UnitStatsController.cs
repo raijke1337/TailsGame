@@ -10,96 +10,83 @@ using UnityEngine.Events;
 
 namespace Arcatech.Stats
 {
+    [Serializable]
     public class UnitStatsController : ManagedControllerBase
     {
-        private Dictionary<BaseStatType, StatValueContainer> stats { get; set;  }
-        public event UnityAction<StatChangedEvent> StatsUpdatedEvent = delegate { };
-
-        [SerializeField, Tooltip("How often the component reports on all stats")] float _freqUpdates = 0.3f;
-        private CountDownTimer _updatesCooldownTimer;
+        private Dictionary<BaseStatType, StatValueContainer> _stats;
 
         public UnitStatsController(SerializedStatModConfig[] startingstats, BaseEntity dummyUnit) : base(dummyUnit)
         {
-            stats = new Dictionary<BaseStatType, StatValueContainer>();
+            _stats = new Dictionary<BaseStatType, StatValueContainer>();
             var vals = Enum.GetValues(typeof(BaseStatType));
             foreach (var typ in vals)
             {
-                stats[(BaseStatType)typ] = new StatValueContainer();
+                _stats[(BaseStatType)typ] = new StatValueContainer();
             }
             AddMods(startingstats);
-
         }
-
         public UnitStatsController AddMods (SerializedStatModConfig[] mods)
         {
             foreach (var cfg in mods)
             {
-                stats[cfg.ChangedStat].ApplyStatsMod(new StatsMod(cfg));
+                _stats[cfg.GetStatType].ApplyStatsMod(cfg);
             }
             return this;
         }
 
-        public bool ApplyEffect (StatsEffect eff)
+        public bool CanApplyEffect (StatsEffect eff,out float current)
         {
-            if (stats.TryGetValue(eff.StatType,out var c))
+            if (_stats.TryGetValue(eff.StatType,out var c))
             {
                 c.ApplyStatsEffect(eff);
-                RaiseEvent(eff.StatType);
+                current = c.GetCurrent;
                 return true;
             }
-            return false;
+            else
+            {
+                current = 0;
+                return false;
+            }
         }
-
-        public bool TryApplyCost (StatsEffect cost)
+        public bool CanApplyCost (StatsEffect cost)
         {
             bool OK;
-
             if (cost == null)
             {
                 OK = true;
             }
             else
             {
-                var cont = stats[cost.StatType];
+                var cont = _stats[cost.StatType];
                 OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
-
                 if (OK)
                 {
                     cont.ApplyStatsEffect(cost);
-                    RaiseEvent(cost.StatType);
-                } }
+                } 
+            }
             return OK;
         }
+
+        public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStatValues => _stats;
+
 
         #region managed
 
         public override void StartController()
         {
-            foreach (var stat in stats.Values)
+            foreach (var stat in _stats.Values)
             {
                 stat.Initialize(stat.GetMax);
-                stat.CachedValue = stat.GetCurrent;
             }
-            _updatesCooldownTimer = new CountDownTimer(_freqUpdates);
-            _updatesCooldownTimer.Start();
-            _updatesCooldownTimer.OnTimerStopped += RefreshTimer;
-
-            Owner.StartCoroutine(ReportUpdatedStats());
         }
 
-        private void RefreshTimer()
-        {
-            Owner.StartCoroutine(ReportUpdatedStats());
-            _updatesCooldownTimer.Start();
-        }
 
         public override void ControllerUpdate(float delta)
         {
-            foreach (var stat in stats)
+            foreach (var stat in _stats)
             {
                 stat.Value.UpdateInDelta(delta);
             }
-            _updatesCooldownTimer.Tick(delta);
         }
 
         public override void StopController()
@@ -111,19 +98,8 @@ namespace Arcatech.Stats
             
         }
         #endregion
-        private IEnumerator ReportUpdatedStats()
-        {
-            yield return null;
-            foreach (var stat in stats.Keys)
-            {
-                RaiseEvent(stat);   
-            }
-        }
-        private void RaiseEvent(BaseStatType stat)
-        {
-            StatsUpdatedEvent.Invoke(new StatChangedEvent(stat, stats[stat]));
-            stats[stat].CachedValue = stats[stat].GetCurrent;
-        }
+
+
 
 
     }

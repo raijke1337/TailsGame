@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: heal
   m_EditorClassIdentifier: 
   _locksMovement: 1
-  _animationName: Throw
+  _animationName: Healing
   _exitTime: 0.5
   _nextAct:
     _nextAnim: {fileID: 0}
     _chainWindowStart: 0
     _chainWindowEnd: 0
+  _onStart: {fileID: 0}
+  _onFinish: {fileID: 0}

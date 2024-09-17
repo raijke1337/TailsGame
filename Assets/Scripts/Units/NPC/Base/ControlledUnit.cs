@@ -7,10 +7,9 @@ namespace Arcatech.Units
     [RequireComponent(typeof(ControlInputsBase),typeof(Rigidbody))]
     public abstract class ControlledUnit : ArmedUnit
     {
-
-        [SerializeField,Self] protected Rigidbody _rb;
-        [SerializeField, Header("Inputs")] 
-        protected MovementStatsConfig movementStats;
+        [Space,Header("Controlled Unit")]
+        [SerializeField] protected MovementStatsConfig movementStats;
+        [SerializeField, Self] protected Rigidbody _rb;
         [Self, SerializeField] protected ControlInputsBase _inputs;
         [SerializeField, Self] protected MovementControllerComponent _movement;
 

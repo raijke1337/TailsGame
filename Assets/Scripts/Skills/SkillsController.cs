@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Arcatech.Skills
 {
+    [Serializable]
     public class SkillsController : ManagedControllerBase, ICombatActions
     {
         UnitInventoryController inv;
@@ -35,7 +36,7 @@ namespace Arcatech.Skills
             if (_skills.ContainsKey(action))
             {
                 var cost = _skills[action].GetCost;
-                if (cost == null || stats.TryApplyCost(cost))
+                if (cost == null || stats.CanApplyCost(cost))
                 {
                     return _skills[action].TryUseItem(out onUse);
                 }

@@ -14,8 +14,9 @@ namespace Arcatech.Items
         public SerializedWeaponUseStrategy WeaponUseStrategy;
         public SerializedStatsEffectConfig Cost;
 
-        [Space]
-        public SerializedStatsEffectConfig[] UseEffects; // only needed in melee weapons for now 
+        //[Space]
+        //public SerializedStatsEffectConfig[] UseEffects; // only needed in melee weapons for now 
+        // obsolete hopefully
 
         public DrawItemsStrategy DrawStrategy;
         public SerializedEffectsCollection Effects;

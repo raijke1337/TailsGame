@@ -14,6 +14,7 @@ namespace Arcatech.Units
     [Serializable]
     public class WeaponController : ManagedControllerBase, ICombatActions
     {
+
         protected Dictionary<UnitActionType, IWeapon> _weapons;
         protected UnitStatsController _stats;
 
@@ -68,7 +69,7 @@ namespace Arcatech.Units
             {
                 var cost = _weapons[action].GetCost;
                 bool ok = _weapons[action].TryUseItem(out onUse);
-                if (ok && _stats.TryApplyCost(cost))
+                if (ok && _stats.CanApplyCost(cost))
                 {
                     _currentWeapon = _weapons[action];
                     _inv.DrawItems(_weapons[action].DrawStrategy);
