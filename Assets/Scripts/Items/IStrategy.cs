@@ -1,4 +1,6 @@
-﻿using Arcatech.Units;
+﻿using Arcatech.Stats;
+using Arcatech.Triggers;
+using Arcatech.Units;
 
 namespace Arcatech
 {
@@ -9,6 +11,10 @@ namespace Arcatech
         void UpdateUsable(float delta);
     }
 
+    public interface IShieldAbsorbStrategy
+    {
+        public StatsEffect[] SplitDamage (StatsEffect damage, StatValueContainer shieldCharge);
+    }
     public interface IStrategy
     {
     }

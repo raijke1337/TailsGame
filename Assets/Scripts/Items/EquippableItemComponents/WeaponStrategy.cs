@@ -1,13 +1,13 @@
 ﻿using Arcatech.AI;
 using Arcatech.UI;
 using Arcatech.Units;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
+
     public class WeaponStrategy : IWeaponUseStrategy
     {
         public BaseEntity Owner { get; }
@@ -25,7 +25,7 @@ namespace Arcatech.Items
 
         protected BaseUnitAction _currentAction;
 
-        public WeaponStrategy (SerializedUnitAction act,DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd,BaseWeaponComponent comp)
+        public WeaponStrategy (SerializedUnitAction act,EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd,BaseWeaponComponent comp)
         {
             Owner = unit;
             Config = cfg;

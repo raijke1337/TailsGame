@@ -6,10 +6,11 @@ using System;
 using UnityEngine;
 namespace Arcatech.Items
 {
+
     public class Equipment : Item, IEquippable
     {
 
-        public Equipment (EquipSO cfg, DummyUnit ow) : base (cfg,ow)
+        public Equipment (EquipSO cfg, EquippedUnit ow) : base (cfg,ow)
         {
             DisplayItem = GameObject.Instantiate(cfg.ItemPrefab);
             StatMods = cfg.StatMods;

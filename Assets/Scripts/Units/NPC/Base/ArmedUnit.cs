@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    public abstract class ArmedUnit : DummyUnit
+    public abstract class ArmedUnit : EquippedUnit
     {
 
         [Space,Header ("Armed Unit")]

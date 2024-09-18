@@ -42,7 +42,7 @@ namespace Arcatech.Managers
         private Dictionary<StatsEffect, List<BaseEntity>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-            Debug.Log($"Handling trigger event; {obj}");
+           // Debug.Log($"Handling trigger event; {obj}");
             var targetToApply = obj.Target;
 
                 if (_applied.TryGetValue(obj.Applied, out var r))

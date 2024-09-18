@@ -1,6 +1,7 @@
 using Arcatech.Texts;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Items
 {
@@ -11,5 +12,9 @@ namespace Arcatech.Items
         public int MaxStack = 1;
 
         public EquipmentType Type;
+        protected virtual void OnValidate()
+        {
+            Assert.IsFalse(Type==EquipmentType.None);
+        }
     }
 }

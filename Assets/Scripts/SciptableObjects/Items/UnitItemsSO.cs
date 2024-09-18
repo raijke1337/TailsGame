@@ -2,6 +2,7 @@ using Arcatech.Items;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 namespace Arcatech.Items
 {
     [Serializable]
@@ -10,5 +11,17 @@ namespace Arcatech.Items
     {
         [SerializeField] public List<EquipSO> Equipment;
         [SerializeField, Space] public List<ItemSO> Inventory;
+
+        private void OnValidate()
+        {
+            foreach (var item in Inventory)
+            {
+                Assert.IsNotNull(item);
+            }
+            foreach (var item in Equipment)
+            {
+                Assert.IsNotNull(item);
+            }
+        }
     }
 }

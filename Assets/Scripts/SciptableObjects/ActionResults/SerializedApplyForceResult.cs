@@ -1,6 +1,7 @@
 ﻿using Arcatech.Units;
 using ECM.Components;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Actions
 {
@@ -9,6 +10,11 @@ namespace Arcatech.Actions
     {
         [SerializeField, Tooltip("Negative for backwards movement")] float Strength;
         [SerializeField] float Duration;
+
+        private void OnValidate()
+        {
+            Assert.IsFalse(Strength == 0);
+        }
         public override IActionResult GetActionResult()
         {
             return new ApplyForceResult(Strength, Duration);

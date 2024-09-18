@@ -26,7 +26,7 @@ namespace Arcatech.Items
 
 
 
-        public Weapon(WeaponSO cfg, DummyUnit ow) : base(cfg, ow)
+        public Weapon(WeaponSO cfg, EquippedUnit ow) : base(cfg, ow)
         {
             _weaponGameobject = DisplayItem as BaseWeaponComponent;
 

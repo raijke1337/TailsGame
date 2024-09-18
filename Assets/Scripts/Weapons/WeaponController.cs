@@ -23,7 +23,7 @@ namespace Arcatech.Units
 
         IWeapon _currentWeapon;
 
-        public WeaponController(UnitStatsController stats, UnitInventoryController inv, DummyUnit dummyUnit) : base(dummyUnit)
+        public WeaponController(UnitStatsController stats, UnitInventoryController inv, EquippedUnit dummyUnit) : base(dummyUnit)
         {
             _stats = stats;
             _inv = inv;

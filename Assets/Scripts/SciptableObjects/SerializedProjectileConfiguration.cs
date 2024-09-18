@@ -4,6 +4,7 @@ using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 namespace Arcatech.Items
 {
     [CreateAssetMenu(fileName = "New Projectile", menuName = "Items/Projectile")]
@@ -16,8 +17,12 @@ namespace Arcatech.Items
         [Range(1, 10), Tooltip("How many enemies will be hit by this projectile"),SerializeField] int ProjectilePenetration;
 
         [SerializeField] SerializedActionResult[] UnitCollisionResult;  
-        [SerializeField] SerializedActionResult[] ExpirationCollisionResult;  
-
+        [SerializeField] SerializedActionResult[] ExpirationCollisionResult;
+        private void OnValidate()
+        {
+            Assert.IsNotNull(ProjectilePrefab);
+            Assert.IsNotNull(UnitCollisionResult);
+        }
         public ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;

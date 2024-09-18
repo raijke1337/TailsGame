@@ -96,7 +96,7 @@ namespace Arcatech.Managers
             Debug.Log("NYI");
         }
 
-        private void OnEventActivated(BaseLevelEventTrigger tr, DummyUnit u, bool isEnter)
+        private void OnEventActivated(BaseLevelEventTrigger tr, EquippedUnit u, bool isEnter)
         {
 
             if (tr is LevelRewardTrigger rew)

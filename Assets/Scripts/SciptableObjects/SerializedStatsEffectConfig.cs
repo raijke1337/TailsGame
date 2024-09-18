@@ -1,6 +1,7 @@
 using Arcatech.Actions;
 using Arcatech.Effects;
 using UnityEngine;
+using UnityEngine.Assertions;
 namespace Arcatech.Triggers
 {
     [CreateAssetMenu(fileName = "New Serialized Stats change effect", menuName = "Actions/Stat Change trigger cfg")]
@@ -13,6 +14,11 @@ namespace Arcatech.Triggers
         public int OverTimeValue; // how much dot or hot will be done
         public int OverTimeValueDuration; // over how much time
         public SerializedActionResult OnApplyResult;
+
+        private void OnValidate()
+        {
+            Assert.IsFalse(InitialValue==0 && OverTimeValue ==0);
+        }
     }
 
 }

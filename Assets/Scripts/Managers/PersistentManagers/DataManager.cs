@@ -161,13 +161,13 @@ namespace Arcatech.Managers
 
         public class Itemfactory
         {
-            public IItem ProduceItem (ItemSO cfg, DummyUnit owner)
+            public IItem ProduceItem (ItemSO cfg, EquippedUnit owner)
             {
                 return cfg.Type switch
                 {
                     EquipmentType.MeleeWeap => new Weapon(cfg as WeaponSO, owner),
                     EquipmentType.RangedWeap => new Weapon(cfg as WeaponSO, owner),
-                    EquipmentType.Shield => new Equipment(cfg as EquipSO, owner),
+                    EquipmentType.Shield => new Shield(cfg as ShieldSO, owner),
                     EquipmentType.Booster => new Equipment(cfg as EquipSO, owner),
                     _ => new Item(cfg, owner),
                 };

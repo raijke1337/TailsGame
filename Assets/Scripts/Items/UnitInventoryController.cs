@@ -54,7 +54,7 @@ namespace Arcatech.Items
         #region used by other components
         private ItemEmpties _empties;
 
-        public UnitInventoryController(UnitInventoryItemConfigsContainer cfg,ItemEmpties em, DummyUnit dummyUnit) : base(dummyUnit)
+        public UnitInventoryController(UnitInventoryItemConfigsContainer cfg,ItemEmpties em, EquippedUnit dummyUnit) : base(dummyUnit)
         {
             Inventory = new UnitInventoryModel(cfg, dummyUnit);
             _empties= em;
@@ -111,20 +111,17 @@ namespace Arcatech.Items
                 return weaps.ToArray();
             }
         }
-
-        public IEquippable[] GetAllEquips
+        public bool HasItemType (EquipmentType type, out IEquippable equipment)
         {
-            get
+            if (Inventory.Equipments.TryGetValue(type, out var  e))
             {
-                List<IEquippable> eqs = new();
-                foreach (var e in Inventory.Equipments.GetAllValues())
-                {
-                    if (e is IEquippable ww)
-                    {
-                        eqs.Add(ww);
-                    }
-                }
-                return eqs.ToArray();
+                equipment = e;
+                return true;
+            }
+            else
+            {
+                equipment = null;
+                return false;
             }
         }
 
@@ -145,7 +142,7 @@ namespace Arcatech.Items
         }
         private void InventoryModelUpdated(IEnumerable<IItem> obj)
         {            
-            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner as DummyUnit,this));
+            EventBus<InventoryUpdateEvent>.Raise(new InventoryUpdateEvent(Owner as EquippedUnit,this));
         }
 
         

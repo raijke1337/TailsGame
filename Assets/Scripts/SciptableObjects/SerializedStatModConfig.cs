@@ -1,6 +1,7 @@
 ﻿
 using Arcatech.Stats;
 using UnityEngine;
+using UnityEngine.Assertions;
 namespace Arcatech.Triggers
 {
     [CreateAssetMenu(fileName = "New Serialized Stat Mod", menuName = "Items/Stats/Stat mod", order = 1)]
@@ -11,7 +12,10 @@ namespace Arcatech.Triggers
         [SerializeField] int _initValue; // value change
         [SerializeField] int _perSecValue;
 
-
+        private void OnValidate()
+        {
+            Assert.IsFalse(_initValue == 0);
+        }
         public BaseStatType GetStatType { get => _stat; }
         public int GetBaseValue { get => _initValue; }
         public int GetPerSecValue { get => _perSecValue; }

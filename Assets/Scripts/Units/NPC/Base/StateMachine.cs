@@ -59,7 +59,7 @@ namespace Arcatech.AI
                 wasSelectedUnitUpdated = false;
             }
         }
-        public DummyUnit FocusUnit { get; set; }
+        public EquippedUnit FocusUnit { get; set; }
         public PlayerUnit Player { get; set; } // if it is set it means the unit is in combat
 
         private void OnUpdatedUnit() { wasSelectedUnitUpdated = true; }

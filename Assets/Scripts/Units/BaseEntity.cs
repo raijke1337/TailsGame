@@ -1,4 +1,5 @@
 using Arcatech.EventBus;
+using Arcatech.Items;
 using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units.Stats;
@@ -96,14 +97,18 @@ namespace Arcatech.Units
             }
         }
 
-        public virtual void ApplyEffect(StatsEffect eff)
+        public virtual void ApplyEffect(StatsEffect eff, IEquippable shield = null)
         {
-            if (_stats.CanApplyEffect(eff, out var curr))
+            if (_stats.CanApplyEffect(eff, out var curr,shield))
             {
                 switch (eff.StatType)
                 {
                     case BaseStatType.Health:
-                        if (eff.InitialValue < 0) EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, Mathf.Abs(eff.InitialValue)));
+                        if (eff.InitialValue < 0)
+                        {
+                            EventBus<DrawDamageEvent>.Raise(new DrawDamageEvent(this, Mathf.Abs(eff.InitialValue)));
+                            HandleDamage(Mathf.Abs(eff.InitialValue));
+                        }
                         if (curr == 0) HandleDeath();
                         break;
                     case BaseStatType.Stamina:
@@ -141,7 +146,7 @@ namespace Arcatech.Units
             }
         }
 
-        public event UnityAction<BaseEntity> BaseUnitDiedEvent = delegate { };
+        public event UnityAction<BaseEntity> BaseEntityDeathEvent = delegate { };
 
         #endregion
 

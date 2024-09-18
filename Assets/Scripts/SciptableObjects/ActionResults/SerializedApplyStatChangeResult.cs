@@ -4,16 +4,28 @@ using UnityEngine;
 using Arcatech.EventBus;
 using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
+using System.Linq;
 
 namespace Arcatech.Actions
 {
     [CreateAssetMenu(fileName = "New apply stat change result", menuName = "Actions/Action Result/Apply Stat Change", order = 3)]
     public class SerializedApplyStatChangeResult : SerializedActionResult
     {
+
         [SerializeField] SerializedDictionary<TriggerTargetType, SerializedStatsEffectConfig[]> StatChanges;
         public override IActionResult GetActionResult()
         {
             return new ApplyStatChangeEffectResult(StatChanges);
+        }
+
+        private void OnValidate()
+        {
+            Assert.IsNotNull(StatChanges);
+            Assert.IsTrue(StatChanges.Count > 0);
+            var firstKey = StatChanges.Keys.FirstOrDefault();
+            Assert.IsNotNull(StatChanges[firstKey]);
+            Assert.IsTrue(StatChanges[firstKey].Length>0);
         }
     }
     public class ApplyStatChangeEffectResult : ActionResult

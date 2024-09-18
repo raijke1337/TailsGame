@@ -9,10 +9,10 @@ namespace Arcatech.Items
     [Serializable]
     public class Item : IItem
     {
-        public DummyUnit Owner { get; }
+        public EquippedUnit Owner { get; }
         public SerializableGuid ID;
         public ItemSO Config;
-        public Item(ItemSO cfg, DummyUnit ow)
+        public Item(ItemSO cfg, EquippedUnit ow)
         {
             ID = SerializableGuid.NewGuid();
             Owner = ow;

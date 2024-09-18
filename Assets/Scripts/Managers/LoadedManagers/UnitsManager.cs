@@ -78,7 +78,7 @@ namespace Arcatech.Managers
             }
             else // just units
             {
-                foreach (DummyUnit u in FindObjectsOfType<DummyUnit>())
+                foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
                 {
                     if (!(u is PlayerUnit))
                     SetupUnit(u, true);
@@ -137,16 +137,16 @@ namespace Arcatech.Managers
         #region units handling
 
 
-        private void SetupUnit(DummyUnit u, bool isEnable)
+        private void SetupUnit(BaseEntity u, bool isEnable)
         {
             if (isEnable)
             {
-                u.BaseUnitDiedEvent += (t) => HandleUnitDeath(t);
+                u.BaseEntityDeathEvent += (t) => HandleUnitDeath(t);
                 u.StartControllerUnit();
             }
             else
             {
-                u.BaseUnitDiedEvent -= (t) => HandleUnitDeath(t);
+                u.BaseEntityDeathEvent -= (t) => HandleUnitDeath(t);
                 u.DisableUnit();
             }
         }

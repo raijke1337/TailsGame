@@ -4,6 +4,7 @@ using Arcatech.Texts;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
 namespace Arcatech.Skills
 {
     [CreateAssetMenu(fileName = "New Skill Config", menuName = "Items/Skills/Skill")]
@@ -22,6 +23,10 @@ namespace Arcatech.Skills
         {
             return new Skill(this,owner,item);
         }
-
+        private void OnValidate()
+        {
+            Assert.IsNotNull(UseStrategy);
+            Assert.IsNotNull(CostTrigger);
+        }
     }
 }

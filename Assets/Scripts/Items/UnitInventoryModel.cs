@@ -7,7 +7,7 @@ namespace Arcatech.Items
 {
     public class UnitInventoryModel
     {
-        public DummyUnit Owner {get;}
+        public EquippedUnit Owner {get;}
         public ObservableArray<Item> Inventory { get; protected set; }
         public ObservableDictionary<EquipmentType, Equipment> Equipments { get; protected set; }
 
@@ -24,7 +24,7 @@ namespace Arcatech.Items
         }
 
 
-        public UnitInventoryModel(UnitInventoryItemConfigsContainer cfgs, DummyUnit owner)
+        public UnitInventoryModel(UnitInventoryItemConfigsContainer cfgs, EquippedUnit owner)
         {
             Owner = owner;  
             Inventory = new ObservableArray<Item>();

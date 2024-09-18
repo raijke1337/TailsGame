@@ -15,7 +15,7 @@ namespace Arcatech.Skills
         UnitStatsController stats;
         protected Dictionary<UnitActionType, ISkill> _skills;
 
-        public SkillsController (UnitStatsController stats, UnitInventoryController inv, DummyUnit ow) : base (ow)
+        public SkillsController (UnitStatsController stats, UnitInventoryController inv, EquippedUnit ow) : base (ow)
         {
             this.inv = inv;
             this.stats = stats;

@@ -11,6 +11,9 @@ namespace Arcatech.Units
     [RequireComponent(typeof(InputsPlayer))]
     public class PlayerUnit : ControlledUnit
     {
+        [Space, Header("Player Unit")]
+        [SerializeField] int _armorBreakStam = 30;
+        [SerializeField] int _armorBreakEnergy = 30;
 
         [SerializeField, Child] protected Camera _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
@@ -52,6 +55,16 @@ namespace Arcatech.Units
                 EventBus<PlayerStatsChangedUIEvent>.Raise(new PlayerStatsChangedUIEvent(pair.Key,pair.Value));
             }
              // used by player UI
+        }
+
+        protected override void HandleDamage(float value)
+        {
+            if (_stats.GetStatValue(BaseStatType.Stamina).GetCurrent <= _armorBreakStam && _stats.GetStatValue(BaseStatType.Energy).GetCurrent <= _armorBreakEnergy)
+            {
+                if (_showDebugs) Debug.Log($"Armor break!");
+                CostumesControllerComponent.instance.OnBreak();
+            }
+            base.HandleDamage(value);
         }
         #endregion
 

@@ -4,6 +4,7 @@ using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Items
 {
@@ -13,5 +14,14 @@ namespace Arcatech.Items
         public BaseEquippableItemComponent ItemPrefab;
         public SerializedStatModConfig[] StatMods;
         public SerializedSkill Skill;
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            Assert.IsNotNull(ItemPrefab);
+            Assert.IsNotNull(Skill);
+        }
     }
+
+
 }

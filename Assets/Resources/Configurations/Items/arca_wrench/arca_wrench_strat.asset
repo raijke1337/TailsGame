@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: arca_wrench_strat
   m_EditorClassIdentifier: 
   Action: {fileID: 11400000, guid: db265a4366829e849930ae516937a9e6, type: 2}
-  ActionResult:
-  - {fileID: 11400000, guid: 808741e726c58e349a89ab69b3c51100, type: 2}
+  ActionResult: []
   TotalCharges: 2
   ChargeRestoreTime: 0.3
   InternalCooldown: 0.3
+  OnColliderHit:
+  - {fileID: 11400000, guid: 9f58592c887d05542a91c99636d28e36, type: 2}

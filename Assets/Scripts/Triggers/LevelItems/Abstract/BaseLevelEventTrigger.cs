@@ -14,7 +14,7 @@ namespace Arcatech.Triggers
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.TryGetComponent(out DummyUnit p))
+            if (other.gameObject.TryGetComponent(out EquippedUnit p))
             {
                 foreach (var action in ActionOnEntry)
                 {
@@ -29,7 +29,7 @@ namespace Arcatech.Triggers
         }
         protected override void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.TryGetComponent(out DummyUnit p))
+            if (other.gameObject.TryGetComponent(out EquippedUnit p))
             {
                 foreach (var action in ActionOnExit)
                 {

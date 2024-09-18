@@ -90,7 +90,7 @@ namespace Arcatech.Units.Inputs
             RequestCombatAction(type);
         }
 
-        protected void Unsub(DummyUnit unit)
+        protected void Unsub(EquippedUnit unit)
         {
             if (_stateMachine.SelectedUnit == unit) _stateMachine.SelectedUnit = null;
            // unit.BaseUnitDiedEvent -= Unsub;

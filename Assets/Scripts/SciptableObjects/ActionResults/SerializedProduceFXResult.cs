@@ -1,6 +1,7 @@
 ﻿using Arcatech.Units;
 using CartoonFX;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Actions
 {
@@ -12,6 +13,12 @@ namespace Arcatech.Actions
         public override IActionResult GetActionResult()
         {
             return new ProduceFXResult(Effects, ParentParticles);
+        }
+
+        private void OnValidate()
+        {
+            Assert.IsNotNull(Effects);
+            Assert.IsTrue(Effects.Length > 0);
         }
     }
 

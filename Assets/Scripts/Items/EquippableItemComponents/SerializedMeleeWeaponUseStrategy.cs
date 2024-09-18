@@ -3,17 +3,24 @@ using Arcatech.EventBus;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Items
 {
-    [CreateAssetMenu (fileName = "Melee Weapon Use Strategy",menuName = "Items/Weapon usage strategy/Melee Weapon Use") ]
+    [CreateAssetMenu (fileName = "Melee Weapon Use Strategy",menuName = "Items/Use strategy/Melee Weapon") ]
     public class SerializedMeleeWeaponUseStrategy : SerializedWeaponUseStrategy
     {
 
        // [SerializeField] SerializedActionResult[] OnStartSwing;
         [SerializeField] SerializedActionResult[] OnColliderHit;
-       // [SerializeField] SerializedActionResult[] OnEndSwing;
-        public override WeaponStrategy ProduceStrategy(DummyUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
+        // [SerializeField] SerializedActionResult[] OnEndSwing;
+
+        private void OnValidate()
+        {
+            Assert.IsNotNull(OnColliderHit);
+            Assert.IsTrue(OnColliderHit.Length > 0);
+        }
+        public override WeaponStrategy ProduceStrategy(EquippedUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
             return new MeleeWeaponStrategy(OnColliderHit,Action, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
         }
@@ -21,7 +28,7 @@ namespace Arcatech.Items
 
     public class MeleeWeaponStrategy : WeaponStrategy
     {
-        public MeleeWeaponStrategy(SerializedActionResult[] onHit, SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
+        public MeleeWeaponStrategy(SerializedActionResult[] onHit, SerializedUnitAction act, EquippedUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
         {
             Trigger = (comp as MeleeWeaponComponent).Trigger;
             Trigger.SomethingHitEvent += HandleColliderHitEvent;

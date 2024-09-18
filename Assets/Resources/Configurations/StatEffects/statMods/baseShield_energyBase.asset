@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8147931a4d5b1354ab05df0fb386f77c, type: 3}
   m_Name: baseShield_energyBase
   m_EditorClassIdentifier: 
-  Icon: {fileID: 0}
-  ChangedStat: 2
-  InitialValue: 100
-  OverTimeValue: 1
+  _stat: 0
+  _condition: {fileID: 0}
+  _initValue: 50
+  _perSecValue: 5

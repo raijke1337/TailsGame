@@ -1,6 +1,7 @@
 ﻿using Arcatech.Items;
 using Arcatech.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Actions
 {
@@ -8,7 +9,10 @@ namespace Arcatech.Actions
     public class SerializedProduceProjectileResult : SerializedActionResult
     {
         [SerializeField] SerializedProjectileConfiguration Projectile;
-
+        private void OnValidate()
+        {
+            Assert.IsNotNull(Projectile);
+        }
         public override IActionResult GetActionResult()
         {
             return new ProduceProjectileResult(Projectile);

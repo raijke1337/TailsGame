@@ -3,21 +3,24 @@ using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Items
 {
-    [CreateAssetMenu(fileName = "Ranged Weapon Use Strategy", menuName = "Items/Weapon usage strategy/Ranged Weapon Use")]
+    [CreateAssetMenu(fileName = "Ranged Weapon Use Strategy", menuName = "Items/Use strategy/Ranged Weapon")]
     public class SerializedRangedWeaponUseStrategy : SerializedWeaponUseStrategy
     {
        // [SerializeField] protected SerializedProjectileConfiguration Projectile;
-        public override WeaponStrategy ProduceStrategy(DummyUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
+       // projectiles are now spawned as "action result"
+        public override WeaponStrategy ProduceStrategy(EquippedUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
             return new RangedWeaponStrategy(ActionResult, Action, unit, cfg, TotalCharges, ChargeRestoreTime, InternalCooldown, comp);
         }
+
     }
     public class RangedWeaponStrategy : WeaponStrategy
     {
-        public RangedWeaponStrategy(SerializedActionResult[] results, SerializedUnitAction act, DummyUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
+        public RangedWeaponStrategy(SerializedActionResult[] results, SerializedUnitAction act, EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, intcd, comp)
         {
             if (results != null)
             {

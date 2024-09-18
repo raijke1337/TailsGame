@@ -1,5 +1,6 @@
 ﻿using Arcatech.Actions;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Units
 {
@@ -15,6 +16,11 @@ namespace Arcatech.Units
         public BaseUnitAction ProduceAction(BaseEntity unit)
         {
             return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime,_onStart,_onFinish);
+        }
+
+        private void OnValidate()
+        {
+            Assert.IsNotNull(_animationName);
         }
 
     }

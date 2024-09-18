@@ -11,9 +11,9 @@ namespace Arcatech.Units
     [Serializable]
     public abstract class BaseController : IManagedController
     {
-        public DummyUnit Owner { get; protected set; }
+        public EquippedUnit Owner { get; protected set; }
 
-        public BaseController(DummyUnit owner)
+        public BaseController(EquippedUnit owner)
         {
             Owner = owner;
         }

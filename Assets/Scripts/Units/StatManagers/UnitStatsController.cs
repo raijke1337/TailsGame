@@ -1,4 +1,5 @@
 using Arcatech.EventBus;
+using Arcatech.Items;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
@@ -34,19 +35,51 @@ namespace Arcatech.Stats
             return this;
         }
 
-        public bool CanApplyEffect (StatsEffect eff,out float current)
+        public bool CanApplyEffect (StatsEffect eff,out float current, IEquippable withShield = null)
         {
-            if (_stats.TryGetValue(eff.StatType,out var c))
+            current = 0;
+            StatValueContainer c;
+            switch (eff.StatType)
             {
-                c.ApplyStatsEffect(eff);
-                current = c.GetCurrent;
-                return true;
+                case BaseStatType.Health:
+                    if (withShield != null && eff.InitialValue < 0)
+                    {
+                        var shield = withShield as Shield;
+                        var results = shield.AbsorbStrategy.SplitDamage(eff, _stats[BaseStatType.Energy]);
+                        foreach (var result in results)
+                        {
+                            CanApplyEffect(result, out _, null);
+                        }
+                        current = _stats[BaseStatType.Health].GetCurrent;
+                        shield.AbsorbStrategy.OnApplicationResult.ProduceResult(Owner, Owner, Owner.transform);
+
+                        return true;
+                    }
+                    else
+                    {
+                        if (_stats.TryGetValue(eff.StatType, out c))
+                        {
+                            c.ApplyStatsEffect(eff);
+                            if (eff.OnApply!=null)
+                            {
+                                eff.OnApply.GetActionResult().ProduceResult(Owner, Owner, Owner.transform);
+                            }
+                            current = c.GetCurrent;
+                            return true;
+                        }
+                    }
+                    break;
+                default:
+                    if (_stats.TryGetValue(eff.StatType, out c))
+                    {
+                        c.ApplyStatsEffect(eff);
+                        current = c.GetCurrent;
+                        return true;
+                    }
+                    break;
             }
-            else
-            {
-                current = 0;
-                return false;
-            }
+            Debug.Log($"Can't apply effect {eff}, something went wrong");
+            return false;
         }
         public bool CanApplyCost (StatsEffect cost)
         {
@@ -68,7 +101,7 @@ namespace Arcatech.Stats
         }
 
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStatValues => _stats;
-
+        public StatValueContainer GetStatValue (BaseStatType type) => _stats[type];
 
         #region managed
 
