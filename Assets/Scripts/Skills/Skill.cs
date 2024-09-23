@@ -1,5 +1,6 @@
 ﻿using Arcatech.EventBus;
 using Arcatech.Items;
+using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Arcatech.Skills
         public BaseEntity Owner { get ; set; }
         protected SerializedSkill Config { get; }
         public UnitActionType UseActionType => Config.UnitActionType;
-        public StatsEffect GetCost => new(Config.CostTrigger);
+        public StatsEffect GetCost => new(Config.Cost);
 
         #endregion
 
@@ -29,10 +30,15 @@ namespace Arcatech.Skills
             Strategy = Config.UseStrategy.ProduceStrategy(Owner,Config, item);
         }
 
-        public bool TryUseItem(out BaseUnitAction onUse)
+        public bool TryUseItem(UnitStatsController stats, out BaseUnitAction onUse)
         {
-            bool ok = Strategy.TryUseUsable(out onUse);
-            return ok;
+            onUse = null;
+            if (stats.CanApplyCost(GetCost) && Strategy.TryUseUsable(out onUse))
+            {
+                stats.ApplyCost(GetCost);
+                return true;
+            }
+            else return false;
         }
 
 

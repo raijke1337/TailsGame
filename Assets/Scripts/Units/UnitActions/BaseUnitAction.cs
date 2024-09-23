@@ -46,13 +46,23 @@ namespace Arcatech.Units
                 }
             }
             this.onStart = onstart;
-            this.onfinish = onfinish;
+            this.onComplete = onfinish;
 
         }
         protected BaseEntity Actor;
         public bool LockMovement { get; protected set; }
         protected NextActionSettings Next { get; }
         public event UnityAction OnComplete = delegate { };
+        /// <summary>
+        /// time until exit time starts
+        /// </summary>
+        public float GetExitTimeDelay
+        {
+            get
+            {
+                return animTime / animSpeedMult * _exitTime;
+            }
+        }
 
 
         string _animationName;
@@ -61,13 +71,13 @@ namespace Arcatech.Units
         float animSpeedMult = 1f;
         float animTime = 1f;
 
-        SerializedActionResult onfinish;
+        SerializedActionResult onComplete;
         SerializedActionResult onStart;
 
         public bool CanAdvance(out BaseUnitAction next)
         {
             next = null;
-            //Debug.Log($"Check anim {_animationName}, progress {_actionTimer.Progress}, exit time is {_exitTime}");
+
             bool ok = Next != null && Next.CheckTime(_actionTimer.Progress);
             if (ok)
             {
@@ -83,9 +93,9 @@ namespace Arcatech.Units
         }
 
 
-        public void DoAction(BaseEntity user)
+        public void StartAction(BaseEntity user)
         {
-
+            string start = "none";
             var a = user.GetComponent<Animator>();
             if (_animationName!= null)
             {
@@ -94,22 +104,27 @@ namespace Arcatech.Units
 
             if (onStart != null)
             {
+                start = onStart.ToString();
                 onStart.GetActionResult().ProduceResult(Actor, null, Actor.transform);
             };
+           // Debug.Log($"Started action {this}, result {start}");
 
             _actionTimer = new CountDownTimer(animTime/animSpeedMult);
             _actionTimer.Start();
             _actionTimer.OnTimerStopped += CompleteAction;
         }
 
-        protected void CallComplete() => OnComplete.Invoke();
         void CompleteAction()
         {
-            if (onfinish != null)
+            string start = "none";
+            if (onComplete != null)
             {
-                onfinish.GetActionResult().ProduceResult(Actor, null, Actor.transform);
+                onComplete.GetActionResult().ProduceResult(Actor, null, Actor.transform);
+                start = onComplete.ToString();
             };
-            CallComplete();
+         //   Debug.Log($"Complete action {this}, result {start}");
+
+            OnComplete.Invoke();
         }
 
         public void Update(float delta)

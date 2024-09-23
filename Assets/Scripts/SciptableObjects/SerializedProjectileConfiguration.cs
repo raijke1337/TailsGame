@@ -12,12 +12,20 @@ namespace Arcatech.Items
     {
 
         [SerializeField] ProjectileComponent ProjectilePrefab;
+
         [SerializeField] float TimeToLive;
         [SerializeField] float ProjectileSpeed;
+
+
+        [SerializeField, Tooltip("Placeholder for homing projectiles, range of scanning for tgts")] float HomingRange = 6f;
+
         [Range(1, 10), Tooltip("How many enemies will be hit by this projectile"),SerializeField] int ProjectilePenetration;
 
         [SerializeField] SerializedActionResult[] UnitCollisionResult;  
         [SerializeField] SerializedActionResult[] ExpirationCollisionResult;
+
+
+
         private void OnValidate()
         {
             Assert.IsNotNull(ProjectilePrefab);
@@ -34,6 +42,11 @@ namespace Arcatech.Items
             proj.Speed = ProjectileSpeed;
 
             proj.SetResult(UnitCollisionResult,ExpirationCollisionResult);
+
+            if (proj is HomingProjectileComponent h)
+            {
+                h.WithHoming(HomingRange);
+            }
 
             return proj;
         }

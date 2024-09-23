@@ -4,6 +4,7 @@ using Arcatech.Units;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Arcatech.Items
 {
@@ -14,12 +15,14 @@ namespace Arcatech.Items
         public SerializedWeaponUseStrategy WeaponUseStrategy;
         public SerializedStatsEffectConfig Cost;
 
-        //[Space]
-        //public SerializedStatsEffectConfig[] UseEffects; // only needed in melee weapons for now 
-        // obsolete hopefully
-
         public DrawItemsStrategy DrawStrategy;
         public SerializedEffectsCollection Effects;
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            Assert.IsNotNull(Cost);
+        }
 
     }
 }

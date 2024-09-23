@@ -92,12 +92,20 @@ namespace Arcatech.Stats
             {
                 var cont = _stats[cost.StatType];
                 OK = cont.GetCurrent >= Mathf.Abs(cost.InitialValue);
-                if (OK)
-                {
-                    cont.ApplyStatsEffect(cost);
-                } 
             }
             return OK;
+        }
+        public void ApplyCost (StatsEffect cost)
+        {
+            var cont = _stats[cost.StatType];
+            if ( cont.GetCurrent >= Mathf.Abs(cost.InitialValue))
+            {
+                cont.ApplyStatsEffect(cost);
+            }
+            else
+            {
+                Debug.LogError($"tried to apply cost {cost} in {Owner} without checking if its possible");
+            }
         }
 
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStatValues => _stats;

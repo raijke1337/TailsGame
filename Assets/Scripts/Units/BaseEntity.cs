@@ -53,9 +53,27 @@ namespace Arcatech.Units
             StopAllCoroutines();
         }
 
+        #region lockUnit
+        private bool _paused = false;
+        public bool UnitPaused
+        {
+            get
+            {
+                return _paused;
+            }
+            set
+            {
+                _paused = value;
+            }
+        }
+
+        #endregion
+
 
         public virtual void RunUpdate(float delta)
         {
+            if (UnitPaused) return;
+
             _stats.ControllerUpdate(delta);
             if (statsUpdateTimer!=null)
             {
@@ -71,6 +89,8 @@ namespace Arcatech.Units
         }
         public virtual void RunFixedUpdate(float delta)
         {
+            if (UnitPaused) return;
+
             _stats.FixedControllerUpdate(delta);
         }
 
@@ -99,7 +119,7 @@ namespace Arcatech.Units
 
         public virtual void ApplyEffect(StatsEffect eff, IEquippable shield = null)
         {
-            if (_stats.CanApplyEffect(eff, out var curr,shield))
+            if (_stats.CanApplyEffect(eff, out var curr, shield))
             {
                 switch (eff.StatType)
                 {
@@ -118,6 +138,8 @@ namespace Arcatech.Units
                         break;
                 }
             }
+            UpdateStats();
+
         }
 
         protected virtual void HandleDamage(float value)
@@ -136,6 +158,11 @@ namespace Arcatech.Units
             {
                 ForceUnitAction(ActionOnDeath.ProduceAction(this));
             }
+            UnitPaused = true;
+            if(TryGetComponent<Collider>(out var c))
+            {
+                c.enabled = false;
+            }
         }
         protected virtual void HandleStun()
         {
@@ -153,7 +180,7 @@ namespace Arcatech.Units
 
         public virtual void ForceUnitAction(BaseUnitAction act)
         {
-            act.DoAction(this);
+            act.StartAction(this);
         }
 
         public virtual void ApplyForceResultToUnit(float imp, float time)

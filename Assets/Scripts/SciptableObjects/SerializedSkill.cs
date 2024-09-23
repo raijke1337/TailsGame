@@ -16,7 +16,7 @@ namespace Arcatech.Skills
 
         [Space, Header("Combat"), SerializeField]
         public UnitActionType UnitActionType;
-        [SerializeField] public SerializedStatsEffectConfig CostTrigger;
+        [SerializeField] public SerializedStatsEffectConfig Cost;
 
 
         public Skill CreateSkill(BaseEntity owner, BaseEquippableItemComponent item)
@@ -26,7 +26,7 @@ namespace Arcatech.Skills
         private void OnValidate()
         {
             Assert.IsNotNull(UseStrategy);
-            Assert.IsNotNull(CostTrigger);
+            Assert.IsNotNull(Cost);
         }
     }
 }

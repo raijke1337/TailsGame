@@ -10,14 +10,14 @@ namespace Arcatech.Items
         [SerializeField] int _shotsPerBurst;
         public override WeaponStrategy ProduceStrategy(EquippedUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
-            return new BurstFireRangedWeaponStrategy(_shotsPerBurst, ActionResult ,Action, unit, cfg, TotalCharges, ChargeRestoreTime, InternalCooldown, comp);
+            return new BurstFireRangedWeaponStrategy(_shotsPerBurst, Action, OnActionStart, OnActionComplete, unit, cfg, TotalCharges, ChargeRestoreTime, InternalCooldown, comp);
         }
     }
     public class BurstFireRangedWeaponStrategy : RangedWeaponStrategy
     {
         int _shotsPerBurst;
 
-        public BurstFireRangedWeaponStrategy(int shots, SerializedActionResult[] results, SerializedUnitAction act, EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(results, act, unit, cfg, charges, reload, intcd, comp)
+        public BurstFireRangedWeaponStrategy(int shots, SerializedUnitAction act, SerializedActionResult[] onUse, SerializedActionResult[] onFinishUse, EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd, BaseWeaponComponent comp) : base(act, onUse, onFinishUse, unit, cfg, charges, reload, intcd, comp)
         {
             _shotsPerBurst = shots;
         }

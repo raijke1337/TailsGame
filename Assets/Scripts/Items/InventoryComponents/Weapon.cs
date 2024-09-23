@@ -1,4 +1,5 @@
 ﻿using Arcatech.EventBus;
+using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections.Generic;
@@ -46,9 +47,16 @@ namespace Arcatech.Items
             UseStrategy = cfg.WeaponUseStrategy.ProduceStrategy(Owner, cfg,_weaponGameobject);
         }
 
-        public bool TryUseItem(out BaseUnitAction act)
+        public bool TryUseItem(UnitStatsController stats, out BaseUnitAction act)
         {
-            bool ok = UseStrategy.TryUseUsable(out act);
+            act = null;
+            bool ok = false;
+            if (stats.CanApplyCost(GetCost) && UseStrategy.TryUseUsable(out act))
+            {
+                stats.ApplyCost(GetCost);
+                ok = true;
+            }
+
             return ok;
         }
 

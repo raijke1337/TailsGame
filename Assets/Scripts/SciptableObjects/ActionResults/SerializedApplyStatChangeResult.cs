@@ -27,6 +27,11 @@ namespace Arcatech.Actions
             Assert.IsNotNull(StatChanges[firstKey]);
             Assert.IsTrue(StatChanges[firstKey].Length>0);
         }
+
+        public override string ToString()
+        {
+            return $"apply effects result total {StatChanges.Count}";
+        }
     }
     public class ApplyStatChangeEffectResult : ActionResult
     {

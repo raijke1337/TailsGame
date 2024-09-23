@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2969185037941477804}
   - component: {fileID: 3324708304295823364}
   - component: {fileID: 8532586997614502200}
+  - component: {fileID: 7099338978121763060}
   m_Layer: 0
   m_Name: ObstacleRocks
   m_TagString: Untagged
@@ -92,9 +93,38 @@ MonoBehaviour:
   _showDebugs: 0
   _unitSide: 1
   defaultStats: {fileID: 11400000, guid: 731359afeaebac84988c8901b44ff4fc, type: 2}
+  statsUpdateFrequency: 0.3
   ActionOnDamage: {fileID: 11400000, guid: c6ec05a0f2a644e40a518aacd63d26cf, type: 2}
   ActionOnDeath: {fileID: 11400000, guid: 2237ed11289a6734faab0b08121d8d01, type: 2}
+  ActionOnStun: {fileID: 0}
   _animator: {fileID: 3324708304295823364}
+--- !u!54 &7099338978121763060
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378664594657177856}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1 &4229596096600978330
 GameObject:
   m_ObjectHideFlags: 0

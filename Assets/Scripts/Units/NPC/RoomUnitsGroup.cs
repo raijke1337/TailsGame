@@ -35,7 +35,7 @@ namespace Arcatech.AI
 
             foreach (var u in otherUnits)
             {
-                u.ForceCombat();
+                //u.ForceCombat();
 
             }
 

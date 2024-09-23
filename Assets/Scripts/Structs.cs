@@ -23,8 +23,6 @@ namespace Arcatech
     public delegate void DodgeEvents<T>(T arg);
     public delegate void SkillEvents<T>(T arg);
 
-    public delegate void StateMachineEvent();
-    public delegate void StateMachineEvent<T>(T arg);
 
     public delegate void ConditionCheckEvents (CheckConditionTrigger condition, bool currentState);
 

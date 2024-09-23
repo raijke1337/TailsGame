@@ -3,10 +3,14 @@ using Arcatech.Effects;
 using Arcatech.EventBus;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
+
+
+
     public class ProjectileComponent : MonoBehaviour
     {
         public BaseEntity Owner { get; set; }
@@ -43,7 +47,7 @@ namespace Arcatech.Items
                 EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
             }
         }
-        private void Update()
+        protected virtual void Update()
         {
             transform.position += Speed * Time.deltaTime * transform.forward;
             Lifetime -= Time.deltaTime;
@@ -71,11 +75,12 @@ namespace Arcatech.Items
 
         protected virtual void OnTriggerEnter(Collider other)
         {
-            //Debug.Log($"{this} hit {other.gameObject}!");
+
 
             if (other.TryGetComponent<BaseEntity>(out var u))
             {
                 // hit an entioty
+                Debug.Log($"{this} hit {u.GetUnitName}!");
                 if (u != Owner && u.Side != Owner.Side)
                 {
                     RemainingHits--;

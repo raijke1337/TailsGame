@@ -14,17 +14,19 @@ namespace Arcatech.Skills
         public float ChargeReload;
 
         [Space] public SerializedUnitAction OnUseAction;
-        public SerializedActionResult[] SkillResults;
+        public SerializedActionResult[] SkillResultsOnUse;
+        public SerializedActionResult[] SkillResultsOnCompleteAction;
 
         public virtual SkillUsageStrategy ProduceStrategy(BaseEntity owner,SerializedSkill cfg, BaseEquippableItemComponent item)
         {
-            return new SkillUsageStrategy(SkillResults, item, OnUseAction,owner,cfg,Charges,ChargeReload);
+            return new SkillUsageStrategy(SkillResultsOnUse, item, OnUseAction,owner,cfg,Charges,ChargeReload);
         }
 
         private void OnValidate()
         {
-            Assert.IsNotNull(SkillResults);
+            Assert.IsNotNull(SkillResultsOnUse);
             Assert.IsNotNull(OnUseAction);
+            //Assert.IsNotNull(SkillResultsOnCompleteAction);
             Assert.IsFalse(Charges==0);
         }
     }

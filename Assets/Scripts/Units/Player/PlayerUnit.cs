@@ -8,7 +8,6 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-    [RequireComponent(typeof(InputsPlayer))]
     public class PlayerUnit : ControlledUnit
     {
         [Space, Header("Player Unit")]
@@ -17,6 +16,8 @@ namespace Arcatech.Units
 
         [SerializeField, Child] protected Camera _faceCam;
         public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
+
+        [SerializeField, Self] protected PlayerMovementController _movement;
 
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
@@ -27,7 +28,36 @@ namespace Arcatech.Units
             ToggleCamera(true);
         }
 
+        public override void RunUpdate(float delta)
+        {
+            base.RunUpdate(delta);
+            UnitIsGrounded = _movement.isGrounded;
 
+            if (ActionLock) return;
+            _movement.SetDesiredMoveDirection(_inputs.InputsMovementVector);
+            _movement.SetDesiredLookDirection(_inputs.InputsLookVector);
+        }
+        //doaction in applyforce leads to this
+        public override void ApplyForceResultToUnit(float impulse, float time)
+        {
+            _movement.ApplyPhysicalMovementResult(impulse, time);
+        }
+
+        protected override void OnActionLock(bool locking)
+        {
+            // stop moving
+            _movement.SetDesiredMoveDirection(Vector3.zero);
+        }
+        protected override void HandleUnitAction(UnitActionType obj)
+        {
+            if (obj == UnitActionType.Jump)
+            {
+                transform.parent = null;
+                _movement.DoJump();
+                DoActionLogic(movementStats.JumpAction.ProduceAction(this));
+            }
+            else base.HandleUnitAction(obj);
+        }
 
         #region inventory
 
@@ -59,6 +89,7 @@ namespace Arcatech.Units
 
         protected override void HandleDamage(float value)
         {
+            UpdateStats();
             if (_stats.GetStatValue(BaseStatType.Stamina).GetCurrent <= _armorBreakStam && _stats.GetStatValue(BaseStatType.Energy).GetCurrent <= _armorBreakEnergy)
             {
                 if (_showDebugs) Debug.Log($"Armor break!");

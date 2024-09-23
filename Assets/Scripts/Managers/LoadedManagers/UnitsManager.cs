@@ -17,7 +17,9 @@ namespace Arcatech.Managers
 
         private PlayerUnit _player;
         public PlayerUnit GetPlayerUnit { get => _player; }
-        private List<RoomUnitsGroup> _npcGroups;
+        //  private List<RoomUnitsGroup> _npcGroups;
+        List<BaseEntity> entities = new List<BaseEntity>();
+
 
         private EffectsManager _effects;
         private SkillsPlacerManager _skills;
@@ -25,17 +27,17 @@ namespace Arcatech.Managers
 
         public void LockUnits(bool IsLock)
         {
-            _player.LockUnit = IsLock;
-            if (_npcGroups != null)
-            {
-                foreach (var g in _npcGroups)
-                {
-                    foreach (var n in g.GetAllUnits)
-                    {
-                        n.LockUnit = IsLock;
-                    }
-                }
-            }
+            _player.UnitPaused = IsLock;
+            //if (_npcGroups != null)
+            //{
+            //    foreach (var g in _npcGroups)
+            //    {
+            //        foreach (var n in g.GetAllUnits)
+            //        {
+            //            n.UnitPaused = IsLock;
+            //        }
+            //    }
+            //}
         }
 
         #region managed
@@ -59,77 +61,106 @@ namespace Arcatech.Managers
             { 
                 SetupUnit(_player, true);
             }
+            //_npcGroups = new List<RoomUnitsGroup>();
 
-            var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
-            if (_rooms.Length != 0) // rooms are set up
-            {
-                _npcGroups = new List<RoomUnitsGroup>();
-                foreach (var room in _rooms)
-                {
-                    var g = new RoomUnitsGroup(room.GetAllUnitsInRoom);
-                    _npcGroups.Add(g);
-                    g.SpawnRoom = room;
+            //var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
+            //if (_rooms.Length != 0) // rooms are set up
+            //{
+            //    foreach (var room in _rooms)
+            //    {
+            //        var g = new RoomUnitsGroup(room.GetAllUnitsInRoom);
+            //        _npcGroups.Add(g);
+            //        g.SpawnRoom = room;
 
-                    foreach (var unit in g.GetAllUnits)
-                    {
-                        SetupUnit(unit, true);
-                    }
-                }
-            }
-            else // just units
+            //        foreach (var unit in g.GetAllUnits)
+            //        {
+            //            SetupUnit(unit, true);
+            //        }
+            //    }
+            //}
+            //else // just units
+            //{
+            //    List<BaseEntity> l = new List<BaseEntity>();
+            //    foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
+            //    {
+            //        if (!(u is PlayerUnit))
+            //        SetupUnit(u, true);
+            //        l.Add(u);
+            //    }
+            //   // _npcGroups.Add(new RoomUnitsGroup(u));
+            //}
+
+            List<BaseEntity> l = new List<BaseEntity>();
+            foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
             {
-                foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
+                if (!(u is PlayerUnit))
                 {
-                    if (!(u is PlayerUnit))
-                    SetupUnit(u, true);
+                    SetupUnit(u,true);
+                    entities.Add(u);
                 }
             }
 
         }
         public virtual void ControllerUpdate(float delta)
         {
-            if (_player.LockUnit) return;
+            if (_player.UnitPaused) return;
 
             _player.RunUpdate(delta);
-            if (_npcGroups == null) return;
-            foreach (var g in _npcGroups)
+            foreach (var e in entities)
             {
-                foreach (var n in g.GetAllUnits.ToArray())
-                {
-                    n.RunUpdate(delta);
-                }
+                e.RunUpdate(delta);
             }
+            //if (_npcGroups == null) return;
+            //foreach (var g in _npcGroups)
+            //{
+            //    foreach (var n in g.GetAllUnits.ToArray())
+            //    {
+            //        n.RunUpdate(delta);
+            //    }
+            //}
         }
 
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
-            if (_player.LockUnit) return;
+            if (_player.UnitPaused) return;
 
             _player.RunFixedUpdate(fixedDelta);
-            if (_npcGroups == null) return;
-            foreach (var g in _npcGroups)
+            foreach (var e in entities)
             {
-                foreach (var n in g.GetAllUnits.ToArray())
-                {
-                    n.RunFixedUpdate(fixedDelta);
-                }
+                e.RunFixedUpdate(fixedDelta);
             }
+
+            //if (_npcGroups == null) return;
+            //foreach (var g in _npcGroups)
+            //{
+            //    foreach (var n in g.GetAllUnits.ToArray())
+            //    {
+            //        n.RunFixedUpdate(fixedDelta);
+            //    }
+            //}
         }
 
         public virtual void StopController()
         {
 
             _player.DisableUnit();
-            if (_npcGroups != null)
+            SetupUnit(_player, false);
+            foreach (var e in entities)
             {
-                foreach (var g in _npcGroups)
-                {
-                    foreach (var n in g.GetAllUnits)
-                    {
-                        n.DisableUnit();
-                    }
-                }
+                e.DisableUnit();
+                SetupUnit(e, false);
             }
+
+            //if (_npcGroups != null)
+            //{
+            //    foreach (var g in _npcGroups)
+            //    {
+            //        foreach (var n in g.GetAllUnits)
+            //        {
+            //            n.DisableUnit();
+            //        }
+            //    }
+            //}
 
         }
         #endregion

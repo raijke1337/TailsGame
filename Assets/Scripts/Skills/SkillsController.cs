@@ -35,11 +35,7 @@ namespace Arcatech.Skills
         {
             if (_skills.ContainsKey(action))
             {
-                var cost = _skills[action].GetCost;
-                if (cost == null || stats.CanApplyCost(cost))
-                {
-                    return _skills[action].TryUseItem(out onUse);
-                }
+                return _skills[action].TryUseItem(stats, out onUse);
             }
             onUse = null;
             return false;

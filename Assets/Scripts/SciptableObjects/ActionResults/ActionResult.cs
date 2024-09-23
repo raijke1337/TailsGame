@@ -7,6 +7,7 @@ namespace Arcatech.Actions
     public abstract class SerializedActionResult : ScriptableObject
     {
         public abstract IActionResult GetActionResult();
+
     }
 
     // trigger toggle

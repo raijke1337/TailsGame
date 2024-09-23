@@ -18,6 +18,7 @@ namespace Arcatech.Triggers
         private void OnValidate()
         {
             Assert.IsFalse(InitialValue==0 && OverTimeValue ==0);
+
         }
     }
 

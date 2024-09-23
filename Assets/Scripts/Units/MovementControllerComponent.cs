@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Windows;
 namespace Arcatech.Units
 {
-    public class MovementControllerComponent : BaseCharacterController
+    public class PlayerMovementController : BaseCharacterController
     {
         Rigidbody _rb;
 

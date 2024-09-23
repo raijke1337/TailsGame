@@ -5,7 +5,7 @@ namespace Arcatech.Units
 {
     public interface IUnitAction
     {
-        public void DoAction(BaseEntity user);
+        public void StartAction(BaseEntity user);
         public event UnityAction OnComplete;
         public bool LockMovement { get; }
     }

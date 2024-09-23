@@ -19,6 +19,10 @@ namespace Arcatech.Actions
         {
             return new ApplyForceResult(Strength, Duration);
         }
+        public override string ToString()
+        {
+            return $"force result {Strength}";
+        }
     }
 
     public class ApplyForceResult : ActionResult

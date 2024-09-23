@@ -17,6 +17,11 @@ namespace Arcatech.Actions
         {
             return new ProduceProjectileResult(Projectile);
         }
+
+        public override string ToString()
+        {
+            return $"projectile result : {Projectile}";
+        }
     }
     public class ProduceProjectileResult : ActionResult
     {

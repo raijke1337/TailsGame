@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
   m_Name: chain lightning proje
   m_EditorClassIdentifier: 
-  ProjectilePrefab: {fileID: 648527123774877334, guid: 85e91a04af065114ab7f59d0bc1c4318,
+  ProjectilePrefab: {fileID: 3647652846724663048, guid: 85e91a04af065114ab7f59d0bc1c4318,
     type: 3}
-  TimeToLive: 1
-  ProjectileSpeed: 50
+  TimeToLive: 10
+  ProjectileSpeed: 1
+  HomingRange: 6
   ProjectilePenetration: 3
   UnitCollisionResult:
-  - {fileID: 11400000, guid: 1bee762937c53014182666042b85acbb, type: 2}
-  - {fileID: 11400000, guid: 91ca95838d54c384fa92a0f09b049bac, type: 2}
+  - {fileID: 11400000, guid: 00806ea9a9966a14bb32211165a36e30, type: 2}
+  - {fileID: 11400000, guid: 54c5118fe045117499e9f31fe44161c1, type: 2}
   ExpirationCollisionResult: []

@@ -42,7 +42,7 @@ namespace Arcatech.Managers
         private Dictionary<StatsEffect, List<BaseEntity>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-           // Debug.Log($"Handling trigger event; {obj}");
+             //Debug.Log($"Handling trigger event; {obj}");
             var targetToApply = obj.Target;
 
                 if (_applied.TryGetValue(obj.Applied, out var r))
@@ -67,12 +67,20 @@ namespace Arcatech.Managers
                 {
                     targetToApply.ApplyEffect(obj.Applied);
                     _applied[obj.Applied] = new List<BaseEntity>() { targetToApply };
+
                 if (obj.Applied.OnApply != null)
                 {
                     obj.Applied.OnApply.GetActionResult().ProduceResult(null, obj.Target, obj.Place);
                 }
             }
         }
+
+
+        void OnTriggerApply(BaseEntity src, BaseEntity tgt, Transform place)
+        {
+
+        }
+
         }
 
         #endregion
