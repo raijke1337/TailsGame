@@ -14,13 +14,14 @@ namespace Arcatech.Skills
         protected SerializedSkill Config { get; }
         public UnitActionType UseActionType => Config.UnitActionType;
         public StatsEffect GetCost => new(Config.Cost);
+        public IDrawItemStrategy DrawStrategy { get; }
 
         #endregion
 
         protected SkillUsageStrategy Strategy { get; }
 
 
-        public Skill(SerializedSkill settings, BaseEntity owner, BaseEquippableItemComponent item)
+        public Skill(IDrawItemStrategy s, SerializedSkill settings, BaseEntity owner, BaseEquippableItemComponent item)
         { 
 
             Config = settings;
@@ -28,6 +29,7 @@ namespace Arcatech.Skills
             if (settings == null) return; // placeholder maybe TODO - for items without skills
 
             Strategy = Config.UseStrategy.ProduceStrategy(Owner,Config, item);
+            DrawStrategy = s;
         }
 
         public bool TryUseItem(UnitStatsController stats, out BaseUnitAction onUse)
@@ -58,6 +60,7 @@ namespace Arcatech.Skills
         public float CurrentNumber => Strategy.CurrentNumber;
 
         public float MaxNumber => Strategy.MaxNumber;
+
 
         #endregion
     }

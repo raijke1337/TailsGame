@@ -1,25 +1,24 @@
 ﻿using Arcatech.Actions;
-using Arcatech.Effects;
-using Arcatech.EventBus;
 using Arcatech.Triggers;
 using Arcatech.Units;
-using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
 
 
-
+    [RequireComponent(typeof(WeaponTriggerComponent))]
     public class ProjectileComponent : MonoBehaviour
     {
         public BaseEntity Owner { get; set; }
         [HideInInspector] public int RemainingHits;
         [HideInInspector] public float Lifetime;
         [HideInInspector] public float Speed;
+        protected bool hasHitUnit = false;
+        WeaponTriggerComponent col;
 
-        public SerializedEffectsCollection VFX;
-        EffectsCollection _fx;
+        //public SerializedEffectsCollection VFX;
+       // EffectsCollection _fx;
 
         IActionResult[] UnitCollisionResult; // explode (place aoe projectile) or apply effects
         IActionResult[] ExpirationCollisionResult; // explode (place aoe projectile) or stop moving
@@ -41,48 +40,19 @@ namespace Arcatech.Items
         }
         private void Start()
         {
-            _fx = new EffectsCollection(VFX);
-            if (_fx.TryGetEffect(EffectMoment.OnStart, out var e))
-            {
-                EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
-            }
-        }
-        protected virtual void Update()
-        {
-            transform.position += Speed * Time.deltaTime * transform.forward;
-            Lifetime -= Time.deltaTime;
-            if (Lifetime < 0)
-            {
-                Destroy(gameObject);
-            }
+            col = GetComponent<WeaponTriggerComponent>();
+            col.SomethingHitEvent += Col_SomethingHitEvent;
         }
 
-
-        protected void OnDestroy()
+        protected virtual void Col_SomethingHitEvent(Collider other)
         {
-            if (_fx.TryGetEffect(EffectMoment.OnExpiry, out var e))
-            {
-                EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
-            }
-            if (ExpirationCollisionResult.Length > 0)
-            {
-                foreach (var exp in ExpirationCollisionResult)
-                {
-                    exp.ProduceResult(Owner,null,transform);
-                }
-            }
-        }
-
-        protected virtual void OnTriggerEnter(Collider other)
-        {
-
-
             if (other.TryGetComponent<BaseEntity>(out var u))
             {
                 // hit an entioty
                 Debug.Log($"{this} hit {u.GetUnitName}!");
                 if (u != Owner && u.Side != Owner.Side)
                 {
+                    hasHitUnit = true;
                     RemainingHits--;
 
                     if (UnitCollisionResult.Length > 0)
@@ -92,10 +62,7 @@ namespace Arcatech.Items
                             uc.ProduceResult(Owner, u, transform);
                         }
                     }
-                    if (_fx.TryGetEffect(EffectMoment.OnCollision, out var e))
-                    {
-                        EventBus<VFXRequest>.Raise(new VFXRequest(e, transform));
-                    }
+
                 }
             }
             if (other.CompareTag("SolidItem") || other.gameObject.isStatic)
@@ -108,6 +75,30 @@ namespace Arcatech.Items
                 Destroy(gameObject);
             }
         }
+
+        protected virtual void Update()
+        {
+            transform.position += Speed * Time.deltaTime * transform.forward;
+            Lifetime -= Time.deltaTime;
+            if (Lifetime < 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+
+        protected virtual void OnDestroy()
+        {
+
+            if (ExpirationCollisionResult.Length > 0 && !hasHitUnit)
+            {
+                foreach (var exp in ExpirationCollisionResult)
+                {
+                    exp.ProduceResult(Owner,null,transform);
+                }
+            }
+        }
+
 
 
     }

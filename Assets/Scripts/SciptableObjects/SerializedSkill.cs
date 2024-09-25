@@ -11,8 +11,8 @@ namespace Arcatech.Skills
     public class SerializedSkill : ScriptableObject
     {
         [Header("Use strategy"),SerializeField] public SerializedSkillUseStrategy UseStrategy;
+        [SerializeField] DrawItemsStrategy DrawItemsStrategy;
         [Header("Text"), SerializeField] public ExtendedText Description;
-        [Header("Effects"), SerializeField] public SerializedEffectsCollection Effects;
 
         [Space, Header("Combat"), SerializeField]
         public UnitActionType UnitActionType;
@@ -21,12 +21,13 @@ namespace Arcatech.Skills
 
         public Skill CreateSkill(BaseEntity owner, BaseEquippableItemComponent item)
         {
-            return new Skill(this,owner,item);
+            return new Skill(DrawItemsStrategy, this,owner,item);
         }
         private void OnValidate()
         {
             Assert.IsNotNull(UseStrategy);
             Assert.IsNotNull(Cost);
+            Assert.IsNotNull(DrawItemsStrategy);
         }
     }
 }

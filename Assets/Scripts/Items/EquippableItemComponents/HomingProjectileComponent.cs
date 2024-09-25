@@ -1,4 +1,5 @@
 ﻿using Arcatech.Units;
+using Cinemachine.Utility;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace Arcatech.Items
             }
             if (target != null)
             {
-                transform.LookAt(target.transform.position);
+                transform.LookAt(new Vector3 (target.transform.position.x, transform.position.y, target.transform.position.z));
             }
 
             transform.position += Speed * Time.deltaTime * transform.forward;
@@ -51,10 +52,10 @@ namespace Arcatech.Items
                 Destroy(gameObject);
             }
         }
-        protected override void OnTriggerEnter(Collider other)
+        protected override void Col_SomethingHitEvent(Collider other)
         {
-            base.OnTriggerEnter(other);
-            if (other.transform.Equals( target))
+            base.Col_SomethingHitEvent(other);
+            if (other.transform.Equals(target))
             {
                 hitTarget.Add(target);
             }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7049254152207290240}
   - component: {fileID: 3647652846724663048}
+  - component: {fileID: 9040626054356448424}
   m_Layer: 0
   m_Name: chain lightning projectile
   m_TagString: Untagged
@@ -48,11 +49,27 @@ MonoBehaviour:
   RemainingHits: 0
   Lifetime: 0
   Speed: 0
-  VFX:
-    Sounds:
-      _serializedList: []
-    Effects:
-      _serializedList: []
+--- !u!65 &9040626054356448424
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643564878323680382}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &6208289289594476192
 PrefabInstance:
   m_ObjectHideFlags: 0

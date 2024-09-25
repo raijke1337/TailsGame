@@ -10,12 +10,13 @@ namespace Arcatech.Skills
     public class SerializedSkillUseStrategy : ScriptableObject
     {
         [Header("Cooldowns")]
-        public int Charges;
-        public float ChargeReload;
+        [SerializeField] int Charges;
+        [SerializeField] float ChargeReload;
 
-        [Space] public SerializedUnitAction OnUseAction;
-        public SerializedActionResult[] SkillResultsOnUse;
-        public SerializedActionResult[] SkillResultsOnCompleteAction;
+        [Space,Header("Usage")]
+        [SerializeField] SerializedUnitAction OnUseAction;
+        [SerializeField] SerializedActionResult[] SkillResultsOnUse;
+        [SerializeField] SerializedActionResult[] SkillResultsOnCompleteAction;
 
         public virtual SkillUsageStrategy ProduceStrategy(BaseEntity owner,SerializedSkill cfg, BaseEquippableItemComponent item)
         {
@@ -26,7 +27,6 @@ namespace Arcatech.Skills
         {
             Assert.IsNotNull(SkillResultsOnUse);
             Assert.IsNotNull(OnUseAction);
-            //Assert.IsNotNull(SkillResultsOnCompleteAction);
             Assert.IsFalse(Charges==0);
         }
     }

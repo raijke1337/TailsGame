@@ -10,7 +10,6 @@ namespace Arcatech.Items
     public class Weapon : Equipment, IWeapon
     {
 
-       // protected List<SerializedStatsEffectConfig> _storedTriggerSettings;
         private SerializedStatsEffectConfig _cost;
         protected BaseWeaponComponent _weaponGameobject;
         public StatsEffect GetCost 

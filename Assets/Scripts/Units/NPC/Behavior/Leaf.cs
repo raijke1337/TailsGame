@@ -14,7 +14,10 @@ namespace Arcatech.Units.Behaviour
         public override NodeStatus Process(NPCUnit actor)
         {
             var st = strat.Process(actor);
-          //  Debug.Log($"{NodeName} status {st}");
+            if (actor.UnitDebug)
+            {
+                Debug.Log($"{NodeName} on {actor.GetUnitName} status {st}");
+            }
             return st;
         }
         public override void Reset()

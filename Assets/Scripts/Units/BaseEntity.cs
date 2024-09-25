@@ -24,6 +24,7 @@ namespace Arcatech.Units
 
         [SerializeField, Self] protected Animator _animator;
 
+        public bool UnitDebug => _showDebugs;
 
         public string GetUnitName { get => defaultStats.DisplayName; }
         [HideInInspector] public Side Side => _unitSide;

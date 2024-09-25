@@ -33,11 +33,16 @@ namespace Arcatech.Skills
 
         public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
         {
+            onUse = null;
             if (_skills.ContainsKey(action))
             {
-                return _skills[action].TryUseItem(stats, out onUse);
+                bool ok = _skills[action].TryUseItem(stats, out onUse);
+                if (ok)
+                {
+                    inv.DrawItems(_skills[action].DrawStrategy);
+                    return ok;
+                }
             }
-            onUse = null;
             return false;
         }
         #endregion

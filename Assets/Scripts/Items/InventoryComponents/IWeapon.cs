@@ -1,8 +1,9 @@
-﻿namespace Arcatech.Items
+﻿using Arcatech.Skills;
+
+namespace Arcatech.Items
 {
-    public interface IWeapon : IUsable
+    public interface IWeapon : IUsable, IAffectsItemDisplay
     {
-        public IDrawItemStrategy DrawStrategy { get; }
         public IWeaponUseStrategy UseStrategy { get; }
 
     }

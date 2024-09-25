@@ -51,6 +51,7 @@ namespace Arcatech.Units
                 drop.Content = _drop;
                 GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
             }
+            agent.isStopped = true;
             base.HandleDeath();
         }
         protected override void OnActionLock(bool locking)
@@ -82,12 +83,45 @@ namespace Arcatech.Units
         protected virtual void SetupBehavior()
         {  
             UnitIsGrounded = true; // placeholder until movement ctrl is implemented
+            SetupIdleRoaming(); 
         }
         protected virtual void ExecuteBehaviour()
         {
-            if (ActionLock) return;
+            if (ActionLock || UnitPaused) return;
+            _animator.SetBool("isMoving", agent.velocity.magnitude > 0);
             tree?.Process(this);
         }
+        
+        void SetupIdleRoaming()
+        {
+            tree = new BehaviourTree(GetUnitName + " undefined idle behavior");
+            Sequence roamandWait = new Sequence("walk around and wait", 0);
+            Leaf roam = new Leaf(new RoamInRangeStrategy(5f,transform.position,agent),"roam in range 5", 100);
+
+
+            Sequence idleWait = new("idle for time");
+            Leaf wait = new(new IdleAtPointStrategy(3f), "Wait 3 sec");
+            idleWait.AddChild(wait);
+
+            bool isDoneWaiting()
+            {
+                if (wait.Process(this) == Node.NodeStatus.Success)
+                {
+                    roamandWait.Reset();
+                    return true;
+                }
+                else return false;
+            }
+            Leaf checkWait = new Leaf(new BehaviourCondition(() => isDoneWaiting()),"is finished idle time");
+            idleWait.AddChild(checkWait);
+
+
+            roamandWait.AddChild(roam);
+            roamandWait.AddChild(idleWait);
+
+            tree.AddChild(roamandWait);
+        }
+
 
         #endregion
 

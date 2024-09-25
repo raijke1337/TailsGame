@@ -19,8 +19,6 @@ namespace Arcatech.Skills
         protected Transform Spawner;
         readonly ExtendedText _desc;
 
-
-
         int MaxCharges { get; }
         float ChargeReload { get; }
         float InternalDelay { get; }
@@ -50,6 +48,7 @@ namespace Arcatech.Skills
             _internalCdTimer = new CountDownTimer(InternalDelay);
             _internalCdTimer.Start();
             Spawner = item.Spawner;
+
         }
 
         public bool TryUseUsable(out BaseUnitAction action)

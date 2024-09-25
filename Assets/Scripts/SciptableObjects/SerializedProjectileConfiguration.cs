@@ -31,7 +31,7 @@ namespace Arcatech.Items
             Assert.IsNotNull(ProjectilePrefab);
             Assert.IsNotNull(UnitCollisionResult);
         }
-        public ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place)
+        public virtual ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;

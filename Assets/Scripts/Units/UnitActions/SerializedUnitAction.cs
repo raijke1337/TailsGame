@@ -12,6 +12,7 @@ namespace Arcatech.Units
         [SerializeField,Range(0f,1f),Tooltip("at what percent of animation time action is considered complete")] protected float _exitTime;
         [SerializeField] NextActionSettings _nextAct;
         [SerializeField] SerializedActionResult _onStart;
+        [SerializeField] SerializedActionResult _onExit;
         [SerializeField] SerializedActionResult _onFinish;
         public BaseUnitAction ProduceAction(BaseEntity unit)
         {
