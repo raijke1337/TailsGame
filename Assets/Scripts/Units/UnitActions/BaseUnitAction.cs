@@ -9,17 +9,19 @@ namespace Arcatech.Units
 {
     public class BaseUnitAction : IUnitAction
     {
-        public static BaseUnitAction BuildAction(BaseEntity u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult onstart, SerializedActionResult onfinish)
+        public static BaseUnitAction BuildAction(BaseEntity u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place)
         {
-            return new BaseUnitAction(u, lck, next, anim, exit,onstart, onfinish);
+            return new BaseUnitAction(u, lck, next, anim, exit,onstart, onfinish, onExit,place);
         }
-        BaseUnitAction(BaseEntity u, bool locks, NextActionSettings next, string anim, float exitTime, SerializedActionResult onstart, SerializedActionResult onfinish)
+
+        BaseUnitAction(BaseEntity u, bool locks, NextActionSettings next, string anim, float exitTime, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place)
         {
             Actor = u;
             LockMovement = locks;
             Next = next;
             _animationName = anim;
             _exitTime = exitTime;
+            this.place = place;
 
             var a = u.GetComponent<Animator>();
 
@@ -45,97 +47,153 @@ namespace Arcatech.Units
                     }
                 }
             }
-            this.onStart = onstart;
-            this.onComplete = onfinish;
+
+            if (onstart != null && onstart.Length > 0)
+            {
+                OnStartAction = new IActionResult[onstart.Length]; 
+                for (int i = 0; i < onstart.Length; i++)
+                {
+                    OnStartAction[i] = onstart[i].GetActionResult();
+                }
+            }
+            if (onfinish != null && onfinish.Length > 0)
+            {
+                OnCompleteAction = new IActionResult[onfinish.Length];
+                for (int i = 0; i < onstart.Length; i++)
+                {
+                    OnCompleteAction[i] = onfinish[i].GetActionResult();
+                }
+            }
+            if (onExit != null && onExit.Length > 0)
+            {
+
+                OnExitTime = new IActionResult[onExit.Length];
+                for (int i = 0; i < onExit.Length; i++)
+                {
+                    OnExitTime[i] = onExit[i].GetActionResult();
+                }
+            }
+
+            _actionTimer = new CountDownTimer(animTime / animSpeedMult);
 
         }
+       
+        
+        
         protected BaseEntity Actor;
         public bool LockMovement { get; protected set; }
         protected NextActionSettings Next { get; }
-        public event UnityAction OnComplete = delegate { };
-        /// <summary>
-        /// time until exit time starts
-        /// </summary>
-        public float GetExitTimeDelay
-        {
-            get
-            {
-                return animTime / animSpeedMult * _exitTime;
-            }
-        }
 
 
-        string _animationName;
+
+        readonly Transform place;
+        readonly string _animationName;
         protected float _exitTime = 1f;
         CountDownTimer _actionTimer;
         float animSpeedMult = 1f;
         float animTime = 1f;
 
-        SerializedActionResult onComplete;
-        SerializedActionResult onStart;
+        UnitActionState _actionState = UnitActionState.None;
+        public UnitActionState GetActionState { get { return _actionState; } }
 
-        public bool CanAdvance(out BaseUnitAction next)
+        readonly IActionResult[] OnCompleteAction;
+        readonly IActionResult[] OnStartAction;
+        readonly IActionResult[] OnExitTime;
+
+        public UnitActionState UpdateAction(float delta)
+        {
+            _actionTimer?.Tick(delta);
+
+            
+            if (_actionTimer.Progress <= _exitTime && _actionState == UnitActionState.Started)
+            {
+                ExitTimeAction();
+            }
+            if (_actionTimer.IsReady && _actionState == UnitActionState.ExitTime)
+            {
+                CompleteAction();
+            }
+            return _actionState;
+        }
+
+        public bool CanAdvance(out SerializedUnitAction next)
         {
             next = null;
 
             bool ok = Next != null && Next.CheckTime(_actionTimer.Progress);
             if (ok)
             {
-                next = Next.GetNextAction(Actor);
+                next = Next.GetNextAction;
             }
             return ok;
         }
 
-
-        public bool IsComplete
+        public void StartAction()
         {
-            get => _actionTimer == null || _actionTimer.Progress >= _exitTime || _actionTimer.IsReady; 
-        }
-
-
-        public void StartAction(BaseEntity user)
-        {
-            string start = "none";
-            var a = user.GetComponent<Animator>();
+            string start = "";
+            var a = Actor.GetComponent<Animator>();
             if (_animationName!= null)
             {
                 a.CrossFade(Animator.StringToHash(_animationName), 0.1f);
             }
-
-            if (onStart != null)
+            if (OnStartAction != null)
             {
-                start = onStart.ToString();
-                onStart.GetActionResult().ProduceResult(Actor, null, Actor.transform);
-            };
-           // Debug.Log($"Started action {this}, result {start}");
-
-            _actionTimer = new CountDownTimer(animTime/animSpeedMult);
+                foreach (var r in OnStartAction)
+                {
+                    r.ProduceResult(Actor, null, place);
+                    start += (r.ToString()+' ');
+                }
+            }
+            _actionTimer.Reset();
             _actionTimer.Start();
-            _actionTimer.OnTimerStopped += CompleteAction;
-        }
+            _actionState = UnitActionState.Started;
 
-        void CompleteAction()
+            if (Actor.UnitDebug) { Debug.Log($"{this}, result {start}"); }
+
+        }
+        void ExitTimeAction()
         {
-            string start = "none";
-            if (onComplete != null)
+            string ex = "";
+            if (OnExitTime != null)
             {
-                onComplete.GetActionResult().ProduceResult(Actor, null, Actor.transform);
-                start = onComplete.ToString();
-            };
-         //   Debug.Log($"Complete action {this}, result {start}");
+                foreach (var r in OnExitTime)
+                {
+                    r.ProduceResult(Actor, null, place);
+                    ex += (r.ToString() + ' ');
+                }
+            }
+            _actionState = UnitActionState.ExitTime;
+            if (Actor.UnitDebug) { Debug.Log($"{this}, result {ex}"); }
 
-            OnComplete.Invoke();
         }
-
-        public void Update(float delta)
+        public void CompleteAction()
         {
-            _actionTimer?.Tick(delta);
-        }
+            if (_actionState == UnitActionState.Completed)
+            {
+                _actionState = UnitActionState.None;
+                return;
+            }
+            string fin = "";
+            if (OnCompleteAction != null)
+            {
+                foreach (var r in OnCompleteAction)
+                {
+                    r.ProduceResult(Actor, null, place);
+                    fin += (r.ToString() + ' ');
+                }
+            };
+            _actionState = UnitActionState.Completed;
+            _actionTimer.Stop();
 
+            if (Actor.UnitDebug) { Debug.Log($"{this}, result {fin}"); }
+
+            //OnComplete.Invoke();
+        }
         public override string ToString()
         {
-            return _animationName;
+            return _animationName+ " state: "+_actionState;
         }
+
     }
 
     [Serializable]
@@ -148,6 +206,6 @@ namespace Arcatech.Units
         {
             return (currentPercent >= _chainWindowStart && currentPercent <= _chainWindowEnd);
         }
-        public BaseUnitAction GetNextAction(BaseEntity unit) => _nextAnim.ProduceAction(unit);
+        public SerializedUnitAction GetNextAction { get => _nextAnim; }
     }
 }

@@ -148,7 +148,7 @@ namespace Arcatech.Units
             if (_showDebugs) Debug.Log($"{GetUnitName} took dmg {value}");
             if (ActionOnDamage != null)
             {
-                ForceUnitAction(ActionOnDamage.ProduceAction(this));
+                ForceUnitAction(ActionOnDamage.ProduceAction(this, transform));
             }
         }
 
@@ -157,7 +157,7 @@ namespace Arcatech.Units
             if (_showDebugs) Debug.Log($"{GetUnitName} died");
             if (ActionOnDeath != null)
             {
-                ForceUnitAction(ActionOnDeath.ProduceAction(this));
+                ForceUnitAction(ActionOnDeath.ProduceAction(this,transform));
             }
             UnitPaused = true;
             if(TryGetComponent<Collider>(out var c))
@@ -170,7 +170,7 @@ namespace Arcatech.Units
             if (_showDebugs) Debug.Log($"{GetUnitName} got stunned");
             if (ActionOnStun != null)
             {
-                ForceUnitAction(ActionOnStun.ProduceAction(this));
+                ForceUnitAction(ActionOnStun.ProduceAction(this, transform));
             }
         }
 
@@ -181,7 +181,7 @@ namespace Arcatech.Units
 
         public virtual void ForceUnitAction(BaseUnitAction act)
         {
-            act.StartAction(this);
+            act.StartAction();
         }
 
         public virtual void ApplyForceResultToUnit(float imp, float time)

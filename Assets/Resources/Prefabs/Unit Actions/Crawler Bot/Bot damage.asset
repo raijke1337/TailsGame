@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
   m_Name: Bot damage
   m_EditorClassIdentifier: 
-  _locksMovement: 0
+  _locksMovement: 1
   _animationName: Bot_damage
   _exitTime: 1
   _nextAct:
     _nextAnim: {fileID: 0}
     _chainWindowStart: 0
     _chainWindowEnd: 0
-  _onStart: {fileID: 0}
-  _onFinish: {fileID: 0}
+  _onStart: []
+  _onExit: []
+  _onFinish: []

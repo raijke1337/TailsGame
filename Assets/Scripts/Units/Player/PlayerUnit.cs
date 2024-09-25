@@ -54,7 +54,7 @@ namespace Arcatech.Units
             {
                 transform.parent = null;
                 _movement.DoJump();
-                DoActionLogic(movementStats.JumpAction.ProduceAction(this));
+                DoActionLogic(movementStats.JumpAction.ProduceAction(this, transform));
             }
             else base.HandleUnitAction(obj);
         }
@@ -97,6 +97,13 @@ namespace Arcatech.Units
             }
             base.HandleDamage(value);
         }
+
+        protected override void HandleDeath()
+        {
+            base.HandleDeath();
+            _movement.SetDesiredMoveDirection(Vector3.zero);
+        }
+
         #endregion
 
 

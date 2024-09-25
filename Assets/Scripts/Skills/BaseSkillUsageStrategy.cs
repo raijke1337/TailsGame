@@ -13,8 +13,7 @@ namespace Arcatech.Skills
     public  class SkillUsageStrategy : IUsablesStrategy    , IIconContent
     {
         public BaseEntity Owner {get;protected set;}
-        SerializedUnitAction Action { get; }
-        IActionResult[] SkillUsageResults;
+        SerializedUnitAction SkillAction { get; }
 
         protected Transform Spawner;
         readonly ExtendedText _desc;
@@ -29,19 +28,15 @@ namespace Arcatech.Skills
 
 
 
-        public SkillUsageStrategy(SerializedActionResult[] results, BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseEntity unit, SerializedSkill cfg, int charges, float reload)
+        public SkillUsageStrategy(BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseEntity unit, SerializedSkill cfg, int charges, float reload)
         {
-            SkillUsageResults = new ActionResult[results.Length];
-            for (int i = 0; i < results.Length; i++)
-            {
-                SkillUsageResults[i] = results[i].GetActionResult();
-            }
+
             Owner = unit;
             _desc = cfg.Description;
             ChargeReload = reload;
             InternalDelay = 0.1f; // placeholder?
             MaxCharges = charges;
-            Action = useaction;
+            SkillAction = useaction;
 
             _remainingCharges = MaxCharges;
             _chargesTimers = new Queue<CountDownTimer>(charges);
@@ -53,7 +48,7 @@ namespace Arcatech.Skills
 
         public bool TryUseUsable(out BaseUnitAction action)
         {
-            action = Action.ProduceAction(Owner);
+            action = SkillAction.ProduceAction(Owner,Spawner);
             if (!_internalCdTimer.IsReady) return false;
             else
             {
@@ -65,20 +60,22 @@ namespace Arcatech.Skills
                     _chargesTimers.Enqueue(t);
                     _remainingCharges--;
                     t.OnTimerStopped += OnTimerComplete;
-                    DoSkillLogic();
+                   // DoSkillLogic();
                     return true;
                 }
             }
             return false;
         }
 
-        protected virtual void DoSkillLogic()
-        {
-            foreach (var r in SkillUsageResults)
-            {
-                r.ProduceResult(Owner, null, Spawner.transform);
-            }
-        }
+        // moved to skill action
+
+        //protected virtual void DoSkillLogic()
+        //{
+        //    foreach (var r in SkillUsageResults)
+        //    {
+        //        r.ProduceResult(Owner, null, Spawner.transform);
+        //    }
+        //}
 
         public virtual void UpdateUsable(float delta)
         {

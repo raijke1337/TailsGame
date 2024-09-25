@@ -16,7 +16,7 @@ namespace Arcatech.Items
         protected BaseWeaponComponent WeaponComponent { get; }
 
 
-        public WeaponStrategy (SerializedUnitAction act,SerializedActionResult[] onUse, SerializedActionResult[] onFinishUse, EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd,BaseWeaponComponent comp)
+        public WeaponStrategy (SerializedUnitAction act,EquippedUnit unit, WeaponSO cfg, int charges, float reload, float intcd,BaseWeaponComponent comp)
         {
             Owner = unit;
             Config = cfg;
@@ -25,49 +25,13 @@ namespace Arcatech.Items
             MaxCharges = charges;
             WeaponComponent = comp;
 
-            Action = act;
-
-            OnActionStart = new IActionResult[onUse.Length];
-            for (int i = 0; i < onUse.Length; i++)
-            {
-                OnActionStart[i] = onUse[i].GetActionResult();
-            }
-
-            OnActionComplete = new IActionResult[onFinishUse.Length];
-            for (var i = 0; i < onFinishUse.Length; i++)
-            {
-                OnActionComplete[i] = onFinishUse[i].GetActionResult();
-            }
+            Action = act.ProduceAction(unit,comp.Spawner);
 
             _remainingCharges = MaxCharges;
             _chargesTimers = new Queue<CountDownTimer>(charges);
             _internalCdTimer = new CountDownTimer(InternalDelay);
             _internalCdTimer.Start();
         }
-
-
-
-# region actions
-        protected SerializedUnitAction Action { get; }
-        protected IActionResult[] OnActionStart { get; }
-        protected IActionResult[] OnActionComplete { get; }
-
-        protected void PerformOnStart(BaseEntity user, BaseEntity target, Transform place)
-        {
-            foreach (var action in OnActionStart)
-            {
-                action.ProduceResult(user, target, place);
-            }
-        }
-        protected void PerformOnComplete(BaseEntity user, BaseEntity target, Transform place)
-        {
-            foreach (var action in OnActionComplete)
-            {
-                action.ProduceResult(user, target, place);
-            }
-        }
-
-        #endregion
 
 
         // charges
@@ -111,9 +75,11 @@ namespace Arcatech.Items
         #endregion
         #region usable
 
+        protected BaseUnitAction Action { get; }
+
         public virtual bool TryUseUsable(out BaseUnitAction action)
         {
-            action = Action.ProduceAction(Owner);
+            action = Action;
             if (CheckTimersAndCharges())
             {
                 ChargesLogicOnUse(); return true;

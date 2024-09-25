@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb1aa02062f61c45ba0ecd3c4b21ded, type: 3}
-  m_Name: skill_expShot_a2_place
+  m_Script: {fileID: 11500000, guid: 074c0baf696d7b94a86b551cf916c840, type: 3}
+  m_Name: skill_chainShock_strat
   m_EditorClassIdentifier: 
-  Projectile: {fileID: 11400000, guid: 89e268fbff722c64d9be554d18facc99, type: 2}
-  numberOfProjectiles: 1
-  spread: 0
-  intDelay: 0.1
+  Charges: 4
+  ChargeReload: 4
+  SkillAction: {fileID: 11400000, guid: 5fd5c5249ff15f743b342732a0b19005, type: 2}

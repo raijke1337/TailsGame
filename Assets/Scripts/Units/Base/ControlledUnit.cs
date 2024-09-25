@@ -33,7 +33,23 @@ namespace Arcatech.Units
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
-            currentAction?.Update(delta);
+            if (currentAction != null)
+            {
+                switch (currentAction?.UpdateAction(delta))
+                {
+                    case UnitActionState.None:
+                        break;
+                    case UnitActionState.Started:
+                        ActionLock = currentAction.LockMovement;
+                        break;
+                    case UnitActionState.ExitTime:
+                        ActionLock =false;
+                        break;
+                    case UnitActionState.Completed:
+                        ActionLock = false;
+                        break;
+                }
+            }
         }
 
         bool _lockAction;
@@ -57,24 +73,18 @@ namespace Arcatech.Units
         protected BaseUnitAction currentAction;
         protected void DoActionLogic(BaseUnitAction act)
         {
-            if (currentAction!= null && currentAction != act)
+            if (currentAction!= null && currentAction != act && currentAction.GetActionState != UnitActionState.Completed)
             {
-                CurrentAction_OnComplete();
+                currentAction.CompleteAction();
             }
             currentAction = act;
             ActionLock = currentAction.LockMovement;
-            currentAction.StartAction(this);
-            currentAction.OnComplete += CurrentAction_OnComplete;
-        }
-        private void CurrentAction_OnComplete()
-        {
-            currentAction.OnComplete -= CurrentAction_OnComplete;
-            currentAction = null;
-            ActionLock = false;
+            currentAction.StartAction();
         }
 
         protected virtual void HandleUnitAction(UnitActionType obj)
         {
+            // this execution is blocked by ActionLock bool
             BaseUnitAction a;
 
             if (!UnitIsGrounded) return;

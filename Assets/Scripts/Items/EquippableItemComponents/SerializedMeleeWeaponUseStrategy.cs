@@ -19,7 +19,7 @@ namespace Arcatech.Items
         }
         public override WeaponStrategy ProduceStrategy(EquippedUnit unit, WeaponSO cfg, BaseWeaponComponent comp)
         {
-            return new MeleeWeaponStrategy(OnColliderHit, Action, OnActionStart,OnActionComplete, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
+            return new MeleeWeaponStrategy(OnColliderHit, Action, unit, cfg, TotalCharges,ChargeRestoreTime,comp);
         }
     }
 

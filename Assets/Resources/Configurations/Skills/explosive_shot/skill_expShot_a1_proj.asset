@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
-  m_Name: item_projectile_bolt_skill
+  m_Name: skill_expShot_a1_proj
   m_EditorClassIdentifier: 
   ProjectilePrefab: {fileID: 533599384589077400, guid: fab0a58990b8bcb43b90765193641909,
     type: 3}
   TimeToLive: 6
   ProjectileSpeed: 5
+  HomingRange: 6
   ProjectilePenetration: 1
   UnitCollisionResult:
   - {fileID: 11400000, guid: 971873bce30743b4699f2904c9a4ac0f, type: 2}
+  - {fileID: 11400000, guid: 25dd66e44c7bd9147af3794978eb73ba, type: 2}
   ExpirationCollisionResult:
   - {fileID: 11400000, guid: 971873bce30743b4699f2904c9a4ac0f, type: 2}
+  - {fileID: 11400000, guid: 25dd66e44c7bd9147af3794978eb73ba, type: 2}

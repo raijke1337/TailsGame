@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
-  m_Name: spin atk
+  m_Script: {fileID: 11500000, guid: 074c0baf696d7b94a86b551cf916c840, type: 3}
+  m_Name: skill_expshot_strat
   m_EditorClassIdentifier: 
-  _locksMovement: 1
-  _animationName: Standing Melee Attack 360 Low
-  _exitTime: 0.9
-  _nextAct:
-    _nextAnim: {fileID: 11400000}
-    _chainWindowStart: 0.3
-    _chainWindowEnd: 0.6
+  Charges: 2
+  ChargeReload: 6
+  SkillAction: {fileID: 11400000, guid: 577a382dbfbf4e948887b3ab29590c8b, type: 2}

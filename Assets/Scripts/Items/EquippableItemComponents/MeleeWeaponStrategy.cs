@@ -1,13 +1,14 @@
 ﻿using Arcatech.Actions;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Arcatech.Items
 {
     public class MeleeWeaponStrategy : WeaponStrategy
     {
-        public MeleeWeaponStrategy(SerializedActionResult[] onHit, SerializedUnitAction act, SerializedActionResult[] onSt, SerializedActionResult[] onE, EquippedUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, onSt, onE,unit, cfg, charges, reload, 0.05f, comp)
+        public MeleeWeaponStrategy(SerializedActionResult[] onHit, SerializedUnitAction act, EquippedUnit unit, WeaponSO cfg, int charges, float reload, BaseWeaponComponent comp) : base(act, unit, cfg, charges, reload, 0.05f, comp)
         {
             Trigger = (comp as MeleeWeaponComponent).Trigger;
             Trigger.SomethingHitEvent += HandleColliderHitEvent;
@@ -19,34 +20,11 @@ namespace Arcatech.Items
             {
                 OnColliderHit[i] = onHit[i].GetActionResult();
             }
-            _actionBandaidTimer = new CountDownTimer(reload);
-
-            _actionBandaidTimer.OnTimerStopped += BandaidTimer;
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += Cleanup;
 
         }
-
-
-
-        private void Cleanup(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.Scene arg1)
-        {
-            Trigger.SomethingHitEvent -= HandleColliderHitEvent;
-            _actionBandaidTimer.OnTimerStopped -= BandaidTimer;
-           // Debug.Log($"weapon {WeaponComponent} unsub");
-        }
-
-        void BandaidTimer ()
-        {            
-            _currentAction = null;
-            PerformOnComplete(Owner, null, WeaponComponent.Spawner);
-        }
-
-        protected IActionResult[] OnColliderHit { get; }
-
         protected WeaponTriggerComponent Trigger;
-        BaseUnitAction _currentAction;
-        CountDownTimer _actionBandaidTimer;
-
+        protected IActionResult[] OnColliderHit { get; }
+        protected BaseUnitAction currentAction;
         public void SwitchCollider(bool state) => Trigger.ToggleCollider(state);
 
         public override bool TryUseUsable(out BaseUnitAction action)
@@ -56,54 +34,36 @@ namespace Arcatech.Items
 
             bool ok = CheckTimersAndCharges();
             action = null;
-            if (!ok) return false;
-
-            // case first attack
-            if (_currentAction == null || _currentAction.IsComplete)
+            if (!ok)
             {
-                PerformOnComplete(Owner, null, WeaponComponent.Spawner);
+                if (Owner.UnitDebug) Debug.Log($"Can't use weapon because CD");
+                return false;
+            }
+            hitsThisSwing.Clear();
 
-                action = Action.ProduceAction(Owner);
-                _currentAction = action;
-                _actionBandaidTimer.Reset();
-                _actionBandaidTimer.Start();
-
+            /// case advancing
+           if (currentAction != null && currentAction.CanAdvance(out var next))
+            {
+                action = next.ProduceAction(Owner,WeaponComponent.Spawner);
                 ChargesLogicOnUse();
-                PerformOnStart(Owner, null, WeaponComponent.Spawner);
-
+                currentAction = action;
+                if (Owner.UnitDebug) Debug.Log($"Advancing weapon combo {next}");
                 return true;
             }
-            //case chain
-            if (_currentAction != null && !_currentAction.IsComplete)
+            //// case first attack OR previous attack is completed
+            
+           else
             {
-                if (_currentAction.CanAdvance(out var n))
-                {
-                    PerformOnComplete(Owner, null, WeaponComponent.Spawner);
-
-                    action = n;
-                    _currentAction = n;
-                    ChargesLogicOnUse();
-                    _actionBandaidTimer.Reset();
-                    _actionBandaidTimer.Start();
-
-                    PerformOnStart(Owner, null, WeaponComponent.Spawner);
-                    // Debug.Log($"Doing chain attack");
-                    return true;
-                }
-                else return false;
-            }
-            Debug.Log($"Can't attack");
-            return false;
-        }
-
-        protected  void PerformOnHit(BaseEntity user, BaseEntity target, Transform place)
-        {
-            foreach (var res in OnColliderHit)
-            {
-                res.ProduceResult(user, target, place);
+                ChargesLogicOnUse();
+                action = Action;
+                currentAction = action;
+                if (Owner.UnitDebug) Debug.Log($"Starting weapon combo {action}");
+                return true;
             }
         }
 
+
+        List<BaseEntity> hitsThisSwing = new();
         private void HandleColliderHitEvent(Collider target)
         {
             if (target == Owner) return;
@@ -111,18 +71,21 @@ namespace Arcatech.Items
             {
                 if (target.TryGetComponent<BaseEntity>(out var e))
                 {
-                    PerformOnHit(Owner, e, WeaponComponent.Spawner);
+                    if (!hitsThisSwing.Contains(e))
+                    {
+                        PerformOnHit(Owner, e, WeaponComponent.Spawner);
+                        hitsThisSwing.Add(e);
+                    }
                 }
             }
         }
-
-        public override void UpdateUsable(float delta)
+        protected void PerformOnHit(BaseEntity user, BaseEntity target, Transform place)
         {
-            base.UpdateUsable(delta);
-            _actionBandaidTimer?.Tick(delta);
+            foreach (var res in OnColliderHit)
+            {
+                res.ProduceResult(user, target, place);
+            }
         }
-
-
     }
 
 

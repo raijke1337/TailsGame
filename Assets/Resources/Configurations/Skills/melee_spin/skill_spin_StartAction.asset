@@ -10,17 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
-  m_Name: 2hSwing 4
+  m_Name: skill_spin_StartAction
   m_EditorClassIdentifier: 
   _locksMovement: 1
-  _animationName: 2HLong@Attack04
-  _exitTime: 0.8
+  _animationName: Standing Melee Attack 360 Low
+  _exitTime: 0.7
   _nextAct:
-    _nextAnim: {fileID: 0}
-    _chainWindowStart: 0
-    _chainWindowEnd: 0
+    _nextAnim: {fileID: 11400000}
+    _chainWindowStart: 0.6
+    _chainWindowEnd: 0.8
   _onStart:
-  - {fileID: 11400000, guid: 808741e726c58e349a89ab69b3c51100, type: 2}
+  - {fileID: 11400000, guid: 62f47557b8839684a8891441c257f845, type: 2}
   _onExit: []
-  _onFinish:
-  - {fileID: 11400000, guid: 9fcfcf324ae2e004b8f626f0b9d9d654, type: 2}
+  _onFinish: []

@@ -11,17 +11,17 @@ namespace Arcatech.Units
         [SerializeField] string _animationName;
         [SerializeField,Range(0f,1f),Tooltip("at what percent of animation time action is considered complete")] protected float _exitTime;
         [SerializeField] NextActionSettings _nextAct;
-        [SerializeField] SerializedActionResult _onStart;
-        [SerializeField] SerializedActionResult _onExit;
-        [SerializeField] SerializedActionResult _onFinish;
-        public BaseUnitAction ProduceAction(BaseEntity unit)
+        [SerializeField] SerializedActionResult[] _onStart;
+        [SerializeField] SerializedActionResult[] _onExit;
+        [SerializeField] SerializedActionResult[] _onFinish;
+        public BaseUnitAction ProduceAction(BaseEntity unit, Transform place)
         {
-            return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime,_onStart,_onFinish);
+            return BaseUnitAction.BuildAction(unit,_locksMovement,_nextAct,_animationName,_exitTime,_onStart,_onFinish,_onExit, place);
         }
 
         private void OnValidate()
         {
-            Assert.IsNotNull(_animationName);
+            Assert.IsFalse((_onStart == null && _onExit == null && _onFinish == null));
         }
 
     }

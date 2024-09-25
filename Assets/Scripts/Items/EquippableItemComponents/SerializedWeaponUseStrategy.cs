@@ -11,8 +11,6 @@ namespace Arcatech.Items
     {
         [Header("Actions")]
         public SerializedUnitAction Action;
-        public SerializedActionResult[] OnActionStart;
-        public SerializedActionResult[] OnActionComplete;
 
         [Space,Header("Stats")]
         public int TotalCharges;
@@ -26,7 +24,7 @@ namespace Arcatech.Items
         }
         public virtual WeaponStrategy ProduceStrategy (EquippedUnit unit, WeaponSO cfg,BaseWeaponComponent comp)
         {
-            return new WeaponStrategy(Action, OnActionStart,OnActionComplete, unit, cfg,TotalCharges,ChargeRestoreTime, InternalCooldown,comp);   
+            return new WeaponStrategy(Action, unit, cfg,TotalCharges,ChargeRestoreTime, InternalCooldown,comp);   
         }
     }
 

@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _locksMovement: 1
   _animationName: 1H-RH@Attack02
-  _exitTime: 1
+  _exitTime: 0.9
   _nextAct:
     _nextAnim: {fileID: 0}
     _chainWindowStart: 0
     _chainWindowEnd: 0
-  _onStart: {fileID: 0}
-  _onFinish: {fileID: 0}
+  _onStart:
+  - {fileID: 11400000, guid: 808741e726c58e349a89ab69b3c51100, type: 2}
+  _onExit: []
+  _onFinish:
+  - {fileID: 11400000, guid: 9fcfcf324ae2e004b8f626f0b9d9d654, type: 2}

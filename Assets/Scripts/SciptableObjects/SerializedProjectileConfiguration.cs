@@ -31,11 +31,21 @@ namespace Arcatech.Items
             Assert.IsNotNull(ProjectilePrefab);
             Assert.IsNotNull(UnitCollisionResult);
         }
-        public virtual ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place)
+        /// <summary>
+        /// instantiate the prefab and set it
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="place"></param>
+        /// <param name="spread">in euler degrees</param>
+        /// <returns></returns>
+        public virtual ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place,float spread = 0f)
         {
             var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             proj.Owner = owner;
-            proj.transform.forward = owner.transform.forward;
+
+            Vector3 dir = owner.transform.forward + new Vector3 (UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread));
+
+            proj.transform.forward = dir;
 
             proj.Lifetime = TimeToLive;
             proj.RemainingHits = ProjectilePenetration; 
