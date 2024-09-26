@@ -199,29 +199,18 @@ namespace Arcatech.Managers
         {
             if (isStart)
             {
-                _pauseBind = new EventBinding<PlayerPauseEvent>(OnPlayerPaused);
+
                 _levelBind = new EventBinding<LevelCompletedEvent>(OnLevelCompleteTrigger);
 
-                EventBus<PlayerPauseEvent>.Register(_pauseBind);
                 EventBus<LevelCompletedEvent>.Register(_levelBind);
             }
             else
             {
-                EventBus<PlayerPauseEvent>.Deregister(_pauseBind);
+                
                 EventBus<LevelCompletedEvent>.Deregister(_levelBind);
             }
         }
 
-
-        #region pause handling
-
-        EventBinding<PlayerPauseEvent> _pauseBind;
-        private void OnPlayerPaused(PlayerPauseEvent isPausing)
-        {
-            _gameControllers.UnitsManager.LockUnits(isPausing.Value);
-            // shoukld stop player inputs
-        }
-        #endregion
 
         #region level complete
         EventBinding<LevelCompletedEvent> _levelBind;
@@ -257,10 +246,10 @@ namespace Arcatech.Managers
 
         public void OnPlayerDead()
         {
-            if (_gameControllers != null)
-            {
-                _gameControllers.StopController();
-            }
+            //if (_gameControllers != null)
+            //{
+            //    _gameControllers.StopController();
+            //}
             _gameControllers.GameInterfaceManager.GameOver();
         }
         public void QuitGame()

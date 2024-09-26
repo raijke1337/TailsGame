@@ -37,8 +37,9 @@ namespace Arcatech.Units
         float maxDodgeSpeed;
         public void ApplyPhysicalMovementResult(float impulse, float time)
         {
+            movement.DisableGrounding(time);
             dodgeVector = transform.forward;
-            maxDodgeSpeed = impulse;
+            maxDodgeSpeed = Mathf.Abs(impulse);
 
            // Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
             dodgeVector *= impulse;
@@ -82,6 +83,7 @@ namespace Arcatech.Units
                 movement.velocity = Vector3.zero;
             else
                 movement.velocity = Vector3.Project(movement.velocity, transform.up);
+
         }
 
         #endregion

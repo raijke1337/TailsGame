@@ -1,4 +1,5 @@
 ﻿using Arcatech.Actions;
+using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Arcatech.Items
         [HideInInspector] public float Speed;
         protected bool hasHitUnit = false;
         WeaponTriggerComponent col;
+        bool isAoe = false; // bandaid but w/e
 
         //public SerializedEffectsCollection VFX;
        // EffectsCollection _fx;
@@ -41,6 +43,7 @@ namespace Arcatech.Items
         private void Start()
         {
             col = GetComponent<WeaponTriggerComponent>();
+            if (GetComponent<AreaOfEffectSphereScalerComponent>()) isAoe = true;
             col.SomethingHitEvent += Col_SomethingHitEvent;
         }
 
@@ -49,7 +52,7 @@ namespace Arcatech.Items
             if (other.TryGetComponent<BaseEntity>(out var u))
             {
                 // hit an entioty
-                Debug.Log($"{this} hit {u.GetUnitName}!");
+                //Debug.Log($"{this} hit {u.GetUnitName}!");
                 if (u != Owner && u.Side != Owner.Side)
                 {
                     hasHitUnit = true;
@@ -62,9 +65,10 @@ namespace Arcatech.Items
                             uc.ProduceResult(Owner, u, transform);
                         }
                     }
-
                 }
             }
+            if (isAoe) return;
+
             if (other.CompareTag("SolidItem") || other.gameObject.isStatic)
             {
                 RemainingHits = 0;

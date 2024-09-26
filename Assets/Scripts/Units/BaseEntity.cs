@@ -6,6 +6,8 @@ using Arcatech.Units.Stats;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Arcatech.Units
 {
@@ -54,7 +56,13 @@ namespace Arcatech.Units
             StopAllCoroutines();
         }
 
-        #region lockUnit
+        /// <summary>
+        /// we have action lock - on actions
+        /// unitpause - on game pause
+        /// unitDead - on death
+        /// </summary>
+
+        #region locks
         private bool _paused = false;
         public bool UnitPaused
         {
@@ -64,16 +72,29 @@ namespace Arcatech.Units
             }
             set
             {
+                if (_showDebugs) Debug.Log($"Entity paused: {value}");
+                OnUnitPause(value);
                 _paused = value;
             }
         }
 
+        private bool _dead = false;
+        public bool UnitDead
+        {
+            get { return _dead; }
+            set
+            {
+                if (_showDebugs) Debug.Log($"Entity dead: {value}");
+                UnitPaused = value;
+                _dead = value;
+            }
+        }
         #endregion
 
 
         public virtual void RunUpdate(float delta)
         {
-            if (UnitPaused) return;
+            if (UnitPaused || UnitDead) return;
 
             _stats.ControllerUpdate(delta);
             if (statsUpdateTimer!=null)
@@ -98,6 +119,7 @@ namespace Arcatech.Units
         #endregion
         #region stats
         CountDownTimer statsUpdateTimer;
+        public event UnityAction<BaseEntity> BaseEntityDeathEvent = delegate { };
 
         protected virtual void UpdateStats()
         {
@@ -154,16 +176,17 @@ namespace Arcatech.Units
 
         protected virtual void HandleDeath()
         {
-            if (_showDebugs) Debug.Log($"{GetUnitName} died");
+            
             if (ActionOnDeath != null)
             {
                 ForceUnitAction(ActionOnDeath.ProduceAction(this,transform));
             }
-            UnitPaused = true;
             if(TryGetComponent<Collider>(out var c))
             {
                 c.enabled = false;
             }
+            UnitDead = true;
+            BaseEntityDeathEvent.Invoke(this);
         }
         protected virtual void HandleStun()
         {
@@ -173,14 +196,18 @@ namespace Arcatech.Units
                 ForceUnitAction(ActionOnStun.ProduceAction(this, transform));
             }
         }
+        protected virtual void OnUnitPause(bool isPause)
+        {
+            Debug.Log($"Entity paused: {isPause} and nothing else happened because this is not overwritten");
+        }
 
-        public event UnityAction<BaseEntity> BaseEntityDeathEvent = delegate { };
 
         #endregion
 
 
         public virtual void ForceUnitAction(BaseUnitAction act)
         {
+            if (UnitPaused) return;
             act.StartAction();
         }
 

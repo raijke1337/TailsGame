@@ -19,7 +19,8 @@ MonoBehaviour:
     _nextAnim: {fileID: 11400000}
     _chainWindowStart: 0.6
     _chainWindowEnd: 0.8
-  _onStart:
+  _onStart: []
+  _onExit:
+  - {fileID: 11400000, guid: 8e19d3b0c233a8542bcf7f505650ee1e, type: 2}
   - {fileID: 11400000, guid: 62f47557b8839684a8891441c257f845, type: 2}
-  _onExit: []
   _onFinish: []

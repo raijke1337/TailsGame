@@ -25,8 +25,11 @@ namespace Arcatech.Units
         public override void StartControllerUnit()
         {
             base.StartControllerUnit();
+            _inputs.InputsPause += OnInputsPauseButton;
             ToggleCamera(true);
         }
+
+
 
         public override void RunUpdate(float delta)
         {
@@ -50,6 +53,7 @@ namespace Arcatech.Units
         }
         protected override void HandleUnitAction(UnitActionType obj)
         {
+            if (UnitPaused || ActionLock) return;
             if (obj == UnitActionType.Jump)
             {
                 transform.parent = null;
@@ -105,7 +109,22 @@ namespace Arcatech.Units
         }
 
         #endregion
+        #region pause
+        private void OnInputsPauseButton()
+        {
+            if (UnitDead) return;
+            else
+            {
+                EventBus<PauseToggleEvent>.Raise(new PauseToggleEvent(!UnitPaused));
+            }
+        }
+        protected override void OnUnitPause(bool isPause)
+        {
+            // also stop moving
+            _movement.SetDesiredMoveDirection(Vector3.zero);
+        }
 
+        #endregion
 
 
 

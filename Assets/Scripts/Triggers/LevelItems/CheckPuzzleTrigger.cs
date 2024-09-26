@@ -27,7 +27,6 @@ namespace Arcatech.Triggers
                     _currentPuzzleWindow = Instantiate(PuzzlePrefab, _ui.transform);
                     _currentPuzzleWindow.PuzzleResult += OnPuzzleResult;
 
-                    _ui.OnPauseRequesShowPanelAndPause(true);
                 }
 
                 base.OnTriggerEnter(other);
@@ -48,7 +47,6 @@ namespace Arcatech.Triggers
         private void OnPuzzleResult(bool ok)
         {
             _currentPuzzleWindow.PuzzleResult -= OnPuzzleResult;
-            _ui.OnPauseRequesShowPanelAndPause(false);
             Destroy(_currentPuzzleWindow.gameObject);
             IsSolved = ok;
         }

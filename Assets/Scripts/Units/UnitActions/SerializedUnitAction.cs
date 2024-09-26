@@ -9,7 +9,7 @@ namespace Arcatech.Units
     {
         [SerializeField] protected bool _locksMovement;
         [SerializeField] string _animationName;
-        [SerializeField,Range(0f,1f),Tooltip("at what percent of animation time action is considered complete")] protected float _exitTime;
+        [SerializeField, Range(0.01f, 0.99f), Tooltip("at what percent of animation time action is considered complete")] protected float _exitTime = 0.75f;
         [SerializeField] NextActionSettings _nextAct;
         [SerializeField] SerializedActionResult[] _onStart;
         [SerializeField] SerializedActionResult[] _onExit;

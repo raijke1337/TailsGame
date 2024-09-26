@@ -1,3 +1,5 @@
+using Arcatech.EventBus;
+using Arcatech.Managers;
 using Arcatech.Scenes.Cameras;
 using KBCore.Refs;
 using UnityEngine;
@@ -12,7 +14,6 @@ namespace Arcatech.Units.Inputs
         [SerializeField,Self] private AimingComponent _aim;
         public AimingComponent Aiming => _aim;
         private IsoCamAdjust _adj;
-
 
         #region managedctrl
 
@@ -92,7 +93,7 @@ namespace Arcatech.Units.Inputs
 
         private void OnPauseButton()
         {
-            Debug.Log($"Pause button NYI");
+            CallBackPause();
         }
 
         private void OnShieldSkill()

@@ -59,10 +59,10 @@ namespace Arcatech.EventBus
         }
     }
 
-    public struct PlayerPauseEvent : IEvent
+    public struct PauseToggleEvent : IEvent
     {
         public bool Value { get; }
-        public PlayerPauseEvent(bool v) => Value = v;
+        public PauseToggleEvent (bool value) => Value = value;
     }
 
     public struct UpdateIconEvent : IEvent

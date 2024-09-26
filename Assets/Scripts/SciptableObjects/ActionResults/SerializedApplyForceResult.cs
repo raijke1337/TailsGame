@@ -19,16 +19,12 @@ namespace Arcatech.Actions
         {
             return new ApplyForceResult(Strength, Duration);
         }
-        public override string ToString()
-        {
-            return $"force result {Strength}";
-        }
     }
 
     public class ApplyForceResult : ActionResult
     {
-        float _imp;
-        float _t;
+        private float _imp;
+        private float _t;
         public ApplyForceResult (float impulse, float dur)
         {
             _imp = impulse;

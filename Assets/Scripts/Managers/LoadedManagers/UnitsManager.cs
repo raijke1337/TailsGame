@@ -1,143 +1,71 @@
-using Arcatech.AI;
-using Arcatech.Effects;
-using Arcatech.Items;
-using Arcatech.Skills;
-using Arcatech.Triggers;
+using Arcatech.EventBus;
 using Arcatech.Units;
-using Arcatech.Units.Inputs;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
-using static UnityEngine.UI.CanvasScaler;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace Arcatech.Managers
 {
     public class UnitsManager : MonoBehaviour, IManagedController
     {
 
-        private PlayerUnit _player;
-        public PlayerUnit GetPlayerUnit { get => _player; }
-        //  private List<RoomUnitsGroup> _npcGroups;
-        List<BaseEntity> entities = new List<BaseEntity>();
 
 
-        private EffectsManager _effects;
-        private SkillsPlacerManager _skills;
-        private TriggersManager _trigger;
 
-        public void LockUnits(bool IsLock)
+        #region pause handling
+
+        EventBinding<PauseToggleEvent> _pauseBind;
+        private void OnPawsToggle(PauseToggleEvent isPausing)
         {
-            _player.UnitPaused = IsLock;
-            //if (_npcGroups != null)
-            //{
-            //    foreach (var g in _npcGroups)
-            //    {
-            //        foreach (var n in g.GetAllUnits)
-            //        {
-            //            n.UnitPaused = IsLock;
-            //        }
-            //    }
-            //}
+            _player.UnitPaused = !_player.UnitPaused;
+            Debug.Log($"Paws the game: {_player.UnitPaused}");
+            foreach(var e in entities)
+            {
+                e.UnitPaused = _player.UnitPaused;
+            }
         }
+        #endregion
+
 
         #region managed
         public virtual void StartController()
         {
-            if (_effects == null)
-            {
-                _effects = EffectsManager.Instance;
-            }
-            if (_trigger == null)
-            {
-                _trigger = GameManager.Instance.GetGameControllers.TriggersProjectilesManager;
-            }
-            if (_skills == null)
-            {
-                _skills = GameManager.Instance.GetGameControllers.SkillsPlacerManager;
-            }
-
-            _player = FindObjectOfType<PlayerUnit>();
-            if (_player != null)
-            { 
-                SetupUnit(_player, true);
-            }
-            //_npcGroups = new List<RoomUnitsGroup>();
-
-            //var _rooms = FindObjectsOfType<EnemiesLevelBlockDecorComponent>();
-            //if (_rooms.Length != 0) // rooms are set up
-            //{
-            //    foreach (var room in _rooms)
-            //    {
-            //        var g = new RoomUnitsGroup(room.GetAllUnitsInRoom);
-            //        _npcGroups.Add(g);
-            //        g.SpawnRoom = room;
-
-            //        foreach (var unit in g.GetAllUnits)
-            //        {
-            //            SetupUnit(unit, true);
-            //        }
-            //    }
-            //}
-            //else // just units
-            //{
-            //    List<BaseEntity> l = new List<BaseEntity>();
-            //    foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
-            //    {
-            //        if (!(u is PlayerUnit))
-            //        SetupUnit(u, true);
-            //        l.Add(u);
-            //    }
-            //   // _npcGroups.Add(new RoomUnitsGroup(u));
-            //}
-
             List<BaseEntity> l = new List<BaseEntity>();
             foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
             {
-                if (!(u is PlayerUnit))
+                SetupUnit(u, true);
+                entities.Add(u);
+                if (u is PlayerUnit p)
                 {
-                    SetupUnit(u,true);
-                    entities.Add(u);
+                    _player = p;
                 }
             }
+
+            _pauseBind = new EventBinding<PauseToggleEvent>(OnPawsToggle);
+            EventBus<PauseToggleEvent>.Register(_pauseBind);
 
         }
         public virtual void ControllerUpdate(float delta)
         {
             if (_player.UnitPaused) return;
 
-            _player.RunUpdate(delta);
-            foreach (var e in entities)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
-                e.RunUpdate(delta);
+                entities[i].RunUpdate(delta);
             }
-            //if (_npcGroups == null) return;
-            //foreach (var g in _npcGroups)
-            //{
-            //    foreach (var n in g.GetAllUnits.ToArray())
-            //    {
-            //        n.RunUpdate(delta);
-            //    }
-            //}
+
         }
 
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
             if (_player.UnitPaused) return;
 
-            _player.RunFixedUpdate(fixedDelta);
-            foreach (var e in entities)
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
-                e.RunFixedUpdate(fixedDelta);
+                entities[i].RunFixedUpdate(fixedDelta);
             }
 
-            //if (_npcGroups == null) return;
-            //foreach (var g in _npcGroups)
-            //{
-            //    foreach (var n in g.GetAllUnits.ToArray())
-            //    {
-            //        n.RunFixedUpdate(fixedDelta);
-            //    }
-            //}
         }
 
         public virtual void StopController()
@@ -151,22 +79,16 @@ namespace Arcatech.Managers
                 SetupUnit(e, false);
             }
 
-            //if (_npcGroups != null)
-            //{
-            //    foreach (var g in _npcGroups)
-            //    {
-            //        foreach (var n in g.GetAllUnits)
-            //        {
-            //            n.DisableUnit();
-            //        }
-            //    }
-            //}
-
+            EventBus<PauseToggleEvent>.Deregister(_pauseBind);
         }
         #endregion
 
         #region units handling
 
+        private PlayerUnit _player;
+        public PlayerUnit GetPlayerUnit { get => _player; }
+        //  private List<RoomUnitsGroup> _npcGroups;
+        List<BaseEntity> entities = new List<BaseEntity>();
 
         private void SetupUnit(BaseEntity u, bool isEnable)
         {
@@ -186,13 +108,14 @@ namespace Arcatech.Managers
         private void HandleUnitDeath(BaseEntity unit)
         {
             unit.DisableUnit();
+          //  entities.Remove(unit);
             
             if (unit is PlayerUnit)
             {
-                LockUnits(true);
+               // GM_OnPauseToggle(true);
                 GameManager.Instance.OnPlayerDead();
             }
-            Destroy(unit.gameObject,2f);
+            //else Destroy(unit.gameObject, 2f);
 
         }
         #endregion

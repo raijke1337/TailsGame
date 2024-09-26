@@ -51,14 +51,19 @@ namespace Arcatech.Units
                 drop.Content = _drop;
                 GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
             }
-            agent.isStopped = true;
+            //agent.isStopped = true;
             base.HandleDeath();
         }
         protected override void OnActionLock(bool locking)
         {
-            agent.ResetPath();
+            agent.isStopped = locking;
+            if (locking) _animator.SetBool("isMoving", false);
         }
-
+        protected override void OnUnitPause(bool isPause)
+        {
+            agent.isStopped = isPause;
+            if (isPause) _animator.SetBool("isMoving", false);
+        }
 
         public override void StartControllerUnit()
         {
@@ -69,6 +74,7 @@ namespace Arcatech.Units
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
+            _animator.SetBool("isMoving", agent.velocity.magnitude > 0);
             ExecuteBehaviour();
         }
 
@@ -88,7 +94,7 @@ namespace Arcatech.Units
         protected virtual void ExecuteBehaviour()
         {
             if (ActionLock || UnitPaused) return;
-            _animator.SetBool("isMoving", agent.velocity.magnitude > 0);
+            
             tree?.Process(this);
         }
         

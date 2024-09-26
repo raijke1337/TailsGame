@@ -19,6 +19,7 @@ namespace Arcatech.Managers
 
         EventBinding<PlayerStatsChangedUIEvent> _statChangedBind;
         EventBinding<InventoryUpdateEvent> _inventoryChangedBind;
+        EventBinding<PauseToggleEvent> _pauseToggleBind;
 
 
         #region managed
@@ -36,11 +37,11 @@ namespace Arcatech.Managers
 
                 _statChangedBind = new EventBinding<PlayerStatsChangedUIEvent>(UpdatePlayerBars);
                 _inventoryChangedBind = new EventBinding<InventoryUpdateEvent>(UpdateIcons);
-
+                _pauseToggleBind = new EventBinding<PauseToggleEvent>(ShowPauseMenu);
 
                 EventBus<PlayerStatsChangedUIEvent>.Register(_statChangedBind);
                 EventBus<InventoryUpdateEvent>.Register(_inventoryChangedBind);
-
+                EventBus<PauseToggleEvent>.Register(_pauseToggleBind);
 
             }
             else
@@ -66,13 +67,14 @@ namespace Arcatech.Managers
         private void OnDisable()
         {
             EventBus<PlayerStatsChangedUIEvent>.Deregister(_statChangedBind);
-
             EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
+            EventBus<PauseToggleEvent>.Deregister(_pauseToggleBind);
         }
         public virtual void StopController()
         {
             EventBus<PlayerStatsChangedUIEvent>.Deregister(_statChangedBind);
             EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
+            EventBus<PauseToggleEvent>.Deregister(_pauseToggleBind);
         }
         #endregion
 
@@ -90,24 +92,22 @@ namespace Arcatech.Managers
                 _text.CurrentDialogue = text;
                 if (text.Options.Count > 0)
                 {
-                    EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isShown));
+                    EventBus<PauseToggleEvent>.Raise(new PauseToggleEvent(isShown));
                 }
             }    
             else
             {
                 //_playerPan.LoadedDialogue(text, isShown);
                 _text.gameObject.SetActive(isShown);
-                EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isShown));
+                EventBus<PauseToggleEvent>.Raise(new PauseToggleEvent(isShown));
             }
 
         }
         private void OnDialogueCompletedInTextWindow()
         {
-            EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(false));
+            EventBus<PauseToggleEvent>.Raise(new PauseToggleEvent(false));
             _text.gameObject.SetActive(false);
         }
-
-
 
 
         #endregion
@@ -132,10 +132,10 @@ namespace Arcatech.Managers
 
         #region menus
 
-        public void OnPauseRequesShowPanelAndPause(bool isPause)
+        public void ShowPauseMenu(PauseToggleEvent isPause)
         {
-            _pause.SetActive(isPause);
-                    EventBus<PlayerPauseEvent>.Raise(new PlayerPauseEvent(isPause));
+            // dont pause the game here
+            _pause.SetActive(isPause.Value);
         }
 
         public void GameOver()
@@ -149,6 +149,10 @@ namespace Arcatech.Managers
         public void OnRestart()
         {
             GameManager.Instance.RequestLoadSceneFromContainer(GameManager.Instance.GetCurrentLevelData);
+        }
+        public void ClickResume()
+        {
+            EventBus<PauseToggleEvent>.Raise(new PauseToggleEvent(false));
         }
 
         #endregion
