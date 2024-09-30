@@ -1,62 +1,63 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
-public class TestSceneManager : MonoBehaviour
+namespace INab.Demo
 {
-    public List<GameObject> objectsToShow = new List<GameObject>();
-
-    public Text text;
-
-    private int currentObjectActiveID = 0;
-
-    // Start is called before the first frame update
-    void Start()
+    public class TestSceneManager : MonoBehaviour
     {
-        foreach(var obj in objectsToShow)
+        public List<GameObject> objectsToShow = new List<GameObject>();
+
+        public Text text;
+
+        private int currentObjectActiveID = 0;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            obj.SetActive(false);
+            foreach (var obj in objectsToShow)
+            {
+                obj.SetActive(false);
+            }
+
+            if (objectsToShow.Count > 0) objectsToShow[0].SetActive(true);
         }
 
-        if(objectsToShow.Count > 0) objectsToShow[0].SetActive(true);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (objectsToShow.Count < 1) return;
-
-        text.text = (currentObjectActiveID + 1).ToString() + " / " + objectsToShow.Count.ToString();
-
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
+        // Update is called once per frame
+        void Update()
         {
-            Previous();
+            if (objectsToShow.Count < 1) return;
+
+            text.text = (currentObjectActiveID + 1).ToString() + " / " + objectsToShow.Count.ToString();
+
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                Previous();
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                Next();
+            }
         }
 
-        if(Input.GetKeyDown(KeyCode.RightArrow))
+        public void Next()
         {
-            Next();
+            objectsToShow[currentObjectActiveID].SetActive(false);
+            currentObjectActiveID++;
+
+            currentObjectActiveID = currentObjectActiveID % objectsToShow.Count;
+
+            objectsToShow[currentObjectActiveID].SetActive(true);
         }
-    }
 
-    public void Next()
-    {
-        objectsToShow[currentObjectActiveID].SetActive(false);
-        currentObjectActiveID++;
+        public void Previous()
+        {
+            objectsToShow[currentObjectActiveID].SetActive(false);
+            currentObjectActiveID--;
+            if (currentObjectActiveID < 0) currentObjectActiveID = objectsToShow.Count - 1;
 
-        currentObjectActiveID = currentObjectActiveID % objectsToShow.Count;
-
-        objectsToShow[currentObjectActiveID].SetActive(true);
-    }
-
-    public void Previous()
-    {
-        objectsToShow[currentObjectActiveID].SetActive(false);
-        currentObjectActiveID--;
-        if (currentObjectActiveID < 0) currentObjectActiveID = objectsToShow.Count - 1;
-
-        objectsToShow[currentObjectActiveID].SetActive(true);
+            objectsToShow[currentObjectActiveID].SetActive(true);
+        }
     }
 }

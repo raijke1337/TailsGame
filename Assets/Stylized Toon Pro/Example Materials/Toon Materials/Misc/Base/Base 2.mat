@@ -25,18 +25,18 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _OUTLINETYPE_NORMAL
   - _OVERLAYMODE1_NONE
   - _OVERLAYMODE_NONE
+  - _USELIGHTRAMP_POSTERIZE
+  - _USESPECULAR_ON
+  m_InvalidKeywords:
+  - _OUTLINETYPE_NORMAL
   - _RIMSPLITCOLOR_USESECONDCOLOR
   - _USEADDITIONALLIGHTSDIFFUSE_ON
   - _USEDYNAMICOUTLINE_ON
   - _USEENVIRONMENTREFLETION_ON
-  - _USELIGHTRAMP_POSTERIZE
   - _USEOUTLINE_ON
   - _USESCREENUVS_ON
-  - _USESPECULAR_ON
-  m_InvalidKeywords:
   - _USESHADOWS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -149,9 +149,9 @@ Material:
     - _Cull: 2
     - _Cutoff: 0
     - _Darken: -0.155
-    - _DiffusePosterizeOffset: -0.285
+    - _DiffusePosterizeOffset: -0.243
     - _DiffusePosterizePower: 1.92
-    - _DiffusePosterizeSteps: 7.22
+    - _DiffusePosterizeSteps: 3.13
     - _DiffuseWarpAffectHalftone: 0
     - _DiffuseWarpBrightnessOffset: 0
     - _DstBlend: 0
@@ -210,7 +210,7 @@ Material:
     - _SideShineHardness: 0
     - _SideShineIntensity: 1
     - _Smoothness: 0.5
-    - _SmoothnessMultiplier: 0.68
+    - _SmoothnessMultiplier: 0.656
     - _SmoothnessTextureChannel: 0
     - _SpecularFaloff: 0
     - _SpecularHighlights: 1
@@ -274,6 +274,6 @@ Material:
     - _RimColor: {r: 1, g: 1, b: 1, a: 0}
     - _RimShadowColor: {r: 0, g: 0.055514283, b: 0.9622641, a: 0}
     - _SecondaryColor: {r: 1, g: 1, b: 1, a: 0}
-    - _ShadowColor: {r: 0.764151, g: 0.3280082, b: 0.3280082, a: 0}
+    - _ShadowColor: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

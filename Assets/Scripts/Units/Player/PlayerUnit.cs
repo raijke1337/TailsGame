@@ -36,7 +36,7 @@ namespace Arcatech.Units
             base.RunUpdate(delta);
             UnitIsGrounded = _movement.isGrounded;
 
-            if (ActionLock) return;
+            if (ActionLock || _stunned) return;
             _movement.SetDesiredMoveDirection(_inputs.InputsMovementVector);
             _movement.SetDesiredLookDirection(_inputs.InputsLookVector);
         }

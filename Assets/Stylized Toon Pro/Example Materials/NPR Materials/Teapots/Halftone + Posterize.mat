@@ -9,16 +9,21 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Halftone + Posterize
   m_Shader: {fileID: 4800000, guid: 60e29b7951f20da47b11861d166b7036, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _OUTLINETYPE_NORMAL
   - _OVERLAYMODE1_NONE
-  - _OVERLAYMODE_NONE
-  - _USEHATCHINGCONSTANTSCALE_ON
-  - _USELIGHTRAMP_STEP
-  m_InvalidKeywords:
+  - _OVERLAYMODE_HAFTONE
   - _RIMSPLITCOLOR_USESECONDCOLOR
   - _USEADAPTIVESCREENUVS_ON
+  - _USEADDITIONALLIGHTSDIFFUSE_ON
+  - _USEHATCHINGCONSTANTSCALE_ON
+  - _USELIGHTRAMP_POSTERIZE
   - _USEPURESKETCH_ON
   - _USESCREENUVS_ON
+  m_InvalidKeywords:
+  - _OVERLAYMODE_HALFTONE
   - _USESHADOWS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -26,6 +31,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -120,7 +126,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AdaptiveThicnkess: 0
-    - _AdditionalLightsAmount: 1
+    - _AdditionalLightsAmount: 0.837
     - _AdditionalLightsFaloff: 1
     - _AdditionalLightsIntesity: 1
     - _AdditionalLightsSmoothnessMultiplier: 1
@@ -170,12 +176,13 @@ Material:
     - _OutlineNoiseScale: 10
     - _OutlineTextureStrength: 0
     - _OutlineType: 0
-    - _OverlayMode: 0
+    - _OverlayMode: 1
     - _OverlayMode1: 0
     - _OverlayRotation: 0
     - _OverlayUVTilling: 30.8
     - _PaperTilling: 1
     - _Parallax: 0.005
+    - _QueueControl: -1
     - _QueueOffset: 0
     - _RampDiffuseTextureLoaded: 1
     - _ReceiveShadows: 1
@@ -216,7 +223,7 @@ Material:
     - _UseAdaptiveScreenUvs: 1
     - _UseAdaptiveScreenUvsWarp: 0
     - _UseAdaptiveUvsSpecular: 0
-    - _UseAdditionalLightsDiffuse: 0
+    - _UseAdditionalLightsDiffuse: 1
     - _UseBacklight: 0
     - _UseDiffuseWarp: 0
     - _UseDiffuseWarpAsOverlay: 0
@@ -224,7 +231,7 @@ Material:
     - _UseEmission: 0
     - _UseEnvironmentRefletion: 0
     - _UseHatchingConstantScale: 1
-    - _UseLightRamp: 0
+    - _UseLightRamp: 2
     - _UseOutline: 0
     - _UsePureSketch: 1
     - _UseRimLight: 0
@@ -250,6 +257,7 @@ Material:
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimShadowColor: {r: 0.51886123, g: 0.49519405, b: 0.9811321, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
+    - _ShadowColorMy: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &7061547194296195777

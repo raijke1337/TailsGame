@@ -1,6 +1,7 @@
 ﻿using Arcatech.Managers;
 using Arcatech.Units.Stats;
 using KBCore.Refs;
+using System.Collections;
 using UnityEngine;
 namespace Arcatech.Units
 {
@@ -11,6 +12,11 @@ namespace Arcatech.Units
         [SerializeField] protected MovementStatsConfig movementStats;
         [SerializeField, Self] protected Rigidbody _rb;
         [Self, SerializeField] protected ControlInputsBase _inputs;
+        [SerializeField, Range(0, 300)] protected float stunEndStamina = 30f;
+        [SerializeField, Range(0.01f, 1)] protected float stunEndGetUpTime = 0.5f;
+
+        protected bool _stunned = false;
+        Coroutine stunEndProgress;
 
         protected bool UnitIsGrounded { get;set;}
 
@@ -23,6 +29,8 @@ namespace Arcatech.Units
                 UnitPaused = false;                
             }
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
+
+            stunEndStamina = Mathf.Clamp(stunEndStamina,_stats.GetStatValue(BaseStatType.Stamina).GetMin, _stats.GetStatValue(BaseStatType.Stamina).GetMax);
         }
         public override void DisableUnit()
         {
@@ -33,6 +41,14 @@ namespace Arcatech.Units
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
+            if (_stunned)
+            {
+                if (_stats.GetStatValue(BaseStatType.Stamina).GetCurrent >= stunEndStamina && stunEndProgress == null)
+                {
+                    stunEndProgress = StartCoroutine(StunCancelCoroutine());
+                }
+                else return;
+            }
             if (currentAction != null)
             {
                 switch (currentAction?.UpdateAction(delta))
@@ -51,6 +67,15 @@ namespace Arcatech.Units
                 }
             }
         }
+        IEnumerator StunCancelCoroutine()
+        {
+            yield return new WaitForSeconds(stunEndGetUpTime);
+            _stunned = false;
+            _animator.SetTrigger("StunEnd");
+            ActionLock = false;
+            stunEndProgress = null;
+            yield return null;
+        }
 
         bool _lockAction;
         protected bool ActionLock
@@ -67,6 +92,12 @@ namespace Arcatech.Units
         }
         protected abstract void OnActionLock(bool locking);
 
+        protected override void HandleStun()
+        {
+            base.HandleStun();
+            ActionLock = true;
+            _stunned = true;
+        }
 
         #region actions
 

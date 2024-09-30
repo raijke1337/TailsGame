@@ -15,34 +15,21 @@ MonoBehaviour:
   version: 2
 --- !u!21 &2100000
 Material:
-  serializedVersion: 8
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ramp 4
   m_Shader: {fileID: 4800000, guid: 60e29b7951f20da47b11861d166b7036, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _OUTLINETYPE_NORMAL
-  - _OVERLAYMODE1_NONE
-  - _OVERLAYMODE_NONE
-  - _RIMSPLITCOLOR_NOSPLIT
-  - _USEADDITIONALLIGHTSDIFFUSE_ON
-  - _USEHATCHINGCONSTANTSCALE_ON
-  - _USELIGHTRAMP_DIFFUSERAMP
-  - _USEOUTLINE_ON
-  - _USEPURESKETCH_ON
-  m_InvalidKeywords:
-  - _USESHADOWS_ON
+  m_ShaderKeywords: _USEADDITIONALLIGHTSDIFFUSE_ON _USEENVIRONMENTREFLETION_ON _USELIGHTRAMP_DIFFUSERAMP
+    _USEOUTLINE_ON _USESPECULAR_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -130,10 +117,9 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    m_Ints: []
     m_Floats:
     - _AdaptiveThicnkess: 0
-    - _AdditionalLightsAmount: 0.703
+    - _AdditionalLightsAmount: 0.728
     - _AdditionalLightsFaloff: 1
     - _AdditionalLightsIntesity: 6
     - _AdditionalLightsSmoothnessMultiplier: 1.18
@@ -169,7 +155,7 @@ Material:
     - _IndirectLightAffectOnHatch: 0
     - _IndirectLightStrength: 1
     - _InverseMask: 0
-    - _LightRampOffset: -0.62
+    - _LightRampOffset: -0.23
     - _Lighten: 0
     - _LocalShift: -2
     - _LocalShiftStrength: 1
@@ -222,7 +208,7 @@ Material:
     - _StepOffset: -0.264
     - _Strength: 0.07
     - _Surface: 0
-    - _Thicnkess: 0.03
+    - _Thicnkess: 0.002
     - _UVAnimationSpeed: 2
     - _UVAnimationSpeedSpec: 2
     - _UVAnimationSpeedWarp: 2
@@ -241,7 +227,7 @@ Material:
     - _UseDiffuseWarpAsOverlay: 0
     - _UseDynamicOutline: 0
     - _UseEmission: 0
-    - _UseEnvironmentRefletion: 0
+    - _UseEnvironmentRefletion: 1
     - _UseHairSpecular: 0
     - _UseHairSpecularMask: 0
     - _UseHatchingConstantScale: 1
@@ -253,7 +239,7 @@ Material:
     - _UseScreenUvsSpecular: 0
     - _UseScreenUvsWarp: 0
     - _UseShadows: 1
-    - _UseSpecular: 0
+    - _UseSpecular: 1
     - _UseSpecularMask: 0
     - _WarpStrength: 0
     - _WarpTextureRotation: 0

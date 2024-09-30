@@ -8,18 +8,26 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Showcase 1
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 60e29b7951f20da47b11861d166b7036, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ENVIRONMENTREFLECTIONS_OFF
-  m_InvalidKeywords: []
+  - _OUTLINETYPE_NORMAL
+  - _OVERLAYMODE1_NONE
+  - _OVERLAYMODE_NONE
+  - _RIMSPLITCOLOR_NOSPLIT
+  - _USEADDITIONALLIGHTSDIFFUSE_ON
+  - _USEHATCHINGCONSTANTSCALE_ON
+  - _USELIGHTRAMP_STEP
+  - _USEPURESKETCH_ON
+  m_InvalidKeywords:
+  - _GLOSSYREFLECTIONS_OFF
+  - _USESHADOWS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -51,7 +59,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 5, y: 5}
         m_Offset: {x: 0, y: 0}
     - _HalftoneTexture:
         m_Texture: {fileID: 0}
@@ -70,8 +78,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 954f241edf02499409ae7f6aee6b449a, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: d1118dda59970a2449ee890fa247c4c5, type: 3}
+        m_Scale: {x: 5, y: 5}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -80,6 +88,10 @@ Material:
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 3.22, y: 3.22}
+        m_Offset: {x: 0, y: 0}
+    - _PaperTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
@@ -91,6 +103,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SpecularMaskTexture:
         m_Texture: {fileID: 2800000, guid: 0c021cea0cf2417459ce7fa844118e17, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -114,7 +130,6 @@ Material:
     - _AdditionalLightsSmoothnessMultiplier: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
-    - _AlphaToMask: 0
     - _BacklightAmount: 0.5
     - _BacklightHardness: 0
     - _BacklightIntensity: 1
@@ -137,7 +152,7 @@ Material:
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 0
     - _GlossMapScale: 0
-    - _Glossiness: 0.26
+    - _Glossiness: 0.581
     - _GlossyReflections: 0
     - _HalftoneEdgeOffset: 0.1
     - _HalftoneSmoothness: 0.3
@@ -146,6 +161,7 @@ Material:
     - _HaltonePatternSize: 0
     - _IndirectLightAffectOnHatch: 0
     - _IndirectLightStrength: 1
+    - _InverseMask: 0
     - _LightRampOffset: 0
     - _Lighten: 0
     - _MainLightIntesity: 1
@@ -160,8 +176,10 @@ Material:
     - _OutlineTextureStrength: 0
     - _OutlineType: 0
     - _OverlayMode: 0
+    - _OverlayMode1: 0
     - _OverlayRotation: 0
     - _OverlayUVTilling: 0
+    - _PaperTilling: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _RampDiffuseTextureLoaded: 1
@@ -175,7 +193,7 @@ Material:
     - _SideShineHardness: 0
     - _SideShineIntensity: 1
     - _Smoothness: 0
-    - _SmoothnessMultiplier: 1
+    - _SmoothnessMultiplier: 0.87
     - _SmoothnessTextureChannel: 0
     - _SpecularFaloff: 0
     - _SpecularHighlights: 1
@@ -187,16 +205,19 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _StepHalftoneTexture: 0
-    - _StepOffset: 0
+    - _StepOffset: -0.139
     - _Strength: 1
     - _Surface: 0
     - _Thicnkess: 0
     - _UVAnimationSpeed: 2
+    - _UVAnimationSpeedSpec: 2
     - _UVAnimationSpeedWarp: 2
     - _UVScrollSpeed: 0
+    - _UVScrollSpeedSpec: 0
     - _UVScrollSpeedWarp: 0
     - _UVSec: 0
     - _UVSrcrollAngle: 0
+    - _UVSrcrollAngleSpec: 0
     - _UVSrcrollAngleWarp: 0
     - _UseAdaptiveScreenUvs: 0
     - _UseAdaptiveScreenUvsWarp: 0
@@ -207,25 +228,27 @@ Material:
     - _UseDiffuseWarpAsOverlay: 0
     - _UseDynamicOutline: 0
     - _UseEmission: 0
-    - _UseEnvironmentRefletion: 1
+    - _UseEnvironmentRefletion: 0
     - _UseHatchingConstantScale: 1
-    - _UseLightRamp: 1
+    - _UseLightRamp: 0
     - _UseOutline: 0
     - _UsePureSketch: 1
     - _UseRimLight: 0
     - _UseScreenUvs: 0
     - _UseScreenUvsSpecular: 0
     - _UseScreenUvsWarp: 0
-    - _UseSpecular: 1
+    - _UseShadows: 1
+    - _UseSpecular: 0
     - _UseSpecularMask: 0
     - _WarpStrength: 0
     - _WarpTextureRotation: 0
     - _WarpTextureScale: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
+    - __dirty: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _HatchingColor: {r: 0, g: 0, b: 0, a: 1}
@@ -233,7 +256,8 @@ Material:
     - _RimColor: {r: 1, g: 1, b: 1, a: 0}
     - _RimShadowColor: {r: 0, g: 0.055514283, b: 0.9622641, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _ShadowColorMy: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5966570634399050517
 MonoBehaviour:
@@ -247,4 +271,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 6
