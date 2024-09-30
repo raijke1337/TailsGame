@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb1aa02062f61c45ba0ecd3c4b21ded, type: 3}
-  m_Name: skill_rjump_a1_proj
+  m_Script: {fileID: 11500000, guid: b30dff747bb250b4496f6b4eef2d1109, type: 3}
+  m_Name: spider_bot_claws_skill_1_placeParticle
   m_EditorClassIdentifier: 
-  Projectile: {fileID: 11400000, guid: a027c3709892c04499907dd1f947367d, type: 2}
-  numberOfProjectiles: 4
-  spread: 3
-  intDelay: 0.1
+  Effects:
+  - {fileID: 2883620193154939874, guid: 95cbf08037e972a4fb9fe2472122a38e, type: 3}
+  ParentParticles: 0

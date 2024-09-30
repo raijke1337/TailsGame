@@ -86,9 +86,20 @@ namespace Arcatech.Managers
         #region units handling
 
         private PlayerUnit _player;
-        public PlayerUnit GetPlayerUnit { get => _player; }
-        //  private List<RoomUnitsGroup> _npcGroups;
-        List<BaseEntity> entities = new List<BaseEntity>();
+        public PlayerUnit GetPlayerUnit
+        {
+            get
+            {
+                if (_player == null)
+                {
+                    _player = FindObjectOfType<PlayerUnit>();
+                }
+                return _player;
+
+            }
+        }
+            //  private List<RoomUnitsGroup> _npcGroups;
+            List<BaseEntity> entities = new List<BaseEntity>();
 
         private void SetupUnit(BaseEntity u, bool isEnable)
         {
@@ -107,15 +118,18 @@ namespace Arcatech.Managers
 
         private void HandleUnitDeath(BaseEntity unit)
         {
-            unit.DisableUnit();
-          //  entities.Remove(unit);
+            SetupUnit(unit, false);
+            entities.Remove(unit);
             
             if (unit is PlayerUnit)
             {
                // GM_OnPauseToggle(true);
                 GameManager.Instance.OnPlayerDead();
             }
-            //else Destroy(unit.gameObject, 2f);
+            else
+            {
+                Destroy(unit.gameObject, 2f);
+            }
 
         }
         #endregion

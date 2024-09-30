@@ -205,11 +205,13 @@ namespace Arcatech.Units
         #endregion
 
 
-        public virtual void ForceUnitAction(BaseUnitAction act)
+        public void ForceUnitAction(BaseUnitAction act)
         {
-            if (UnitPaused) return;
-            act.StartAction();
+            if (UnitPaused || act == null) return;
+            OnForceAction(act);
         }
+        protected virtual void OnForceAction(BaseUnitAction act) { }
+
 
         public virtual void ApplyForceResultToUnit(float imp, float time)
         {

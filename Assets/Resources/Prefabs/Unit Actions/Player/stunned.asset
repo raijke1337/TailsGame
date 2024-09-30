@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _locksMovement: 1
   _animationName: KnockDownStart
-  _exitTime: 0
+  _exitTime: 0.01
   _nextAct:
     _nextAnim: {fileID: 0}
     _chainWindowStart: 0
     _chainWindowEnd: 0
-  _onStart: []
+  _onStart:
+  - {fileID: 0}
   _onExit: []
   _onFinish: []

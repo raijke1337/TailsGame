@@ -83,10 +83,7 @@ namespace Arcatech.Units
             get => _lockAction;
             set
             {
-                if (value)
-                {
-                    OnActionLock(value);
-                }
+                OnActionLock(value);
                 _lockAction = value;
             }
         }
@@ -102,6 +99,13 @@ namespace Arcatech.Units
         #region actions
 
         protected BaseUnitAction currentAction;
+
+        protected override void OnForceAction(BaseUnitAction act)
+        {
+            base.OnForceAction(act);
+            DoActionLogic(act);
+        }
+
         protected void DoActionLogic(BaseUnitAction act)
         {
             if (currentAction!= null && currentAction != act && currentAction.GetActionState != UnitActionState.Completed)
@@ -143,10 +147,15 @@ namespace Arcatech.Units
                     Debug.LogWarning($"action type {obj} not supported in {this}");
                     break;
             }
-
+            
             
             #endregion
 
+        }
+        protected override void HandleDeath()
+        {
+            currentAction?.CompleteAction();
+            base.HandleDeath();
         }
     }
 }

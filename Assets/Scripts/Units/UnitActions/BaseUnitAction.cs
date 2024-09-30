@@ -102,6 +102,8 @@ namespace Arcatech.Units
 
         public UnitActionState UpdateAction(float delta)
         {
+
+
             _actionTimer?.Tick(delta);
 
             
@@ -178,8 +180,15 @@ namespace Arcatech.Units
             {
                 foreach (var r in OnCompleteAction)
                 {
-                    r.ProduceResult(Actor, null, place);
-                    fin += (r.ToString() + ' ');
+                    if (r == null)
+                    {
+                        fin +=  "NULL RESULT";
+                    }// bandaid TODO dunno why it happens
+                    else
+                    {
+                        r.ProduceResult(Actor, null, place);
+                        fin += (r.ToString() + ' ');
+                    }
                 }
             };
             _actionState = UnitActionState.Completed;

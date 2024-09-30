@@ -12,8 +12,6 @@ namespace Arcatech.Units
 
         [Header("NPC Behaviour : Crawler")]
 
-
-
         [SerializeField] List<Transform> patrolPoints1;
         [SerializeField] List<Transform> patrolPoints2;
 
@@ -26,7 +24,6 @@ namespace Arcatech.Units
         protected override void SetupBehavior()
         {
             base.SetupBehavior();
-
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.transform;
             tree = new BehaviourTree(GetUnitName + " behaviour");
 
@@ -86,6 +83,11 @@ namespace Arcatech.Units
 
 
             tree.AddChild(actionsPriority);
+
+        }
+        protected override void ExecuteBehaviour()
+        {
+            base.ExecuteBehaviour();
 
         }
 
