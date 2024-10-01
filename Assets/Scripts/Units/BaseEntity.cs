@@ -2,16 +2,19 @@ using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Stats;
 using Arcatech.Triggers;
+using Arcatech.Units.Inputs;
 using Arcatech.Units.Stats;
 using KBCore.Refs;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
 namespace Arcatech.Units
 {
-    public class BaseEntity : ValidatedMonoBehaviour
+    public class BaseEntity : ValidatedMonoBehaviour, ITargetable
     {
         protected const float zeroF = 0f;
         [Header("Entity")]
@@ -28,7 +31,7 @@ namespace Arcatech.Units
 
         public bool UnitDebug => _showDebugs;
 
-        public string GetUnitName { get => defaultStats.DisplayName; }
+        public string GetName { get => defaultStats.DisplayName; }
         [HideInInspector] public Side Side => _unitSide;
 
         #region managed
@@ -36,9 +39,10 @@ namespace Arcatech.Units
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (defaultStats == null)
+            Assert.IsFalse(defaultStats==null);
+            if (_unitSide == Side.EnemySide)
             {
-                Debug.LogError($"{this} needs assigned stats!");
+                Assert.IsTrue(gameObject.layer == LayerMask.NameToLayer("EnemiesLayer"));
             }
         }
         public virtual void StartControllerUnit() // this is run by unit manager
@@ -89,6 +93,7 @@ namespace Arcatech.Units
                 _dead = value;
             }
         }
+
         #endregion
 
 
@@ -167,7 +172,7 @@ namespace Arcatech.Units
 
         protected virtual void HandleDamage(float value)
         {
-            if (_showDebugs) Debug.Log($"{GetUnitName} took dmg {value}");
+            if (_showDebugs) Debug.Log($"{GetName} took dmg {value}");
             if (ActionOnDamage != null)
             {
                 ForceUnitAction(ActionOnDamage.ProduceAction(this, transform));
@@ -190,7 +195,7 @@ namespace Arcatech.Units
         }
         protected virtual void HandleStun()
         {
-            if (_showDebugs) Debug.Log($"{GetUnitName} got stunned");
+            if (_showDebugs) Debug.Log($"{GetName} got stunned");
             if (ActionOnStun != null)
             {
                 ForceUnitAction(ActionOnStun.ProduceAction(this, transform));
@@ -204,7 +209,7 @@ namespace Arcatech.Units
 
         #endregion
 
-
+        #region actions
         public void ForceUnitAction(BaseUnitAction act)
         {
             if (UnitPaused || act == null) return;
@@ -215,9 +220,19 @@ namespace Arcatech.Units
 
         public virtual void ApplyForceResultToUnit(float imp, float time)
         {
-            Debug.Log($"Tried to apply impulse {imp} over {time} to {GetUnitName} but it has no movement controller component, using rb impulse");
+            Debug.Log($"Tried to apply impulse {imp} over {time} to {GetName} but it has no movement controller component, using rb impulse");
             Rigidbody rb = GetComponent<Rigidbody>();
             rb?.AddForce(Vector3.forward * imp * 5f,ForceMode.Impulse);
         }
+        #endregion
+
+
+        #region itargetable
+
+        public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetDisplayValues => _stats.GetStatValues;
+        #endregion
     }
+
+
+
 }

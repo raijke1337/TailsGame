@@ -4,12 +4,29 @@ using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.UI;
 using Arcatech.Units;
+using Arcatech.Units.Inputs;
 using CartoonFX;
 using UnityEngine;
 
 namespace Arcatech.EventBus
 {
     public interface IEvent { }
+
+    #region UI events
+
+    public struct PlayerTargetUpdateEvent : IEvent
+    {
+        public PlayerTargetUpdateEvent(ITargetable target, bool isPicked)
+        {
+            Target = target;
+            IsPicked = isPicked;
+        }
+
+        public ITargetable Target { get; }
+        public bool IsPicked { get; }
+
+    }
+
     public struct PlayerStatsChangedUIEvent : IEvent
     {
         public BaseStatType StatType { get; }
@@ -19,6 +36,7 @@ namespace Arcatech.EventBus
              StatType = statType; Container = container;
         }
     }
+
 
     public struct DrawDamageEvent : IEvent
     {
@@ -30,6 +48,7 @@ namespace Arcatech.EventBus
         }
     }
 
+    #endregion
     public struct StatsEffectTriggerEvent : IEvent
     {
         public StatsEffectTriggerEvent(BaseEntity target, StatsEffect toApply, Transform place)
@@ -44,7 +63,7 @@ namespace Arcatech.EventBus
         public Transform Place { get; }
         public override string ToString()
         {
-            return string.Concat(Applied," on ", Target?.GetUnitName, " at ", Place.position);
+            return string.Concat(Applied," on ", Target?.GetName, " at ", Place.position);
         }
     }
     public struct VFXEvent : IEvent

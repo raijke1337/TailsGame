@@ -1,3 +1,6 @@
+using Arcatech.EventBus;
+using Arcatech.Units.Inputs;
+using KBCore.Refs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,35 +10,24 @@ namespace Arcatech.UI
     public class TargetPanel : PanelWithBarGeneric
     {
 
-        [SerializeField] protected TextMeshProUGUI _description;
-        [SerializeField] protected RawImage _image;
-        private BaseTargetableItem _currentItem;
-
-        public virtual void AssignItem(BaseTargetableItem item)
+        [SerializeField,Child] protected TextMeshProUGUI _description;
+        public void UpdateTargeted(bool show, ITargetable tgt)
         {
-            Debug.Log($"assign item {item} to tgt panel : NYI");
-            //if (item != _currentItem && _currentItem != null)
-            //{
-            //    _currentItem.ToggleCam(false);
-            //}
-
-            //_currentItem = item;
-            //_description.text = item.GetTitle;
-            //_image.texture = item.ToggleCam(true);
-
-
-            //if (item is TargetableUnit u)
-            //{
-                
-            //    _bars.gameObject.SetActive(true);
-            //    _bars.LoadValues(u.GetHealthStat, DisplayValueType.Health);
-            //}
-            //else
-            //{
-            //    _bars.gameObject.SetActive(false);
-            //}
+            if (!show)
+            {
+                _bars.ClearAllBars();
+            }
+            else
+            {
+                _description.text = tgt.GetName;
+                foreach(var bar in tgt.GetDisplayValues)
+                {
+                    _bars.UpdateBarValue(bar.Key,bar.Value);
+                }
+            }
         }
- 
+
+
     }
 
 }

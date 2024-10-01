@@ -16,7 +16,7 @@ namespace Arcatech.Units.Behaviour
             var st = strat.Process(actor);
             if (actor.UnitDebug)
             {
-                Debug.Log($"{NodeName} on {actor.GetUnitName} status {st}");
+                Debug.Log($"{NodeName} on {actor.GetName} status {st}");
             }
             return st;
         }

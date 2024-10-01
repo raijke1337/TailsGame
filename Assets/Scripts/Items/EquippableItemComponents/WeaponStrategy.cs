@@ -98,8 +98,12 @@ namespace Arcatech.Items
         #endregion
         #region UI
         public Sprite Icon => Config.Description.Picture;
-        public float CurrentNumber => MaxCharges - _chargesTimers.Count;
-        public float MaxNumber => MaxCharges;
+
+        public float FillValue => _internalCdTimer.Progress;
+
+        public string Text => _remainingCharges > 0 ? "Ready" : "Recharge";
+
+
         #endregion
     }
 

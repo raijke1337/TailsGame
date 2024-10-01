@@ -11,9 +11,10 @@ namespace Arcatech.Skills
     {
         #region interface
         public BaseEntity Owner { get ; set; }
-        protected SerializedSkill Config { get; }
-        public UnitActionType UseActionType => Config.UnitActionType;
-        public StatsEffect GetCost => new(Config.Cost);
+       // protected SerializedSkill Config { get; }
+        public UnitActionType UseActionType { get;  }
+        public StatsEffect GetCost => new(_cost);
+        protected SerializedStatsEffectConfig _cost;
         public IDrawItemStrategy DrawStrategy { get; }
 
         #endregion
@@ -24,11 +25,12 @@ namespace Arcatech.Skills
         public Skill(IDrawItemStrategy s, SerializedSkill settings, BaseEntity owner, BaseEquippableItemComponent item)
         { 
 
-            Config = settings;
             Owner = owner;
             if (settings == null) return; // placeholder maybe TODO - for items without skills
 
-            Strategy = Config.UseStrategy.ProduceStrategy(Owner,Config, item);
+            UseActionType = settings.UnitActionType;
+            _cost = settings.Cost;
+            Strategy = settings.UseStrategy.ProduceStrategy(Owner, settings, item);
             DrawStrategy = s;
         }
 
@@ -55,11 +57,11 @@ namespace Arcatech.Skills
         #region UI
 
 
-        public Sprite Icon => Config.Description.Picture;
+        public Sprite Icon => Strategy.Icon;
 
-        public float CurrentNumber => Strategy.CurrentNumber;
+        public float FillValue => Strategy.FillValue;
 
-        public float MaxNumber => Strategy.MaxNumber;
+        public string Text => Strategy.Text;
 
 
         #endregion

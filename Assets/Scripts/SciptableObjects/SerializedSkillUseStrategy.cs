@@ -18,7 +18,7 @@ namespace Arcatech.Skills
 
         public virtual SkillUsageStrategy ProduceStrategy(BaseEntity owner,SerializedSkill cfg, BaseEquippableItemComponent item)
         {
-            return new SkillUsageStrategy(item, SkillAction,owner,cfg,Charges,ChargeReload);
+            return new SkillUsageStrategy(item, SkillAction,owner,cfg.Description,Charges,ChargeReload);
         }
 
         private void OnValidate()

@@ -35,7 +35,7 @@ namespace Arcatech.Units
             base.OnValidate();
             if (this.Side == Side.EnemySide && !CompareTag("Enemy"))
             {
-                Debug.LogError($"Set enemy tag for {GetUnitName}");
+                Debug.LogError($"Set enemy tag for {GetName}");
             }
         }
         protected override void HandleDamage(float value)
@@ -100,7 +100,7 @@ namespace Arcatech.Units
         
         void SetupIdleRoaming()
         {
-            tree = new BehaviourTree(GetUnitName + " undefined idle behavior");
+            tree = new BehaviourTree(GetName + " undefined idle behavior");
             Sequence roamandWait = new Sequence("walk around and wait", 0);
             Leaf roam = new Leaf(new RoamInRangeStrategy(5f,transform.position,agent),"roam in range 5", 100);
 

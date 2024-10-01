@@ -16,6 +16,20 @@ namespace Arcatech.UI
         [SerializeField] Ease _barsEaseMethod;
         [SerializeField] float _barsEaseTime = 0.3f;
 
+        public void RemoveBar(BaseStatType type)
+        {
+            Destroy(_barsDict[type].gameObject);
+            _barsDict.Remove(type);
+        }
+        public void ClearAllBars()
+        {
+            foreach (var bar in _barsDict.Values)
+            {
+                Destroy(bar.gameObject);
+            }
+        _barsDict.Clear(); 
+        }
+
         private void AddBar (BaseStatType barValue)
         {
             _barsDict[barValue] = Instantiate(_barPrefab, this.transform).

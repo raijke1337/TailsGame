@@ -28,11 +28,11 @@ namespace Arcatech.Skills
 
 
 
-        public SkillUsageStrategy(BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseEntity unit, SerializedSkill cfg, int charges, float reload)
+        public SkillUsageStrategy(BaseEquippableItemComponent item, SerializedUnitAction useaction, BaseEntity unit, ExtendedText desc, int charges, float reload)
         {
 
             Owner = unit;
-            _desc = cfg.Description;
+            _desc = desc;
             ChargeReload = reload;
             InternalDelay = 0.1f; // placeholder?
             MaxCharges = charges;
@@ -95,8 +95,10 @@ namespace Arcatech.Skills
 
         #region UI
         public Sprite Icon => _desc.Picture;
-        public float CurrentNumber => _remainingCharges;
-        public float MaxNumber => MaxCharges;
+
+        public float FillValue => _chargesTimers.TryPeek(out var p)? p.Progress : 0 ;
+
+        public string Text => _remainingCharges > 0 ? "Ready" : "Recharge";
 
         #endregion
 

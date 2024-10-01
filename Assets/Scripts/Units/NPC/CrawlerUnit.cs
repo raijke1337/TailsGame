@@ -25,9 +25,9 @@ namespace Arcatech.Units
         {
             base.SetupBehavior();
             _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.transform;
-            tree = new BehaviourTree(GetUnitName + " behaviour");
+            tree = new BehaviourTree(GetName + " behaviour");
 
-            BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + GetUnitName);
+            BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + GetName);
 
 
             Sequence activateSkillSeq = new Sequence("activate skill", 100);

@@ -69,9 +69,9 @@ namespace Arcatech.Items
 
         public Sprite Icon => Config.Description.Picture;
 
-        public float CurrentNumber => UseStrategy.CurrentNumber;
+        public float FillValue => UseStrategy.FillValue;
 
-        public float MaxNumber => UseStrategy.MaxNumber;
+        public string Text => UseStrategy.Text;
 
 
         #endregion

@@ -10,11 +10,9 @@ using UnityEngine.Events;
 
 namespace Arcatech.UI
 {
-    public class PlayerUnitPanel : ValidatedMonoBehaviour
+    public class PlayerUnitPanel : PanelWithBarGeneric
     {
         [SerializeField,Child] protected IconContainersManager _icons;
-        [SerializeField,Child] protected BarsContainersManager _bars;
-
         EventBinding<UpdateIconEvent> bindIcons;
 
         private void Awake()
@@ -25,7 +23,7 @@ namespace Arcatech.UI
 
 
 
-        public void ShowStat (BaseStatType type , StatValueContainer cont) => _bars.UpdateBarValue(type, cont);
+
         public void ShowIcons (UnitInventoryController inv)
         {
             foreach (var weapon in inv.GetWeapons)
@@ -33,6 +31,8 @@ namespace Arcatech.UI
                 _icons.TrackIcon(weapon);
             }
         }
+
+
         private void RefreshIcon(UpdateIconEvent obj)
         {
             if (obj.User is PlayerUnit)

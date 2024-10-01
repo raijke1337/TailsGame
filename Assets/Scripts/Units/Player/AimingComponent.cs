@@ -1,7 +1,10 @@
+using Arcatech.EventBus;
 using Arcatech.Managers;
 using Arcatech.UI;
 using Cinemachine.Utility;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Scripting.APIUpdating;
@@ -13,6 +16,8 @@ namespace Arcatech.Units.Inputs
         #region setup
         private Camera _camera;
         private Plane _aimPlane;
+
+        [SerializeField, Range(0.1f, 3f)] float targetingSphereRadius = 1f;
 
         #endregion
 
@@ -65,10 +70,6 @@ namespace Arcatech.Units.Inputs
         private float prevY;
         float planeY = 0f;
 
-
-        public SimpleEventsHandler<bool, BaseTargetableItem> SelectionUpdatedEvent;
-
-
         #region managed
         public void StartController()
         {
@@ -84,40 +85,21 @@ namespace Arcatech.Units.Inputs
 
         public void ControllerUpdate(float delta)
         {
-
+            // update aim plane position
             if (transform.position.y != prevY)
             {
                 _aimPlane.Translate(Vector2.down * (transform.position.y - prevY));
                 prevY = transform.position.y;
             }
 
-
+            // aim at plane
+            ////raycast at plane
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(r, out var newhit))
-            {
-                if (newhit.collider != hit.collider)
-                {
-                    hit = newhit;
-                }
-                _target = hit.transform.position;
-            }
+            _aimPlane.Raycast(r, out float rayDist);
+            _target = r.GetPoint(rayDist);
+            Debug.Log($"{_target}");
+            CheckTargetables(_target);
 
-            // no object, aim at plane
-            if (_aimPlane.Raycast(r, out float rayDist))
-            {
-                _target = r.GetPoint(rayDist);
-            }
-
-            // hit a selectable
-            if (Physics.Raycast(r, out hit))
-            {
-                if (hit.collider.gameObject.TryGetComponent<BaseTargetableItem>(out var item))
-                {
-                    //_aimedObject = item;
-                    _target = hit.collider.transform.position; // aim at the center of the target
-                    SelectionUpdatedEvent?.Invoke(true, item);
-                }
-            }
 
             var vectorToTarget = _target - transform.position;
             // new
@@ -126,21 +108,46 @@ namespace Arcatech.Units.Inputs
             distanceToTarget = vectorToTarget.magnitude;
             _dotProduct = Vector3.Dot(transform.forward, GetNormalizedDirectionToTaget);
             _rotationToTarget = Vector3.Cross(transform.forward, GetNormalizedDirectionToTaget).y;
-
-
         }
 
+        ITargetable currentTgt;
+        Collider[] checkColliders = new Collider[10];
+        void CheckTargetables(Vector3 target)
+        {
+            if (target == null) return; 
+            if (Physics.OverlapSphereNonAlloc(target, targetingSphereRadius, checkColliders, LayerMask.NameToLayer("Ground")) > 0) // dont check ground layer objects
+            {
+                if (currentTgt != null) return;
 
+                for (int i = 0; i < checkColliders.Length; i++)
+                {
+                    if (checkColliders[i] == null) break;
+                    if (checkColliders[i].TryGetComponent<ITargetable>(out var component))
+                    {
+                        currentTgt = component;
+                        EventBus<PlayerTargetUpdateEvent>.Raise(new PlayerTargetUpdateEvent(component, true));
+                    }
+                }
+            }
+            else
 
+                EventBus<PlayerTargetUpdateEvent>.Raise(new PlayerTargetUpdateEvent(currentTgt, false));
+            currentTgt = null;
+        }
 
         public void StopController()
         {
 
         }
-
         #endregion
 
-
-
+        private void OnDrawGizmos()
+        {
+            if (_target != null)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(_target, targetingSphereRadius);
+            }
+        }
     }
 }
