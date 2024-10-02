@@ -24,7 +24,7 @@ namespace Arcatech
     public delegate void SkillEvents<T>(T arg);
 
 
-    public delegate void ConditionCheckEvents (CheckConditionTrigger condition, bool currentState);
+  //  public delegate void ConditionCheckEvents (CheckConditionTrigger condition, bool currentState);
 
     #endregion
 

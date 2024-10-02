@@ -26,6 +26,7 @@ namespace Arcatech.Units
         [Space, SerializeField] protected SerializedUnitAction ActionOnDamage;
         [SerializeField] protected SerializedUnitAction ActionOnDeath;
         [SerializeField] protected SerializedUnitAction ActionOnStun;
+        [SerializeField, Tooltip("Place to spawn stunned result")] protected Transform _headT;
 
         [SerializeField, Self] protected Animator _animator;
 
@@ -40,10 +41,7 @@ namespace Arcatech.Units
         {
             base.OnValidate();
             Assert.IsFalse(defaultStats==null);
-            if (_unitSide == Side.EnemySide)
-            {
-                Assert.IsTrue(gameObject.layer == LayerMask.NameToLayer("EnemiesLayer"));
-            }
+
         }
         public virtual void StartControllerUnit() // this is run by unit manager
         {
@@ -198,7 +196,7 @@ namespace Arcatech.Units
             if (_showDebugs) Debug.Log($"{GetName} got stunned");
             if (ActionOnStun != null)
             {
-                ForceUnitAction(ActionOnStun.ProduceAction(this, transform));
+                ForceUnitAction(ActionOnStun.ProduceAction(this, _headT));
             }
         }
         protected virtual void OnUnitPause(bool isPause)

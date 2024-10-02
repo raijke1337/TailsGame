@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Arcatech.Units.Stats
 {
-    [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Configurations/Stats")]
+    [CreateAssetMenu(fileName = "New BaseStatsConfig", menuName = "Units/Base Stats")]
     public class BaseStatsConfig : ScriptableObjectID
     {
         public string DisplayName;

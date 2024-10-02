@@ -8,6 +8,4 @@ namespace Arcatech.Actions
         void ProduceResult(BaseEntity user, BaseEntity target, Transform place);
     }
 
-
-
 }

@@ -75,41 +75,41 @@ namespace Arcatech.Managers
             {
                 triggers.Add(tr);
                 //tr.TriggerHitUnitEvent += (u,e) => OnEventActivated(tr,u,e);
-                if (tr is CheckConditionTrigger check)
-                {
-                    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
-                }
+                //if (tr is CheckConditionTrigger check)
+                //{
+                //    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
+                //}
             }
             else
             {
                 triggers.Remove(tr);
                // tr.TriggerHitUnitEvent -= (u, e) => OnEventActivated(tr, u, e);
-                if (tr is CheckConditionTrigger check)
-                {
-                    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
-                }
+                //if (tr is CheckConditionTrigger check)
+                //{
+                //    check.UpdatedConditionStateEvent += Check_UpdatedConditionStateEvent;
+                //}
             }
         }
 
-        private void Check_UpdatedConditionStateEvent(CheckConditionTrigger condition, bool currentStatee)
-        {
-            Debug.Log("NYI");
-        }
+        //private void Check_UpdatedConditionStateEvent(CheckConditionTrigger condition, bool currentStatee)
+        //{
+        //    Debug.Log("NYI");
+        //}
 
         private void OnEventActivated(BaseLevelEventTrigger tr, EquippedUnit u, bool isEnter)
         {
 
-            if (tr is LevelRewardTrigger rew)
-            {
-                //if (DebugMessage)
-                //{
-                //    Debug.Log($"Picked up {rew.Content}");
-                //}
-                //u.AddItem(rew.Content,true);
+            //if (tr is LevelRewardTrigger rew)
+            //{
+            //    //if (DebugMessage)
+            //    //{
+            //    //    Debug.Log($"Picked up {rew.Content}");
+            //    //}
+            //    //u.AddItem(rew.Content,true);
 
-                ManageTrigger(rew, false);
+            //    ManageTrigger(rew, false);
 
-            }
+            //}
             if (tr is LevelTextTrigger txt)
             {
                 //if (DebugMessage)
@@ -118,21 +118,21 @@ namespace Arcatech.Managers
                 //}
                 _ui.UpdateGameText(txt.Text, isEnter);
             }
-            if (tr is LevelCompleteTrigger comp)
-            {
+            //if (tr is LevelCompleteTrigger comp)
+            //{
 
-                EventBus<LevelCompletedEvent>.Raise(new LevelCompletedEvent(comp.ThisLevel));
-            }
+            //    EventBus<LevelCompletedEvent>.Raise(new LevelCompletedEvent(comp.ThisLevel));
+            //}
 
-            if (tr is CheckConditionTrigger check)
-            {
-                bool satisfied = check.GetCondition;
-                check.UpdateControlledItems(satisfied);
-                //if (DebugMessage)
-                //{
-                //    Debug.Log($"{}");
-                //}
-            }
+            //if (tr is CheckConditionTrigger check)
+            //{
+            //    bool satisfied = check.GetCondition;
+            //    check.UpdateControlledItems(satisfied);
+            //    //if (DebugMessage)
+            //    //{
+            //    //    Debug.Log($"{}");
+            //    //}
+            //}
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Arcatech.Actions
     // spawn projectile 
     // movement impulse
     // spawn particle effect
+    // check some condition
     public abstract class ActionResult : IActionResult
     {
         public abstract void ProduceResult(BaseEntity user, BaseEntity target,Transform place);

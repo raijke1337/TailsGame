@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Arcatech.Units.Stats
 {
-    [CreateAssetMenu(fileName = "New MoveStatsConfig", menuName = "Configurations/Move Stats"),Serializable]
+    [CreateAssetMenu(fileName = "New MoveStatsConfig", menuName = "Units/Move Stats"),Serializable]
     public class MovementStatsConfig : ScriptableObjectID
     {
         public SerializedDictionary<MovementStatType, SimpleContainerConfig> Stats;

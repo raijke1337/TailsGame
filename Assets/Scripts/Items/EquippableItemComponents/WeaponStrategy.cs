@@ -101,7 +101,7 @@ namespace Arcatech.Items
 
         public float FillValue => _internalCdTimer.Progress;
 
-        public string Text => _remainingCharges > 0 ? "Ready" : "Recharge";
+        public string Text => _remainingCharges > 0 ? "Ready" : "Wait";
 
 
         #endregion

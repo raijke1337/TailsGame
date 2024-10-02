@@ -1,14 +1,19 @@
 using Arcatech.Actions;
 using Arcatech.Effects;
 using Arcatech.Units;
+using JetBrains.Annotations;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Arcatech.Triggers
 {
+
+
+
     public class BaseLevelEventTrigger : BaseTrigger
     {
-        [SerializeField] TriggerTargetType targetType;
+        [SerializeField] protected TriggerTargetType targetType;
         [SerializeField] protected bool DestroyOnExit = false;
         [SerializeField] protected bool DestroyOnEnter = false;
         [Space, SerializeField] protected SerializedActionResult[] ActionOnEntry;

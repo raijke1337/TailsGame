@@ -97,7 +97,6 @@ namespace Arcatech.Units.Inputs
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             _aimPlane.Raycast(r, out float rayDist);
             _target = r.GetPoint(rayDist);
-            Debug.Log($"{_target}");
             CheckTargetables(_target);
 
 

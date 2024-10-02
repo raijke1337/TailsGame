@@ -66,17 +66,6 @@ namespace Arcatech.Skills
             }
             return false;
         }
-
-        // moved to skill action
-
-        //protected virtual void DoSkillLogic()
-        //{
-        //    foreach (var r in SkillUsageResults)
-        //    {
-        //        r.ProduceResult(Owner, null, Spawner.transform);
-        //    }
-        //}
-
         public virtual void UpdateUsable(float delta)
         {
             foreach (var t in _chargesTimers.ToList())
@@ -98,7 +87,7 @@ namespace Arcatech.Skills
 
         public float FillValue => _chargesTimers.TryPeek(out var p)? p.Progress : 0 ;
 
-        public string Text => _remainingCharges > 0 ? "Ready" : "Recharge";
+        public string Text => _remainingCharges > 0 ? "Ready" : "Wait";
 
         #endregion
 

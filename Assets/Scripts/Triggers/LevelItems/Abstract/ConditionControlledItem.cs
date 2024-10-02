@@ -1,42 +1,18 @@
-using System.Collections;
+using Arcatech.Level;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Rendering;
 
-namespace Arcatech.Triggers
+namespace Arcatech.Level
 {
-    public abstract class ConditionControlledItem : MonoBehaviour
+    public abstract class ConditionControlledItem : MonoBehaviour, IConditionControlled
     {
-        [SerializeField] ControlledItemState _startingState;
-        public event SimpleEventsHandler<ControlledItemState, ConditionControlledItem> ItemChangedStateEvent;
-
-
-
-        protected ControlledItemState _currentState;
-        public void ChangeItemState (ControlledItemState desired)
+        public virtual void SetState(bool newstate)
         {
-            if (_currentState != desired)
-            {
-                OnPerformChangeState(desired);                
-            }
+            OnSetState(newstate);
         }
-
-        private void Awake()
-        {
-            // to not override
-        }
-
-        private void OnEnable()
-        {
-            Assert.IsFalse(_startingState == ControlledItemState.None);
-            _currentState = ControlledItemState.None;
-            StartControllerValues();
-            ChangeItemState(_startingState);
-        }
-
-
-        protected void CallbackEvent(ControlledItemState state)=> ItemChangedStateEvent?.Invoke(state, this);
-        protected abstract void OnPerformChangeState(ControlledItemState desired);
-        protected abstract void StartControllerValues();
+        protected abstract void OnSetState(bool newstate);
     }
+
 }

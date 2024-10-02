@@ -23,7 +23,7 @@ namespace Arcatech.Units
         //used by room ctrl
         public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
 
-        [SerializeField] private LevelRewardTrigger _dropPrefab;
+      //  [SerializeField] private LevelRewardTrigger _dropPrefab;
         [SerializeField] private ItemSO _drop;
         
         [SerializeField, Self] NPCUnitInputs inputs;
@@ -45,12 +45,12 @@ namespace Arcatech.Units
         }
         protected override void HandleDeath()
         {
-            if (_drop != null)
-            {
-                var drop = Instantiate(_dropPrefab, transform.position, transform.rotation);
-                drop.Content = _drop;
-                GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
-            }
+            //if (_drop != null)
+            //{
+            //    var drop = Instantiate(_dropPrefab, transform.position, transform.rotation);
+            //    drop.Content = _drop;
+            //    GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
+            //}
             //agent.isStopped = true;
             base.HandleDeath();
         }
