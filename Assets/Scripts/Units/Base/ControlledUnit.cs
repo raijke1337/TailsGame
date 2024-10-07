@@ -1,4 +1,5 @@
 ﻿using Arcatech.Managers;
+using Arcatech.Triggers;
 using Arcatech.Units.Stats;
 using KBCore.Refs;
 using System.Collections;
@@ -6,7 +7,7 @@ using UnityEngine;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase), typeof(Rigidbody))]
-    public abstract class ControlledUnit : ArmedUnit
+    public abstract class ControlledUnit : ArmedUnit, IInteractor
     {
         [Space, Header("Controlled Unit")]
         [SerializeField] protected MovementStatsConfig movementStats;
@@ -18,7 +19,6 @@ namespace Arcatech.Units
         protected bool _stunned = false;
         Coroutine stunEndProgress;
 
-        protected bool UnitIsGrounded { get;set;}
 
         public override void StartControllerUnit()
         {
@@ -29,9 +29,13 @@ namespace Arcatech.Units
                 UnitPaused = false;                
             }
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
+            _inputs.RequestInteraction += HandleInteractionAction;
 
             stunEndStamina = Mathf.Clamp(stunEndStamina,_stats.GetStatValue(BaseStatType.Stamina).GetMin, _stats.GetStatValue(BaseStatType.Stamina).GetMax);
         }
+
+        protected abstract void HandleInteractionAction(IInteractible i);
+
         public override void DisableUnit()
         {
             base.DisableUnit();
@@ -122,7 +126,7 @@ namespace Arcatech.Units
             // this execution is blocked by ActionLock bool
             BaseUnitAction a;
 
-            if (!UnitIsGrounded) return;
+            if (!_ground.isOnGround) return;
             switch (obj)
             {
                 case UnitActionType.Melee:
@@ -156,6 +160,11 @@ namespace Arcatech.Units
         {
             currentAction?.CompleteAction();
             base.HandleDeath();
+        }
+
+        public virtual void ReceiveInteraction(IInteractible interactible)
+        {
+            if (_showDebugs) Debug.Log($"NYI: {this} receives interaction from {interactible}");
         }
     }
 }

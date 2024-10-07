@@ -32,7 +32,7 @@ namespace Arcatech.Actions
         }
         public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
-            user.ApplyForceResultToUnit(_imp, _t);  
+            user.ApplyForceResultToUnit(_imp, _t);
         }
     }
 

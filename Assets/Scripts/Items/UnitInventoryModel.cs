@@ -2,6 +2,7 @@
 using Arcatech.Units;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcatech.Items
 {
@@ -47,6 +48,14 @@ namespace Arcatech.Items
         }
 
         public Item PickItem(int index) => Inventory[index] as Item;
+        public bool HasItem(ItemSO check)
+        {
+            if (check == null) return false;
+            else
+            {
+                return Inventory.items.Any(t => t.ID == check.ID) || Equipments.GetAllValues().Any(t => t.ID == check.ID); 
+            }
+        }
         public void Clear() => Inventory.Clear();
         public bool AddItem(Item i) => Inventory.TryAdd(i);
         public bool RemoveItem(Item i) => Inventory.TryRemove(i);

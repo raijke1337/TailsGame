@@ -12,10 +12,7 @@ namespace Arcatech.Actions
         {
             return new ToggleColliderResult(ResultingColliderState);
         }
-        public override string ToString()
-        {
-            return $"collider toggle result status : {ResultingColliderState}";
-        }
+
     }
     public class ToggleColliderResult : ActionResult
     {

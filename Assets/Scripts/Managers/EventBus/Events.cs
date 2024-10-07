@@ -16,14 +16,20 @@ namespace Arcatech.EventBus
 
     public struct PlayerTargetUpdateEvent : IEvent
     {
-        public PlayerTargetUpdateEvent(ITargetable target, bool isPicked)
+        public PlayerTargetUpdateEvent(ITargetable target)
         {
             Target = target;
-            IsPicked = isPicked;
         }
-
+        public override string ToString()
+        {
+            if (Target == null)
+            {
+                return $"no target";
+            }
+            else return $"{Target.GetName}";
+            
+        }
         public ITargetable Target { get; }
-        public bool IsPicked { get; }
 
     }
 

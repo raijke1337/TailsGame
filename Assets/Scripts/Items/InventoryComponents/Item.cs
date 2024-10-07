@@ -14,7 +14,7 @@ namespace Arcatech.Items
         public ItemSO Config;
         public Item(ItemSO cfg, EquippedUnit ow)
         {
-            ID = SerializableGuid.NewGuid();
+            ID = cfg.ID;
             Owner = ow;
             Config = cfg;
             Type = cfg.Type;

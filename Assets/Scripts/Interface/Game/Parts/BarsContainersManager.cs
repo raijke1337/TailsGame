@@ -23,11 +23,13 @@ namespace Arcatech.UI
         }
         public void ClearAllBars()
         {
+            if (_barsDict == null) return;
+
             foreach (var bar in _barsDict.Values)
             {
                 Destroy(bar.gameObject);
             }
-        _barsDict.Clear(); 
+            _barsDict.Clear();
         }
 
         private void AddBar (BaseStatType barValue)
@@ -37,6 +39,8 @@ namespace Arcatech.UI
                 SetEaseMethod(_barsEaseMethod).
                 SetFillTime(_barsEaseTime);
         }
+
+        
 
         public void UpdateBarValue(BaseStatType barValue, StatValueContainer container)
         {

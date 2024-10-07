@@ -4,14 +4,26 @@ using Arcatech.Texts;
 using Arcatech.UI;
 using Arcatech.Units;
 using Arcatech.Units.Inputs;
+using DG.Tweening;
 using KBCore.Refs;
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 namespace Arcatech.Managers
 {
     public class GameInterfaceManager : MonoBehaviour, IManagedController
     {
+
+        public static GameInterfaceManager Instance;
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(this.gameObject);
+        }
+
+
         [SerializeField] private TargetPanel _tgtPan;
         [SerializeField] private PlayerUnitPanel _playerPan;
         [SerializeField] private GameTextComp _text;
@@ -27,36 +39,6 @@ namespace Arcatech.Managers
         #region managed
         public virtual void StartController()
         {
-
-
-            if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
-            {
-                _playerPan.gameObject.SetActive(true);
-                
-                _text.gameObject.SetActive(false);
-                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
-                _ded.SetActive(false);
-
-                _statChangedBind = new EventBinding<PlayerStatsChangedUIEvent>(UpdatePlayerBars);
-                _inventoryChangedBind = new EventBinding<InventoryUpdateEvent>(UpdateIcons);
-                _pauseToggleBind = new EventBinding<PauseToggleEvent>(ShowPauseMenu);
-                _targetUpdateBinding = new EventBinding<PlayerTargetUpdateEvent>(OnTargetUpdate);
-
-                EventBus<PlayerStatsChangedUIEvent>.Register(_statChangedBind);
-                EventBus<InventoryUpdateEvent>.Register(_inventoryChangedBind);
-                EventBus<PauseToggleEvent>.Register(_pauseToggleBind);
-                EventBus<PlayerTargetUpdateEvent>.Register(_targetUpdateBinding);
-
-            }
-            else
-            {
-                _playerPan.gameObject.SetActive(false);
-                _text.gameObject.SetActive(false);
-                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow; // dialogues also happen in scene levels
-                _ded.SetActive(false);
-                _tgtPan.gameObject.SetActive(false);
-            }
-
         }
 
 
@@ -67,9 +49,41 @@ namespace Arcatech.Managers
 
         public virtual void ControllerUpdate(float delta)
         {
-            if (currentTgt != null)
+
+        }
+
+        private void OnEnable()
+        {
+            _statChangedBind = new EventBinding<PlayerStatsChangedUIEvent>(UpdatePlayerBars);
+            _inventoryChangedBind = new EventBinding<InventoryUpdateEvent>(UpdateIcons);
+            _pauseToggleBind = new EventBinding<PauseToggleEvent>(ShowPauseMenu);
+            _targetUpdateBinding = new EventBinding<PlayerTargetUpdateEvent>(OnTargetUpdate);
+
+            EventBus<PlayerStatsChangedUIEvent>.Register(_statChangedBind);
+            EventBus<InventoryUpdateEvent>.Register(_inventoryChangedBind);
+            EventBus<PauseToggleEvent>.Register(_pauseToggleBind);
+            EventBus<PlayerTargetUpdateEvent>.Register(_targetUpdateBinding);
+        }
+
+        private void Start()
+        {
+
+            if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
-                _tgtPan.UpdateTargeted(true, currentTgt);
+                _playerPan.gameObject.SetActive(true);
+
+                _text.gameObject.SetActive(false);
+                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow;
+                _ded.SetActive(false);
+                _tgtPan.gameObject.SetActive(false); /// placeholder
+            }
+            else
+            {
+                _playerPan.gameObject.SetActive(false);
+                _text.gameObject.SetActive(false);
+                _text.DialogueCompleteEvent += OnDialogueCompletedInTextWindow; // dialogues also happen in scene levels
+                _ded.SetActive(false);
+                _tgtPan.gameObject.SetActive(false);
             }
         }
         private void OnDisable()
@@ -81,10 +95,6 @@ namespace Arcatech.Managers
         }
         public virtual void StopController()
         {
-            EventBus<PlayerStatsChangedUIEvent>.Deregister(_statChangedBind);
-            EventBus<InventoryUpdateEvent>.Deregister(_inventoryChangedBind);
-            EventBus<PauseToggleEvent>.Deregister(_pauseToggleBind);
-            EventBus<PlayerTargetUpdateEvent>.Deregister(_targetUpdateBinding);
         }
         #endregion
 
@@ -138,21 +148,15 @@ namespace Arcatech.Managers
             }
         }
 
-        ITargetable currentTgt;
-
         void OnTargetUpdate(PlayerTargetUpdateEvent e)
         {
+           // Debug.Log($"{e}");
             if (e.Target is PlayerUnit) return; //dont show playuer
-            if (e.IsPicked)
-            {
-                currentTgt = e.Target;  
-                _tgtPan.UpdateTargeted(e.IsPicked, e.Target);
-            }
-            else
-            {
-                currentTgt = null;
-            }
-            _tgtPan.gameObject.SetActive(e.IsPicked);
+
+            _tgtPan.UpdateTargeted(e.Target);
+            _tgtPan.gameObject.SetActive(e.Target != null);
+
+
         }
 
         #endregion
@@ -176,7 +180,11 @@ namespace Arcatech.Managers
         }
         public void OnRestart()
         {
-            GameManager.Instance.RequestLoadSceneFromContainer(GameManager.Instance.GetCurrentLevelData);
+            int ndex = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            SceneManager.LoadScene(ndex);
+
+            //GameManager.Instance.RequestLoadSceneFromContainer(GameManager.Instance.GetCurrentLevelData);
         }
         public void ClickResume()
         {

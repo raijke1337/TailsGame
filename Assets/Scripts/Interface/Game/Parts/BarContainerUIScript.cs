@@ -42,22 +42,22 @@ namespace Arcatech.UI
         {
             Color flash = new Color(0, 0, 0, 0); // transparent white
             if (c.GetCurrent > c.CachedValue) // heal
-            {
-                flash = _colors.PositiveColor;
-            }
+                {
+                    flash = _colors.PositiveColor;
+                }
             if (c.GetCurrent < c.CachedValue)
-            {
-                flash = _colors.NegativeColor;
-            }
+                {
+                    flash = _colors.NegativeColor;
+                }
 
-            _background.DOColor(flash, 0.1f).SetEase(Ease.InQuint).Play().onComplete += FlashBack;
-                _fill.DOFillAmount(c.GetPercent, fillTime).SetEase(_ease).Play();
+            _background.DOColor(flash, 0.1f).SetEase(Ease.InQuint).Play().onComplete += () => _background.DOColor(_baseBgColor, 0.1f).SetEase(Ease.InQuint).Play(); 
+
+            _fill.DOFillAmount(c.GetPercent, fillTime).SetEase(_ease).Play();
             _text.text = c.ToString();
         }
-
-        private void FlashBack()
+        private void OnDestroy()
         {
-            _background.DOColor(_baseBgColor, 0.1f).SetEase(Ease.InQuint).Play();
+            
         }
     }
 }

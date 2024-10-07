@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: skill_expshot_Action
   m_EditorClassIdentifier: 
   _locksMovement: 0
-  _animationName: AssaultRifle@Shot01
+  _animationName: Rifle@Shot01
   _exitTime: 0.8
   _nextAct:
     _nextAnim: {fileID: 0}
-    _chainWindowStart: 0
     _chainWindowEnd: 0
-  _onStart: []
-  _onExit:
+  _onStart:
   - {fileID: 11400000, guid: 076d74352c5f7ab408c5fed3450e8859, type: 2}
+  _onExit: []
   _onFinish: []

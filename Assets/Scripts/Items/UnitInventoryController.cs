@@ -47,7 +47,6 @@ namespace Arcatech.Items
             // moveto inventory, move to equipped go here)
             // events from the view component
             Debug.Log($"Something happened in inventory view");
-
         }
 
 
@@ -123,6 +122,10 @@ namespace Arcatech.Items
                 equipment = null;
                 return false;
             }
+        }
+        public bool HasItem  (ItemSO check)
+        {
+            return Inventory.HasItem(check);
         }
 
         public SerializedStatModConfig[] GetCurrentMods

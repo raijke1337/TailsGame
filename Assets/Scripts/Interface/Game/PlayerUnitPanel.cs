@@ -21,9 +21,6 @@ namespace Arcatech.UI
             EventBus<UpdateIconEvent>.Register(bindIcons);
         }
 
-
-
-
         public void ShowIcons (UnitInventoryController inv)
         {
             foreach (var weapon in inv.GetWeapons)

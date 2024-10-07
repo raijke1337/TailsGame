@@ -24,7 +24,7 @@ namespace Arcatech.Units.Behaviour
         }
         public NodeStatus Process(ControlledUnit actor)
         {
-            if (!unset && isPathCalculated && agent.remainingDistance < agent.stoppingDistance)
+            if (!unset && isPathCalculated && agent.remainingDistance <= agent.stoppingDistance)
             {
                 return NodeStatus.Success;
             }

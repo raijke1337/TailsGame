@@ -16,6 +16,7 @@ Material:
   - _OVERLAYMODE1_NONE
   - _OVERLAYMODE_HATCHING
   - _RIMSPLITCOLOR_NOSPLIT
+  - _USEADDITIONALLIGHTSDIFFUSE_ON
   - _USEHATCHINGCONSTANTSCALE_ON
   - _USELIGHTRAMP_DIFFUSERAMP
   - _USESPECULAR_ON
@@ -123,7 +124,7 @@ Material:
     - _HalftoneToonAffect: 0
     - _HaltonePatternSize: 0
     - _IndirectLightAffectOnHatch: 0
-    - _IndirectLightStrength: 0.3
+    - _IndirectLightStrength: 0.155
     - _InverseMask: 0
     - _LightRampOffset: 0
     - _Lighten: 0
@@ -176,7 +177,7 @@ Material:
     - _UseAdaptiveScreenUvs: 0
     - _UseAdaptiveScreenUvsWarp: 0
     - _UseAdaptiveUvsSpecular: 0
-    - _UseAdditionalLightsDiffuse: 0
+    - _UseAdditionalLightsDiffuse: 1
     - _UseBacklight: 0
     - _UseDiffuseWarp: 0
     - _UseDiffuseWarpAsOverlay: 0
@@ -200,7 +201,7 @@ Material:
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 0.5803922, g: 0.54509807, b: 0.48627454, a: 0}
-    - _Color: {r: 0.4292453, g: 0.9678192, b: 1, a: 1}
+    - _Color: {r: 0.20603138, g: 0.46687835, b: 0.482, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
     - _HatchingColor: {r: 0.18209413, g: 0.41263524, b: 0.426, a: 1}

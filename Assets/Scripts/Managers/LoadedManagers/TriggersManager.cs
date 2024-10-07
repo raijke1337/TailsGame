@@ -12,14 +12,29 @@ namespace Arcatech.Managers
     public class TriggersManager : MonoBehaviour, IManagedController
     {
 
+
+
         EventBinding<StatsEffectTriggerEvent> _triggersBinding;
+
+        private void OnEnable()
+        {
+            if (_triggersBinding == null) _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
+            EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
+        }
+        private void OnDisable()
+        {
+            EventBus<StatsEffectTriggerEvent>.Deregister(_triggersBinding);
+        }
+
 
         #region LoadedManager
         public virtual void StartController()
         {
-            _triggersBinding = new EventBinding<StatsEffectTriggerEvent>(HandleTriggerEvent);
+
+            Debug.Log($"starting triggers on {gameObject}");
+
             _applied = new Dictionary<StatsEffect, List<BaseEntity>>();
-            EventBus<StatsEffectTriggerEvent>.Register(_triggersBinding);
+
         }
         public virtual void ControllerUpdate(float delta)
         {
@@ -33,7 +48,7 @@ namespace Arcatech.Managers
         public virtual void StopController()
         {
             _applied.Clear();
-            EventBus<StatsEffectTriggerEvent>.Deregister(_triggersBinding);
+
         }
         #endregion
 
@@ -42,31 +57,31 @@ namespace Arcatech.Managers
         private Dictionary<StatsEffect, List<BaseEntity>> _applied;
         private void HandleTriggerEvent(StatsEffectTriggerEvent obj)
         {
-             //Debug.Log($"Handling trigger event; {obj}");
+           // Debug.Log($"Handling trigger event; {obj}");
             var targetToApply = obj.Target;
 
-                if (_applied.TryGetValue(obj.Applied, out var r))
+            if (_applied.TryGetValue(obj.Applied, out var r))
+            {
+                // effect in list
+
+                if (r.Contains(targetToApply)) return; // target in list
+                else
                 {
-                    // effect in list
+                    // target not in list
+                    targetToApply.ApplyEffect(obj.Applied);
+                    r.Add(obj.Target);
 
-                    if (r.Contains(targetToApply)) return; // target in list
-                    else
-                    {
-                        // target not in list
-                        targetToApply.ApplyEffect(obj.Applied);
-                        r.Add(obj.Target);
-
-                    if (obj.Applied.OnApply!=null)
+                    if (obj.Applied.OnApply != null)
                     {
                         obj.Applied.OnApply.GetActionResult().ProduceResult(null, obj.Target, obj.Place); // play particles or maybe something else if needed
                     }
                 }
-                }
-                // effect not in list just do normally
-                else
-                {
-                    targetToApply.ApplyEffect(obj.Applied);
-                    _applied[obj.Applied] = new List<BaseEntity>() { targetToApply };
+            }
+            // effect not in list just do normally
+            else
+            {
+                targetToApply.ApplyEffect(obj.Applied);
+                _applied[obj.Applied] = new List<BaseEntity>() { targetToApply };
 
                 if (obj.Applied.OnApply != null)
                 {
@@ -74,15 +89,7 @@ namespace Arcatech.Managers
                 }
             }
         }
-
-
-        void OnTriggerApply(BaseEntity src, BaseEntity tgt, Transform place)
-        {
-
-        }
-
-        }
-
-        #endregion
     }
+    #endregion
+}
 

@@ -1,7 +1,9 @@
 using Arcatech.EventBus;
 using Arcatech.Managers;
+using Arcatech.Triggers;
 using Arcatech.UI;
 using Cinemachine.Utility;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -18,7 +20,10 @@ namespace Arcatech.Units.Inputs
         private Plane _aimPlane;
 
         [SerializeField, Range(0.1f, 3f)] float targetingSphereRadius = 1f;
+        [SerializeField] float targetingUpdateFreq = 0.1f;
 
+        ITargetable currentTgt;
+        Collider[] checkColliders = new Collider[10];
         #endregion
 
         #region public properties
@@ -27,6 +32,8 @@ namespace Arcatech.Units.Inputs
         float _dotProduct;
         float _rotationToTarget;
         RaycastHit hit;
+        public ITargetable Target => currentTgt;
+
         public float GetDotProduct
         { get { return _dotProduct; } }
 
@@ -52,8 +59,8 @@ namespace Arcatech.Units.Inputs
         {
             get
             {
-                var heading = _target - transform.position;
-                return heading.normalized;
+                var heading = (_target - transform.position).normalized;
+                return heading;
             }
         }
         public Vector3 GetDirectionToTarget
@@ -69,14 +76,19 @@ namespace Arcatech.Units.Inputs
 
         private float prevY;
         float planeY = 0f;
+        CountDownTimer targetUpdate;
 
         #region managed
         public void StartController()
         {
+            Debug.Log("start aiming");
             _aimPlane = new Plane(Vector3.down, planeY);
 
             _target = transform.forward;
             _camera = Camera.main;
+
+            targetUpdate = new CountDownTimer(targetingUpdateFreq);
+            targetUpdate.Start();
         }
         public void FixedControllerUpdate(float fixedDelta)
         {
@@ -97,9 +109,6 @@ namespace Arcatech.Units.Inputs
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
             _aimPlane.Raycast(r, out float rayDist);
             _target = r.GetPoint(rayDist);
-            CheckTargetables(_target);
-
-
             var vectorToTarget = _target - transform.position;
             // new
             vectorToTarget.ProjectOntoPlane(_aimPlane.normal);
@@ -107,10 +116,33 @@ namespace Arcatech.Units.Inputs
             distanceToTarget = vectorToTarget.magnitude;
             _dotProduct = Vector3.Dot(transform.forward, GetNormalizedDirectionToTaget);
             _rotationToTarget = Vector3.Cross(transform.forward, GetNormalizedDirectionToTaget).y;
+
+
+            //if (currentTgt is IInteractible)
+            //{
+            //    GameUIManager.Instance.SetCursor(CursorType.Item);
+            //    if (currentTgt is BaseEntity)
+            //    {
+            //        GameUIManager.Instance.SetCursor(CursorType.EnemyTarget);
+            //    }
+            //}
+            //else
+            //{
+            //    GameUIManager.Instance.SetCursor(CursorType.Explore);
+            //}
+
+
+            targetUpdate.Tick(delta);
+            if (targetUpdate.IsReady)
+            {
+                CheckTargetables(_target);
+                targetUpdate.Reset();
+                targetUpdate.Start();
+            }
+
+
         }
 
-        ITargetable currentTgt;
-        Collider[] checkColliders = new Collider[10];
         void CheckTargetables(Vector3 target)
         {
             if (target == null) return; 
@@ -124,14 +156,16 @@ namespace Arcatech.Units.Inputs
                     if (checkColliders[i].TryGetComponent<ITargetable>(out var component))
                     {
                         currentTgt = component;
-                        EventBus<PlayerTargetUpdateEvent>.Raise(new PlayerTargetUpdateEvent(component, true));
+                        break;
                     }
                 }
             }
             else
+            {
+                currentTgt = null;
+            }
 
-                EventBus<PlayerTargetUpdateEvent>.Raise(new PlayerTargetUpdateEvent(currentTgt, false));
-            currentTgt = null;
+            EventBus<PlayerTargetUpdateEvent>.Raise(new PlayerTargetUpdateEvent(currentTgt));
         }
 
         public void StopController()
@@ -148,5 +182,29 @@ namespace Arcatech.Units.Inputs
                 Gizmos.DrawWireSphere(_target, targetingSphereRadius);
             }
         }
+
+        public bool CheckInteractive (out IInteractible item)
+        {
+            item = null;
+
+            var hits = Physics.OverlapSphere(_target, targetingSphereRadius);
+            if (hits.Length > 0)
+            {
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    if (checkColliders[i] == null) break;
+                    if (checkColliders[i].gameObject.layer.Equals(LayerMask.NameToLayer("Ground")) ) break;
+
+                    if (checkColliders[i].TryGetComponent<IInteractible>(out var component))
+                    {
+                        item = component;
+                        return true;
+                    }
+                }
+                return false;
+            }
+           return false;
+        }
+
     }
 }

@@ -85,9 +85,19 @@ namespace Arcatech.Skills
         #region UI
         public Sprite Icon => _desc.Picture;
 
-        public float FillValue => _chargesTimers.TryPeek(out var p)? p.Progress : 0 ;
+        public float FillValue
+        {
+            get
+            {
+                if (_remainingCharges > 0) return _internalCdTimer.Progress - 1;
+                else
+                {
+                    return _chargesTimers.TryPeek(out var p) ? p.Progress : _internalCdTimer.Progress - 1;
+                }
+            }
+        }
 
-        public string Text => _remainingCharges > 0 ? "Ready" : "Wait";
+        public string Text => _remainingCharges > 0 ? "OK" : "CHARGING";
 
         #endregion
 

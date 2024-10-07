@@ -11,20 +11,35 @@ namespace Arcatech.UI
     {
 
         [SerializeField,Child] protected TextMeshProUGUI _description;
-        public void UpdateTargeted(bool show, ITargetable tgt)
+        ITargetable currentTgt;
+        public void UpdateTargeted(ITargetable tgt)
         {
-            if (!show)
+            if (tgt == null)
             {
-                _bars.ClearAllBars();
+                Clear();
             }
             else
             {
-                _description.text = tgt.GetName;
-                foreach(var bar in tgt.GetDisplayValues)
-                {
-                    _bars.UpdateBarValue(bar.Key,bar.Value);
-                }
+                currentTgt = tgt;
+                _description.text = currentTgt.GetName;
             }
+        }
+
+        private void Update()
+        {
+            if (currentTgt == null || currentTgt.GetDisplayValues == null) return;
+
+            foreach (var bar in currentTgt.GetDisplayValues)
+            {
+                _bars.UpdateBarValue(bar.Key, bar.Value);
+            }
+        }
+
+        void Clear()
+        {
+            _bars.ClearAllBars();
+            _description.text = "?: NO TARGET :3";
+            currentTgt = null;
         }
 
 

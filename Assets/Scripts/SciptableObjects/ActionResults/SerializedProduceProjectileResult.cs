@@ -11,6 +11,7 @@ namespace Arcatech.Actions
     {
         [SerializeField] SerializedProjectileConfiguration Projectile;
         [SerializeField,Range (1,10)] int numberOfProjectiles;
+        [SerializeField, Tooltip("seconds before shot is done"),Range(0.1f, 1f)] float shotDelay = 0.3f;
         [SerializeField, Range(0, 10)] float spread;
         [SerializeField, Range(0.1f, 1f)] float intDelay = 0.1f;
 
@@ -20,7 +21,7 @@ namespace Arcatech.Actions
         }
         public override IActionResult GetActionResult()
         {
-            return new ProduceProjectileResult(Projectile,numberOfProjectiles,spread,intDelay);
+            return new ProduceProjectileResult(Projectile,numberOfProjectiles,spread,intDelay,shotDelay);
         }
 
         public override string ToString()
@@ -34,12 +35,14 @@ namespace Arcatech.Actions
         int _num;
         float _spread;
         float _delay;
-        public ProduceProjectileResult(SerializedProjectileConfiguration p, int n,float s, float d)
+        float _shotDelay;
+        public ProduceProjectileResult(SerializedProjectileConfiguration p, int n,float s, float d, float st)
         {
             _p = p;
             _num = n;
             _spread = s;
             _delay = d;
+            _shotDelay = st;
         }
 
         public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
@@ -49,6 +52,7 @@ namespace Arcatech.Actions
 
         IEnumerator ShootingCoroutine(BaseEntity user, Transform place)
         {
+            yield return new WaitForSeconds(_shotDelay);
             int done = 0;
             while (done < _num)
             {

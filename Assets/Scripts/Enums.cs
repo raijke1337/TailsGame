@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 public enum Side
 {
     PlayerSide,
@@ -11,14 +14,6 @@ public enum BaseStatType : byte
     Energy
 }
 
-public enum MovementStatType : byte
-{
-    MoveSpeed,
-    TurnSpeed,
-    JumpForce
-}
-
-
 public enum EquipmentType
 {
     None,
@@ -29,6 +24,17 @@ public enum EquipmentType
     Costume,
     Modifier,
     Other = 255
+}
+
+public enum WeaponAnimationsSet
+{
+    None,
+    MeleeOneHanded,
+    MeleeTwoHanded,
+    MeleeTwoHandedLong,
+    RangedHandGun,
+    RangedRifle,
+    RangedAutoRifle
 }
 
 public enum UnitActionType : byte
@@ -94,11 +100,7 @@ public enum EffectMoment
     OnCollision,
     OnExpiry
 }
-public enum SkillState
-{
-    Placer,
-    AoE
-}
+
 
 #region AI
 public enum ReferenceUnitType : byte
@@ -114,14 +116,6 @@ public enum ReferenceUnitType : byte
 
 
 #endregion
-public enum ControlledItemState : byte
-{
-    None,
-    Negative,
-    NegativeToPositive,
-    Positive,
-    PositiveToNegative,
-}
 
 public enum FaceExpression : byte
 {
@@ -132,3 +126,11 @@ public enum FaceExpression : byte
     Bothered
 }
 
+
+
+
+[Serializable]
+public class NestedList<T> : List<T>
+{
+    public List<T> InternalList;
+}

@@ -24,15 +24,14 @@ namespace Arcatech.Items
         public UnitActionType UseActionType { get; protected set; }
         public IWeaponUseStrategy UseStrategy { get; protected set; }
 
-
+        public WeaponAnimationsSet AnimationSet { get; protected set; }
 
         public Weapon(WeaponSO cfg, EquippedUnit ow) : base(cfg, ow)
         {
             _weaponGameobject = DisplayItem as BaseWeaponComponent;
 
             _cost = cfg.Cost;
-           // _storedTriggerSettings = new List<SerializedStatsEffectConfig>(cfg.UseEffects);
-
+            AnimationSet = cfg.WeaponType;
             switch (Type)
             {
                 case EquipmentType.MeleeWeap:

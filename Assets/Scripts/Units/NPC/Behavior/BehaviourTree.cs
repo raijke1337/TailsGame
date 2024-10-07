@@ -9,16 +9,19 @@ namespace Arcatech.Units.Behaviour
 
     public class BehaviourTree : Node
     {
-
+        
         public BehaviourTree(string n, int p = 0) : base (n,p)
         {
 
         }
         public override NodeStatus Process(NPCUnit actor)
         {
+            if (Children.Count == 0)
+            {
+                return NodeStatus.Fail;
+            }
+
             NodeStatus status = Children[currentChildIndex].Process(actor);
-
-
 
             if (status == NodeStatus.Success)
             {

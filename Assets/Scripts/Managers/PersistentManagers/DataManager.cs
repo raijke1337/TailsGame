@@ -5,17 +5,17 @@ using Arcatech.Scenes;
 using Arcatech.Units;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+
 namespace Arcatech.Managers
 {
-
     public class DataManager : MonoBehaviour
     {
         public Itemfactory ItemsFactory;
         public static DataManager Instance;
+
+
         private void Awake()
         {
             if (Instance == null)
@@ -25,12 +25,13 @@ namespace Arcatech.Managers
                 _bindInv = new EventBinding<InventoryUpdateEvent>(OnInventoryUpdate);
                 _bindLvls = new EventBinding<LevelCompletedEvent>(OnLevelComplete);
 
+
                 SaveService = new SavesHandler(new JsonSerializer());
                 ReloadSave();
 
                 EventBus<InventoryUpdateEvent>.Register(_bindInv);
                 EventBus<LevelCompletedEvent>.Register(_bindLvls);
-
+              //  Debug.Log($"register event binds in {this} at {Time.time}");
             }
 
             else Destroy(gameObject);
@@ -40,6 +41,7 @@ namespace Arcatech.Managers
         {
             EventBus<InventoryUpdateEvent>.Deregister(_bindInv);
             EventBus<LevelCompletedEvent>.Deregister(_bindLvls);
+           // Debug.Log($"deregister event binds in {this} at {Time.time}");
         }
 
         #region SceneContainers
@@ -173,9 +175,5 @@ namespace Arcatech.Managers
                 };
             }
         }
-
-
-
-
     }
 }

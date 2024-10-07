@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Arcatech.Units
 {
-
+    
     public class EquippedUnit : BaseEntity
     {
         [Space,Header("Equipped Unit"), SerializeField] protected UnitItemsSO defaultEquips;
@@ -61,6 +61,7 @@ namespace Arcatech.Units
             return new UnitInventoryItemConfigsContainer(defaultEquips);
         }
 
+        public bool HasItem(ItemSO toCheck) => _inventory.HasItem(toCheck);
         #endregion
 
 /// <summary>

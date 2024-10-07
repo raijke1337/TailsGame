@@ -21,7 +21,7 @@ public class GameUIManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private SerializedDictionary<CursorType, Texture2D> _cursors;
+    [SerializeField] private SerializedDictionary<CursorType, Sprite> _cursors;
     [SerializeField] private SerializedDictionary<FontType, TMP_FontAsset> _fonts;
     [SerializeField] private List<Sprite>  _match2Pictures;
 
@@ -43,7 +43,7 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetCursor(CursorType type)
     {
-        Cursor.SetCursor(_cursors[type], Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(_cursors[type].texture, Vector2.zero, CursorMode.Auto);
         Cursor.visible = true;
     }
     public TMP_FontAsset GetFont(FontType t) => _fonts[t];

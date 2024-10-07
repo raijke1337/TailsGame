@@ -19,17 +19,18 @@ namespace Arcatech.Stats
         public UnitStatsController(SerializedStatModConfig[] startingstats, BaseEntity dummyUnit) : base(dummyUnit)
         {
             _stats = new Dictionary<BaseStatType, StatValueContainer>();
-            var vals = Enum.GetValues(typeof(BaseStatType));
-            foreach (var typ in vals)
-            {
-                _stats[(BaseStatType)typ] = new StatValueContainer();
-            }
+            //var vals = Enum.GetValues(typeof(BaseStatType));
+            //foreach (var typ in vals)
+            //{
+            //    _stats[(BaseStatType)typ] = new StatValueContainer();
+            //}
             AddMods(startingstats);
         }
         public UnitStatsController AddMods (SerializedStatModConfig[] mods)
         {
             foreach (var cfg in mods)
             {
+                if (!_stats.ContainsKey(cfg.GetStatType)) _stats[cfg.GetStatType] = new StatValueContainer();
                 _stats[cfg.GetStatType].ApplyStatsMod(cfg);
             }
             return this;

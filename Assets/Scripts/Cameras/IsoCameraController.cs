@@ -34,56 +34,60 @@ namespace Arcatech.Scenes.Cameras
         private Dictionary<FadingDecorComponent, Coroutine> _cors;
         private RaycastHit[] _hitsThisFrame;
 
-        private bool isStarted = false;
+        
 
         #region managed
         public void StartController()
         {
-            _camera = GetComponent<Camera>();
-            if (_playerAimingComponent == null) _playerAimingComponent = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.GetAimingComponent;
-
+            _camera = GetComponent<Camera>();           
             _hitsThisFrame = new RaycastHit[50];
-            _cors = new Dictionary<FadingDecorComponent, Coroutine>();
-            transform.position = _playerAimingComponent.transform.position + _desiredOffsetFromPlayer;
-            isStarted = true;
+            _cors = new Dictionary<FadingDecorComponent, Coroutine>();           
+
         }
 
         public void ControllerUpdate(float delta)
         {
-            if (!isStarted) return;
-            if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
+            if (_playerAimingComponent == null)
             {
-                _cameraTargetGizmoColor = Color.green;
-                if (DebugMessage)                
-                {
-                    Debug.Log($"Switching camera target to far look");
-                }
-
-                _cameraTargetPoint = _playerAimingComponent.GetLookTarget;
+                _playerAimingComponent = FindObjectOfType<AimingComponent>();
+                transform.position = _playerAimingComponent.transform.position + _desiredOffsetFromPlayer;
             }
             else
             {
-                _cameraTargetGizmoColor = Color.yellow;
-                if (DebugMessage)
+                if (_playerAimingComponent.GetDistanceToTarget < _lookDist)
                 {
-                    Debug.Log($"Switching camera target to close look");
-                }
-                _cameraTargetPoint = _playerAimingComponent.transform.position + _playerAimingComponent.GetNormalizedDirectionToTaget * _lookDist;
+                    _cameraTargetGizmoColor = Color.green;
+                    if (DebugMessage)
+                    {
+                        Debug.Log($"Switching camera target to far look");
+                    }
 
+                    _cameraTargetPoint = _playerAimingComponent.GetLookTarget;
+                }
+                else
+                {
+                    _cameraTargetGizmoColor = Color.yellow;
+                    if (DebugMessage)
+                    {
+                        Debug.Log($"Switching camera target to close look");
+                    }
+                    _cameraTargetPoint = _playerAimingComponent.transform.position + _playerAimingComponent.GetNormalizedDirectionToTaget * _lookDist;
+
+                }
+
+                transform.position = Vector3.Slerp(transform.position, _cameraTargetPoint + _desiredOffsetFromPlayer, Time.deltaTime * _catchUpSpeed);
+                SphereCastForHiding();
             }
 
-            transform.position = Vector3.Slerp(transform.position, _cameraTargetPoint + _desiredOffsetFromPlayer, Time.deltaTime* _catchUpSpeed);
-            SphereCastForHiding();
 
         }
         public void FixedControllerUpdate(float fixedDelta)
         {
-            if (!isStarted) return;
+
         }
         public void StopController()
         {
-            isStarted = false;
-            StopAllCoroutines();
+
         }
 
         #endregion

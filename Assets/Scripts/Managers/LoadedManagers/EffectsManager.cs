@@ -1,6 +1,5 @@
 using Arcatech.Effects;
 using Arcatech.EventBus;
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 namespace Arcatech.Managers
@@ -32,7 +31,6 @@ namespace Arcatech.Managers
         #endregion
         private void Start()
         {
-            SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
             _drawDamageEventBind = new EventBinding<DrawDamageEvent>(PlaceDamageText);
             _placeParticleEventBind = new EventBinding<VFXRequest>(PlaceParticle);
 
@@ -51,18 +49,11 @@ namespace Arcatech.Managers
         private void PlaceDamageText(DrawDamageEvent @event)
         {
             Vector3 dirToCamera = Camera.main.transform.position - @event.Unit.transform.position;
-            Vector3 adjustedPosition = @event.Unit.transform.position + (Vector3.up * 2) + dirToCamera.normalized; // move towards camera 1
+            Vector3 adjustedPosition = @event.Unit.transform.position + (Vector3.up * 2) + dirToCamera.normalized + Random.insideUnitSphere; // move towards camera 1 an d some random
 
             var txt = Instantiate(_particleTextPrefab,adjustedPosition,Quaternion.identity);
 
             txt.PlayNumbers((int)@event.Damage);
-        }
-
-
-
-        private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
-        {
-            PlayMusic(GameManager.Instance.GetCurrentLevelData.Music);
         }
 
         private void PlayMusic(AudioClip clip)
@@ -74,17 +65,10 @@ namespace Arcatech.Managers
             _musicObj.Play();
         }
 
-
-        public void CleanUpOnSceneChange()
-        {
-            StopAllCoroutines();
-            if (_musicObj != null) Destroy(_musicObj.gameObject);
-
-
-        }
-
         private void OnDisable()
         {
+            StopAllCoroutines();
+           // Debug.Log($"deregister event binds in {this} at {Time.time}");
             EventBus<DrawDamageEvent>.Deregister(_drawDamageEventBind);
             EventBus<VFXRequest>.Deregister(_placeParticleEventBind);
         }

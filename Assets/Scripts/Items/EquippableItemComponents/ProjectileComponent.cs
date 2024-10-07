@@ -86,22 +86,22 @@ namespace Arcatech.Items
             Lifetime -= Time.deltaTime;
             if (Lifetime < 0)
             {
+                Expiry();
                 Destroy(gameObject);
             }
         }
 
-
-        protected virtual void OnDestroy()
+        protected virtual void Expiry()
         {
-
             if (ExpirationCollisionResult.Length > 0 && !hasHitUnit)
             {
                 foreach (var exp in ExpirationCollisionResult)
                 {
-                    exp.ProduceResult(Owner,null,transform);
+                    exp.ProduceResult(Owner, null, transform);
                 }
             }
         }
+
 
 
 

@@ -4,6 +4,7 @@ using Arcatech.Stats;
 using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
 using Arcatech.Units.Stats;
+using ECM.Components;
 using KBCore.Refs;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,8 @@ using static UnityEngine.Rendering.DebugUI;
 
 namespace Arcatech.Units
 {
-    public class BaseEntity : ValidatedMonoBehaviour, ITargetable
+    [RequireComponent(typeof(GroundDetection))]
+    public class BaseEntity : ValidatedMonoBehaviour, IInteractible
     {
         protected const float zeroF = 0f;
         [Header("Entity")]
@@ -30,8 +32,8 @@ namespace Arcatech.Units
 
         [SerializeField, Self] protected Animator _animator;
 
+        protected GroundDetection _ground;
         public bool UnitDebug => _showDebugs;
-
         public string GetName { get => defaultStats.DisplayName; }
         [HideInInspector] public Side Side => _unitSide;
 
@@ -46,6 +48,7 @@ namespace Arcatech.Units
         public virtual void StartControllerUnit() // this is run by unit manager
         {
             if (_showDebugs) Debug.Log($"Starting unit {this}");
+            _ground = GetComponent<GroundDetection>();
             _stats = new UnitStatsController(defaultStats.InitialStats, this);
             _stats.StartController();
             statsUpdateTimer = new CountDownTimer(statsUpdateFrequency);
@@ -55,7 +58,6 @@ namespace Arcatech.Units
         public virtual void DisableUnit()
         {
             if (_showDebugs) Debug.Log($"Stopping unit {this}");
-            StopAllCoroutines();
         }
 
         /// <summary>
@@ -222,12 +224,24 @@ namespace Arcatech.Units
             Rigidbody rb = GetComponent<Rigidbody>();
             rb?.AddForce(Vector3.forward * imp * 5f,ForceMode.Impulse);
         }
+
+
         #endregion
 
 
         #region itargetable
 
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetDisplayValues => _stats.GetStatValues;
+
+
+        #endregion
+
+        #region iinteractible
+        public void AcceptInteraction(IInteractor actor)
+        {
+            Debug.Log($"Tried to interact with {GetName}");
+        }
+        public Vector3 Position => transform.position;
         #endregion
     }
 

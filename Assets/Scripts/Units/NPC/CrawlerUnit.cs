@@ -1,9 +1,6 @@
-﻿using Arcatech.Managers;
-using Arcatech.Units.Behaviour;
-using KBCore.Refs;
+﻿using Arcatech.Units.Behaviour;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Arcatech.Units
 {
@@ -12,23 +9,16 @@ namespace Arcatech.Units
 
         [Header("NPC Behaviour : Crawler")]
 
-        [SerializeField] List<Transform> patrolPoints1;
-        [SerializeField] List<Transform> patrolPoints2;
 
         [SerializeField, Range(1, 20)] float detectionRange = 10f;
         [SerializeField, Range(0, 1)] float skillUseTreschold = 0.2f;
+        [SerializeField] List<NestedList<Transform>> patrolPointVariants;
 
 
-        Transform _player;
 
         protected override void SetupBehavior()
         {
-            base.SetupBehavior();
-            _player = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit.transform;
-            tree = new BehaviourTree(GetName + " behaviour");
-
             BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + GetName);
-
 
             Sequence activateSkillSeq = new Sequence("activate skill", 100);
             bool IsLowHP()
@@ -69,29 +59,28 @@ namespace Arcatech.Units
             chasePlayerSeq.AddChild(new Leaf(new BehaviourCondition(PlayerInRange), "is player in range"));
             chasePlayerSeq.AddChild(new Leaf(new MoveToPointStrategy(transform, agent, _player), "move to player"));
             chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Melee)), "use melee attack"));
+            chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => chasePlayerSeq.Reset()), "reset chase"));
 
             actionsPriority.AddChild(chasePlayerSeq);
 
-            BehaviourRandomSelector randomPatrol = new BehaviourRandomSelector("patrol points", 10);
-            Leaf patrol1 = new Leaf(new PatrolPointsStrategy(transform, agent, patrolPoints1), "points 1");
-            Leaf patrol2 = new Leaf(new PatrolPointsStrategy(transform, agent, patrolPoints2), "points 2");
+            if (patrolPointVariants!=null && patrolPointVariants.Count > 0)
+            {
+                BehaviourRandomSelector randomPatrol = new BehaviourRandomSelector("patrol points", 10);
+                for (int i = 0; i < patrolPointVariants.Count; i++)
+                {
+                    Leaf p = new Leaf(new PatrolPointsStrategy(transform, agent, patrolPointVariants[i].InternalList), $"points option {i}");
+                    randomPatrol.AddChild(p);
+                }
 
-            randomPatrol.AddChild(patrol2);
-            randomPatrol.AddChild(patrol1);
-
-            actionsPriority.AddChild(randomPatrol);
-
+                actionsPriority.AddChild(randomPatrol);
+            }
+            else
+            {
+                actionsPriority.AddChild(SetupIdleRoaming());
+            }
 
             tree.AddChild(actionsPriority);
-
         }
-        protected override void ExecuteBehaviour()
-        {
-            base.ExecuteBehaviour();
-
-        }
-
-
     }
 
 }

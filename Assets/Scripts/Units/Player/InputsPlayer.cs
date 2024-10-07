@@ -1,6 +1,7 @@
 using Arcatech.EventBus;
 using Arcatech.Managers;
 using Arcatech.Scenes.Cameras;
+using Arcatech.Triggers;
 using KBCore.Refs;
 using UnityEngine;
 
@@ -9,9 +10,10 @@ namespace Arcatech.Units.Inputs
     [RequireComponent(typeof(AimingComponent))]
     public class InputsPlayer : ControlInputsBase
     {
-
+        [Space,Header("Player inputs")]
         [SerializeField, Anywhere] PlayerInputReaderObject _playerInputReader;
         [SerializeField,Self] private AimingComponent _aim;
+        [SerializeField] float _interactRange = 3f;
         public AimingComponent Aiming => _aim;
         private IsoCamAdjust _adj;
 
@@ -88,9 +90,18 @@ namespace Arcatech.Units.Inputs
 
         private void OnMountButton()
         {
-            // nyi
+            if (Aiming.CheckInteractive(out var inter))
+            {
+                if (Vector3.Distance(transform.position,inter.Position)<= _interactRange)
+                {
+                    CallBackInteraction(inter);
+                }
+                else
+                {
+                    Debug.Log($"Too far to interact with {inter}");
+                }
+            }
         }
-
         private void OnPauseButton()
         {
             CallBackPause();

@@ -1,6 +1,7 @@
 using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Managers;
+using Arcatech.Triggers;
 using Arcatech.Units.Inputs;
 using KBCore.Refs;
 using UnityEngine;
@@ -15,9 +16,8 @@ namespace Arcatech.Units
         [SerializeField] int _armorBreakEnergy = 30;
 
         [SerializeField, Child] protected Camera _faceCam;
-        public AimingComponent GetAimingComponent => (_inputs as InputsPlayer).Aiming;
-
-        [SerializeField, Self] protected PlayerMovementController _movement;
+        AimingComponent _aim;
+        [SerializeField, Self] protected DashJumpMovementController _movement;
 
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
@@ -26,6 +26,8 @@ namespace Arcatech.Units
         {
             base.StartControllerUnit();
             _inputs.InputsPause += OnInputsPauseButton;
+            _aim = (_inputs as InputsPlayer).Aiming;
+
             ToggleCamera(true);
         }
 
@@ -34,11 +36,10 @@ namespace Arcatech.Units
         public override void RunUpdate(float delta)
         {
             base.RunUpdate(delta);
-            UnitIsGrounded = _movement.isGrounded;
 
             if (ActionLock || _stunned) return;
             _movement.SetDesiredMoveDirection(_inputs.InputsMovementVector);
-            _movement.SetDesiredLookDirection(_inputs.InputsLookVector);
+            _movement.SetDesiredLookDirection(_inputs.InputsLookVector,_aim.Target!=null);
         }
         //doaction in applyforce leads to this
         public override void ApplyForceResultToUnit(float impulse, float time)
@@ -124,9 +125,13 @@ namespace Arcatech.Units
             _movement.SetDesiredMoveDirection(Vector3.zero);
         }
 
+
         #endregion
 
-
+        protected override void HandleInteractionAction(IInteractible i)
+        {
+            i.AcceptInteraction(this);
+        }
 
     }
 

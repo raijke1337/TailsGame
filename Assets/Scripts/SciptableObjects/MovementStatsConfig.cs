@@ -23,4 +23,13 @@ namespace Arcatech.Units.Stats
         public float Min;
         public float Start;
     }
+
+    public enum MovementStatType
+    {
+        Movespeed,
+        TurnSpeed,
+
+    }
+
+
 }

@@ -5,6 +5,8 @@ using Arcatech.Scenes;
 using Arcatech.Scenes.Cameras;
 using Arcatech.UI;
 using Arcatech.Units;
+using DG.Tweening;
+using KBCore.Refs;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -30,24 +32,17 @@ namespace Arcatech.Managers
         [SerializeField] private PlayerUnit PlayerPrefab;
         [SerializeField] private MenuPrefabControllerComp _mainMenuPrefab;
 
-        [Space, SerializeField] private LoadedManagers GameControllersPrefab;
         [SerializeField] private GameInterfaceManager gameInterfaceManagerPrefab;
-        [SerializeField] private IsoCameraController gameCameraPrefab;
-
-
-        private LoadedManagers _gameControllers;
-
-        public LoadedManagers GetGameControllers => _gameControllers;
+        [SerializeField] private IsoCameraController gameCameraPrefab;        
         public GameInterfaceManager GetGameInterfacePrefab => gameInterfaceManagerPrefab;
         public IsoCameraController GetGameCameraPrefab => gameCameraPrefab;
-
 
         private void OnEnable()
         {
             Bindings(true);
 
             _dataManager = DataManager.Instance;
-            SceneManager.sceneLoaded += SwitchedScenesCleanUp;
+
 #if UNITY_EDITOR
             Assert.IsNotNull(_mainScene);
             Assert.IsNotNull(_equipsScene);
@@ -60,28 +55,8 @@ namespace Arcatech.Managers
 #endif
             int sceneIndex = SceneManager.GetActiveScene().buildIndex;
             _currentLevel = _dataManager.GetSceneContainer(sceneIndex);
-
-
-            if (_currentLevel == _mainScene)
-            {
-                Instantiate(_mainMenuPrefab);
-            }
         }
 
-        private void Update()
-        {
-            if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
-            {
-                _gameControllers.ControllerUpdate(Time.deltaTime);
-            }
-        }
-        private void FixedUpdate()
-        {
-            if (_currentLevel != null && (_currentLevel.LevelType == LevelType.Game || _currentLevel.LevelType == LevelType.Scene) && _gameControllers != null)
-            {
-                _gameControllers.FixedControllerUpdate(Time.fixedDeltaTime);
-            }
-        }
         private void OnDisable()
         {
             Bindings(false);
@@ -107,6 +82,14 @@ namespace Arcatech.Managers
         private SceneContainer _cachedGameLevel;
         public void RequestLoadSceneFromContainer(SceneContainer sc)
         {
+            DOTween.KillAll();
+            Debug.Log($"Placeholder - starting level as GAME level");
+
+            if (sc == _mainScene)
+            {
+                Instantiate(_mainMenuPrefab);
+            }
+
             switch (sc.LevelType)
             {
                 default:
@@ -135,16 +118,14 @@ namespace Arcatech.Managers
             }
         }
 
-        private void DoLoadScene(int index)
-        {
-            Debug.Log($"Loading scene index {index} - {SceneManager.GetSceneByBuildIndex(index).name}\nCurrent level is: {SceneManager.GetActiveScene().name}");
-
-            _currentLevel = _dataManager.GetSceneContainer(index);
-
-            EffectsManager.Instance.CleanUpOnSceneChange();
+        void DoLoadScene(int index)
+        {            
+            Debug.Log($"Loading scene index {index} - {SceneManager.GetSceneByBuildIndex(index).name}\nCurrent level is: {SceneManager.GetActiveScene().name}");       
+            _currentLevel = _dataManager.GetSceneContainer(index);            
             SceneManager.LoadScene(index);
-        }
 
+        }
+        #endregion
         #region UNITY UI
         public void OnStartNewGameButton()
         {
@@ -162,65 +143,35 @@ namespace Arcatech.Managers
 #endif
             Application.Quit();
         }
-        #endregion
 
         public void OnFinishedEquips()
         {
             _equipsDone = true;
             RequestLoadSceneFromContainer(_cachedGameLevel);
         }
-
-
-
-
-        private void SwitchedScenesCleanUp(Scene arg0, LoadSceneMode arg1)
-        {
-
-            _gameControllers = Instantiate(GameControllersPrefab);
-            _gameControllers.StartController(LevelType.Game);
-            Debug.Log($"Placeholder - starting level as GAME level");
-            //_gameControllers.StartController(_currentLevel.LevelType);
-
-            if (arg0.buildIndex == _mainScene.SceneLoaderIndex)
-            {
-                Instantiate(_mainMenuPrefab);
-            }
-
-        }
         #endregion
-
-
-
-
-
-
-        #region game events
-        private void Bindings(bool isStart)
-        {
-            if (isStart)
-            {
-
-                _levelBind = new EventBinding<LevelCompletedEvent>(OnLevelCompleteTrigger);
-
-                EventBus<LevelCompletedEvent>.Register(_levelBind);
-            }
-            else
-            {
-                
-                EventBus<LevelCompletedEvent>.Deregister(_levelBind);
-            }
-        }
 
 
         #region level complete
         EventBinding<LevelCompletedEvent> _levelBind;
+        private void Bindings(bool isStart)
+        {
+            if (isStart)
+            {
+                _levelBind = new EventBinding<LevelCompletedEvent>(OnLevelCompleteTrigger);
+                EventBus<LevelCompletedEvent>.Register(_levelBind);
+                //Debug.Log($"register event binds in {this} at {Time.time}");
+            }
+            else
+            {
+                EventBus<LevelCompletedEvent>.Deregister(_levelBind);
+                //Debug.Log($"deregister event binds in {this} at {Time.time}");
+            }
+        }
 
         private void OnLevelCompleteTrigger(LevelCompletedEvent obj)
         {
-            if (_gameControllers != null)
-            {
-                _gameControllers.StopController();
-            }
+
             if (obj.CompletedLevel.NextLevel == null)
             {
                 Debug.Log($"Level complete trigger has no next lv assigned, returning to main");
@@ -232,26 +183,13 @@ namespace Arcatech.Managers
             }
         }
         #endregion
-        #endregion
 
 
         public void OnReturnToMain()
         {
-            if (_gameControllers != null)
-            {
-                _gameControllers.StopController();
-            }
             DoLoadScene(_mainScene.SceneLoaderIndex);
         }
 
-        public void OnPlayerDead()
-        {
-            //if (_gameControllers != null)
-            //{
-            //    _gameControllers.StopController();
-            //}
-            _gameControllers.GameInterfaceManager.GameOver();
-        }
         public void QuitGame()
         {
             Application.Quit();

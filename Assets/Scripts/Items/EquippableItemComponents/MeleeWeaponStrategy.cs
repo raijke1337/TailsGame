@@ -25,7 +25,11 @@ namespace Arcatech.Items
         protected WeaponTriggerComponent Trigger;
         protected IActionResult[] OnColliderHit { get; }
         protected BaseUnitAction currentAction;
-        public void SwitchCollider(bool state) => Trigger.ToggleCollider(state);
+        public void SwitchCollider(bool state)
+        {
+            Trigger.ToggleCollider(state);
+            if (Owner.UnitDebug) Debug.Log($"collider on {WeaponComponent} {(state == true ? "on" : "off")} ");
+        }
 
         public override bool TryUseUsable(out BaseUnitAction action)
         {

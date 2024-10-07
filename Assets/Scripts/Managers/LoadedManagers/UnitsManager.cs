@@ -1,3 +1,4 @@
+using Arcatech.BlackboardSystem;
 using Arcatech.EventBus;
 using Arcatech.Units;
 using System.Collections.Generic;
@@ -9,9 +10,6 @@ namespace Arcatech.Managers
 {
     public class UnitsManager : MonoBehaviour, IManagedController
     {
-
-
-
 
         #region pause handling
 
@@ -27,10 +25,18 @@ namespace Arcatech.Managers
         }
         #endregion
 
+        public static UnitsManager Instance;
+        private void Awake()
+        {
+            if (Instance != null) Destroy(Instance.gameObject);
+            Instance = this;
+        }
+
 
         #region managed
         public virtual void StartController()
         {
+
             List<BaseEntity> l = new List<BaseEntity>();
             foreach (BaseEntity u in FindObjectsOfType<BaseEntity>())
             {
@@ -41,10 +47,7 @@ namespace Arcatech.Managers
                     _player = p;
                 }
             }
-
-            _pauseBind = new EventBinding<PauseToggleEvent>(OnPawsToggle);
-            EventBus<PauseToggleEvent>.Register(_pauseBind);
-
+            SetupBlackboard();
         }
         public virtual void ControllerUpdate(float delta)
         {
@@ -54,7 +57,7 @@ namespace Arcatech.Managers
             {
                 entities[i].RunUpdate(delta);
             }
-
+            UpdateBlackboardController();
         }
 
         public virtual void FixedControllerUpdate(float fixedDelta)
@@ -78,28 +81,14 @@ namespace Arcatech.Managers
                 e.DisableUnit();
                 SetupUnit(e, false);
             }
-
-            EventBus<PauseToggleEvent>.Deregister(_pauseBind);
+            entities.Clear();
         }
         #endregion
 
         #region units handling
 
         private PlayerUnit _player;
-        public PlayerUnit GetPlayerUnit
-        {
-            get
-            {
-                if (_player == null)
-                {
-                    _player = FindObjectOfType<PlayerUnit>();
-                }
-                return _player;
-
-            }
-        }
-            //  private List<RoomUnitsGroup> _npcGroups;
-            List<BaseEntity> entities = new List<BaseEntity>();
+        List<BaseEntity> entities = new List<BaseEntity>();
 
         private void SetupUnit(BaseEntity u, bool isEnable)
         {
@@ -118,19 +107,65 @@ namespace Arcatech.Managers
 
         private void HandleUnitDeath(BaseEntity unit)
         {
+
             SetupUnit(unit, false);
             entities.Remove(unit);
             
             if (unit is PlayerUnit)
             {
-               // GM_OnPauseToggle(true);
-                GameManager.Instance.OnPlayerDead();
+                GameInterfaceManager.Instance.GameOver();
             }
             else
             {
                 Destroy(unit.gameObject, 2f);
             }
 
+        }
+        #endregion
+
+        private void OnEnable()
+        {
+            _pauseBind = new EventBinding<PauseToggleEvent>(OnPawsToggle);
+            EventBus<PauseToggleEvent>.Register(_pauseBind);
+        }
+        private void OnDisable()
+        {
+            EventBus<PauseToggleEvent>.Deregister(_pauseBind);
+        }
+
+
+        #region blackboard
+
+
+        [Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
+
+        readonly Blackboard bb = new();
+        readonly Arbiter ar = new Arbiter();
+        BlackboardKey safeSpot;
+        private void SetupBlackboard()
+        {
+
+
+            bbData.SetupBlackboard(bb);
+            safeSpot = bb.GetOrRegisterKey("safeSpot");
+
+            foreach (var e in entities)
+            {
+                if (e is IExpert ex)
+                {
+                    ar.RegisterExpert(ex);
+                }
+            }       
+        }
+        public Blackboard GetBlackboard => bb;
+
+        void UpdateBlackboardController()
+        {
+            foreach (var act in ar.BlackboardIteration(bb))
+            {
+                act();
+            }
+           // bb.SetValue(safeSpot, _player.transform.forward * 6f);
         }
         #endregion
 

@@ -39,12 +39,26 @@ namespace Arcatech.Actions
 
         public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
-            Transform par = null;
-            if (parent) par = target.transform;
-            foreach (var effect in _effs)
+            if (parent)
             {
-                GameObject.Instantiate(effect, place.position, place.rotation,par);
+                Transform par = null;
+
+                if (target != null) par = target.transform;
+                else par = place; 
+                foreach (var effect in _effs)
+                {
+                    GameObject.Instantiate(effect, place.position, place.rotation, par);
+                }
             }
+            else
+            {
+                foreach (var effect in _effs)
+                {
+                    GameObject.Instantiate(effect, place.position, place.rotation);
+                }
+            }
+
+
         }
     }
 
