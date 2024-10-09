@@ -91,11 +91,13 @@ namespace Arcatech.BlackboardSystem
         public BlackboardKey GetOrRegisterKey (string keyName)
         {
             Assert.IsNotNull(keyName);
+
             if (!keysRegistry.TryGetValue(keyName, out var key))
             {
                 key = new BlackboardKey(keyName);
                 keysRegistry[keyName] = key;
             }
+            Debug();
             return key;
         }
 

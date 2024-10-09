@@ -144,10 +144,8 @@ namespace Arcatech.Managers
         BlackboardKey safeSpot;
         private void SetupBlackboard()
         {
-
-
             bbData.SetupBlackboard(bb);
-            safeSpot = bb.GetOrRegisterKey("safeSpot");
+            safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
 
             foreach (var e in entities)
             {
@@ -165,7 +163,6 @@ namespace Arcatech.Managers
             {
                 act();
             }
-           // bb.SetValue(safeSpot, _player.transform.forward * 6f);
         }
         #endregion
 

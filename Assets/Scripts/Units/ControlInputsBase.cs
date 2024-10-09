@@ -27,6 +27,7 @@ namespace Arcatech.Units
         {
             UnitActionRequestedEvent.Invoke(type);
         }
+        
         protected void CallBackPause() => InputsPause.Invoke();
         protected void CallBackInteraction(IInteractible i) => RequestInteraction.Invoke(i);
     }

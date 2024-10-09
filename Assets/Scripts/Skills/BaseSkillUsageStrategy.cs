@@ -82,6 +82,19 @@ namespace Arcatech.Skills
             Mathf.Clamp(_remainingCharges, 0, MaxCharges); // just in case
         }
 
+        public bool CanUseUsable()
+        {
+            if (!_internalCdTimer.IsReady) return false;
+            else
+            {
+                if (_remainingCharges > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         #region UI
         public Sprite Icon => _desc.Picture;
 

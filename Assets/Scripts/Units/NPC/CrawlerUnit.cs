@@ -57,7 +57,7 @@ namespace Arcatech.Units
             }
 
             chasePlayerSeq.AddChild(new Leaf(new BehaviourCondition(PlayerInRange), "is player in range"));
-            chasePlayerSeq.AddChild(new Leaf(new MoveToPointStrategy(transform, agent, _player), "move to player"));
+            chasePlayerSeq.AddChild(new Leaf(new MoveToPointStrategy(agent, _player), "move to player"));
             chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Melee)), "use melee attack"));
             chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => chasePlayerSeq.Reset()), "reset chase"));
 

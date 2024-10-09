@@ -45,6 +45,11 @@ namespace Arcatech.Skills
             }
             return false;
         }
+
+        public bool CanUseAction(UnitActionType action)
+        {
+            return _skills[action].CanUseItem(stats);
+        }
         #endregion
         public override void StartController()
         {

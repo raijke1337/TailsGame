@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arcatech.Units.Inputs;
+using System;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace Arcatech.Units.Behaviour
     public class BehaviourAction : IBehaviorTreeStrategy
     {
 
-        public BehaviourAction(System.Action act) => this.act = act;
+        public BehaviourAction(Action act) => this.act = act;
 
         readonly Action act;
 

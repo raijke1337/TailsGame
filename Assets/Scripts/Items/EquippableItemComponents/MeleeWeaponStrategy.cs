@@ -36,7 +36,7 @@ namespace Arcatech.Items
             // TODO needs debug
             // add checks to prevent additional triggering
 
-            bool ok = CheckTimersAndCharges();
+            bool ok = CanUseUsable();
             action = null;
             if (!ok)
             {

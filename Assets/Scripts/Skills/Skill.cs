@@ -44,7 +44,10 @@ namespace Arcatech.Skills
             }
             else return false;
         }
-
+        public bool CanUseItem(UnitStatsController stats)
+        {
+            return stats.CanApplyCost(GetCost) && Strategy.CanUseUsable();
+        }
 
 
         public void DoUpdate(float delta)
@@ -52,6 +55,8 @@ namespace Arcatech.Skills
             Strategy.UpdateUsable(delta);
             EventBus<UpdateIconEvent>.Raise(new UpdateIconEvent(this, Owner));
         }
+
+
 
 
         #region UI

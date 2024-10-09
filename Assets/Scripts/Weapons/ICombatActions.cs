@@ -8,6 +8,7 @@ namespace Arcatech
     /// </summary>
     public interface ICombatActions : IManagedController
     {
+        public bool CanUseAction(UnitActionType action);
         public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse);
     }
 }

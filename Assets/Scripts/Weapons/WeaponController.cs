@@ -80,6 +80,11 @@ namespace Arcatech.Units
             return false;
         }
 
+
+        public bool CanUseAction(UnitActionType action)
+        {
+            return _weapons[action].CanUseItem(_stats);
+        }
         #endregion
 
 
@@ -103,6 +108,8 @@ namespace Arcatech.Units
         {
             EventBus<InventoryUpdateEvent>.Deregister(bindInv);
         }
+
+
 
         #endregion
     }

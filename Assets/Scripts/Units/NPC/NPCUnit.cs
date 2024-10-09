@@ -21,15 +21,20 @@ namespace Arcatech.Units
         //used by room ctrl
         public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
 
-        [Space, Header("Dummy NPC Unit")]
+        [Space, Header("Idling settings")]
         protected Transform _player;
-
-
+        [SerializeField] protected float _playerDetectionRange = 8f;
         [SerializeField] float _idleWanderRange = 5f;
         [SerializeField] float _waitAtIdleSpotTime = 3f;
 
-        [Space,Header("Drop NYI"),SerializeField] private ItemSO _drop;
-        
+        protected virtual void OnDrawGizmos()
+        {
+            if (_showDebugs)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(transform.position, _playerDetectionRange);
+            }
+        }
 
         protected override void OnValidate()
         {
@@ -86,9 +91,8 @@ namespace Arcatech.Units
         public override void StartControllerUnit()
         {
             base.StartControllerUnit();
-
             _player = FindObjectOfType<PlayerUnit>().transform;
-            tree = new BehaviourTree(GetName + " undefined behavior tree");
+            BaseBehaviourSetup();
             SetupBehavior();
         }
 
@@ -97,11 +101,9 @@ namespace Arcatech.Units
             base.RunUpdate(delta);
             _ground.DetectGround();
 
-            _animator.SetBool("isMoving", agent.velocity.magnitude > 0);
+            _animator.SetBool("isMoving", agent.velocity.magnitude > 0 && !agent.isStopped);
             ExecuteBehaviour();
         }
-
-
 
         #region behavior
 
@@ -109,21 +111,28 @@ namespace Arcatech.Units
         protected BehaviourTree tree;
         [Space, SerializeField, Self] protected NavMeshAgent agent;
 
+
+        protected float initStoppingDistance;
         protected Blackboard bb;
         protected BlackboardKey groupCombat;
         protected BlackboardKey safeSpot;
 
+        void BaseBehaviourSetup()
+        {
+            tree = new BehaviourTree(GetName + " undefined behavior tree");
+            bb = UnitsManager.Instance.GetBlackboard;
+            groupCombat = bb.GetOrRegisterKey("groupCombat");
+            safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
+
+
+            initStoppingDistance = agent.stoppingDistance;
+        }
         protected virtual void SetupBehavior()
         {
-            BehaviourPrioritySelector actionPicker = new BehaviourPrioritySelector("choose activity");
-            bb = UnitsManager.Instance.GetBlackboard;          
-            
-            groupCombat = bb.GetOrRegisterKey("groupCombat");
-
+            BehaviourPrioritySelector actionPicker = new BehaviourPrioritySelector("generic npc activity");
             actionPicker.AddChild(SetupIdleRoaming());
             actionPicker.AddChild(SetupCowardlyBehaviour());
             tree.AddChild(actionPicker);
-
         }
         protected virtual void ExecuteBehaviour()
         {
@@ -133,10 +142,6 @@ namespace Arcatech.Units
                 Debug.Log($"{GetName} has an empty behavior tree!");
             }
         }
-
-
-
-
         /// <summary>
         /// priority 0
         /// </summary>
@@ -144,6 +149,7 @@ namespace Arcatech.Units
         protected Sequence SetupIdleRoaming()
         {
             Sequence roamandWait = new Sequence("walk around and wait",0);
+            Leaf resetStoppingDistance = new Leaf(new BehaviourAction(() => agent.stoppingDistance = initStoppingDistance), "Reset stopping distance");
             Leaf roam = new Leaf(new RoamInRangeStrategy(_idleWanderRange, transform.position,agent), $"roam in range {_idleWanderRange}");
 
 
@@ -163,7 +169,7 @@ namespace Arcatech.Units
             Leaf checkWait = new Leaf(new BehaviourCondition(() => isDoneWaiting()),"is finished idle time");
             idleWait.AddChild(checkWait);
 
-
+            roamandWait.AddChild(resetStoppingDistance);
             roamandWait.AddChild(roam);
             roamandWait.AddChild(idleWait);
 
@@ -176,7 +182,7 @@ namespace Arcatech.Units
         protected Sequence SetupCowardlyBehaviour()
         {
             safeSpot = bb.GetOrRegisterKey("safeSpot");
-            Sequence runAwayFromAttack = new Sequence("run away when attacked", 10);
+            Sequence runAwayFromAttack = new Sequence("run away to safe spot in combat", 10);
             bool IsCombat()
             {
                 if (bb.TryGetValue(groupCombat, out bool yes))
@@ -190,34 +196,46 @@ namespace Arcatech.Units
                 agent.speed *= 2; //palceholder
                 return true;
             }
+
             Leaf checkAttacked = new Leaf(new BehaviourCondition(IsCombat), "was attacked sometime ago");
-            Vector3 awayFromPlayerDir = (transform.position - _player.position).normalized * _idleWanderRange;
-            Leaf runAway = new Leaf(new RoamInRangeStrategy(_idleWanderRange, awayFromPlayerDir, agent),
-                $"run away to a spot around {awayFromPlayerDir}");
-            void ResetCombatState()
+            Vector3 GetSafeSpot ()
             {
-                bb.SetValue(groupCombat, false);
-                agent.speed /= 2; //palceholder
+                bb.TryGetValue(safeSpot, out Vector3 s);
+                return s;
             }
-            Leaf resetState = new Leaf(new BehaviourAction(() => ResetCombatState()),"reset combat key");
+
+            Leaf runAway = new Leaf(new RoamInRangeStrategy(_idleWanderRange, GetSafeSpot(), agent),
+                $"run away to a spot around {GetSafeSpot()}");
+
+            Leaf reset = new Leaf(new BehaviourAction(() => agent.speed /= 2), "reset speed");
 
             runAwayFromAttack.AddChild(checkAttacked);
             runAwayFromAttack.AddChild(runAway);
-            runAwayFromAttack.AddChild(resetState);
-            
+            runAwayFromAttack.AddChild(reset);
+
             return runAwayFromAttack;
         }
 
+        protected bool CheckDistanceToPlayer(float distance)
+        {
+            return Vector3.Magnitude(transform.position - _player.transform.position) <= distance;
+        }
+
+
         #region blackboard IExpert code testing
 
-        public int GetActionImportance(Blackboard bb)
+        public virtual int GetActionImportance(Blackboard bb)
         {
             return 1;
         }
 
-        public void Execute(Blackboard bb)
+        public virtual void Execute(Blackboard bb)
         {
-
+            if (!CheckDistanceToPlayer(_playerDetectionRange))
+            {
+                bb.SetValue(groupCombat, false);
+                agent.speed /= 2;
+            }
         }
 
 

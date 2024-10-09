@@ -57,12 +57,17 @@ namespace Arcatech.Items
 
             return ok;
         }
-
+        public bool CanUseItem(UnitStatsController stats)
+        {
+            return stats.CanApplyCost(GetCost) && UseStrategy.CanUseUsable();
+        }
         public void DoUpdate(float delta)
         {
             UseStrategy.UpdateUsable(delta);
             EventBus<UpdateIconEvent>.Raise(new UpdateIconEvent(this, Owner));
         }
+
+
 
         #region UI
 

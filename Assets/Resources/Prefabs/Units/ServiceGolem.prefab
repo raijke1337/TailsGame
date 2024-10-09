@@ -5939,8 +5939,6 @@ GameObject:
   - component: {fileID: 6491212273667095636}
   - component: {fileID: 4821026220045114508}
   - component: {fileID: 8802708854192566849}
-  - component: {fileID: 2438207583451009681}
-  - component: {fileID: 5923607037821170607}
   m_Layer: 7
   m_Name: ServiceGolem
   m_TagString: Enemy
@@ -6112,12 +6110,12 @@ MonoBehaviour:
   _inputs: {fileID: 6491212273667095636}
   stunEndStamina: 30
   stunEndGetUpTime: 0.5
+  _playerDetectionRange: 8
   _idleWanderRange: 5
   _waitAtIdleSpotTime: 3
-  _drop: {fileID: 0}
   agent: {fileID: 122197050836451525}
   _playerInFrontAngle: 15
-  _minRangeCharge: 5
+  _chargeRange: 5
 --- !u!114 &8802708854192566849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6138,61 +6136,6 @@ MonoBehaviour:
   _ledgeOffset: 0
   _castDistance: 0.5
   _triggerInteraction: 1
---- !u!114 &2438207583451009681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6282177902539391458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3cbe6e70d01e994f8f83cb5098e14ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 5
-  _angularSpeed: 540
-  _acceleration: 50
-  _deceleration: 20
-  _groundFriction: 8
-  _useBrakingFriction: 0
-  _brakingFriction: 8
-  _airFriction: 0
-  _airControl: 0.2
-  _canCrouch: 0
-  _standingHeight: 2
-  _crouchingHeight: 1
-  _baseJumpHeight: 1.5
-  _extraJumpTime: 0.5
-  _extraJumpPower: 25
-  _jumpPreGroundedToleranceTime: 0.15
-  _jumpPostGroundedToleranceTime: 0.15
-  _maxMidAirJumps: 1
-  _useRootMotion: 0
-  _rootMotionRotation: 0
-  _minCrossYToRotate: 0.4
---- !u!114 &5923607037821170607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6282177902539391458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eae04a4fe514bf4789aec1bdb93100b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxLateralSpeed: 10
-  _maxRiseSpeed: 20
-  _maxFallSpeed: 20
-  _useGravity: 1
-  _gravity: {x: 0, y: -30, z: 0}
-  _slideOnSteepSlope: 0
-  _slopeLimit: 45
-  _slideGravityMultiplier: 2
-  _snapToGround: 1
-  _snapStrength: 0.5
 --- !u!1 &6282183787786567646
 GameObject:
   m_ObjectHideFlags: 0

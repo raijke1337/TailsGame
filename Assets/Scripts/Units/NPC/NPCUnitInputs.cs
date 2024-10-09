@@ -13,10 +13,6 @@ namespace Arcatech.Units.Inputs
         {
             return this;
         }
-        protected override void RequestCombatAction(UnitActionType type)
-        {
-            base.RequestCombatAction(type);
-        }
 
     }
 }

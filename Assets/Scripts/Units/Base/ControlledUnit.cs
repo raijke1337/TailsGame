@@ -120,7 +120,28 @@ namespace Arcatech.Units
             ActionLock = currentAction.LockMovement;
             currentAction.StartAction();
         }
+        public bool CanDoAction(UnitActionType action)
+        {
+            if (!_ground.isOnGround) return false;
+            else switch (action)
+                {
+                    case UnitActionType.Melee:
+                        return _weapons.CanUseAction(action);
+                    case UnitActionType.Ranged:
+                        return _weapons.CanUseAction(action);
+                    case UnitActionType.DodgeSkill:
+                        return _skills.CanUseAction(action);
+                    case UnitActionType.MeleeSkill:
+                        return _skills.CanUseAction(action);
+                    case UnitActionType.RangedSkill:
+                        return _skills.CanUseAction(action);
+                    case UnitActionType.ShieldSkill:
+                        return _skills.CanUseAction(action);
+                    default:
+                        return false;
+                }
 
+        }
         protected virtual void HandleUnitAction(UnitActionType obj)
         {
             // this execution is blocked by ActionLock bool

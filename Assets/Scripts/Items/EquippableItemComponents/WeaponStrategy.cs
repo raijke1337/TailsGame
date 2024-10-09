@@ -43,18 +43,6 @@ namespace Arcatech.Items
         Queue<CountDownTimer> _chargesTimers;
         CountDownTimer _internalCdTimer;
         protected int _remainingCharges { get; private set; }
-        protected bool CheckTimersAndCharges()
-        {
-            if (!_internalCdTimer.IsReady) return false;
-            else
-            {
-                if (_remainingCharges > 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         private void ReplenishCharge()
         {
             _chargesTimers.Peek().OnTimerStopped -= ReplenishCharge;
@@ -80,7 +68,7 @@ namespace Arcatech.Items
         public virtual bool TryUseUsable(out BaseUnitAction action)
         {
             action = Action;
-            if (CheckTimersAndCharges())
+            if (CanUseUsable())
             {
                 ChargesLogicOnUse(); return true;
             }
@@ -94,6 +82,19 @@ namespace Arcatech.Items
                 t?.Tick(delta); 
             }
             _internalCdTimer?.Tick(delta);
+        }
+
+        public bool CanUseUsable()
+        {
+            if (!_internalCdTimer.IsReady) return false;
+            else
+            {
+                if (_remainingCharges > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
         #region UI
