@@ -17,6 +17,7 @@ Material:
   - _OVERLAYMODE_NONE
   - _RIMSPLITCOLOR_NOSPLIT
   - _USEADDITIONALLIGHTSDIFFUSE_ON
+  - _USEENVIRONMENTREFLETION_ON
   - _USEHATCHINGCONSTANTSCALE_ON
   - _USELIGHTRAMP_DIFFUSERAMP
   m_InvalidKeywords:
@@ -107,7 +108,7 @@ Material:
     - _BacklightAmount: 0.5
     - _BacklightHardness: 0
     - _BacklightIntensity: 1
-    - _Cutoff: 0
+    - _Cutoff: 0.5
     - _Darken: 0
     - _DiffusePosterizeOffset: 0
     - _DiffusePosterizePower: 1
@@ -115,7 +116,7 @@ Material:
     - _DiffuseWarpAffectHalftone: 0
     - _DiffuseWarpBrightnessOffset: 1.12
     - _Falloff: 50
-    - _Glossiness: 0.138
+    - _Glossiness: 0.3
     - _GridScale: 1
     - _HalftoneEdgeOffset: 0.1
     - _HalftoneSmoothness: 0.3
@@ -123,7 +124,7 @@ Material:
     - _HalftoneToonAffect: 0
     - _HaltonePatternSize: 0
     - _IndirectLightAffectOnHatch: 0
-    - _IndirectLightStrength: 0.178
+    - _IndirectLightStrength: 0.3
     - _InverseMask: 0
     - _LightRampOffset: -0.25
     - _Lighten: 0
@@ -145,6 +146,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RampDiffuseTextureLoaded: 1
+    - _ReceiveShadows: 1
     - _RimPower: 2
     - _RimSmoothness: 0
     - _RimSplitColor: 0
@@ -182,7 +184,7 @@ Material:
     - _UseDiffuseWarpAsOverlay: 0
     - _UseDynamicOutline: 0
     - _UseEmission: 0
-    - _UseEnvironmentRefletion: 0
+    - _UseEnvironmentRefletion: 1
     - _UseHatchingConstantScale: 1
     - _UseLightRamp: 1
     - _UseOutline: 0
@@ -203,12 +205,12 @@ Material:
     - _Color: {r: 0.773, g: 0.773, b: 0.773, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _HalftoneColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HatchingColor: {r: 0.95699996, g: 0.6680235, b: 0, a: 1}
+    - _HatchingColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 0}
     - _RimShadowColor: {r: 0, g: 0.05551431, b: 0.9622642, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecColor: {r: 1, g: 1, b: 1, a: 0}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3794302070529733579
 MonoBehaviour:

@@ -2,6 +2,7 @@ using Arcatech.EventBus;
 using Arcatech.Managers;
 using Arcatech.Triggers;
 using Arcatech.UI;
+using Cinemachine;
 using Cinemachine.Utility;
 using System;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace Arcatech.Units.Inputs
     public class AimingComponent : MonoBehaviour, IManagedController
     {
         #region setup
-        private Camera _camera;
         private Plane _aimPlane;
 
         [SerializeField, Range(0.1f, 3f)] float targetingSphereRadius = 1f;
@@ -34,6 +34,8 @@ namespace Arcatech.Units.Inputs
         RaycastHit hit;
         public ITargetable Target => currentTgt;
 
+
+        CinemachineBrain _br;
         public float GetDotProduct
         { get { return _dotProduct; } }
 
@@ -85,7 +87,8 @@ namespace Arcatech.Units.Inputs
             _aimPlane = new Plane(Vector3.down, planeY);
 
             _target = transform.forward;
-            _camera = Camera.main;
+            _br = GetComponent<CinemachineBrain>();
+
 
             targetUpdate = new CountDownTimer(targetingUpdateFreq);
             targetUpdate.Start();
@@ -107,6 +110,8 @@ namespace Arcatech.Units.Inputs
             // aim at plane
             ////raycast at plane
             Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+           // Ray r = _br.OutputCamera.ScreenPointToRay(Input.mousePosition);
+            
             _aimPlane.Raycast(r, out float rayDist);
             _target = r.GetPoint(rayDist);
             var vectorToTarget = _target - transform.position;

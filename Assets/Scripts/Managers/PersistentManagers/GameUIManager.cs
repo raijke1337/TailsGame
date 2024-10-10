@@ -43,7 +43,7 @@ public class GameUIManager : MonoBehaviour
     }
     public void SetCursor(CursorType type)
     {
-        Cursor.SetCursor(_cursors[type].texture, Vector2.zero, CursorMode.Auto);
+       // Cursor.SetCursor(_cursors[type].texture, Vector2.zero, CursorMode.Auto);
         Cursor.visible = true;
     }
     public TMP_FontAsset GetFont(FontType t) => _fonts[t];
