@@ -24,7 +24,7 @@ namespace Arcatech.Units
             this.place = place;
             var a = u.GetComponent<Animator>();
 
-            if (_animationName != null)
+            if (_animationName != null && a.runtimeAnimatorController.animationClips.Any(t=>t.name == _animationName))
             {
                 var clip = a.runtimeAnimatorController.animationClips.First(t => t.name == _animationName);
                 var clipLength = clip.length;
@@ -50,6 +50,10 @@ namespace Arcatech.Units
                     }
                 }
             }
+            else
+            {
+                Debug.LogWarning($"animation not found for action {this}");
+            }
 
 
 
@@ -65,7 +69,7 @@ namespace Arcatech.Units
             if (onfinish != null && onfinish.Length > 0)
             {
                 OnCompleteAction = new IActionResult[onfinish.Length];
-                for (int i = 0; i < onstart.Length; i++)
+                for (int i = 0; i < onfinish.Length; i++)
                 {
                     OnCompleteAction[i] = onfinish[i].GetActionResult();
                 }

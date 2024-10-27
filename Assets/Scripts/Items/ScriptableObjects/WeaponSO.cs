@@ -16,7 +16,6 @@ namespace Arcatech.Items
         public SerializedStatsEffectConfig Cost;
 
         public DrawItemsStrategy DrawStrategy;
-        public SerializedEffectsCollection Effects;
 
         public WeaponAnimationsSet WeaponType;
 

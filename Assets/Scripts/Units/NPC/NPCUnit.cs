@@ -57,17 +57,6 @@ namespace Arcatech.Units
 
             base.HandleDamage(value);
         }
-        protected override void HandleDeath()
-        {
-            //if (_drop != null)
-            //{
-            //    var drop = Instantiate(_dropPrefab, transform.position, transform.rotation);
-            //    drop.Content = _drop;
-            //    GameManager.Instance.GetGameControllers.LevelManager.RegisterNewTrigger(drop, true);
-            //}
-            //agent.isStopped = true;
-            base.HandleDeath();
-        }
 
         protected override void HandleInteractionAction(IInteractible i)
         {

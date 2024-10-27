@@ -41,8 +41,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7480995966857918065}
   - component: {fileID: 7480995966855116269}
-  - component: {fileID: 7480995966856178869}
   - component: {fileID: 7433877491313162267}
+  - component: {fileID: 258637521327348454}
   m_Layer: 0
   m_Name: arca_crossbow
   m_TagString: Untagged
@@ -58,14 +58,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7480995966858221551}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.70710576, y: -0, z: -0, w: 0.70710784}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 71935491005924082}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &7480995966855116269
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -73,8 +73,21 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7480995966858221551}
-  m_Mesh: {fileID: -868724937018667138, guid: b0ea8dfadb7a2114f8b343648fe60fb1, type: 3}
---- !u!23 &7480995966856178869
+  m_Mesh: {fileID: -868724937018667138, guid: d844a608c1a18944784f3c0ba0fce889, type: 3}
+--- !u!114 &7433877491313162267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7480995966858221551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8b494d30dac4a54d9cc26f42239a228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawner: {fileID: 71935491005924082}
+--- !u!23 &258637521327348454
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,10 +107,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7fde4f5ecdb528945acb4d5339f91977, type: 2}
-  - {fileID: 2100000, guid: 1e75d51d555dec54b90544819dd5e13a, type: 2}
-  - {fileID: 2100000, guid: c70e075a2144ba04784d74b7b2889fd3, type: 2}
-  - {fileID: 2100000, guid: c56ed283720773d4e8aafb8fb3ab6c33, type: 2}
+  - {fileID: 2100000, guid: c2bbb67c76623bc4187ce40e4f5b6033, type: 2}
+  - {fileID: 2100000, guid: 9e5d99514f50ae04eb776d20eb8d3c0f, type: 2}
+  - {fileID: 2100000, guid: 497315c25af420448ade95d112744593, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,16 +131,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7433877491313162267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7480995966858221551}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8b494d30dac4a54d9cc26f42239a228, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spawner: {fileID: 71935491005924082}

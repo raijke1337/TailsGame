@@ -40,7 +40,17 @@ namespace Arcatech.Items
         /// <returns></returns>
         public virtual ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place,float spread = 0f)
         {
-            var proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
+            ProjectileComponent proj = null;
+            try
+            {                
+            
+                proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
+            }
+            catch
+            {
+                Debug.Log($"Error creating projectile {ProjectilePrefab} by {owner.GetName} ");
+            }
+
             proj.Owner = owner;
 
             Vector3 dir = owner.transform.forward + new Vector3 (UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread));

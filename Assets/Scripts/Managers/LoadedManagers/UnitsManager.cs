@@ -73,9 +73,6 @@ namespace Arcatech.Managers
 
         public virtual void StopController()
         {
-
-            _player.DisableUnit();
-            SetupUnit(_player, false);
             foreach (var e in entities)
             {
                 e.DisableUnit();

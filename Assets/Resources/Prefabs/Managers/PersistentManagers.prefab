@@ -56,6 +56,9 @@ MonoBehaviour:
     - Key: 0
       Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
         type: 3}
+    - Key: 1
+      Value: {fileID: 2555940965172109900, guid: 252d1f9f9eb6dfe46873735361f596d6,
+        type: 3}
     - Key: 2
       Value: {fileID: 6555481737146133282, guid: 252d1f9f9eb6dfe46873735361f596d6,
         type: 3}
@@ -167,12 +170,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d2c817abec01df42a02918a742a2749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioPrefab: {fileID: 4184976033158668723, guid: a606c6bdfaa79c0458f0fb1a76634478,
-    type: 3}
-  _musicPrefab: {fileID: 4184976033158668723, guid: 3cf3edcb8e8fa8e498b5afe6285ce1e9,
-    type: 3}
   _particleTextPrefab: {fileID: -1364766221019919504, guid: 09037bedced6fd8479db8016dab0c016,
     type: 3}
+  emitterPrefab: {fileID: 153249698424754343, guid: a606c6bdfaa79c0458f0fb1a76634478,
+    type: 3}
+  maxSoundInstances: 30
+  collectionCheck: 1
+  defaultCapacity: 10
+  maxSize: 100
 --- !u!114 &8102464925495723807
 MonoBehaviour:
   m_ObjectHideFlags: 0

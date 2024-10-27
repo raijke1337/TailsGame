@@ -190,6 +190,7 @@ namespace Arcatech.Units
             {
                 c.enabled = false;
             }
+
             UnitDead = true;
             BaseEntityDeathEvent.Invoke(this);
         }
@@ -215,7 +216,10 @@ namespace Arcatech.Units
             if (UnitPaused || act == null) return;
             OnForceAction(act);
         }
-        protected virtual void OnForceAction(BaseUnitAction act) { }
+        protected virtual void OnForceAction(BaseUnitAction act) 
+        {
+            act.StartAction();
+        }
 
 
         public virtual void ApplyForceResultToUnit(float imp, float time)

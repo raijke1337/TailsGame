@@ -1,15 +1,13 @@
 using Arcatech.Actions;
-using Arcatech.Effects;
+using Arcatech.Level;
 using Arcatech.Units;
-using JetBrains.Annotations;
-using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Arcatech.Triggers
 {
 
 
-    public class BaseLevelEventTrigger : BaseTrigger
+    public class BaseLevelEventTrigger : BaseTrigger, IConditionControlled
     {
         [Header("Base event trigger")]
         [SerializeField] protected TriggerTargetType targetType;
@@ -98,6 +96,12 @@ namespace Arcatech.Triggers
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        public void SetState(bool newstate)
+        {
+            Debug.Log($"Switch state of {this}, TODO");
+            gameObject.SetActive(!gameObject.activeSelf);
         }
     }
 }
