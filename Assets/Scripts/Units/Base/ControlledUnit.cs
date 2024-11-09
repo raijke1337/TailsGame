@@ -99,6 +99,11 @@ namespace Arcatech.Units
             ActionLock = true;
             _stunned = true;
         }
+        protected override void HandleDamage(float value)
+        {
+            if (_stunned) return; // do not play anims 
+            base.HandleDamage(value);
+        }
 
         #region actions
 

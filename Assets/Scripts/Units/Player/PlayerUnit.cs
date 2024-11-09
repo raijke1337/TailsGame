@@ -19,6 +19,7 @@ namespace Arcatech.Units
         AimingComponent _aim;
         [SerializeField, Self] protected DashJumpMovementController _movement;
 
+        CostumesControllerComponent costumes;
 
         protected void ToggleCamera(bool value) { _faceCam.enabled = value; }
 
@@ -27,6 +28,7 @@ namespace Arcatech.Units
             base.StartControllerUnit();
             _inputs.InputsPause += OnInputsPauseButton;
             _aim = (_inputs as InputsPlayer).Aiming;
+            costumes = GetComponent<CostumesControllerComponent>();
 
             ToggleCamera(true);
         }
@@ -98,7 +100,7 @@ namespace Arcatech.Units
             if (_stats.GetStatValue(BaseStatType.Stamina).GetCurrent <= _armorBreakStam && _stats.GetStatValue(BaseStatType.Energy).GetCurrent <= _armorBreakEnergy)
             {
                 if (_showDebugs) Debug.Log($"Armor break!");
-                CostumesControllerComponent.instance.OnBreak();
+                costumes.OnBreak();
             }
             base.HandleDamage(value);
         }

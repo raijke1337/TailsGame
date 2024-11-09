@@ -43,10 +43,11 @@ MonoBehaviour:
   components:
   - {fileID: 6341956494149734610}
   - {fileID: 2956907110499603055}
-  - {fileID: 1080528465640110323}
+  - {fileID: 2754887900712776225}
   - {fileID: 8943245588698220132}
   - {fileID: -6732586965964829257}
---- !u!114 &1080528465640110323
+  - {fileID: 7972671871697203352}
+--- !u!114 &2754887900712776225
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,22 +65,22 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 2
   scatter:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0.7
   clamp:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 65472
   tint:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   highQualityFiltering:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   downscale:
     m_OverrideState: 0
     m_Value: 0
@@ -108,7 +109,7 @@ MonoBehaviour:
   active: 0
   mode:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 2
   neutralHDRRangeReductionMode:
     m_OverrideState: 0
     m_Value: 2
@@ -154,10 +155,10 @@ MonoBehaviour:
     m_Value: 0
   outlineColor:
     m_OverrideState: 1
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 0.14150941, g: 0.07569979, b: 0, a: 1}
   outlineThickness:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 1
   enableClosenessBoost:
     m_OverrideState: 0
     m_Value: 0
@@ -218,6 +219,25 @@ MonoBehaviour:
   enableNormalOutline:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &7972671871697203352
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
+  m_Name: WhiteBalance
+  m_EditorClassIdentifier: 
+  active: 1
+  temperature:
+    m_OverrideState: 1
+    m_Value: -20
+  tint:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &8943245588698220132
 MonoBehaviour:
   m_ObjectHideFlags: 3

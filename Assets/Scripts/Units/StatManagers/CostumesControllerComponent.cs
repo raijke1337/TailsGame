@@ -1,3 +1,4 @@
+using Arcatech.Actions;
 using Arcatech.EventBus;
 using CartoonFX;
 using System.Collections.Generic;
@@ -7,14 +8,13 @@ namespace Arcatech.Units
 {
     public class CostumesControllerComponent : MonoBehaviour
     {
-        public static CostumesControllerComponent instance;
-        private void Awake()
-        {
-            instance = this;
-        }
+
+        public void Init(BaseEntity unit) => owner = unit;
+
+        BaseEntity owner;
 
         [SerializeField] private List<GameObject> _parts;
-        [SerializeField] CFXR_Effect[] BreakEffects;
+        [SerializeField] SerializedActionResult[] BreakEffects;
         public void OnBreak()
         {
             if (_parts != null)
@@ -27,7 +27,10 @@ namespace Arcatech.Units
 
                     if (BreakEffects != null && BreakEffects.Length > 0)
                     {
-                        EventBus<VFXEvent>.Raise(new VFXEvent(BreakEffects[Random.Range(0,BreakEffects.Length-1)], s.transform));
+                        foreach (var f in BreakEffects)
+                        {
+                            f.GetActionResult().ProduceResult(owner, null, owner.transform);
+                        }
                     }
                     s.SetActive(false);
                     _parts.RemoveAt(ind);
