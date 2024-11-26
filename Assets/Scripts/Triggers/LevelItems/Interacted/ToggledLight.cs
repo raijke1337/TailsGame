@@ -21,5 +21,4 @@ namespace Arcatech.Level
             else _light.color = negColor;
         }
     }
-
 }

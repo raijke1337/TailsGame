@@ -8,7 +8,7 @@ namespace Arcatech.Level
         [Space, Header("Condition checker")]
         [SerializeField] SerializedDictionary<EventCondition, ConditionControlledItem[]> _list;
 
-        public override void AcceptInteraction(IInteractor actor)
+        public override void AcceptInteraction(IInteractible actor)
         {
             base.AcceptInteraction(actor);
             foreach (var cond in _list.Keys)

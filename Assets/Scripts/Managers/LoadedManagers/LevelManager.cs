@@ -18,6 +18,15 @@ namespace Arcatech.Managers
         #region managed
         public virtual void StartController()
         {
+            if (_passiveEvents != null)
+            {
+                _passiveEvents.Clear();
+            }
+            else
+            {
+                _passiveEvents = new List<PassiveEventTrigger> ();
+            }
+            _passiveEvents.AddRange(FindObjectsOfType<PassiveEventTrigger>());
 
             _levelBlocks = FindObjectsOfType<LevelBlockDecorPrefabComponent>().ToList(); // find only starting "cubes"
             foreach (var t in _levelBlocks)
@@ -33,6 +42,17 @@ namespace Arcatech.Managers
             {
                 t.ControllerUpdate(delta);
             }
+            foreach (var t in _passiveEvents.ToList())
+            {
+                if (!t.Triggered)
+                {
+                    t.CheckEventTrigger();
+                }
+                else
+                {
+                    _passiveEvents.Remove(t);
+                }
+            }    
         }
         public virtual void FixedControllerUpdate(float fixedDelta)
         {
@@ -50,6 +70,7 @@ namespace Arcatech.Managers
 
         #region level events
 
+        [SerializeField] protected List<PassiveEventTrigger> _passiveEvents;
 
 
         #endregion

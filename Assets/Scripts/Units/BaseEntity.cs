@@ -242,7 +242,7 @@ namespace Arcatech.Units
         #endregion
 
         #region iinteractible
-        public void AcceptInteraction(IInteractor actor)
+        public void AcceptInteraction(IInteractible actor)
         {
             Debug.Log($"Tried to interact with {GetName}");
         }

@@ -5,7 +5,7 @@ namespace Arcatech.Triggers
 {
     public interface IInteractible : ITargetable
     {
-        void AcceptInteraction(IInteractor actor);
+        void AcceptInteraction(IInteractible actor);
         Vector3 Position { get; }
     }
 

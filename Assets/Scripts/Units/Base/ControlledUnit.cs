@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(ControlInputsBase), typeof(Rigidbody))]
-    public abstract class ControlledUnit : ArmedUnit, IInteractor
+    public abstract class ControlledUnit : ArmedUnit, IInteractible
     {
         [Space, Header("Controlled Unit")]
         [SerializeField] protected MovementStatsConfig movementStats;

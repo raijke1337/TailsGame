@@ -18,14 +18,14 @@ namespace Arcatech.Level
 
         public Vector3 Position => transform.position;
 
-        public virtual void AcceptInteraction(IInteractor actor)
+        public virtual void AcceptInteraction(IInteractible actor)
         {
 
             foreach (var r in ActionOnInteract)
             {
                 r.GetActionResult().ProduceResult(actor as BaseEntity, null, transform);
             }
-            actor.ReceiveInteraction(this);
+            actor.AcceptInteraction(this);
         }
         #endregion
     }

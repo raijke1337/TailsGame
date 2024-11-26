@@ -9,7 +9,7 @@ namespace Arcatech.Level
     public class ItemCheckCondition : EventCondition
     {
         [SerializeField] ItemSO _checked;
-        public override bool PerformConditionChecks(IInteractor user, IInteractible target, Transform place)
+        public override bool PerformConditionChecks(IInteractible user, IInteractible target, Transform place)
         {
             if (user is EquippedUnit eq)
             {

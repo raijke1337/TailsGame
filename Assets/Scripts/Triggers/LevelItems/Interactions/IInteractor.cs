@@ -1,7 +1,7 @@
 ﻿namespace Arcatech.Triggers
 {
-    public interface IInteractor
-    {
-        void ReceiveInteraction(IInteractible interactible);
-    }
+    //public interface IInteractible
+    //{
+    //    void ReceiveInteraction(IInteractible interactible);
+    //}
 }

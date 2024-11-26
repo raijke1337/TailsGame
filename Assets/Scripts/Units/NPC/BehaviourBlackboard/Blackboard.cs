@@ -84,7 +84,7 @@ namespace Arcatech.BlackboardSystem
         public void SetValue<T>(BlackboardKey keyy, T value)
         {
             entries[keyy] = new BlackboardEntry<T>(keyy, value);
-            Debug();
+           // Debug();
         }
 
 
@@ -97,7 +97,7 @@ namespace Arcatech.BlackboardSystem
                 key = new BlackboardKey(keyName);
                 keysRegistry[keyName] = key;
             }
-            Debug();
+            //Debug();
             return key;
         }
 
