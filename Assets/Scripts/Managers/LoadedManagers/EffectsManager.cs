@@ -1,8 +1,14 @@
+using Arcatech.Actions;
 using Arcatech.Effects;
 using Arcatech.EventBus;
+using Arcatech.Items;
+using Arcatech.Units;
+using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
 namespace Arcatech.Managers
 {
@@ -15,7 +21,7 @@ namespace Arcatech.Managers
         private EventBinding<DrawDamageEvent> _drawDamageEventBind;
         private EventBinding<VFXRequest> _placeParticleEventBind;
         private EventBinding<SoundClipRequest> _playSoundEventBind;
-
+        private EventBinding<ProjectilePlaceEvent> _projectilePlaceEventBind;
 
         #region singleton
         public static EffectsManager Instance;
@@ -33,20 +39,22 @@ namespace Arcatech.Managers
             _drawDamageEventBind = new EventBinding<DrawDamageEvent>(PlaceDamageText);
             _placeParticleEventBind = new EventBinding<VFXRequest>(PlaceParticle);
             _playSoundEventBind = new EventBinding<SoundClipRequest>(CreateSound);
-
+            _projectilePlaceEventBind = new EventBinding<ProjectilePlaceEvent>(PlaceProjectile);
 
 
             EventBus<DrawDamageEvent>.Register(_drawDamageEventBind);
             EventBus<VFXRequest>.Register(_placeParticleEventBind);
             EventBus<SoundClipRequest>.Register(_playSoundEventBind);
+            EventBus<ProjectilePlaceEvent>.Register(_projectilePlaceEventBind);
 
         }
-
         private void OnDisable()
         {
             StopAllCoroutines();
             EventBus<DrawDamageEvent>.Deregister(_drawDamageEventBind);
             EventBus<VFXRequest>.Deregister(_placeParticleEventBind);
+            EventBus<SoundClipRequest>.Deregister(_playSoundEventBind);
+            EventBus<ProjectilePlaceEvent>.Deregister(_projectilePlaceEventBind);
         }
 
 
@@ -93,7 +101,6 @@ namespace Arcatech.Managers
 
         private void CreateSound(SoundClipRequest obj)
         {
-
             SoundsBuilder b = new SoundsBuilder(this).WithSoundData(obj.Data)
                 .WithPosition(obj.Place).
                 WithRandomPitch(obj.RandomPitch);
@@ -164,9 +171,30 @@ namespace Arcatech.Managers
             else return true;
         }
 
-#endregion
-#endregion
+        #endregion
+        #endregion
+        #region projectiles
 
+
+        private void PlaceProjectile(ProjectilePlaceEvent p)
+        {
+            StartCoroutine(ShootingCoroutine(p));
+        }
+
+        IEnumerator ShootingCoroutine(ProjectilePlaceEvent ev)
+        {
+            yield return new WaitForSeconds(ev.ShootingConfig.ShotDelay);
+            int done = 0;
+            while (done < ev.ShootingConfig.Shots)
+            {
+                done++;
+                ev.Projectile.ProduceProjectile(ev.Shooter, ev.Place, ev.ShootingConfig.Spread);
+                yield return new WaitForSeconds(ev.ShootingConfig.BetweenShotsDelay);
+            }
+            yield return null;
+        }
+
+        #endregion
 
     }
 }

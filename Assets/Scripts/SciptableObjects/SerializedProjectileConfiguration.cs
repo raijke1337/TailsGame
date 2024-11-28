@@ -42,8 +42,7 @@ namespace Arcatech.Items
         {
             ProjectileComponent proj = null;
             try
-            {                
-            
+            {                       
                 proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
             }
             catch
