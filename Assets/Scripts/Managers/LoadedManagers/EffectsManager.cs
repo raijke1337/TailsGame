@@ -183,15 +183,32 @@ namespace Arcatech.Managers
 
         IEnumerator ShootingCoroutine(ProjectilePlaceEvent ev)
         {
+            Vector3 place = ev.Place.position;
+            Quaternion rotation = ev.Place.rotation; // if this is called on an expiring projectile, place becomes null
+
             yield return new WaitForSeconds(ev.ShootingConfig.ShotDelay);
             int done = 0;
-            while (done < ev.ShootingConfig.Shots)
+
+            if (ev.Place == null)
             {
-                done++;
-                ev.Projectile.ProduceProjectile(ev.Shooter, ev.Place, ev.ShootingConfig.Spread);
-                yield return new WaitForSeconds(ev.ShootingConfig.BetweenShotsDelay);
+                while (done < ev.ShootingConfig.Shots)
+                {
+                    done++;
+                    ev.Projectile.ProduceProjectile(ev.Shooter, place,rotation, ev.ShootingConfig.Spread);
+                    yield return new WaitForSeconds(ev.ShootingConfig.BetweenShotsDelay);
+                }
+                yield return null;
             }
-            yield return null;
+            else
+            {
+                while (done < ev.ShootingConfig.Shots)
+                {
+                    done++;
+                    ev.Projectile.ProduceProjectile(ev.Shooter, ev.Place, ev.ShootingConfig.Spread);
+                    yield return new WaitForSeconds(ev.ShootingConfig.BetweenShotsDelay);
+                }
+                yield return null;
+            }
         }
 
         #endregion

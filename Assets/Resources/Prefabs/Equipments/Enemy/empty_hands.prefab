@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -1177572744775169072}
   - component: {fileID: 6959362188710972137}
   - component: {fileID: 1794634301983339432}
+  - component: {fileID: 4310067913641203878}
   m_Layer: 0
   m_Name: empty_hands
   m_TagString: Untagged
@@ -47,7 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawner: {fileID: 3770109131149486333}
-  Trigger: {fileID: 1794634301983339432}
 --- !u!65 &6959362188710972137
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -81,3 +81,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cc5452177305e4287558b216bd3933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4310067913641203878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7822952326495062899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ceb339997c8304e9354d4ce5ddc9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _emit: 1
+  _emitTime: 0
+  _material: {fileID: 2100000, guid: 5f402d1520e5fa74fa21e08f85b71370, type: 2}
+  _lifeTime: 1
+  _colors: []
+  _sizes: []
+  _minVertexDistance: 0.1
+  _maxVertexDistance: 10
+  _maxAngle: 3
+  _autoDestruct: 0
+  subdivisions: 4
+  _base: {fileID: 3770109131149486333}
+  _tip: {fileID: 3770109131149486333}

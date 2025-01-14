@@ -30,6 +30,7 @@ namespace Arcatech.Units
             _aim = (_inputs as InputsPlayer).Aiming;
             costumes = GetComponent<CostumesControllerComponent>();
 
+            _movement.speed = movementStats.Stats[Stats.MovementStatType.Movespeed].Max;
             ToggleCamera(true);
         }
 
@@ -43,11 +44,6 @@ namespace Arcatech.Units
             _movement.SetDesiredMoveDirection(_inputs.InputsMovementVector);
             _movement.SetDesiredLookDirection(_inputs.InputsLookVector,_aim.Target!=null);
         }
-        //doaction in applyforce leads to this
-        public override void ApplyForceResultToUnit(float impulse, float time)
-        {
-            _movement.ApplyPhysicalMovementResult(impulse, time);
-        }
 
         protected override void OnActionLock(bool locking)
         {
@@ -56,7 +52,7 @@ namespace Arcatech.Units
         }
         protected override void HandleUnitAction(UnitActionType obj)
         {
-            if (UnitPaused || ActionLock) return;
+            if (UnitPaused || ActionLock || !_movement.isGrounded) return; //add grounded check
             if (obj == UnitActionType.Jump)
             {
                 transform.parent = null;
@@ -65,6 +61,12 @@ namespace Arcatech.Units
             }
             else base.HandleUnitAction(obj);
         }
+        public override void ApplyForceResultToUnit(float speed, float distance)
+        {
+            base.ApplyForceResultToUnit(speed, distance);
+            _movement.DisableGroundingOnUnitImpulse(speed, distance);
+        }
+
 
         #region inventory
 

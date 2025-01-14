@@ -80,6 +80,9 @@ namespace Arcatech.Units
         public override void StartControllerUnit()
         {
             base.StartControllerUnit();
+            agent.speed = movementStats.Stats[Stats.MovementStatType.Movespeed].Max;
+            agent.updateRotation = true; // todo check what this adoes
+
             _player = FindObjectOfType<PlayerUnit>().transform;
             BaseBehaviourSetup();
             SetupBehavior();

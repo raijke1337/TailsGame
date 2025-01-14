@@ -2,16 +2,15 @@ using Arcatech.EventBus;
 using Arcatech.Items;
 using Arcatech.Stats;
 using Arcatech.Triggers;
-using Arcatech.Units.Inputs;
 using Arcatech.Units.Stats;
+using DG.Tweening;
 using ECM.Components;
 using KBCore.Refs;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace Arcatech.Units
 {
@@ -223,11 +222,19 @@ namespace Arcatech.Units
         }
 
 
-        public virtual void ApplyForceResultToUnit(float imp, float time)
+        public virtual void ApplyForceResultToUnit(float speed, float distance)
         {
-            Debug.Log($"Tried to apply impulse {imp} over {time} to {GetName} but it has no movement controller component, using rb impulse");
-            Rigidbody rb = GetComponent<Rigidbody>();
-            rb?.AddForce(Vector3.forward * imp * 5f,ForceMode.Impulse);
+            if (gameObject.TryGetComponent<Rigidbody>(out var rb))
+            {
+                Vector3 end = rb.transform.position + (rb.transform.forward * distance);
+                rb.DOMove(end, Mathf.Abs(distance / speed), false);
+                //Debug.Log($"Tried to apply impulse {distance} to {GetName} but it has no movement controller component, using dotween");
+                //rb.AddForce(rb.transform.forward * distance * 5f,ForceMode.Impulse);
+            }
+            else
+            {
+                Debug.Log($"Tried to apply impulse {distance} to {GetName} but it has no rigidbody");
+            }
         }
 
 

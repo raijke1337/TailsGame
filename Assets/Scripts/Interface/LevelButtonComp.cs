@@ -8,7 +8,7 @@ namespace Arcatech.UI
     {
         [SerializeField] private SceneContainer _data;
         private TextMeshProUGUI _text;
-        public event SimpleEventsHandler<SceneContainer> OnButtonClick;
+       // public event SimpleEventsHandler<SceneContainer> OnButtonClick;
         private RectTransform _rect;
         public Vector2 GetSize
         {

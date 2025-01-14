@@ -14,6 +14,8 @@ namespace Arcatech.Items
             Trigger.SomethingHitEvent += HandleColliderHitEvent;
             Trigger.ToggleCollider(false);
 
+            Trail = (comp as MeleeWeaponComponent).Trail;
+
             OnColliderHit = new IActionResult[onHit.Length];
 
             for (int i = 0; i < onHit.Length; i++)
@@ -23,11 +25,13 @@ namespace Arcatech.Items
 
         }
         protected WeaponTriggerComponent Trigger;
+        protected MeleeWeaponTrail Trail;
         protected IActionResult[] OnColliderHit { get; }
         protected BaseUnitAction currentAction;
         public void SwitchCollider(bool state)
         {
             Trigger.ToggleCollider(state);
+            Trail.Emit = state;
             if (Owner.UnitDebug) Debug.Log($"collider on {WeaponComponent} {(state == true ? "on" : "off")} ");
         }
 

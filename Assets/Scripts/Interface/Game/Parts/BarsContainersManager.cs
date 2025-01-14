@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 namespace Arcatech.UI
 {
-    public class BarsContainersManager : ValidatedMonoBehaviour
+    public class BarsContainersManager : MonoBehaviour
     {
         Dictionary <BaseStatType, BarContainerUIScript> _barsDict;
         [SerializeField] BarContainerUIScript _barPrefab;

@@ -13,7 +13,7 @@ namespace Arcatech.Skills
         float startRad;
         float time;
         float progress;
-        bool start = false;
+       // bool start = false;
 
         private void Start()
         {
@@ -22,7 +22,8 @@ namespace Arcatech.Skills
             time = _projectile.Lifetime;
             _col.radius = 0.1f;
             startRad = _col.radius;
-            start = true;
+           
+           //start = true;
         }
 
         private void OnDestroy()

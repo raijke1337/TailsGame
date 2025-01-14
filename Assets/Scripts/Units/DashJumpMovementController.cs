@@ -37,60 +37,61 @@ namespace Arcatech.Units
         }
         #endregion
         #region dash
+        // movement moved to dotween
 
         CountDownTimer dashTimer;
         Vector3 dodgeVector;
         float maxDodgeSpeed;
-        public void ApplyPhysicalMovementResult(float impulse, float time)
+        public void DisableGroundingOnUnitImpulse(float speed, float distance)
         {
+            float time = distance / speed;
             movement.DisableGrounding(time);
-            dodgeVector = transform.forward;
-            maxDodgeSpeed = Mathf.Abs(impulse);
+            // dodgeVector = transform.forward;
+            // maxDodgeSpeed = Mathf.Abs(impulse);
 
-           // Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
-            dodgeVector *= impulse;
+            //// Debug.Log($"Start dodge str {impulse} over {time} direction {dodgeVector}");
+            // dodgeVector *= impulse;
 
-            if (dashTimer == null || dashTimer.IsReady)
-            {
-                //Debug.Log($"New dodge");
-                dashTimer = new CountDownTimer(time);
-                dashTimer.OnTimerStopped += OnDashFinish;
-                dashTimer.Start();
-            }
-            else
-            {
-               // Debug.Log($"Extend dodge");
-                OnDashFinish();
-                dashTimer.Reset(time);
-                dashTimer.OnTimerStopped += OnDashFinish;
-                dashTimer.Start();
-            }
+            //if (dashTimer == null || dashTimer.IsReady)
+            //{
+            //    //Debug.Log($"New dodge");
+            //    dashTimer = new CountDownTimer(time);
+            //    dashTimer.OnTimerStopped += OnDashFinish;
+            //    dashTimer.Start();
+            //}
+            //else
+            //{
+            //    // Debug.Log($"Extend dodge");
+            //    OnDashFinish();
+            //    dashTimer.Reset(time);
+            //    dashTimer.OnTimerStopped += OnDashFinish;
+            //    dashTimer.Start();
+            //}
         }
-        void DoDashing()
-        {
-            movement.Move(dodgeVector, maxDodgeSpeed);
-           // Debug.Log($"Doing dodge dir {dodgeVector}");
+        //void DoDashing()
+        //{
+        //    //movement.Move(dodgeVector, maxDodgeSpeed);
+        //   // Debug.Log($"Doing dodge dir {dodgeVector}");
 
-            // cancel any vertical velocity while dashing on air (e.g. Cancel gravity)
+        //    // cancel any vertical velocity while dashing on air (e.g. Cancel gravity)
 
-            if (!movement.isOnGround)
-            {
-                movement.velocity = Vector3.ProjectOnPlane(movement.velocity, transform.up);
-            }
+        //    //if (!movement.isOnGround)
+        //    //{
+        //    //    movement.velocity = Vector3.ProjectOnPlane(movement.velocity, transform.up);
+        //    //}
 
-        }
-        void OnDashFinish()
-        {
-         //   Debug.Log($"Dodge finished");
-            dashTimer.OnTimerStopped -= OnDashFinish;
-            // Cancel dash momentum, if not grounded, preserve gravity
+        //}
+        //void OnDashFinish()
+        //{
+        // //   Debug.Log($"Dodge finished");
+        //    dashTimer.OnTimerStopped -= OnDashFinish;
+        //    // Cancel dash momentum, if not grounded, preserve gravity
 
-            if (isGrounded)
-                movement.velocity = Vector3.zero;
-            else
-                movement.velocity = Vector3.Project(movement.velocity, transform.up);
-
-        }
+        //    if (isGrounded)
+        //        movement.velocity = Vector3.zero;
+        //    else
+        //        movement.velocity = Vector3.Project(movement.velocity, transform.up);
+        //}
 
         #endregion
         bool isStandingRotating = false;
@@ -159,14 +160,16 @@ namespace Arcatech.Units
         }
         protected override void Move()
         {
-            if (dashTimer != null && dashTimer.IsRunning)
-            {
-                DoDashing();
-            }
-            else
-            {
-                base.Move();
-            }
+            //if (dashTimer != null && dashTimer.IsRunning)
+            //{
+            //    DoDashing();
+            //}
+            //else
+            //{
+            //    base.Move();
+            //}
+
+            base.Move();
         }
 
         public override void Update()

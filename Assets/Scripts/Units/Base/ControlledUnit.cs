@@ -10,7 +10,7 @@ namespace Arcatech.Units
     public abstract class ControlledUnit : ArmedUnit, IInteractible
     {
         [Space, Header("Controlled Unit")]
-        [SerializeField] protected MovementStatsConfig movementStats;
+         [SerializeField] protected MovementStatsConfig movementStats;
         [SerializeField, Self] protected Rigidbody _rb;
         [Self, SerializeField] protected ControlInputsBase _inputs;
         [SerializeField, Range(0, 300)] protected float stunEndStamina = 30f;

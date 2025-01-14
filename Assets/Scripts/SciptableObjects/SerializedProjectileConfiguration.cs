@@ -40,36 +40,29 @@ namespace Arcatech.Items
         /// <returns></returns>
         public virtual ProjectileComponent ProduceProjectile(BaseEntity owner, Transform place,float spread = 0f)
         {
-            ProjectileComponent proj = null;
-            try
-            {                       
-                proj = Instantiate(ProjectilePrefab, place.position,place.rotation) ;
-            }
-            catch
-            {
-                Debug.Log($"Error creating projectile {ProjectilePrefab} by {owner.GetName} ");
-            }
+            return ProduceProjectile(owner, place.position, place.rotation, spread);
+        }
 
+        public virtual ProjectileComponent ProduceProjectile (BaseEntity owner, Vector3 pos, Quaternion rot, float spread = 0f)
+        {
+            ProjectileComponent proj = Instantiate(ProjectilePrefab, pos, rot);
             proj.Owner = owner;
-
-            Vector3 dir = owner.transform.forward + new Vector3 (UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread));
+            Vector3 dir = owner.transform.forward + new Vector3(UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread), UnityEngine.Random.Range(-spread, spread));
 
             proj.transform.forward = dir;
 
             proj.Lifetime = TimeToLive;
-            proj.RemainingHits = ProjectilePenetration; 
+            proj.RemainingHits = ProjectilePenetration;
             proj.Speed = ProjectileSpeed;
 
-            proj.SetResult(UnitCollisionResult,ExpirationCollisionResult);
+            proj.SetResult(UnitCollisionResult, ExpirationCollisionResult);
 
             if (proj is HomingProjectileComponent h)
             {
                 h.WithHoming(HomingRange);
             }
-
             return proj;
         }
-
     }
 
 }

@@ -28,7 +28,6 @@ namespace Arcatech.Units.Stats
     {
         Movespeed,
         TurnSpeed,
-
     }
 
 

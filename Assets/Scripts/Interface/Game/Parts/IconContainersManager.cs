@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Arcatech.UI
 {
-    public class IconContainersManager : ValidatedMonoBehaviour
+    public class IconContainersManager : MonoBehaviour
     {
 
         [SerializeField] private IconContainerUIScript _iconPrefab;
