@@ -47,7 +47,7 @@ namespace Arcatech.Managers
                     _player = p;
                 }
             }
-            SetupBlackboard();
+           // SetupBlackboard();
         }
         public virtual void ControllerUpdate(float delta)
         {
@@ -57,7 +57,7 @@ namespace Arcatech.Managers
             {
                 entities[i].RunUpdate(delta);
             }
-            UpdateBlackboardController();
+            //UpdateBlackboardController();
         }
 
         public virtual void FixedControllerUpdate(float fixedDelta)
@@ -131,37 +131,37 @@ namespace Arcatech.Managers
         }
 
 
-        #region blackboard
+        //#region blackboard
 
 
-        [Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
+        //[Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
 
-        readonly Blackboard bb = new();
-        readonly Arbiter ar = new Arbiter();
-        BlackboardKey safeSpot;
-        private void SetupBlackboard()
-        {
-            bbData.SetupBlackboard(bb);
-            safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
+        //readonly Blackboard bb = new();
+        //readonly Arbiter ar = new Arbiter();
+        //BlackboardKey safeSpot;
+        //private void SetupBlackboard()
+        //{
+        //    bbData.SetupBlackboard(bb);
+        //    safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
 
-            foreach (var e in entities)
-            {
-                if (e is IExpert ex)
-                {
-                    ar.RegisterExpert(ex);
-                }
-            }       
-        }
-        public Blackboard GetBlackboard => bb;
+        //    foreach (var e in entities)
+        //    {
+        //        if (e is IExpert ex)
+        //        {
+        //            ar.RegisterExpert(ex);
+        //        }
+        //    }       
+        //}
+        //public Blackboard GetBlackboard => bb;
 
-        void UpdateBlackboardController()
-        {
-            foreach (var act in ar.BlackboardIteration(bb))
-            {
-                act();
-            }
-        }
-        #endregion
+        //void UpdateBlackboardController()
+        //{
+        //    foreach (var act in ar.BlackboardIteration(bb))
+        //    {
+        //        act();
+        //    }
+        //}
+        //#endregion
 
     }
 

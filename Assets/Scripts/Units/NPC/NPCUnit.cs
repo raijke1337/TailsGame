@@ -1,31 +1,33 @@
-using Arcatech.AI;
-using Arcatech.Items;
+using Arcatech.BlackboardSystem;
 using Arcatech.Managers;
 using Arcatech.Triggers;
 using Arcatech.Units.Behaviour;
-using Arcatech.Units.Inputs;
-using ECM.Controllers;
 using KBCore.Refs;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using Arcatech.BlackboardSystem;
+using UnityEngine.Rendering;
 
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class NPCUnit : ControlledUnit, IExpert
+    public class NPCUnit : ControlledUnit//, IExpert
     {
-        public RoomUnitsGroup UnitsGroup { get; set; }
-
-        //used by room ctrl
-        public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
 
         [Space, Header("Idling settings")]
         protected Transform _player;
-        [SerializeField] protected float _playerDetectionRange = 8f;
         [SerializeField] float _idleWanderRange = 5f;
         [SerializeField] float _waitAtIdleSpotTime = 3f;
+
+        [Space, Header("Patrol settings, uses idle at spot timer")]
+        [SerializeField] protected List<NestedList<Transform>> patrolPointVariants;
+
+        [Space, Header("Player seeking setting")]
+        [SerializeField] protected float _playerDetectionRange = 8f;
+        [SerializeField, Range(1, 999)] protected float _combatTimeout = 3f;
+        [SerializeField] SerializedUnitAction _enterCombatAction;
+        [SerializeField] SerializedUnitAction _exitCombatAction;
 
         protected virtual void OnDrawGizmos()
         {
@@ -44,17 +46,56 @@ namespace Arcatech.Units
                 Debug.LogError($"Set enemy tag for {GetName}");
             }
         }
-        protected override void HandleDamage(float value)
+
+
+        #region combat state
+        public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
+        protected CountDownTimer combatTimeoutTimer;
+        bool _inCombat = false;
+        public bool UnitInCombatState
         {
-            if (bb == null)
+            get => _inCombat;
+            set 
+            { 
+                if (_inCombat == value) return;
+                OnCombatStateChanged(value);
+                _inCombat = value;
+                if (_showDebugs) Debug.Log($"{gameObject.name} combat state: {value}");
+            }
+        }
+        protected virtual void OnCombatStateChanged(bool state)
+        {
+            if (state)
             {
-                bb = UnitsManager.Instance.GetBlackboard;
+                if (combatTimeoutTimer == null) combatTimeoutTimer = new CountDownTimer(_combatTimeout);
+                combatTimeoutTimer.Start();
             }
 
+            if (state && _enterCombatAction != null)
+            {
+                ForceUnitAction(_enterCombatAction.ProduceAction(this, _headT));
+            }
+            if (!state && _exitCombatAction != null)
+            {
+                ForceUnitAction(_exitCombatAction.ProduceAction(this, _headT));
+            }
+        }
+
+        void CombatStateUpdate(float d)
+        {
+            combatTimeoutTimer?.Tick(d);
+            if (combatTimeoutTimer != null)
+            {
+                if (combatTimeoutTimer.IsReady) { combatTimeoutTimer.Reset(); UnitInCombatState = false; Debug.Log($"combat timeout {GetName}"); };
+            }
+        }
+
+        #endregion
+
+        protected override void HandleDamage(float value)
+        {
             OnUnitAttackedEvent?.Invoke(this);
-            bb.SetValue(groupCombat, true);
-
-
+            UnitInCombatState = true;
             base.HandleDamage(value);
         }
 
@@ -92,7 +133,7 @@ namespace Arcatech.Units
         {
             base.RunUpdate(delta);
             _ground.DetectGround();
-
+            CombatStateUpdate(delta);
             _animator.SetBool("isMoving", agent.velocity.magnitude > 0 && !agent.isStopped);
             ExecuteBehaviour();
         }
@@ -105,28 +146,30 @@ namespace Arcatech.Units
 
 
         protected float initStoppingDistance;
-        protected Blackboard bb;
-        protected BlackboardKey groupCombat;
-        protected BlackboardKey safeSpot;
 
         void BaseBehaviourSetup()
         {
             tree = new BehaviourTree(GetName + " undefined behavior tree");
-            bb = UnitsManager.Instance.GetBlackboard;
-            groupCombat = bb.GetOrRegisterKey("groupCombat");
-            safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
-
+            //bb = UnitsManager.Instance.GetBlackboard;
+            //groupCombat = bb.GetOrRegisterKey("groupCombat");
+            //safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
 
             initStoppingDistance = agent.stoppingDistance;
         }
         protected virtual void SetupBehavior()
         {
-            BehaviourPrioritySelector actionPicker = new BehaviourPrioritySelector("generic npc activity");
-            actionPicker.AddChild(SetupIdleRoaming());
-            actionPicker.AddChild(SetupCowardlyBehaviour());
-            tree.AddChild(actionPicker);
+            BehaviourPrioritySelector dummyUnitBehavior = new BehaviourPrioritySelector("npc idles");
+            if (patrolPointVariants != null && patrolPointVariants.Count > 0)
+            {
+                dummyUnitBehavior.AddChild(SetupPatrolPoints());
+            }
+            dummyUnitBehavior.AddChild(SetupIdleRoaming());
+
+            tree.AddChild(dummyUnitBehavior);
+
+            Debug.Log($"{GetName} is using dummy behavior!");
         }
-        protected virtual void ExecuteBehaviour()
+        void ExecuteBehaviour()
         {
             if (ActionLock || UnitPaused) return;            
             if (tree?.Process(this) == Node.NodeStatus.Fail)
@@ -141,9 +184,7 @@ namespace Arcatech.Units
         protected Sequence SetupIdleRoaming()
         {
             Sequence roamandWait = new Sequence("walk around and wait",0);
-            Leaf resetStoppingDistance = new Leaf(new BehaviourAction(() => agent.stoppingDistance = initStoppingDistance), "Reset stopping distance");
-            Leaf roam = new Leaf(new RoamInRangeStrategy(_idleWanderRange, transform.position,agent), $"roam in range {_idleWanderRange}");
-
+            Leaf roam = new Leaf(new RoamAroundPoint(_idleWanderRange, transform.position,agent), $"roam in range {_idleWanderRange}");
 
             Sequence idleWait = new("idle for time");
             Leaf wait = new(new IdleAtPointStrategy(_waitAtIdleSpotTime), $"Wait {_waitAtIdleSpotTime} sec");
@@ -161,51 +202,20 @@ namespace Arcatech.Units
             Leaf checkWait = new Leaf(new BehaviourCondition(() => isDoneWaiting()),"is finished idle time");
             idleWait.AddChild(checkWait);
 
-            roamandWait.AddChild(resetStoppingDistance);
             roamandWait.AddChild(roam);
             roamandWait.AddChild(idleWait);
 
             return roamandWait;
         }
-        /// <summary>
-        /// priority 10
-        /// </summary>
-        /// <returns>run away when attacked sequence</returns>
-        protected Sequence SetupCowardlyBehaviour()
+
+        protected Sequence SetupPatrolPoints()
         {
-            safeSpot = bb.GetOrRegisterKey("safeSpot");
-            Sequence runAwayFromAttack = new Sequence("run away to safe spot in combat", 10);
-            bool IsCombat()
-            {
-                if (bb.TryGetValue(groupCombat, out bool yes))
-                {
-                    if (!yes)
-                    {
-                        runAwayFromAttack.Reset();
-                        return false;
-                    }
-                }
-                agent.speed *= 2; //palceholder
-                return true;
-            }
+            Sequence randomPatrol = new Sequence("patrol points", 20);
+            List<Transform> points = patrolPointVariants[0].InternalList; // todo pick random
 
-            Leaf checkAttacked = new Leaf(new BehaviourCondition(IsCombat), "was attacked sometime ago");
-            Vector3 GetSafeSpot ()
-            {
-                bb.TryGetValue(safeSpot, out Vector3 s);
-                return s;
-            }
+            randomPatrol.AddChild(new Leaf(new PatrolPointsStrategy(transform, agent, points, _waitAtIdleSpotTime), "patrol points", 30));
 
-            Leaf runAway = new Leaf(new RoamInRangeStrategy(_idleWanderRange, GetSafeSpot(), agent),
-                $"run away to a spot around {GetSafeSpot()}");
-
-            Leaf reset = new Leaf(new BehaviourAction(() => agent.speed /= 2), "reset speed");
-
-            runAwayFromAttack.AddChild(checkAttacked);
-            runAwayFromAttack.AddChild(runAway);
-            runAwayFromAttack.AddChild(reset);
-
-            return runAwayFromAttack;
+            return randomPatrol;
         }
 
         protected bool CheckDistanceToPlayer(float distance)
@@ -214,24 +224,24 @@ namespace Arcatech.Units
         }
 
 
-        #region blackboard IExpert code testing
+        //#region blackboard IExpert code testing
 
-        public virtual int GetActionImportance(Blackboard bb)
-        {
-            return 1;
-        }
+        //public virtual int GetActionImportance(Blackboard bb)
+        //{
+        //    return 1;
+        //}
 
-        public virtual void Execute(Blackboard bb)
-        {
-            if (!CheckDistanceToPlayer(_playerDetectionRange))
-            {
-                bb.SetValue(groupCombat, false);
-                agent.speed /= 2;
-            }
-        }
+        //public virtual void Execute(Blackboard bb)
+        //{
+        //    if (!CheckDistanceToPlayer(_playerDetectionRange))
+        //    {
+        //        bb.SetValue(groupCombat, false);
+        //        agent.speed /= 2;
+        //    }
+        //}
 
 
-        #endregion
+        //#endregion
 
 
         #endregion

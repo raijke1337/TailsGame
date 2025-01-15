@@ -18,6 +18,7 @@ namespace Arcatech.Units.Behaviour
         {
             if (waitTimer.IsReady)
             {
+                waitTimer.Reset();
                 return NodeStatus.Success;
             }
 

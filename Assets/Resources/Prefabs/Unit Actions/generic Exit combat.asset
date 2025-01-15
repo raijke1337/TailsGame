@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9cc8855ea334f124cb9b91bd0e05f722, type: 3}
-  m_Name: skill_dodge_action
+  m_Name: generic Exit combat
   m_EditorClassIdentifier: 
-  _locksMovement: 1
-  _animationName: SLIDE00
-  _exitTime: 0.5
+  _locksMovement: 0
+  _animationName: 
+  _exitTime: 0.75
   _nextAct:
-    _nextAnim: {fileID: 11400000}
-    _chainWindowEnd: 0.9
+    _nextAnim: {fileID: 0}
+    _chainWindowEnd: 0
   _onStart:
-  - {fileID: 11400000, guid: 3d39b558ade855a4c9a34fa3d186b34f, type: 2}
-  - {fileID: 11400000, guid: 54c5118fe045117499e9f31fe44161c1, type: 2}
+  - {fileID: 11400000, guid: 57607d7aa8f8bd246a80f2e2ce73750d, type: 2}
   _onExit: []
   _onFinish: []

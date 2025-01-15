@@ -1,9 +1,7 @@
-﻿using DG.Tweening;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using static Arcatech.Units.Behaviour.Node;
-using static Unity.Burst.Intrinsics.X86;
 
 namespace Arcatech.Units.Behaviour
 {
@@ -13,30 +11,29 @@ namespace Arcatech.Units.Behaviour
         readonly Transform entity;
         readonly NavMeshAgent agent;
         readonly List<Transform> patrolPoints;
-        readonly float patrolSpeed;
         int currentIndex;
         bool isPathCalculated;
 
-        public PatrolPointsStrategy(Transform entity, NavMeshAgent agent, List<Transform> patrolPoints, float patrolSpeed = 2f)
+        readonly CountDownTimer idleTimer;
+
+        public PatrolPointsStrategy(Transform entity, NavMeshAgent agent, List<Transform> patrolPoints, float waitTime = 2f)
         {
             this.entity = entity;
             this.agent = agent;
             this.patrolPoints = patrolPoints;
-            this.patrolSpeed = patrolSpeed;
+            idleTimer = new CountDownTimer(waitTime);
             currentIndex = 0;
         }
 
         public NodeStatus Process(ControlledUnit actor)
         {
-            if (currentIndex == patrolPoints.Count)
-            { 
-                Reset();
-                return NodeStatus.Success; 
+            if (idleTimer.IsRunning) // currentlly idling
+            {
+                idleTimer.Tick(Time.deltaTime);
+                return NodeStatus.Running;
             }
-
             var target = patrolPoints[currentIndex];
             agent.SetDestination(target.position);
-            entity.LookAt(target.position);
 
             if (!agent.pathPending)
             {
@@ -45,19 +42,22 @@ namespace Arcatech.Units.Behaviour
 
             if (isPathCalculated && agent.remainingDistance < 1f)
             {
+                idleTimer.Reset();
+                idleTimer.Start();
+
                 currentIndex++;
+                if (currentIndex >= patrolPoints.Count) { currentIndex = 0; }
                 isPathCalculated = false;
             }
-
-
 
             return NodeStatus.Running;
         }
 
         public void Reset()
         {
-             currentIndex = 0;
+            currentIndex = 0;
             isPathCalculated = false;
+            idleTimer.Reset();
         }
     }
 }

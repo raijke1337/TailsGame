@@ -844,7 +844,7 @@ NavMeshAgent:
   m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 360
-  m_StoppingDistance: 1
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -931,7 +931,7 @@ MonoBehaviour:
   ActionOnDamage: {fileID: 11400000, guid: 1fa710f2e33701c40991d25a55b82af1, type: 2}
   ActionOnDeath: {fileID: 11400000, guid: 04bc54e0b7ddd764aaeb1f6e5a2abdcb, type: 2}
   ActionOnStun: {fileID: 0}
-  _headT: {fileID: 0}
+  _headT: {fileID: 3983754378033790471}
   _animator: {fileID: 5255978924601524904}
   defaultEquips: {fileID: 11400000, guid: 674c150d51a7eb9429e920be147a9332, type: 2}
   itemEmpties:
@@ -952,13 +952,15 @@ MonoBehaviour:
   _inputs: {fileID: 43252403117740059}
   stunEndStamina: 0
   stunEndGetUpTime: 0.01
-  _playerDetectionRange: 8
   _idleWanderRange: 5
   _waitAtIdleSpotTime: 3
-  agent: {fileID: 5255978924601524905}
-  detectionRange: 10
-  skillUseTreschold: 0.2
   patrolPointVariants: []
+  _playerDetectionRange: 8
+  _combatTimeout: 3
+  _enterCombatAction: {fileID: 11400000, guid: 3e414ef8f3a3f6343be87488e5342590, type: 2}
+  _exitCombatAction: {fileID: 11400000, guid: 55a1b7d1aa12aec4b97798559eabf9a3, type: 2}
+  agent: {fileID: 5255978924601524905}
+  skillUseTreschold: 0.2
 --- !u!136 &7837973382278617466
 CapsuleCollider:
   m_ObjectHideFlags: 0

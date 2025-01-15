@@ -1,44 +1,46 @@
-using Arcatech.Managers;
 using Arcatech.Units;
-using Arcatech.Units.Inputs;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Arcatech.AI
 {
-    public class RoomUnitsGroup
+    public class RoomUnitsGroup : MonoBehaviour 
     {
         public List<NPCUnit> GetAllUnits => _units;
         private List<NPCUnit> _units;
-        public EnemiesLevelBlockDecorComponent SpawnRoom { get; set; }
 
-        public RoomUnitsGroup(List<NPCUnit> list)
-        {
-            _units = list;
-            foreach (EquippedUnit unit in _units)
-            {
-                unit.BaseEntityDeathEvent += RemoveUnitOnDeath;
-            }
-            foreach (NPCUnit unit in _units)
-            {
-                unit.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
-                unit.UnitsGroup = this;
-            }
+        Collider box;
+
+        private void OnValidate()
+        {            
+            Assert.IsNotNull(GetComponent<Collider>());
         }
 
+        public void Start()
+        {
+            box = GetComponent<Collider>();
+            box.isTrigger = true;
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            
+            if (other.gameObject.TryGetComponent<NPCUnit>(out var u))
+            {
+                if (_units == null) _units = new List<NPCUnit>();
+                if (!_units.Contains(u))
+                {
+                    _units.Add(u);
+                    u.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
+                    u.BaseEntityDeathEvent += RemoveUnitOnDeath;
+                    Debug.Log($"{this.gameObject} register unit {u}");
+                }
+            }
+        }
         private void Unit_OnUnitAttackedEvent(NPCUnit arg)
         {
-            var otherUnits = new List<NPCUnit>();
-            otherUnits.AddRange(_units);
-            otherUnits.Remove(arg);
-
-            foreach (var u in otherUnits)
-            {
-                //u.ForceCombat();
-
-            }
-
+            foreach (var unit in _units) { unit.UnitInCombatState = true; };
         }
 
 
@@ -49,36 +51,8 @@ namespace Arcatech.AI
                 _units.Remove(unit);
                 unit.BaseEntityDeathEvent -= RemoveUnitOnDeath;
                 unit.OnUnitAttackedEvent -= Unit_OnUnitAttackedEvent;
+                Debug.Log($"{this.gameObject} deregister unit {unit}");
             }
-        }
-
-
-        // used by inputs
-        public EquippedUnit GetUnitForAI(ReferenceUnitType type)
-        {
-            EquippedUnit res = null;
-            //switch (type)
-            //{
-            //    case ReferenceUnitType.Small:
-            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-            //        break;
-            //    case ReferenceUnitType.Big:
-            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-            //        break;
-            //    case ReferenceUnitType.Boss:
-            //        res = _units.FirstOrDefault(t => t.GetUnitType() == type);
-            //        break;
-            //    case ReferenceUnitType.Self:
-            //        Debug.LogWarning(type + " was somehow requested, this should not happen");
-            //        break;
-            //    case ReferenceUnitType.Any:
-            //        Debug.LogWarning(type + " NYI");
-            //        break;
-            //    case ReferenceUnitType.Player:
-            //        res = GameManager.Instance.GetGameControllers.UnitsManager.GetPlayerUnit;
-            //        break;
-            //}
-            return res;
         }
     }
 }

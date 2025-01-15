@@ -27,7 +27,7 @@ namespace Arcatech.Units
         [Space, SerializeField] protected SerializedUnitAction ActionOnDamage;
         [SerializeField] protected SerializedUnitAction ActionOnDeath;
         [SerializeField] protected SerializedUnitAction ActionOnStun;
-        [SerializeField, Tooltip("Place to spawn stunned result")] protected Transform _headT;
+        [SerializeField, Tooltip("Place to spawn effects")] protected Transform _headT;
 
         [SerializeField, Self] protected Animator _animator;
 
@@ -42,7 +42,7 @@ namespace Arcatech.Units
         {
             base.OnValidate();
             Assert.IsFalse(defaultStats==null);
-
+            Assert.IsNotNull(_headT);
         }
         public virtual void StartControllerUnit() // this is run by unit manager
         {
@@ -221,19 +221,27 @@ namespace Arcatech.Units
             act.StartAction();
         }
 
-
+        Tweener force;
         public virtual void ApplyForceResultToUnit(float speed, float distance)
         {
             if (gameObject.TryGetComponent<Rigidbody>(out var rb))
             {
                 Vector3 end = rb.transform.position + (rb.transform.forward * distance);
-                rb.DOMove(end, Mathf.Abs(distance / speed), false);
+                force = rb.DOMove(end, Mathf.Abs(distance / speed), false);
                 //Debug.Log($"Tried to apply impulse {distance} to {GetName} but it has no movement controller component, using dotween");
                 //rb.AddForce(rb.transform.forward * distance * 5f,ForceMode.Impulse);
             }
             else
             {
                 Debug.Log($"Tried to apply impulse {distance} to {GetName} but it has no rigidbody");
+            }
+        }
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+            {
+               if (_showDebugs) Debug.Log("Boom");
+               force?.Kill();
             }
         }
 

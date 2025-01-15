@@ -31,19 +31,19 @@ namespace Arcatech.Units
 
             bool CombatCondition ()
             {
-                bb.TryGetValue(groupCombat, out bool comb);
-                return (comb || CheckDistanceToPlayer(_playerDetectionRange));
+                //bb.TryGetValue(groupCombat, out bool comb);
+                return (UnitInCombatState || CheckDistanceToPlayer(_playerDetectionRange));
             }
 
             Sequence combatSequence = new Sequence("in combat with player", 50);
             Leaf checkCombat = new Leaf(new BehaviourCondition(CombatCondition), "is in combat");
             Leaf resetCombat = new Leaf(new BehaviourAction(() => { agent.stoppingDistance = initStoppingDistance; combatSequence.Reset(); }), "reset combat");
-            Leaf justChase = new Leaf(new MoveToPointStrategy(agent, _player.transform, true, _playerInFrontAngle), "run to player to hit");
+            Leaf justChase = new Leaf(new MoveToTransformStrategy(agent, _player.transform, true, _playerInFrontAngle), "run to player to hit");
 
 
 
             combatSequence.AddChild(checkCombat);
-            combatSequence.AddChild(new Leaf(new BehaviourAction(() => bb.SetValue(groupCombat, true)), "change combat state for room"));
+            //combatSequence.AddChild(new Leaf(new BehaviourAction(() => bb.SetValue(groupCombat, true)), "change combat state for room"));
 
             BehaviorSelector chooseAction = new BehaviorSelector("choose between charge and attack");
 
@@ -63,7 +63,7 @@ namespace Arcatech.Units
             Sequence chasePlayerAndUseCharge = new Sequence("chase and charge");
             Leaf chargeCheck = new Leaf(new BehaviourCondition (() => CanDoAction(UnitActionType.DodgeSkill)),"check if skill is ready");
             Leaf setRange = new Leaf(new BehaviourAction(()=> agent.stoppingDistance = _chargeRange),$"set stopping distance to {_chargeRange}");
-            Leaf moveIntoRange = new Leaf(new MoveToPointStrategy(agent, _player.transform, true, _playerInFrontAngle), "rotate and chase");
+            Leaf moveIntoRange = new Leaf(new MoveToTransformStrategy(agent, _player.transform, true, _playerInFrontAngle), "rotate and chase");
             Leaf useCharge = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.DodgeSkill)), "charge");
 
             chasePlayerAndUseCharge.AddChild(chargeCheck);
@@ -83,20 +83,20 @@ namespace Arcatech.Units
             tree.AddChild(actionsPriority);
         }
 
-        public override int GetActionImportance(Blackboard bb)
-        {
-            if (bb.TryGetValue(groupCombat, out bool isCombat))
-            {
-                if (!isCombat) { return 0; }
-                else return 20;
-            }
-            return 0;
-        }
+        //public override int GetActionImportance(Blackboard bb)
+        //{
+        //    if (bb.TryGetValue(groupCombat, out bool isCombat))
+        //    {
+        //        if (!isCombat) { return 0; }
+        //        else return 20;
+        //    }
+        //    return 0;
+        //}
 
-        public override void Execute(Blackboard bb)
-        {
-            bb.AddAction(() => bb.SetValue(safeSpot, transform.position));
-        }
+        //public override void Execute(Blackboard bb)
+        //{
+        //    bb.AddAction(() => bb.SetValue(safeSpot, transform.position));
+        //}
     }
 }
 
