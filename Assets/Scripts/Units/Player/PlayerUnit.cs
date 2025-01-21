@@ -29,6 +29,7 @@ namespace Arcatech.Units
             _inputs.InputsPause += OnInputsPauseButton;
             _aim = (_inputs as InputsPlayer).Aiming;
             costumes = GetComponent<CostumesControllerComponent>();
+            costumes.Init(this);
 
             _movement.speed = movementStats.Stats[Stats.MovementStatType.Movespeed].Max;
             ToggleCamera(true);
@@ -56,6 +57,7 @@ namespace Arcatech.Units
             if (obj == UnitActionType.Jump)
             {
                 transform.parent = null;
+                _animator.SetTrigger("TalkTrigger");
                 _movement.DoJump();
                 DoActionLogic(movementStats.JumpAction.ProduceAction(this, transform));
             }

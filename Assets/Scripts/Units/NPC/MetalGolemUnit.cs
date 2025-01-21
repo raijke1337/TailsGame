@@ -32,7 +32,7 @@ namespace Arcatech.Units
             bool CombatCondition ()
             {
                 //bb.TryGetValue(groupCombat, out bool comb);
-                return (UnitInCombatState || CheckDistanceToPlayer(_playerDetectionRange));
+                return (UnitInCombatState || CheckDistanceToPlayer(_playerDetectionSphereCastRange));
             }
 
             Sequence combatSequence = new Sequence("in combat with player", 50);

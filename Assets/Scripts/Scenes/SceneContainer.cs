@@ -1,4 +1,5 @@
-﻿using Arcatech.Texts;
+﻿using Arcatech.Effects;
+using Arcatech.Texts;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,7 +12,7 @@ namespace Arcatech.Scenes
         public int SceneLoaderIndex;
         public LevelType LevelType;
         public SimpleText Description;
-        public AudioClip Music;
+        public SoundClipData Music;
         public bool IsUnlockedByDefault;
         public SceneContainer NextLevel;
     }

@@ -69,6 +69,8 @@ namespace Arcatech.Managers
 
         private void PlaceDamageText(DrawDamageEvent @event)
         {
+            if (@event.Unit == null) return;
+
             Vector3 dirToCamera = Camera.main.transform.position - @event.Unit.transform.position;
             Vector3 adjustedPosition = @event.Unit.transform.position + (Vector3.up * 2) + dirToCamera.normalized + Random.insideUnitSphere; // move towards camera 1 an d some random
 

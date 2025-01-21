@@ -2,6 +2,7 @@
 using Arcatech.Triggers;
 using Arcatech.Units;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Arcatech.Items
@@ -28,10 +29,11 @@ namespace Arcatech.Items
         protected MeleeWeaponTrail Trail;
         protected IActionResult[] OnColliderHit { get; }
         protected BaseUnitAction currentAction;
-        public void SwitchCollider(bool state)
+        public async void SwitchCollider(bool state, float delay)
         {
-            Trigger.ToggleCollider(state);
             Trail.Emit = state;
+            await Task.Delay((int)delay*1000);
+            Trigger.ToggleCollider(state);
             if (Owner.UnitDebug) Debug.Log($"collider on {WeaponComponent} {(state == true ? "on" : "off")} ");
         }
 

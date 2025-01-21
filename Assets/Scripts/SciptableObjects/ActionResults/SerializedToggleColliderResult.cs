@@ -8,18 +8,21 @@ namespace Arcatech.Actions
     public class SerializedToggleColliderResult : SerializedActionResult
     {
         [SerializeField] bool ResultingColliderState;
+        [SerializeField, Range(0, 1f)] float Delay = 0.1f;
         public override IActionResult GetActionResult()
         {
-            return new ToggleColliderResult(ResultingColliderState);
+            return new ToggleColliderResult(ResultingColliderState,Delay);
         }
 
     }
     public class ToggleColliderResult : ActionResult
     {
         bool state;
-        public ToggleColliderResult(bool p)
+        float delay;
+        public ToggleColliderResult(bool p, float d)
         {
             state = p;
+            delay = d;
         }
 
         public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
@@ -28,7 +31,7 @@ namespace Arcatech.Actions
             {
                 if (w.UseStrategy is MeleeWeaponStrategy m)
                 {
-                    m.SwitchCollider(state);
+                    m.SwitchCollider(state,delay);
                 }
             }
         }

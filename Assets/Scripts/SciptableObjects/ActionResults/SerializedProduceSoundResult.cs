@@ -19,7 +19,7 @@ namespace Arcatech.Actions
     }
 
 
-    public class ProduceSoundResult : IActionResult
+    public class ProduceSoundResult : ActionResult
     {
         readonly SoundClipData[] sounds;
         bool pitch;
@@ -29,7 +29,7 @@ namespace Arcatech.Actions
             this.pitch = pitch;
         }
 
-        public void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
+        public override void ProduceResult(BaseEntity user, BaseEntity target, Transform place)
         {
             foreach (var s in sounds)
             {

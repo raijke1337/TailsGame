@@ -24,9 +24,12 @@ namespace Arcatech.Units
         [SerializeField] protected List<NestedList<Transform>> patrolPointVariants;
 
         [Space, Header("Player seeking setting")]
-        [SerializeField] protected float _playerDetectionRange = 8f;
-        [SerializeField, Range(1, 999)] protected float _combatTimeout = 3f;
-        [SerializeField] SerializedUnitAction _enterCombatAction;
+        [SerializeField] protected float _playerDetectionSphereCastRange = 8f;
+        [SerializeField,Range(0.01f,1f), Tooltip("How often enemy scans for player in front of self")] protected float _sphereCastDelay = 0.1f;
+        [SerializeField, Range(1, 10f)] protected float _sphereCastRadius = 3f;
+        [SerializeField, Range(1, 999)] protected float _combatTimeout = 5f;
+
+        [Space,SerializeField] SerializedUnitAction _enterCombatAction;
         [SerializeField] SerializedUnitAction _exitCombatAction;
 
         protected virtual void OnDrawGizmos()
@@ -34,7 +37,13 @@ namespace Arcatech.Units
             if (_showDebugs)
             {
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(transform.position, _playerDetectionRange);
+                if (UnitInCombatState)
+                {
+                    Gizmos.color = Color.red;
+                }
+                Gizmos.DrawWireSphere(_headT.position, _sphereCastRadius);
+                Gizmos.DrawWireSphere(_headT.position + (_headT.forward * _playerDetectionSphereCastRange), _sphereCastRadius);
+                Gizmos.DrawLine(_headT.position, _headT.position + (_headT.forward * _playerDetectionSphereCastRange));
             }
         }
 
@@ -70,7 +79,6 @@ namespace Arcatech.Units
                 if (combatTimeoutTimer == null) combatTimeoutTimer = new CountDownTimer(_combatTimeout);
                 combatTimeoutTimer.Start();
             }
-
             if (state && _enterCombatAction != null)
             {
                 ForceUnitAction(_enterCombatAction.ProduceAction(this, _headT));
@@ -81,12 +89,42 @@ namespace Arcatech.Units
             }
         }
 
-        void CombatStateUpdate(float d)
+        void InternalCombatStateUpdate(float d)
         {
+            SeekPlayer(d);
             combatTimeoutTimer?.Tick(d);
             if (combatTimeoutTimer != null)
             {
-                if (combatTimeoutTimer.IsReady) { combatTimeoutTimer.Reset(); UnitInCombatState = false; Debug.Log($"combat timeout {GetName}"); };
+                if (combatTimeoutTimer.IsReady)
+                { 
+                    combatTimeoutTimer.Reset(); UnitInCombatState = false; Debug.Log($"combat timeout {GetName}"); 
+                };
+            }
+        }
+        RaycastHit[] hits = new RaycastHit[20];
+
+        float _castDelay = 0f;
+        void SeekPlayer(float delta)
+        {
+            _castDelay += delta;
+            if (_castDelay >= _sphereCastDelay)
+            {
+                _castDelay = 0f;
+                if (Physics.SphereCastNonAlloc(_headT.position, _sphereCastRadius, transform.forward, hits,_playerDetectionSphereCastRange)>0)
+                {
+                    foreach (RaycastHit hit in hits)
+                    {
+                        if (hit.collider != null && hit.collider.CompareTag("Player"))
+                        {
+                            combatTimeoutTimer?.Reset();
+                            UnitInCombatState = true;
+                            break;
+                        }
+                    }
+                }
+
+
+                //float dist = Vector3.SqrMagnitude(_player.position - transform.position); // placeholder TODO maybe
             }
         }
 
@@ -133,7 +171,7 @@ namespace Arcatech.Units
         {
             base.RunUpdate(delta);
             _ground.DetectGround();
-            CombatStateUpdate(delta);
+            InternalCombatStateUpdate(delta);
             _animator.SetBool("isMoving", agent.velocity.magnitude > 0 && !agent.isStopped);
             ExecuteBehaviour();
         }

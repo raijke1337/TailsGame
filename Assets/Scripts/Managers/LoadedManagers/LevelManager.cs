@@ -7,6 +7,7 @@ using UnityEngine;
 using Arcatech.Level;
 using Arcatech.EventBus;
 using Arcatech.Items;
+using Arcatech.Effects;
 
 namespace Arcatech.Managers
 {
@@ -33,6 +34,7 @@ namespace Arcatech.Managers
             {
                 t.StartController();
             }
+            var music = GameManager.Instance.GetCurrentLevelData.Music;
 
         }
 

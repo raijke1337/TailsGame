@@ -2,6 +2,7 @@
 using Arcatech.Skills;
 using Arcatech.Triggers;
 using Arcatech.Units;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcatech.Items
@@ -18,6 +19,9 @@ namespace Arcatech.Items
         protected bool hasHitUnit = false;
         WeaponTriggerComponent col;
         bool isAoe = false; // bandaid but w/e
+
+        BaseEntity[] hits;
+        int index = 0;
 
         //public SerializedEffectsCollection VFX;
        // EffectsCollection _fx;
@@ -39,6 +43,7 @@ namespace Arcatech.Items
             {
                 ExpirationCollisionResult[i] = exp[i].GetActionResult();
             }
+            hits = new BaseEntity[RemainingHits];
         }
         private void Start()
         {
@@ -49,12 +54,16 @@ namespace Arcatech.Items
 
         protected virtual void Col_SomethingHitEvent(Collider other)
         {
+            Debug.Log($"{this} hit {other}!");
+
             if (other.TryGetComponent<BaseEntity>(out var u))
             {
                 // hit an entioty
-                //Debug.Log($"{this} hit {u.GetUnitName}!");
-                if (u != Owner && u.Side != Owner.Side)
+
+                if (u != Owner && u.Side != Owner.Side && !hits.Contains(u) && RemainingHits > 0) // mightr be slow 
                 {
+                    hits[index] = u;
+                    index++;
                     hasHitUnit = true;
                     RemainingHits--;
 
@@ -76,6 +85,7 @@ namespace Arcatech.Items
 
             if (RemainingHits == 0)
             {
+                Expiry();
                 Destroy(gameObject);
             }
         }
@@ -95,6 +105,7 @@ namespace Arcatech.Items
         {
             if (ExpirationCollisionResult.Length > 0 && !hasHitUnit)
             {
+                Debug.Log($"{this} expiry!");
                 foreach (var exp in ExpirationCollisionResult)
                 {
                     exp.ProduceResult(Owner, null, transform);

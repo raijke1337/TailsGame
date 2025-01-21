@@ -1,4 +1,6 @@
 
+using Arcatech.Effects;
+using Arcatech.EventBus;
 using Arcatech.Scenes;
 using Arcatech.Scenes.Cameras;
 using System;
@@ -31,6 +33,8 @@ namespace Arcatech.Managers
         private void Start()
         {
             _ctrls = new();
+            EventBus<SoundClipRequest>.Raise(new SoundClipRequest(GameManager.Instance.GetCurrentLevelData.Music, false, transform.position));
+
             switch (GameManager.Instance.GetCurrentLevelData.LevelType)
             {
                 case LevelType.Menu:
