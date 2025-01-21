@@ -1,8 +1,7 @@
-﻿using Arcatech.Effects;
-using Arcatech.Triggers;
+﻿using Arcatech.Triggers;
 using Arcatech.Units;
+using com.cyborgAssets.inspectorButtonPro;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -25,6 +24,7 @@ namespace Arcatech.Items
             Assert.IsNotNull(Cost);
             Assert.IsFalse(WeaponType == WeaponAnimationsSet.None);
         }
+
 
     }
 }
