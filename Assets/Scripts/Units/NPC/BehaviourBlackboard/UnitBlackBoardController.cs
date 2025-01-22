@@ -9,7 +9,7 @@ namespace Arcatech.BlackboardSystem
 
         [SerializeField] BlackboardData bbData;
         readonly Blackboard bb = new();
-        readonly Arbiter ar = new Arbiter();
+        readonly ActionPicker ar = new ActionPicker();
 
         private void Awake()
         {
@@ -17,7 +17,7 @@ namespace Arcatech.BlackboardSystem
 
         }
         public Blackboard GetBlackboard => bb;
-        public void RegisterExpert(IExpert e) => ar.RegisterExpert(e);
+        public void RegisterExpert(IRoomUnitTacticsMember e) => ar.RegisterExpert(e);
 
         private void Update()
         {

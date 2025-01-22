@@ -30,8 +30,15 @@ namespace Arcatech.Units
             }
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
             _inputs.RequestInteraction += HandleInteractionAction;
-
-            stunEndStamina = Mathf.Clamp(stunEndStamina,_stats.GetStatValue(BaseStatType.Stamina).GetMin, _stats.GetStatValue(BaseStatType.Stamina).GetMax);
+            if (_stats.GetStatValue(BaseStatType.Stamina) != null)
+            {
+                stunEndStamina = Mathf.Clamp(stunEndStamina, _stats.GetStatValue(BaseStatType.Stamina).GetMin, _stats.GetStatValue(BaseStatType.Stamina).GetMax);
+            }
+            else
+            {
+                stunEndStamina = 0;
+            }
+           
         }
 
         protected abstract void HandleInteractionAction(IInteractible i);

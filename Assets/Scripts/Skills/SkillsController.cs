@@ -1,10 +1,8 @@
 using Arcatech.Items;
 using Arcatech.Stats;
-using Arcatech.Triggers;
 using Arcatech.Units;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Arcatech.Skills
 {
@@ -48,7 +46,12 @@ namespace Arcatech.Skills
 
         public bool CanUseAction(UnitActionType action)
         {
-            return _skills[action].CanUseItem(stats);
+            try
+            {
+                return _skills[action].CanUseItem(stats);
+            }
+            catch
+            { return false; }
         }
         #endregion
         public override void StartController()

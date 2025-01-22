@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8147931a4d5b1354ab05df0fb386f77c, type: 3}
-  m_Name: debug golem hp
+  m_Script: {fileID: 11500000, guid: 61e0457c339806a47b16b727556b71ec, type: 3}
+  m_Name: arca drone_heal_stat 20 + 50 over 5
   m_EditorClassIdentifier: 
-  _stat: 0
-  _condition: {fileID: 0}
-  _initValue: 500
-  _perSecValue: 5
+  ChangedStat: 0
+  InitialValue: 20
+  OverTimeValue: 50
+  OverTimeValueDuration: 5
+  OnApplyResult: {fileID: 11400000, guid: 995688bb43ce2c94bae8425539189a61, type: 2}

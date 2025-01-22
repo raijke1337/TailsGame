@@ -130,39 +130,6 @@ namespace Arcatech.Managers
             EventBus<PauseToggleEvent>.Deregister(_pauseBind);
         }
 
-
-        //#region blackboard
-
-
-        //[Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
-
-        //readonly Blackboard bb = new();
-        //readonly Arbiter ar = new Arbiter();
-        //BlackboardKey safeSpot;
-        //private void SetupBlackboard()
-        //{
-        //    bbData.SetupBlackboard(bb);
-        //    safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
-
-        //    foreach (var e in entities)
-        //    {
-        //        if (e is IExpert ex)
-        //        {
-        //            ar.RegisterExpert(ex);
-        //        }
-        //    }       
-        //}
-        //public Blackboard GetBlackboard => bb;
-
-        //void UpdateBlackboardController()
-        //{
-        //    foreach (var act in ar.BlackboardIteration(bb))
-        //    {
-        //        act();
-        //    }
-        //}
-        //#endregion
-
     }
 
 }

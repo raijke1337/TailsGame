@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8147931a4d5b1354ab05df0fb386f77c, type: 3}
-  m_Name: debug golem hp
+  m_Script: {fileID: 11500000, guid: 7cb1aa02062f61c45ba0ecd3c4b21ded, type: 3}
+  m_Name: drone_heal_a1_placeAoe
   m_EditorClassIdentifier: 
-  _stat: 0
-  _condition: {fileID: 0}
-  _initValue: 500
-  _perSecValue: 5
+  Projectile: {fileID: 11400000, guid: 7db0715d08d01a84287277971b6b54e0, type: 2}
+  numberOfProjectiles: 1
+  shotDelay: 0.3
+  spread: 0
+  intDelay: 0.1

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f21f7bca634ee4c46b1df0ecc1c0853d, type: 3}
+  m_Name: drone_heal_aoe_proj
+  m_EditorClassIdentifier: 
+  ProjectilePrefab: {fileID: 2645275445023034881, guid: 91f87ca3184f5d04aa2621d08b190b6e,
+    type: 3}
+  TimeToLive: 0.1
+  ProjectileSpeed: 0
+  HomingRange: 6
+  ProjectilePenetration: 3
+  UnitCollisionResult:
+  - {fileID: 11400000, guid: 6a0c1f00fa6acdc4cb9ae68a2487df67, type: 2}
+  ExpirationCollisionResult: []

@@ -5,12 +5,12 @@ using UnityEngine.Assertions;
 namespace Arcatech.BlackboardSystem
 {
     /// <summary>
-    /// arbiter class executes actions provided by IExperts, based on their Importance
+    /// action picker class executes actions provided by IRoomUnitTacticsMember, based on their Importance
     /// </summary>
-    public class Arbiter
+    public class ActionPicker
     {
-        readonly List<IExpert> experts = new List<IExpert>();
-        public void RegisterExpert (IExpert e)
+        readonly List<IRoomUnitTacticsMember> experts = new List<IRoomUnitTacticsMember>();
+        public void RegisterExpert (IRoomUnitTacticsMember e)
         {
             Assert.IsNotNull(e);
             experts.Add(e);
@@ -18,7 +18,7 @@ namespace Arcatech.BlackboardSystem
         // selecting the expert most relevant at the moment
         public List<Action> BlackboardIteration(Blackboard bb)
         {
-            IExpert chosen = null;
+            IRoomUnitTacticsMember chosen = null;
             int highestImp = 0;
             foreach (var expert in experts)
             {

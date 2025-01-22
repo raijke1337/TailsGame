@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Arcatech.Units;
 using Arcatech.Units.Behaviour;
 using UnityEngine.Assertions;
 
@@ -67,6 +68,7 @@ namespace Arcatech.BlackboardSystem
     [Serializable]
     public class Blackboard
     {
+        #region too complex
         Dictionary<string, BlackboardKey> keysRegistry = new(); // for external lookup if entry alreay exists
         Dictionary<BlackboardKey, object> entries = new Dictionary<BlackboardKey, object>(); // for entires
 
@@ -117,6 +119,18 @@ namespace Arcatech.BlackboardSystem
                     UnityEngine.Debug.Log($"Key {e.Key} / Value {val}");
                 }
             }
+        }
+        #endregion
+
+        public NPCUnit gatherAround { get; private set; }
+        public void SetGatherPointUnit (NPCUnit g)
+        {
+            if (g == null)
+            gatherAround = g;
+        }
+        public void ResetGatherPoint ()
+        {
+            gatherAround = null;
         }
 
         #region arbiter section

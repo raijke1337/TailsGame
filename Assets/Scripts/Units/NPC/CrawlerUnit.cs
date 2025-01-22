@@ -1,4 +1,5 @@
-﻿using Arcatech.Units.Behaviour;
+﻿using Arcatech.BlackboardSystem;
+using Arcatech.Units.Behaviour;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Arcatech.Units
     {
 
         [Header("NPC Behaviour : Crawler")]
-        [SerializeField, Range(0, 1)] float skillUseTreschold = 0.2f;
+        [SerializeField, Range(0, 1)] float selfDestructHealthPercent = 0.2f;
 
         protected override void SetupBehavior()
         {
@@ -16,7 +17,7 @@ namespace Arcatech.Units
 
             Sequence explode = new Sequence("Explode at low hp", 100);
 
-            Leaf checkHP = new Leaf(new BehaviourCondition(()=> _stats.GetStatValue(BaseStatType.Health).GetPercent < skillUseTreschold), "is hp low for skill");
+            Leaf checkHP = new Leaf(new BehaviourCondition(()=> _stats.GetStatValue(BaseStatType.Health).GetPercent < selfDestructHealthPercent), "is hp low for skill");
             Leaf useSkill = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.MeleeSkill)), "melee skill");
 
             explode.AddChild(checkHP);
@@ -26,9 +27,6 @@ namespace Arcatech.Units
 
             Leaf checkCombatState = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state");
             Leaf chase = new Leaf(new MoveToTransformStrategy(agent, _player), "move to player");
-
-
-
             Leaf attack = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Melee)), "use melee attack");
             Leaf chaseComplete = new Leaf(new BehaviourAction(() => inCombat.Reset()), "reset chase");
 
@@ -46,5 +44,4 @@ namespace Arcatech.Units
             tree.AddChild(actionsPriority);
         }
     }
-
 }

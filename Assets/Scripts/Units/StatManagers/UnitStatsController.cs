@@ -110,8 +110,17 @@ namespace Arcatech.Stats
         }
 
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetStatValues => _stats;
-        public StatValueContainer GetStatValue (BaseStatType type) => _stats[type];
-
+        public StatValueContainer GetStatValue(BaseStatType type)
+        {
+            try
+            {
+                return _stats[type];
+            }
+            catch
+            {
+                return null;
+            }
+        }
         #region managed
 
         public override void StartController()

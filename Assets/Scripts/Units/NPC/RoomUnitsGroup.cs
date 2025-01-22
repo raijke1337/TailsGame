@@ -1,8 +1,8 @@
+using Arcatech.BlackboardSystem;
 using Arcatech.Units;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace Arcatech.AI
 {
@@ -23,9 +23,13 @@ namespace Arcatech.AI
             box = GetComponent<Collider>();
             box.isTrigger = true;
         }
-        private void OnTriggerEnter(Collider other)
+
+        private void Update()
         {
-            
+            UpdateBlackboardController();
+        }
+        private void OnTriggerEnter(Collider other)
+        {            
             if (other.gameObject.TryGetComponent<NPCUnit>(out var u))
             {
                 if (_units == null) _units = new List<NPCUnit>();
@@ -34,6 +38,7 @@ namespace Arcatech.AI
                     _units.Add(u);
                     u.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
                     u.BaseEntityDeathEvent += RemoveUnitOnDeath;
+                    ar.RegisterExpert(u);
                     Debug.Log($"{this.gameObject} register unit {u}");
                 }
             }
@@ -54,5 +59,23 @@ namespace Arcatech.AI
                 Debug.Log($"{this.gameObject} deregister unit {unit}");
             }
         }
+
+
+
+        #region room tactics
+
+       // [Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
+
+        readonly Blackboard bb = new();
+        readonly ActionPicker ar = new ActionPicker();
+
+        void UpdateBlackboardController()
+        {
+            foreach (var act in ar.BlackboardIteration(bb))
+            {
+                act();
+            }
+        }
+        #endregion
     }
 }

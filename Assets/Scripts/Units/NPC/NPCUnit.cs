@@ -12,13 +12,14 @@ using UnityEngine.Rendering;
 namespace Arcatech.Units
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class NPCUnit : ControlledUnit//, IExpert
+    public class NPCUnit : ControlledUnit, IRoomUnitTacticsMember
     {
 
         [Space, Header("Idling settings")]
         protected Transform _player;
         [SerializeField] float _idleWanderRange = 5f;
         [SerializeField] float _waitAtIdleSpotTime = 3f;
+        [SerializeField, Range(0, 1)] float _callDistressHealth = 0;
 
         [Space, Header("Patrol settings, uses idle at spot timer")]
         [SerializeField] protected List<NestedList<Transform>> patrolPointVariants;
@@ -110,7 +111,7 @@ namespace Arcatech.Units
             if (_castDelay >= _sphereCastDelay)
             {
                 _castDelay = 0f;
-                if (Physics.SphereCastNonAlloc(_headT.position, _sphereCastRadius, transform.forward, hits,_playerDetectionSphereCastRange)>0)
+                if (Physics.SphereCastNonAlloc(_headT.position, _sphereCastRadius, transform.forward, hits, _playerDetectionSphereCastRange) > 0)
                 {
                     foreach (RaycastHit hit in hits)
                     {
@@ -122,9 +123,6 @@ namespace Arcatech.Units
                         }
                     }
                 }
-
-
-                //float dist = Vector3.SqrMagnitude(_player.position - transform.position); // placeholder TODO maybe
             }
         }
 
@@ -188,9 +186,6 @@ namespace Arcatech.Units
         void BaseBehaviourSetup()
         {
             tree = new BehaviourTree(GetName + " undefined behavior tree");
-            //bb = UnitsManager.Instance.GetBlackboard;
-            //groupCombat = bb.GetOrRegisterKey("groupCombat");
-            //safeSpot = bb.GetOrRegisterKey("safeSpotLocation");
 
             initStoppingDistance = agent.stoppingDistance;
         }
@@ -209,7 +204,11 @@ namespace Arcatech.Units
         }
         void ExecuteBehaviour()
         {
-            if (ActionLock || UnitPaused) return;            
+            if (ActionLock || UnitPaused) return;
+            if (UnitInCombatState) {
+
+                int i = 0;
+            };
             if (tree?.Process(this) == Node.NodeStatus.Fail)
             {
                 Debug.Log($"{GetName} has an empty behavior tree!");
@@ -261,30 +260,26 @@ namespace Arcatech.Units
             return Vector3.Magnitude(transform.position - _player.transform.position) <= distance;
         }
 
-
-        //#region blackboard IExpert code testing
-
-        //public virtual int GetActionImportance(Blackboard bb)
-        //{
-        //    return 1;
-        //}
-
-        //public virtual void Execute(Blackboard bb)
-        //{
-        //    if (!CheckDistanceToPlayer(_playerDetectionRange))
-        //    {
-        //        bb.SetValue(groupCombat, false);
-        //        agent.speed /= 2;
-        //    }
-        //}
-
-
-        //#endregion
-
-
         #endregion
 
+        #region room tactics
 
+        public virtual int GetActionImportance(Blackboard bb)
+        {           
+            if (_stats.GetStatValue(BaseStatType.Health).GetPercent < _callDistressHealth)
+            {
+                //if (_showDebugs) Debug.Log($"Execute room tactics request {this}");
+                return 50;
+
+            }
+            else return 0;
+        }
+
+        public virtual void Execute(Blackboard bb)
+        {
+           bb.SetGatherPointUnit(this);
+        }
+        #endregion
     }
 }
 

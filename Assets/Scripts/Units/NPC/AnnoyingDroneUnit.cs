@@ -1,4 +1,5 @@
-﻿using Arcatech.Managers;
+﻿using Arcatech.BlackboardSystem;
+using Arcatech.Managers;
 using Arcatech.Units.Behaviour;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
@@ -10,97 +11,109 @@ namespace Arcatech.Units
     {
 
         [Header("NPC Behaviour : Drone")]
+        [SerializeField, Range(0,1),Tooltip("Percent of player detection range at which unit tries to run away")] float _runAwayDistance = 0.5f;
 
-        [SerializeField, Range(0, 1), Tooltip("Heal ally")] float skillUseTreschold = 0.5f;
 
         protected override void SetupBehavior()
         {
-            BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + GetName);
+            BehaviourPrioritySelector allActions = new BehaviourPrioritySelector("unit actions");
 
-            //Sequence activateSkillSeq = new Sequence("activate skill", 100);
-            //bool IsLowHP()
-            //{
-            //    if (_stats.GetStatValue(BaseStatType.Health).GetPercent < skillUseTreschold)
-            //    {
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        activateSkillSeq.Reset();
-            //        return false;
-            //    }
-            //}
+            Sequence goHealAlly = new Sequence("heal allied unit actions", 100);
+            Leaf canHelp = new Leaf(new BehaviourCondition(() => _skills.CanUseAction(UnitActionType.RangedSkill)), "check if ranged skill is ready");
+            Leaf allyNeedsHeal = new Leaf(new BehaviourCondition(() => _initHelp == true), "check if help sequence init by tactics");
+            Leaf moveToAlly = new Leaf(new MoveToTransformStrategy(agent, _unitToHelp), "move to unit set by tactics");
+            Leaf skill = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.RangedSkill)), "use skill");
+            Leaf helpDone = new Leaf(new BehaviourAction(CompleteHelp), "complete help report to tactics");
 
-            //Leaf checkHP = new Leaf(new BehaviourCondition(IsLowHP), "is hp low for skill");
-            //Leaf useSkill = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.MeleeSkill)), "melee skill");
-
-            //activateSkillSeq.AddChild(checkHP);
-            //activateSkillSeq.AddChild(useSkill);
-
-            //actionsPriority.AddChild(activateSkillSeq);
-
-            //Sequence chasePlayerSeq = new Sequence("chasing player", 50);
-            //bool PlayerInRange()
-            //{
-            //    if (Vector3.SqrMagnitude(_player.position - transform.position) < detectionRange) // placeholder
-            //    {
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        chasePlayerSeq.Reset();
-            //        return false;
-            //    }
-            //}
-
-            //chasePlayerSeq.AddChild(new Leaf(new BehaviourCondition(PlayerInRange), "is player in range"));
-            //chasePlayerSeq.AddChild(new Leaf(new MoveToPointStrategy(agent, _player), "move to player"));
-            //chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Melee)), "use melee attack"));
-            //chasePlayerSeq.AddChild(new Leaf(new BehaviourAction(() => chasePlayerSeq.Reset()), "reset chase"));
-
-            //actionsPriority.AddChild(chasePlayerSeq);
-
-            //Sequence inCombat = new Sequence("combat activity",50);
-            //Leaf checkCombatState = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state");
-            //Leaf chase = new Leaf(new MoveToTransformStrategy(agent, _player), "move to player");
-
-            //inCombat.AddChild(checkCombatState);
-            //inCombat.AddChild(chase);
-
-            //actionsPriority.AddChild(inCombat);
-
-            Leaf checkCombat = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check state");
-            Sequence combatActivity = new Sequence("combat!", 50);
-            combatActivity.AddChild(checkCombat);
-
-            BehaviourPrioritySelector pickCombatAction = new BehaviourPrioritySelector("choose action", 0);
-
-            Sequence goHealAlly = new Sequence("heal allied unit",100);
-            Leaf checkAlly = new Leaf(new BehaviourCondition(() => _stats.GetStatValue(BaseStatType.Health).GetPercent <= skillUseTreschold),"Placeholder check ally hp");
-            // TODO use units room manager hehre
-            Leaf moveToAlly = new Leaf(new MoveToTransformStrategy(agent, transform),"placeholder move to transform");
-            Leaf skill = new Leaf(new BehaviourAction(()=>HandleUnitAction(UnitActionType.RangedSkill)), "use skill");
-
-            goHealAlly.AddChild(checkAlly); 
+            goHealAlly.AddChild(canHelp);
+            goHealAlly.AddChild(allyNeedsHeal);
             goHealAlly.AddChild(moveToAlly);
             goHealAlly.AddChild(skill);
+            goHealAlly.AddChild(helpDone);
 
-            Sequence attackPlayer = new Sequence("shoot at player", 80);
-            Leaf rotate = new Leaf (new RotateToPoint(agent,_player.position,0f),"aim at player");
+            allActions.AddChild(goHealAlly);
+
+            Sequence doCombat = new Sequence("combat actions " + GetName, 80);
+            Leaf checkCombat = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state",100);
+            Leaf resetCombat = new Leaf(new BehaviourAction(() => doCombat.Reset()),"reset combat seq");
+
+            BehaviourPrioritySelector combatPriority = new BehaviourPrioritySelector("select combat action", 0);
+
+
+            Sequence fleeFromPlayer = new Sequence("run away from player", 80);
+            Leaf checkDistance = new Leaf(new BehaviourCondition(() => CheckDistance()),"check distance to plyaer");
+            Leaf flee = new Leaf(new RoamAroundPoint(20f, transform.position, agent),"placeholder pick a point to run to");
+            fleeFromPlayer.AddChild(checkDistance);
+            fleeFromPlayer.AddChild(flee);
+            fleeFromPlayer.AddChild(resetCombat);
+
+            Sequence attackPlayer = new Sequence("shoot at player", 60);
+            Leaf rotate = new Leaf (new AimAtTransform(agent,_player,10f),"aim at player");
             Leaf shoot = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Ranged)), "fire!");
+            attackPlayer.AddChild(rotate);
+            attackPlayer.AddChild(shoot);
+            attackPlayer.AddChild(resetCombat);
+
+            combatPriority.AddChild(attackPlayer);
+            combatPriority.AddChild(fleeFromPlayer);
+
+            doCombat.AddChild(checkCombat);
+            doCombat.AddChild(combatPriority);
 
 
-            combatActivity.AddChild(pickCombatAction);
+            allActions.AddChild(doCombat);
 
-            Sequence idle = new Sequence("idling", 10);
 
+            Sequence idleActivity = new Sequence("idling", 10);
             if (patrolPointVariants != null && patrolPointVariants.Count > 0)
             {
-                idle.AddChild(SetupPatrolPoints());
+                idleActivity.AddChild(SetupPatrolPoints());
             }
-            idle.AddChild(SetupIdleRoaming());
-            tree.AddChild(idle);
+            idleActivity.AddChild(SetupIdleRoaming());
+            allActions.AddChild(idleActivity);
+
+            tree.AddChild(allActions);
         }
+
+        bool _initHelp = false;
+        bool _helpDone = false;
+        Transform _unitToHelp;
+
+        void CompleteHelp()
+        {
+            _helpDone = true;
+            _unitToHelp = null;
+             tree.Reset();
+        }
+        public override void Execute(Blackboard bb)
+        {
+            if (!_helpDone && bb.gatherAround != null && !_initHelp)
+            {
+                _initHelp = true;
+                _unitToHelp = bb.gatherAround.transform;
+            }
+            if (_helpDone)
+            {
+                _initHelp = false;
+                _helpDone = false;
+                bb.ResetGatherPoint();
+            }
+            base.Execute(bb);
+        }
+        public override int GetActionImportance(Blackboard bb)
+        {
+            if (_helpDone) return 60;
+            else return 10;
+        
+        }
+
+        bool CheckDistance()
+        {
+            float distance = Vector3.Distance(transform.position,_player.transform.position);
+            float percent = distance / _playerDetectionSphereCastRange;
+            return (percent < _runAwayDistance);
+        }
+
     }
 
 }
