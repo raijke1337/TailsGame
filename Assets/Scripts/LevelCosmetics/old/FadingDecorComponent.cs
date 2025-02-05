@@ -2,45 +2,46 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 namespace Arcatech.Level
 {
     public class FadingDecorComponent : MonoBehaviour//, IEquatable<FadingDecorComponent>
     {
-        public List<Renderer> Renderers;
-        public Vector3 Position;
-        public List<Material> Materials;
 
+        [SerializeField] SerializedDictionary<Renderer, Material[]> _original = new();
         [HideInInspector] public float InitialAlpha;
 
         private void Awake()
         {
-            Position = transform.position;
-            if (Renderers.Count == 0)
+            foreach (var r in GetComponentsInChildren<Renderer>())
             {
-                Renderers.AddRange(GetComponentsInChildren<Renderer>()); // all or parts
-            }
-            foreach (var r in Renderers)
-            {
-                Materials.AddRange(r.materials);
-            }
-
-            if (Materials[0].HasProperty("_Color"))
-            {
-                InitialAlpha = Materials[0].color.a; // fade to fadedAlpha in fader comp then back to initial // it is poossible to implement an array 
-            }
-            else if (Materials[0].HasProperty("_BaseColor"))
-            {
-                InitialAlpha =  Materials[0].GetColor("_BaseColor").a;
-            }
-            else
-            {
-                Debug.LogWarning($"{Materials[0]} has no colors propereties and failed to setup in {this}");
+                var mats = r.materials;
+                _original[r] = new Material[mats.Length];
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    _original[r][i] = mats[i];
+                }
             }
         }
 
+        public void Fade(float speed, float desiredAlpha, Material newMaterial)
+        {
+            foreach(var r in _original.Keys)
+            {
+                r.material = newMaterial;
+            }
+        }
+        public void Unfade()
+        {
+            foreach (var r in _original.Keys)
+            {
+                r.material = _original[r][0];
+            }
+        }
         public override int GetHashCode()
         {
-            return Position.GetHashCode();
+            return transform.GetHashCode();
         }
+
     }
 }

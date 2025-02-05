@@ -25,13 +25,13 @@ namespace Arcatech.Scenes.Cameras
 
        // [SerializeField] string _fadingTag;
         [Range(0, 1f), SerializeField] float _targetFadedAlpha = 0.33f;
-        [SerializeField] bool _keepShadows = true;
+        [SerializeField] Material _fadedMaterial;
         [SerializeField] float _fadeSpeed = 0.5f;
 
 
         [Header("Fade out info")]
         [SerializeField] private List<FadingDecorComponent> _currentlyFadingList = new List<FadingDecorComponent>();
-        private Dictionary<FadingDecorComponent, Coroutine> _cors;
+        //private Dictionary<FadingDecorComponent, Coroutine> _cors;
         private RaycastHit[] _hitsThisFrame;
 
         
@@ -41,7 +41,7 @@ namespace Arcatech.Scenes.Cameras
         {
             _camera = GetComponent<Camera>();           
             _hitsThisFrame = new RaycastHit[50];
-            _cors = new Dictionary<FadingDecorComponent, Coroutine>();           
+           // _cors = new Dictionary<FadingDecorComponent, Coroutine>();           
 
         }
 
@@ -112,14 +112,8 @@ namespace Arcatech.Scenes.Cameras
                         //Debug.Log($"Raycast on relevant object {fading.gameObject.name}");
                         if (!_currentlyFadingList.Contains(fading))
                         {
-                            if (_cors.ContainsKey(fading))
-                            {
-                               // Debug.Log($"Stop coroutine (expected show) for {fading}");
-                                StopCoroutine(_cors[fading]);
-                            }
-                            //Debug.Log($"Add {fading} to list adn start hiding coroutine");
                             _currentlyFadingList.Add(fading);
-                            _cors[fading] = StartCoroutine(HideObject(fading));
+                            fading.Fade(_fadeSpeed,_targetFadedAlpha,_fadedMaterial);
                         }
                     }
                 }
@@ -152,13 +146,7 @@ namespace Arcatech.Scenes.Cameras
                 {
                    // Debug.Log($"Remove from fading list {decor}");
                     _currentlyFadingList.Remove(decor);
-                    if (_cors.ContainsKey(decor) && _cors[decor] != null)
-                    {
-                     //   Debug.Log($"Stop coroutine (expected hide) for {decor} and starting show");
-                        StopCoroutine(_cors[decor]);
-                    }
-                    var c = StartCoroutine(ShowObject(decor));
-                    _cors[decor] = c; 
+                    decor.Unfade();
                 }
 
 
@@ -167,127 +155,10 @@ namespace Arcatech.Scenes.Cameras
 
             }
         }
-            private FadingDecorComponent GetFadingDecorFromHit(RaycastHit hit)
-            {
-                return hit.collider != null ? hit.collider.GetComponent<FadingDecorComponent>() : null;
-            }
 
-            private IEnumerator HideObject(FadingDecorComponent f)
-            {
-          //  Debug.Log($"Start Coroutine Hide for {f}");
-            foreach (Material m in f.Materials)
-            {
-                if ((m.HasProperty("_BaseColor")) || (m.HasProperty("_Color")))
-                {
-                    // shader magic goes here (see debug inspector for opaque vs transparent materials values)
-                    // prepare materials
-                    m.SetFloat("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                    m.SetFloat("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    m.SetFloat("_ZWrite", 0);
-
-                    // transparent surface type or not
-                    m.SetFloat("_Surface", 1);
-
-                    m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-
-                    m.SetShaderPassEnabled("DepthOnly", false);
-                    m.SetShaderPassEnabled("SHADOWCASTER", _keepShadows);
-
-                    m.SetOverrideTag("RenderType", "Transparent");
-
-                    m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                    m.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                }
-            }
-
-            if ((f.Materials[0].HasProperty("_BaseColor")) || (f.Materials[0].HasProperty("_Color"))) 
-            {
-                float t = 0;
-                // check for custom shaders from asset store, should only affect the outline
-
-                while (f.Materials[0].GetColor("_BaseColor").a > _targetFadedAlpha)
-                {
-                    foreach (Material m in f.Materials)
-                    {
-                        if ((m.HasProperty("_BaseColor")) || !(m.HasProperty("_Color")))
-                        {
-
-                            if (m.HasProperty("_BaseColor"))
-                            {
-                                Color c = new Color(
-   m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b,
-      Mathf.Lerp(f.InitialAlpha, _targetFadedAlpha, t * _fadeSpeed));
-                                m.SetColor("_BaseColor", c);
-                            }
-
-                            if (m.HasProperty("_Color"))
-                            {
-                                Color c = new Color(
-                                m.GetColor("_Color").r, m.GetColor("_Color").g, m.GetColor("_Color").b,
-      Mathf.Lerp(f.InitialAlpha, _targetFadedAlpha, t * _fadeSpeed));
-                                m.SetColor("_Color", c);
-                            }
-                        }
-                    }
-
-                    t += Time.deltaTime;
-                    yield return null;
-                }
-            }
-
-
-
-           // Debug.Log($"Complete Coroutine Hide for {f}");
-            yield return null;
-        }
-
-            private IEnumerator ShowObject(FadingDecorComponent f)
-            {
-           // Debug.Log($"Start Coroutine Show for {f}");
-            float t = 0;
-            while (f.Materials[0].GetColor("_BaseColor").a < f.InitialAlpha)
-            {
-                foreach (Material m in f.Materials)
-                {
-
-                    Color c = new(
-                            m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b,
-                            Mathf.Lerp(_targetFadedAlpha, f.InitialAlpha, t * _fadeSpeed));
-
-                    if (m.HasProperty("_BaseColor"))
-                    {
-                        m.SetColor("_BaseColor", c);
-                    }
-                    if (m.HasProperty("_Color"))
-                    {
-                        m.SetColor("_Color", c);
-                    }
-                }
-                t += Time.deltaTime;
-                yield return null;
-            }
-
-            foreach (Material m in f.Materials)
-            {
-               //set back to opaque
-
-                    m.SetFloat("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                m.SetFloat("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                m.SetFloat("_ZWrite", 1);
-                m.SetFloat("_Surface", 0);
-
-                m.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
-
-                m.SetShaderPassEnabled("DepthOnly", true);
-                m.SetShaderPassEnabled("SHADOWCASTER", true);
-
-                m.SetOverrideTag("RenderType", "Opaque");
-
-                m.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                m.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            }
-            //Debug.Log($"Complete Coroutine Show for {f}");
-            yield return null;  
+        private FadingDecorComponent GetFadingDecorFromHit(RaycastHit hit)
+        {
+            return hit.collider != null ? hit.collider.GetComponent<FadingDecorComponent>() : null;
         }
 
         #endregion

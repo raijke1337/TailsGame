@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2264027754243199844}
   - component: {fileID: 5362455168262290002}
   - component: {fileID: 7384647571716712136}
+  - component: {fileID: 3401334204677990956}
   m_Layer: 3
   m_Name: BasicBlockoutCubeGround
   m_TagString: Untagged
@@ -133,3 +134,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &3401334204677990956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303277341599031241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fc2b01bde6d3c14d92735c5c06855df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Renderers: []
+  Position: {x: 0, y: 0, z: 0}
+  Materials: []
+  InitialAlpha: 0
