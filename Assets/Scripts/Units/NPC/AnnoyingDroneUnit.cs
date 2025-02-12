@@ -31,7 +31,7 @@ namespace Arcatech.Units
             goHealAlly.AddChild(skill);
             goHealAlly.AddChild(helpDone);
 
-            allActions.AddChild(goHealAlly);
+
 
             Sequence doCombat = new Sequence("combat actions " + GetName, 80);
             Leaf checkCombat = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state",100);
@@ -48,12 +48,13 @@ namespace Arcatech.Units
             fleeFromPlayer.AddChild(resetCombat);
 
             Sequence attackPlayer = new Sequence("shoot at player", 60);
-            Leaf rotate = new Leaf (new AimAtTransform(agent,_player,10f),"aim at player");
+            Leaf rotate = new Leaf (new AimAtTransform(agent,_player,1f),"aim at player");
             Leaf shoot = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Ranged)), "fire!");
             attackPlayer.AddChild(rotate);
             attackPlayer.AddChild(shoot);
             attackPlayer.AddChild(resetCombat);
 
+            combatPriority.AddChild(fleeFromPlayer);
             combatPriority.AddChild(attackPlayer);
             combatPriority.AddChild(fleeFromPlayer);
 
@@ -114,6 +115,15 @@ namespace Arcatech.Units
             return (percent < _runAwayDistance);
         }
 
+
+        protected override void OnDrawGizmos()
+        {
+            base.OnDrawGizmos();
+            if (!_showDebugs) return;
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(agent.transform.position, agent.transform.position + agent.transform.forward);
+
+        }
     }
 
 }

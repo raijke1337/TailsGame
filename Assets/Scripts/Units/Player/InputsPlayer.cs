@@ -19,28 +19,29 @@ namespace Arcatech.Units.Inputs
 
         #region managedctrl
 
-        protected override void OnEnable()
+        public override void StartController()
         {
-            base.OnEnable();
-            _adj ??= new IsoCamAdjust();
+            base.StartController();
 
+            _adj ??= new IsoCamAdjust();
             _playerInputReader.EnablePlayerInputs();
             _aim = GetComponent<AimingComponent>();
             _aim?.StartController();
         }
-        protected override void OnDisable()
+        public override void StopController()
         {
-            base.OnDisable();
+            base.StopController();
             _aim?.StopController();
         }
-        private void Update()
+        public override void ControllerUpdate(float delta)
         {
-            _aim?.ControllerUpdate(Time.deltaTime);
+            base.ControllerUpdate(delta);
+            _aim?.ControllerUpdate(delta);
         }
         #endregion
 
 
-       #region inputs section
+        #region inputs section
 
         protected override ControlInputsBase ControllerBindings(bool start)
         {

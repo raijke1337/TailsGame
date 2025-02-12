@@ -57,7 +57,6 @@ namespace Arcatech.Units
             }
         }
 
-
         #region combat state
         public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
         protected CountDownTimer combatTimeoutTimer;

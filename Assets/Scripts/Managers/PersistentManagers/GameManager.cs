@@ -56,6 +56,10 @@ namespace Arcatech.Managers
 #endif
             int sceneIndex = SceneManager.GetActiveScene().buildIndex;
             _currentLevel = _dataManager.GetSceneContainer(sceneIndex);
+            if (_currentLevel == _mainScene)
+            {
+                Instantiate(_mainMenuPrefab);
+            }
         }
 
 
@@ -85,7 +89,7 @@ namespace Arcatech.Managers
         public void RequestLoadSceneFromContainer(SceneContainer sc)
         {
             DOTween.KillAll();
-            Debug.Log($"Placeholder - starting level as GAME level");
+           // Debug.Log($"Placeholder - starting level as GAME level");
 
             if (sc == _mainScene)
             {

@@ -71,7 +71,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 2
+  m_BaseOffset: 1.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!54 &991282173168482384
@@ -161,7 +161,7 @@ MonoBehaviour:
   defaultStats: {fileID: 11400000, guid: 1374923c983f42c43a02eda2e678063d, type: 2}
   statsUpdateFrequency: 0.1
   ActionOnDamage: {fileID: 11400000, guid: 4e8cbe5b1c1520d4d85860ff79afbdb7, type: 2}
-  ActionOnDeath: {fileID: 0}
+  ActionOnDeath: {fileID: 11400000, guid: 648b53680b5f2bd42aa6e1bb641bed20, type: 2}
   ActionOnStun: {fileID: 0}
   _headT: {fileID: 4427656349988229674}
   _animator: {fileID: 1838617094227350465}
@@ -189,11 +189,11 @@ MonoBehaviour:
   _playerDetectionSphereCastRange: 8
   _sphereCastDelay: 0.1
   _sphereCastRadius: 3
-  _combatTimeout: 5
+  _combatTimeout: 20
   _enterCombatAction: {fileID: 11400000, guid: 3e414ef8f3a3f6343be87488e5342590, type: 2}
   _exitCombatAction: {fileID: 11400000, guid: 55a1b7d1aa12aec4b97798559eabf9a3, type: 2}
   agent: {fileID: 3009641304411149464}
-  _runAwayDistance: 0.5
+  _runAwayDistance: 0.1
 --- !u!95 &1838617094227350465
 Animator:
   serializedVersion: 5

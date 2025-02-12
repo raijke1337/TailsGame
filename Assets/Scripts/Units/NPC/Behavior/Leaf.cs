@@ -19,7 +19,7 @@ namespace Arcatech.Units.Behaviour
             if (actor.UnitDebug)
             {
                 if (_debug == null) _debug = new BehaviorTreeDebugger();
-                _debug.PrintDebug($"{actor.GetName}: {NodeName} status {st}");
+                _debug.PrintDebug($"{actor.GetName} behavior: {NodeName} status {st}");
             }
             return st;
         }

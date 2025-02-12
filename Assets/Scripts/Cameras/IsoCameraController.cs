@@ -19,8 +19,9 @@ namespace Arcatech.Scenes.Cameras
         [SerializeField,Range(1,5f),Tooltip("extra range when looking with mouse")] private float _lookDist = 1f;
 
         [Header("Fade out Settings")]
-        [SerializeField,Tooltip("View radius of player for fade")] float _viewRadius = 5f;
-        [SerializeField, Tooltip("the position of raycast target on the player")] Vector3 _targetAimOffset = Vector3.zero;
+        [SerializeField,Tooltip("View radius of player for fade")] float _fadeRayOffset = 5f;
+        [SerializeField,Tooltip("radius of fade sphere")] float _fadeCastRad = 5f;
+     //   [SerializeField, Tooltip("the position of raycast target on the player")] Vector3 _targetAimOffset = Vector3.zero;
 
 
        // [SerializeField] string _fadingTag;
@@ -31,7 +32,6 @@ namespace Arcatech.Scenes.Cameras
 
         [Header("Fade out info")]
         [SerializeField] private List<FadingDecorComponent> _currentlyFadingList = new List<FadingDecorComponent>();
-        //private Dictionary<FadingDecorComponent, Coroutine> _cors;
         private RaycastHit[] _hitsThisFrame;
 
         
@@ -95,9 +95,9 @@ namespace Arcatech.Scenes.Cameras
 
         private void SphereCastForHiding()
         {
-            Ray ray = new Ray(_camera.transform.position, _playerAimingComponent.transform.position + _targetAimOffset);
-            float distance = (Vector3.Distance(_camera.transform.position, _playerAimingComponent.transform.position + _targetAimOffset));
-            int hits = Physics.SphereCastNonAlloc(ray, _viewRadius, _hitsThisFrame, distance);
+            Ray ray = new Ray(_camera.transform.position, _playerAimingComponent.transform.position);
+            float distance = (Vector3.Distance(_camera.transform.position, _playerAimingComponent.transform.position) - _fadeRayOffset);
+            int hits = Physics.SphereCastNonAlloc(ray, _fadeCastRad, _hitsThisFrame, distance);
 
             //add relevant
             if (hits > 0)

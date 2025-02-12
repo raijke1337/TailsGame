@@ -9,6 +9,7 @@ namespace Arcatech.Scenes.Cameras
 
         private void AdjustDirections()
         {
+            if (Camera.main == null) return; // main menu
             Isoforward = Camera.main.transform.forward;
             Isoforward.y = 0;
             Isoforward = Vector3.Normalize(Isoforward);

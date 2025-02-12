@@ -26,7 +26,8 @@ namespace Arcatech.Units
           
             if (GameManager.Instance.GetCurrentLevelData.LevelType == LevelType.Game)
             {
-                UnitPaused = false;                
+                UnitPaused = false;
+                _inputs.StartController();
             }
             _inputs.UnitActionRequestedEvent += HandleUnitAction;
             _inputs.RequestInteraction += HandleInteractionAction;
@@ -47,6 +48,7 @@ namespace Arcatech.Units
         {
             base.DisableUnit();
             _inputs.UnitActionRequestedEvent -= HandleUnitAction;
+            _inputs.StopController();
         }
 
         public override void RunUpdate(float delta)
@@ -77,6 +79,7 @@ namespace Arcatech.Units
                         break;
                 }
             }
+            _inputs.ControllerUpdate(delta);
         }
         IEnumerator StunCancelCoroutine()
         {

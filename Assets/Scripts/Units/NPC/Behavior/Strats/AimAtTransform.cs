@@ -8,18 +8,20 @@ namespace Arcatech.Units.Behaviour
     {
         readonly float angle;
         readonly NavMeshAgent agent;
-        readonly Transform desiredPoint;
-        public AimAtTransform (NavMeshAgent agent, Transform point,float angleTolerance)
+        readonly Transform aimAt;
+        public AimAtTransform (NavMeshAgent agent, Transform point, float angleTolerance)
         {
             this.angle = angleTolerance;
             this.agent = agent;
-            this.desiredPoint = point;
+            this.aimAt = point;
         }
 
         public NodeStatus Process(ControlledUnit actor)
         {
-            Vector3 desired = (desiredPoint.position - actor.transform.position).normalized;
-            float currentangle = Vector3.Angle(actor.transform.forward, desired);
+            Vector3 desired = (aimAt.position - actor.transform.position).normalized;
+            desired.y = 0f;
+            float currentangle = Vector3.Angle(agent.transform.forward.normalized,desired);   
+
             if (currentangle < angle)
             {
                 agent.isStopped = false;
@@ -28,7 +30,7 @@ namespace Arcatech.Units.Behaviour
             else
             {
                 agent.isStopped = true;
-                actor.transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(actor.transform.forward, desired, 1f, 1f));
+                actor.transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(actor.transform.forward, desired, 0.1f, 1f));
                 return NodeStatus.Running;
             }
         }

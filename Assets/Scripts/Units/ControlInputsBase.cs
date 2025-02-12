@@ -5,19 +5,12 @@ using UnityEngine;
 namespace Arcatech.Units
 {
 
-    public abstract class ControlInputsBase : MonoBehaviour
+    public abstract class ControlInputsBase : MonoBehaviour, IManagedController
     {
         public Vector3 InputsMovementVector { get; protected set; }
         public Vector3 InputsLookVector { get; protected set; }
 
-        protected virtual void OnEnable()
-        {
-            ControllerBindings(true);
-        }
-        protected virtual void OnDisable()
-        {
-            ControllerBindings(false);
-        }
+
         protected abstract ControlInputsBase ControllerBindings(bool start);
         public event Action<UnitActionType> UnitActionRequestedEvent = delegate { };
         public event Action InputsPause = delegate { };
@@ -30,5 +23,25 @@ namespace Arcatech.Units
         
         protected void CallBackPause() => InputsPause.Invoke();
         protected void CallBackInteraction(IInteractible i) => RequestInteraction.Invoke(i);
+
+        public virtual void StartController()
+        {
+            ControllerBindings(true);
+        }
+
+        public virtual void ControllerUpdate(float delta)
+        {
+
+        }
+
+        public virtual void FixedControllerUpdate(float fixedDelta)
+        {
+            
+        }
+
+        public virtual void StopController()
+        {
+            ControllerBindings(false);
+        }
     }
 }
