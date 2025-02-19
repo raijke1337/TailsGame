@@ -26,7 +26,7 @@ namespace Arcatech.EventBus
             {
                 return $"no target";
             }
-            else return $"{Target.GetName}";
+            else return $"{Target.UnitName}";
             
         }
         public ITargetable Target { get; }
@@ -69,7 +69,7 @@ namespace Arcatech.EventBus
         public Transform Place { get; }
         public override string ToString()
         {
-            return string.Concat(Applied," on ", Target?.GetName, " at ", Place.position);
+            return string.Concat(Applied," on ", Target?.UnitName, " at ", Place.position);
         }
     }
     public struct VFXEvent : IEvent

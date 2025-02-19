@@ -13,7 +13,7 @@ namespace Arcatech.Units
 
         protected override void SetupBehavior()
         {
-            BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + GetName);
+            BehaviourPrioritySelector actionsPriority = new BehaviourPrioritySelector("actions list " + UnitName);
 
             Sequence explode = new Sequence("Explode at low hp", 100);
 

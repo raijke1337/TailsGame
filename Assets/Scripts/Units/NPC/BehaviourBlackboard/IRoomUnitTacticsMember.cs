@@ -1,15 +1,17 @@
+
 using System.Collections;
 using UnityEngine;
 
-namespace Arcatech.BlackboardSystem
+namespace Arcatech.AI
 {
     /// <summary>
     /// expert is a class that makes a decision regarding a certain aspect of behavior
     /// </summary>
     public interface IRoomUnitTacticsMember 
     {
-        int GetActionImportance(Blackboard bb);
-        void Execute(Blackboard bb);
+        bool UnitInCombatState { get; set; }
+        bool UnitNeedsHelp { get; }
+        void SetUnitsGroup(RoomUnitsGroup g);
     }
 
 

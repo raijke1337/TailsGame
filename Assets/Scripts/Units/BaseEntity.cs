@@ -33,7 +33,7 @@ namespace Arcatech.Units
 
         protected GroundDetection _ground;
         public bool UnitDebug => _showDebugs;
-        public string GetName { get => defaultStats.DisplayName; }
+        public string UnitName { get => defaultStats.DisplayName; }
         [HideInInspector] public Side Side => _unitSide;
 
         #region managed
@@ -171,7 +171,7 @@ namespace Arcatech.Units
 
         protected virtual void HandleDamage(float value)
         {
-            if (_showDebugs) Debug.Log($"{GetName} took dmg {value}");
+            if (_showDebugs) Debug.Log($"{UnitName} took dmg {value}");
             if (ActionOnDamage != null)
             {                
                 ForceUnitAction(ActionOnDamage.ProduceAction(this, transform));
@@ -195,7 +195,7 @@ namespace Arcatech.Units
         }
         protected virtual void HandleStun()
         {
-            if (_showDebugs) Debug.Log($"{GetName} got stunned");
+            if (_showDebugs) Debug.Log($"{UnitName} got stunned");
             if (ActionOnStun != null)
             {
                 ForceUnitAction(ActionOnStun.ProduceAction(this, _headT));
@@ -232,7 +232,7 @@ namespace Arcatech.Units
             }
             else
             {
-                Debug.Log($"Tried to apply impulse {distance} to {GetName} but it has no rigidbody");
+                Debug.Log($"Tried to apply impulse {distance} to {UnitName} but it has no rigidbody");
             }
         }
         private void OnCollisionEnter(Collision collision)
@@ -258,7 +258,7 @@ namespace Arcatech.Units
         #region iinteractible
         public void AcceptInteraction(IInteractible actor)
         {
-            Debug.Log($"Tried to interact with {GetName}");
+            Debug.Log($"Tried to interact with {UnitName}");
         }
         public Vector3 Position => transform.position;
         #endregion

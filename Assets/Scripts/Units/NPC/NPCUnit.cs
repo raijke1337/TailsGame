@@ -1,5 +1,4 @@
-using Arcatech.BlackboardSystem;
-using Arcatech.Managers;
+using Arcatech.AI;
 using Arcatech.Triggers;
 using Arcatech.Units.Behaviour;
 using KBCore.Refs;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
-using UnityEngine.Rendering;
 
 namespace Arcatech.Units
 {
@@ -19,7 +17,7 @@ namespace Arcatech.Units
         protected Transform _player;
         [SerializeField] float _idleWanderRange = 5f;
         [SerializeField] float _waitAtIdleSpotTime = 3f;
-        [SerializeField, Range(0, 1)] float _callDistressHealth = 0;
+        [SerializeField, Range(0, 1)] float _callDistressHealth = 0.1f;
 
         [Space, Header("Patrol settings, uses idle at spot timer")]
         [SerializeField] protected List<NestedList<Transform>> patrolPointVariants;
@@ -53,80 +51,10 @@ namespace Arcatech.Units
             base.OnValidate();
             if (this.Side == Side.EnemySide && !CompareTag("Enemy"))
             {
-                Debug.LogError($"Set enemy tag for {GetName}");
+                Debug.LogError($"Set enemy tag for {UnitName}");
             }
         }
-
-        #region combat state
-        public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
-        protected CountDownTimer combatTimeoutTimer;
-        bool _inCombat = false;
-        public bool UnitInCombatState
-        {
-            get => _inCombat;
-            set 
-            { 
-                if (_inCombat == value) return;
-                OnCombatStateChanged(value);
-                _inCombat = value;
-                if (_showDebugs) Debug.Log($"{gameObject.name} combat state: {value}");
-            }
-        }
-        protected virtual void OnCombatStateChanged(bool state)
-        {
-            if (state)
-            {
-                if (combatTimeoutTimer == null) combatTimeoutTimer = new CountDownTimer(_combatTimeout);
-                combatTimeoutTimer.Start();
-            }
-            if (state && _enterCombatAction != null)
-            {
-                ForceUnitAction(_enterCombatAction.ProduceAction(this, _headT));
-            }
-            if (!state && _exitCombatAction != null)
-            {
-                ForceUnitAction(_exitCombatAction.ProduceAction(this, _headT));
-            }
-        }
-
-        void InternalCombatStateUpdate(float d)
-        {
-            SeekPlayer(d);
-            combatTimeoutTimer?.Tick(d);
-            if (combatTimeoutTimer != null)
-            {
-                if (combatTimeoutTimer.IsReady)
-                { 
-                    combatTimeoutTimer.Reset(); UnitInCombatState = false; Debug.Log($"combat timeout {GetName}"); 
-                };
-            }
-        }
-        RaycastHit[] hits = new RaycastHit[20];
-
-        float _castDelay = 0f;
-        void SeekPlayer(float delta)
-        {
-            _castDelay += delta;
-            if (_castDelay >= _sphereCastDelay)
-            {
-                _castDelay = 0f;
-                if (Physics.SphereCastNonAlloc(_headT.position, _sphereCastRadius, transform.forward, hits, _playerDetectionSphereCastRange) > 0)
-                {
-                    foreach (RaycastHit hit in hits)
-                    {
-                        if (hit.collider != null && hit.collider.CompareTag("Player"))
-                        {
-                            combatTimeoutTimer?.Reset();
-                            UnitInCombatState = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        #endregion
-
+        
         protected override void HandleDamage(float value)
         {
             OnUnitAttackedEvent?.Invoke(this);
@@ -136,7 +64,7 @@ namespace Arcatech.Units
 
         protected override void HandleInteractionAction(IInteractible i)
         {
-            if (_showDebugs) Debug.Log($"{GetName} wants to interact with {i}");
+            if (_showDebugs) Debug.Log($"{UnitName} wants to interact with {i}");
             i.AcceptInteraction(this);
         }
         protected override void OnActionLock(bool locking)
@@ -184,7 +112,7 @@ namespace Arcatech.Units
 
         void BaseBehaviourSetup()
         {
-            tree = new BehaviourTree(GetName + " undefined behavior tree");
+            tree = new BehaviourTree(UnitName + " undefined behavior tree");
 
             initStoppingDistance = agent.stoppingDistance;
         }
@@ -199,7 +127,7 @@ namespace Arcatech.Units
 
             tree.AddChild(dummyUnitBehavior);
 
-            Debug.Log($"{GetName} is using dummy behavior!");
+            Debug.Log($"{UnitName} is using dummy behavior!");
         }
         void ExecuteBehaviour()
         {
@@ -210,7 +138,7 @@ namespace Arcatech.Units
             };
             if (tree?.Process(this) == Node.NodeStatus.Fail)
             {
-                Debug.Log($"{GetName} has an empty behavior tree!");
+                Debug.Log($"{UnitName} has an empty behavior tree!");
             }
         }
         /// <summary>
@@ -263,21 +191,99 @@ namespace Arcatech.Units
 
         #region room tactics
 
-        public virtual int GetActionImportance(Blackboard bb)
-        {           
-            if (_stats.GetStatValue(BaseStatType.Health).GetPercent < _callDistressHealth)
-            {
-                //if (_showDebugs) Debug.Log($"Execute room tactics request {this}");
-                return 50;
+        protected RoomUnitsGroup _group;
+        public void SetUnitsGroup(RoomUnitsGroup g) => _group = g;  
 
-            }
-            else return 0;
-        }
+        #region combat state
+        public event UnityAction<NPCUnit> OnUnitAttackedEvent = delegate { };
+        protected CountDownTimer combatTimeoutTimer;
+        bool _inCombat = false;
+        string _debugString;
 
-        public virtual void Execute(Blackboard bb)
+        public bool UnitInCombatState
         {
-           bb.SetGatherPointUnit(this);
+            get
+            {
+                return _inCombat;
+            }
+            set
+            {
+                if (_inCombat == value) return;
+                OnCombatStateChanged(value);
+                _inCombat = value;
+                if (_showDebugs) Debug.Log($"{UnitName} combat state: {value}");
+            }
         }
+
+        protected virtual void OnCombatStateChanged(bool state)
+        {
+            if (state)
+            {
+                if (combatTimeoutTimer == null) combatTimeoutTimer = new CountDownTimer(_combatTimeout);
+                combatTimeoutTimer.Start();
+            }
+            if (state && _enterCombatAction != null)
+            {
+                ForceUnitAction(_enterCombatAction.ProduceAction(this, _headT));
+            }
+            if (!state && _exitCombatAction != null)
+            {
+                ForceUnitAction(_exitCombatAction.ProduceAction(this, _headT));
+            }
+        }
+
+        void InternalCombatStateUpdate(float d)
+        {
+            SeekPlayer(d);
+            combatTimeoutTimer?.Tick(d);
+            if (combatTimeoutTimer != null)
+            {
+                if (combatTimeoutTimer.IsReady)
+                {
+                    combatTimeoutTimer.Reset(); UnitInCombatState = false; Debug.Log($"combat timeout {UnitName}");
+                };
+            }
+        }
+        RaycastHit[] hits = new RaycastHit[20];
+
+        float _castDelay = 0f;
+        void SeekPlayer(float delta)
+        {
+            _castDelay += delta;
+            if (_castDelay >= _sphereCastDelay)
+            {
+                _castDelay = 0f;
+                if (Physics.SphereCastNonAlloc(_headT.position, _sphereCastRadius, transform.forward, hits, _playerDetectionSphereCastRange) > 0)
+                {
+                    foreach (RaycastHit hit in hits)
+                    {
+                        if (hit.collider != null && hit.collider.CompareTag("Player"))
+                        {
+                            combatTimeoutTimer?.Reset();
+                            UnitInCombatState = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        #endregion
+        #region UnitNeedsHelp
+
+
+        public bool UnitNeedsHelp
+        {
+            get
+            {
+                return _stats.GetStatValues[BaseStatType.Health].GetPercent <= _callDistressHealth;
+            }
+        }
+
+
+        #endregion
+
         #endregion
     }
 }

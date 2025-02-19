@@ -9,23 +9,25 @@ namespace Arcatech.Units
 {
     public class BaseUnitAction : IUnitAction
     {
-        public static BaseUnitAction BuildAction(BaseEntity u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place)
+        public static BaseUnitAction BuildAction(BaseEntity u, bool lck, NextActionSettings next, string anim, float exit, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place, float crossfade)
         {
-            return new BaseUnitAction(u, lck, next, anim, exit,onstart, onfinish, onExit,place);
+            return new BaseUnitAction(u, lck, next, anim, exit,onstart, onfinish, onExit,place,crossfade);
         }
 
-        BaseUnitAction(BaseEntity u, bool locks, NextActionSettings next, string anim, float exitTimeMult, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place)
+        BaseUnitAction(BaseEntity u, bool locks, NextActionSettings next, string anim, float exitTimeMult, SerializedActionResult[] onstart, SerializedActionResult[] onfinish, SerializedActionResult[] onExit, Transform place,float crossfade)
         {
             Actor = u;
             LockMovement = locks;
             Next = next;
             _animationName = anim;
+            _crossfadeTime = crossfade;
 
             this.place = place;
             var a = u.GetComponent<Animator>();
 
             if (_animationName != null && a.runtimeAnimatorController.animationClips.Any(t=>t.name == _animationName))
             {
+
                 var clip = a.runtimeAnimatorController.animationClips.First(t => t.name == _animationName);
                 var clipLength = clip.length;
 
@@ -54,8 +56,6 @@ namespace Arcatech.Units
             {
                 Debug.LogWarning($"animation not found for action {this}");
             }
-
-
 
 
             if (onstart != null && onstart.Length > 0)
@@ -100,6 +100,7 @@ namespace Arcatech.Units
 
         readonly Transform place;
         readonly string _animationName;
+        readonly float _crossfadeTime;
 
 
 
@@ -143,7 +144,7 @@ namespace Arcatech.Units
             var a = Actor.GetComponent<Animator>();
             if (_animationName!= null)
             {
-                a.CrossFade(Animator.StringToHash(_animationName), 0.1f);
+                a.CrossFade(Animator.StringToHash(_animationName), _crossfadeTime);
             }
             if (OnStartAction != null)
             {
@@ -215,7 +216,9 @@ namespace Arcatech.Units
             _actionState = UnitActionState.Completed;
             _actionTimer.Stop();
 
-            if (Actor.UnitDebug) { Debug.Log($"{this}, result {fin}"); }
+            if (Actor.UnitDebug) { 
+                //Debug.Log($"{this}, result {fin}");
+                                   }
 
             //OnComplete.Invoke();
         }

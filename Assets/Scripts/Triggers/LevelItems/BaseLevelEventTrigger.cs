@@ -42,7 +42,7 @@ namespace Arcatech.Triggers
                         if (p.Side == Side.PlayerSide) ApplyResults(p);
                         break;
                     default:
-                        Debug.Log($"{p.GetName} entered {this} and nothing happened because of trigger settings");
+                        Debug.Log($"{p.UnitName} entered {this} and nothing happened because of trigger settings");
                         break;
                 }
             }
@@ -73,7 +73,7 @@ namespace Arcatech.Triggers
                         if (p.Side == Side.PlayerSide) ApplyResults(p);
                         break;
                     default:
-                        Debug.Log($"{p.GetName} exited {this} and nothing happened because of trigger settings");
+                        Debug.Log($"{p.UnitName} exited {this} and nothing happened because of trigger settings");
                         break;
                 }
             }

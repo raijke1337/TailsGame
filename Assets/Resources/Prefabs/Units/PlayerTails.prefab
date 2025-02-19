@@ -2207,8 +2207,8 @@ SkinnedMeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 6558d685746271c419bcb8d4cf2aa0a5, type: 2}
   - {fileID: 2100000, guid: f14db72408e84b74791f72f3229ae933, type: 2}
-  - {fileID: 2100000, guid: 24e8ebd4f2e6e3a4a8a228231e92bf4c, type: 2}
   - {fileID: 2100000, guid: 0a466eb2cbc819047a5297a22645147e, type: 2}
+  - {fileID: 2100000, guid: e40f3e0aa0c7a6f4d8d77ddeef8f41a4, type: 2}
   - {fileID: 2100000, guid: 9e5d99514f50ae04eb776d20eb8d3c0f, type: 2}
   - {fileID: 2100000, guid: 215822aefe5f891458eeb1b739a44215, type: 2}
   - {fileID: 2100000, guid: d9a84753b09b7d6468ce6774a60ab8f0, type: 2}
@@ -2306,7 +2306,7 @@ SkinnedMeshRenderer:
   - {fileID: 996784494998202494}
   - {fileID: 2214618342859533820}
   m_BlendShapeWeights:
-  - 28.9
+  - 0
   - 0
   - 0
   m_RootBone: {fileID: 5424680761454188665}
@@ -2574,6 +2574,7 @@ Transform:
   - {fileID: 3632378003872371339}
   - {fileID: 4441700243957092291}
   - {fileID: 5515619440684197201}
+  - {fileID: 4621412979903990228}
   m_Father: {fileID: 1521121602225420020}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4056625478892136804
@@ -3077,7 +3078,7 @@ MonoBehaviour:
       - Key: 3
         Value: {fileID: 5069323492966082635}
       - Key: 4
-        Value: {fileID: 2120298175430706101}
+        Value: {fileID: 4621412979903990228}
   defaultItemsDrawStrat: {fileID: 11400000, guid: 3d85b90fc7650454a8bd4a812b2442f5,
     type: 2}
   _weapons:
@@ -4388,7 +4389,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4425237684287532083
 Transform:
   m_ObjectHideFlags: 0
@@ -4528,6 +4529,37 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0015076846, y: 0.20746273, z: -0.0573408}
     m_Extent: {x: 0.15046878, y: 0.104572184, z: 0.10983071}
   m_DirtyAABB: 0
+--- !u!1 &6744617874167249052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4621412979903990228}
+  m_Layer: 8
+  m_Name: boosterEmpty
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4621412979903990228
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6744617874167249052}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.70710605, y: 0.000000007450577, z: 0.00000017369157, w: 0.7071074}
+  m_LocalPosition: {x: 0, y: -0.75, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5424680761454188665}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &6868430381919515967
 GameObject:
   m_ObjectHideFlags: 0

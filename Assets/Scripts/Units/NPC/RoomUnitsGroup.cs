@@ -8,7 +8,7 @@ namespace Arcatech.AI
 {
     public class RoomUnitsGroup : MonoBehaviour 
     {
-        public List<NPCUnit> GetAllUnits => _units;
+        //public List<NPCUnit> GetAllUnits => _units;
         private List<NPCUnit> _units;
 
         Collider box;
@@ -24,10 +24,6 @@ namespace Arcatech.AI
             box.isTrigger = true;
         }
 
-        private void Update()
-        {
-            UpdateBlackboardController();
-        }
         private void OnTriggerEnter(Collider other)
         {            
             if (other.gameObject.TryGetComponent<NPCUnit>(out var u))
@@ -38,7 +34,7 @@ namespace Arcatech.AI
                     _units.Add(u);
                     u.OnUnitAttackedEvent += Unit_OnUnitAttackedEvent;
                     u.BaseEntityDeathEvent += RemoveUnitOnDeath;
-                    ar.RegisterExpert(u);
+                    //ar.RegisterExpert(u);
                     Debug.Log($"{this.gameObject} register unit {u}");
                 }
             }
@@ -64,18 +60,22 @@ namespace Arcatech.AI
 
         #region room tactics
 
-       // [Header("Blackboard initial settings"), SerializeField] BlackboardData bbData;
-
-        readonly Blackboard bb = new();
-        readonly ActionPicker ar = new ActionPicker();
-
-        void UpdateBlackboardController()
+        public bool UnitsInDanger (out BaseEntity unit)
         {
-            foreach (var act in ar.BlackboardIteration(bb))
+            unit = null;
+            foreach (var u in _units)
             {
-                act();
+                if (u.UnitNeedsHelp)
+                {
+                    unit = u;
+                    return true;
+                }
             }
+            return false;
         }
+
+
+
         #endregion
     }
 }

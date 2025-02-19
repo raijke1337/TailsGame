@@ -9,8 +9,7 @@ namespace Arcatech.Units.Behaviour
 
         public Leaf(IBehaviorTreeStrategy strat, string n, int p = 0) : base (n,p)
         {
-            this.strat = strat;
-            
+            this.strat = strat;            
         }
 
         public override NodeStatus Process(NPCUnit actor)
@@ -19,13 +18,18 @@ namespace Arcatech.Units.Behaviour
             if (actor.UnitDebug)
             {
                 if (_debug == null) _debug = new BehaviorTreeDebugger();
-                _debug.PrintDebug($"{actor.GetName} behavior: {NodeName} status {st}");
+                PrintDebug(st,actor);
             }
             return st;
         }
         public override void Reset()
         {
             strat.Reset();
+        }
+
+        protected virtual void PrintDebug(NodeStatus st, NPCUnit ac)
+        {
+           // _debug.PrintDebug($"{ac.UnitName} Leaf: {NodeName} status {st}");
         }
     }
 

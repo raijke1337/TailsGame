@@ -21,7 +21,7 @@ namespace Arcatech.UI
             else
             {
                 currentTgt = tgt;
-                _description.text = currentTgt.GetName;
+                _description.text = currentTgt.UnitName;
             }
         }
 

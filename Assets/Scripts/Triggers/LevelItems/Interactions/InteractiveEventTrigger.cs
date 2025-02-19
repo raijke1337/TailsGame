@@ -12,7 +12,7 @@ namespace Arcatech.Level
         [Header("Interactive trigger"),Space,SerializeField] protected string _displayName = "Interactive item";
         [SerializeField] protected SerializedActionResult[] ActionOnInteract;
 
-        public string GetName => _displayName;
+        public string UnitName => _displayName;
 
         public IReadOnlyDictionary<BaseStatType, StatValueContainer> GetDisplayValues => null;
 
