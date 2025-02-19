@@ -25,14 +25,16 @@ namespace Arcatech.Skills
                 _skills[skill.UseActionType] = skill;
             }
         }
-
-        #region  interface
+        public bool ActionAvailable(UnitActionType action)
+        {
+            return _skills.ContainsKey(action);
+        }
 
 
         public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
         {
             onUse = null;
-            if (_skills.ContainsKey(action))
+            if (ActionAvailable(action))
             {
                 bool ok = _skills[action].TryUseItem(stats, out onUse);
                 if (ok)
@@ -53,7 +55,8 @@ namespace Arcatech.Skills
             catch
             { return false; }
         }
-        #endregion
+
+
         public override void StartController()
         {
         }

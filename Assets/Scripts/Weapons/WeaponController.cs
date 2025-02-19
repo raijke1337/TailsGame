@@ -65,7 +65,7 @@ namespace Arcatech.Units
         #region interface
         public bool TryUseAction(UnitActionType action, out BaseUnitAction onUse)
         {
-            if (_weapons.ContainsKey(action))
+            if (ActionAvailable(action))
             {
                 bool ok = _weapons[action].TryUseItem(_stats, out onUse);
                 if (ok)
@@ -80,7 +80,10 @@ namespace Arcatech.Units
             return false;
         }
 
-
+        public bool ActionAvailable(UnitActionType action)
+        {
+            return _weapons.ContainsKey(action);
+        }
         public bool CanUseAction(UnitActionType action)
         {
             return _weapons[action].CanUseItem(_stats);

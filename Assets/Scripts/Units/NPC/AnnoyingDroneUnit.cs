@@ -1,8 +1,5 @@
-﻿using Arcatech.BlackboardSystem;
-using Arcatech.Managers;
-using Arcatech.Units.Behaviour;
-using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
+﻿using Arcatech.Units.Behaviour;
+using AYellowpaper.SerializedCollections.KeysGenerators;
 using UnityEngine;
 
 namespace Arcatech.Units
@@ -12,7 +9,8 @@ namespace Arcatech.Units
 
         [Header("NPC Behaviour : Drone")]
         [SerializeField, Range(0,1),Tooltip("Percent of player detection range at which unit tries to run away")] float _runAwayDistance = 0.5f;
-
+        [SerializeField,Tooltip("Heal the entity when it has low hp")] BaseEntity _assistTarget;
+        [SerializeField,Tooltip("Heal at  hp %"), Range (0,1)] float _assistHealth;
 
         protected override void SetupBehavior()
         {
@@ -20,22 +18,24 @@ namespace Arcatech.Units
             Leaf stopAgent = new Leaf(new BehaviourAction(() => agent.isStopped = true), "stop agent to perform combat");
 
 
-            Sequence doCombat = new Sequence("combat actions " + UnitName, 80);
+            Sequence combatSequence = new Sequence("combat actions " + UnitName, 80);
             Leaf checkCombat = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state", 100);
 
             BehaviourPrioritySelector combatPriority = new BehaviourPrioritySelector("select combat action", 0);
-            Leaf combatDone = new Leaf(new BehaviourAction(() => doCombat.Reset()), "Reset combat");
+            Leaf combatDone = new Leaf(new BehaviourAction(() => combatSequence.Reset()), "Reset combat");
 
             Sequence aimAndShoot = new Sequence("aim at player and use weapon", 50);
 
             Leaf checkDistance = new Leaf(new BehaviourCondition(() => IsPlayerFarEnough()), "check distance to plyaer");
             Leaf rotate = new Leaf(new AimAtTransform(agent, _player, 1f), "aim at player");
-            Leaf shoot = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Ranged)), "fire!");
+            Leaf shoot = new Leaf(new CheckCombatAction(_skills, _weapons, UnitActionType.Ranged), "prepare to shoot");
+            Leaf shoot2 = new Leaf(new BehaviourAction(()=>HandleUnitAction(UnitActionType.Ranged)),"Shoot");
 
             aimAndShoot.AddChild(checkDistance);
             aimAndShoot.AddChild(stopAgent);
             aimAndShoot.AddChild(rotate);
             aimAndShoot.AddChild(shoot);
+            aimAndShoot.AddChild(shoot2);
             aimAndShoot.AddChild(combatDone);
 
 
@@ -53,24 +53,50 @@ namespace Arcatech.Units
             combatPriority.AddChild(runAwayFromPlayer);
 
 
-            doCombat.AddChild(checkCombat);
-            doCombat.AddChild(combatPriority);
 
 
-            Sequence idleActivity = new Sequence("idling", 10);
+            if (_assistTarget != null)
+            {
+                Sequence assistAlly = new Sequence("assist damaged ally", 100);
+                Leaf checkSkill = new Leaf(new CheckCombatAction(_skills, _weapons, UnitActionType.RangedSkill), "is skill ready");
+                Leaf checkAllyNeedsHelp = new Leaf(new BehaviourCondition(() =>
+                {
+                    float hpPerc = _assistTarget.GetDisplayValues[BaseStatType.Health].GetPercent;
+                    return hpPerc < _assistHealth;
+                }), "check if assist necessary");
+                Leaf goToAlly = new Leaf(new MoveToTransformStrategy(agent,_assistTarget.transform),"move to ally");
+                Leaf useSkill = new Leaf (new BehaviourAction (()=> HandleUnitAction(UnitActionType.RangedSkill)),"use heal");
+
+
+                assistAlly.AddChild(checkAllyNeedsHelp);
+                assistAlly.AddChild(checkSkill);
+                assistAlly.AddChild(resumeAgent);
+                assistAlly.AddChild(goToAlly);
+                assistAlly.AddChild(useSkill);          
+
+
+               // tree.AddChild(assistAlly);
+                //doCombat.AddChild(assistAlly);
+            }
+
+            combatSequence.AddChild(checkCombat);
+            combatSequence.AddChild(combatPriority);
+
+
+            Sequence idleSequence = new Sequence("idling", 10);
             BehaviorInverter noCombatState = new BehaviorInverter("no combat state");
             noCombatState.AddChild(checkCombat);
 
-            idleActivity.AddChild(noCombatState);
+            idleSequence.AddChild(noCombatState);
             if (patrolPointVariants != null && patrolPointVariants.Count > 0)
             {
-                idleActivity.AddChild(SetupPatrolPoints());
+                idleSequence.AddChild(SetupPatrolPoints());
             }
-            idleActivity.AddChild(SetupIdleRoaming());
+            idleSequence.AddChild(SetupIdleRoaming());
 
 
-            tree.AddChild(idleActivity);
-            tree.AddChild(doCombat);
+            tree.AddChild(idleSequence);
+            tree.AddChild(combatSequence);
 
         }
 
@@ -80,14 +106,14 @@ namespace Arcatech.Units
             float distance = Vector3.Distance(transform.position,_player.transform.position);
             float percent = distance / _playerDetectionSphereCastRange;
             bool result = percent > _runAwayDistance;
-            if (_showDebugs) Debug.Log($"{distance} distance, {_playerDetectionSphereCastRange} range, result {percent}%, comparing to {_runAwayDistance}, returns {result}");
+            //if (_showDebugs) Debug.Log($"{distance} distance, {_playerDetectionSphereCastRange} range, result {percent}%, comparing to {_runAwayDistance}, returns {result}");
             return result;
         }
 
-        bool HasUnitsToHeal ()
-        {
-            return _group.UnitsInDanger(out _);
-        }
+        //bool HasUnitsToHeal ()
+        //{
+        //    return _group.UnitsInDanger(out _assistTarget);
+        //}
 
         protected override void OnDrawGizmos()
         {

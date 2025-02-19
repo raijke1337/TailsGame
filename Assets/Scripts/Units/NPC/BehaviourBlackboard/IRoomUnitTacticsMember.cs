@@ -10,7 +10,7 @@ namespace Arcatech.AI
     public interface IRoomUnitTacticsMember 
     {
         bool UnitInCombatState { get; set; }
-        bool UnitNeedsHelp { get; }
+        //bool UnitNeedsHelp { get; }
         void SetUnitsGroup(RoomUnitsGroup g);
     }
 

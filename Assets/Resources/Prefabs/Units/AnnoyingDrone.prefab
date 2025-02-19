@@ -37,7 +37,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4427656349988229674}
-  - {fileID: 2928339740182589499}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6292121739571759412
@@ -162,7 +161,7 @@ MonoBehaviour:
   statsUpdateFrequency: 0.1
   ActionOnDamage: {fileID: 11400000, guid: 4e8cbe5b1c1520d4d85860ff79afbdb7, type: 2}
   ActionOnDeath: {fileID: 11400000, guid: 648b53680b5f2bd42aa6e1bb641bed20, type: 2}
-  ActionOnStun: {fileID: 0}
+  ActionOnStun: {fileID: 11400000, guid: ed6b701e0ece27740b7d60cbdac083df, type: 2}
   _headT: {fileID: 4427656349988229674}
   _animator: {fileID: 1838617094227350465}
   defaultEquips: {fileID: 11400000, guid: 4d7928c9d5a28dc41a493a19d5289683, type: 2}
@@ -180,11 +179,10 @@ MonoBehaviour:
   movementStats: {fileID: 11400000, guid: e9d5bc6f8873cfa439a9541d3549a420, type: 2}
   _rb: {fileID: 991282173168482384}
   _inputs: {fileID: 6292121739571759412}
-  stunEndStamina: 0
+  stunEndStamina: 10
   stunEndGetUpTime: 0.01
   _idleWanderRange: 5
   _waitAtIdleSpotTime: 3
-  _callDistressHealth: 0
   patrolPointVariants: []
   _playerDetectionSphereCastRange: 8
   _sphereCastDelay: 0.1
@@ -193,7 +191,9 @@ MonoBehaviour:
   _enterCombatAction: {fileID: 11400000, guid: 3e414ef8f3a3f6343be87488e5342590, type: 2}
   _exitCombatAction: {fileID: 11400000, guid: 55a1b7d1aa12aec4b97798559eabf9a3, type: 2}
   agent: {fileID: 3009641304411149464}
-  _runAwayDistance: 0.1
+  _runAwayDistance: 0.6
+  _assistTarget: {fileID: 0}
+  _assistHealth: 0.9
 --- !u!95 &1838617094227350465
 Animator:
   serializedVersion: 5
@@ -239,12 +239,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6814102537041854284}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0.0000005513429}
-  m_LocalPosition: {x: 0, y: -0.156, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 2.0812616e-14, y: 0.00000003774895, z: -1, w: 0.0000005513429}
+  m_LocalPosition: {x: 0, y: -0.52, z: 0}
+  m_LocalScale: {x: 3.3333333, y: 3.3333333, z: 3.3333333}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8077765334472504948}
+  m_Father: {fileID: 4427656349988229674}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!1001 &1988001179075365130
 PrefabInstance:
@@ -272,15 +272,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4634224576167428, guid: eab0ff9626d52cf45b04b5d03faecc2b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.003133074
       objectReference: {fileID: 0}
     - target: {fileID: 4634224576167428, guid: eab0ff9626d52cf45b04b5d03faecc2b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.003144892
       objectReference: {fileID: 0}
     - target: {fileID: 4634224576167428, guid: eab0ff9626d52cf45b04b5d03faecc2b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.6666666
+      value: -1.6666607
       objectReference: {fileID: 0}
     - target: {fileID: 4634224576167428, guid: eab0ff9626d52cf45b04b5d03faecc2b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -502,6 +502,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8197801949105392651}
+    - targetCorrespondingSourceObject: {fileID: 400000, guid: 28723f10c2a8e094a9351e892f5271b8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2928339740182589499}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 28723f10c2a8e094a9351e892f5271b8, type: 3}
 --- !u!4 &4427656349988229674 stripped

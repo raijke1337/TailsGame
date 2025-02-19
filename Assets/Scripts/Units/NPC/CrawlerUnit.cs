@@ -18,7 +18,7 @@ namespace Arcatech.Units
             Sequence explode = new Sequence("Explode at low hp", 100);
 
             Leaf checkHP = new Leaf(new BehaviourCondition(()=> _stats.GetStatValue(BaseStatType.Health).GetPercent < selfDestructHealthPercent), "is hp low for skill");
-            Leaf useSkill = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.MeleeSkill)), "melee skill");
+            Leaf useSkill = new Leaf(new CheckCombatAction(_skills, _weapons, UnitActionType.MeleeSkill), "explode");
 
             explode.AddChild(checkHP);
             explode.AddChild(useSkill);
@@ -27,7 +27,8 @@ namespace Arcatech.Units
 
             Leaf checkCombatState = new Leaf(new BehaviourCondition(() => UnitInCombatState == true), "check combat state");
             Leaf chase = new Leaf(new MoveToTransformStrategy(agent, _player), "move to player");
-            Leaf attack = new Leaf(new BehaviourAction(() => HandleUnitAction(UnitActionType.Melee)), "use melee attack");
+            Leaf attack = new Leaf(new CheckCombatAction(_skills,_weapons, UnitActionType.Melee), "use melee attack");
+
             Leaf chaseComplete = new Leaf(new BehaviourAction(() => inCombat.Reset()), "reset chase");
 
             inCombat.AddChild(checkCombatState);

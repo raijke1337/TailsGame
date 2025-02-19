@@ -1,5 +1,6 @@
 using Arcatech.BlackboardSystem;
 using Arcatech.Units;
+using com.cyborgAssets.inspectorButtonPro;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -12,6 +13,14 @@ namespace Arcatech.AI
         private List<NPCUnit> _units;
 
         Collider box;
+        [ProButton]
+        void StopCombat()
+        {
+            foreach (var unit in _units)
+            {
+                unit.UnitInCombatState = false;
+            }
+        }
 
         private void OnValidate()
         {            
@@ -55,27 +64,5 @@ namespace Arcatech.AI
                 Debug.Log($"{this.gameObject} deregister unit {unit}");
             }
         }
-
-
-
-        #region room tactics
-
-        public bool UnitsInDanger (out BaseEntity unit)
-        {
-            unit = null;
-            foreach (var u in _units)
-            {
-                if (u.UnitNeedsHelp)
-                {
-                    unit = u;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-
-        #endregion
     }
 }

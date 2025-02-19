@@ -17,7 +17,6 @@ namespace Arcatech.Units
         protected Transform _player;
         [SerializeField] float _idleWanderRange = 5f;
         [SerializeField] float _waitAtIdleSpotTime = 3f;
-        [SerializeField, Range(0, 1)] float _callDistressHealth = 0.1f;
 
         [Space, Header("Patrol settings, uses idle at spot timer")]
         [SerializeField] protected List<NestedList<Transform>> patrolPointVariants;
@@ -211,6 +210,7 @@ namespace Arcatech.Units
                 if (_inCombat == value) return;
                 OnCombatStateChanged(value);
                 _inCombat = value;
+                tree.Reset();
                 if (_showDebugs) Debug.Log($"{UnitName} combat state: {value}");
             }
         }
@@ -270,19 +270,7 @@ namespace Arcatech.Units
 
 
         #endregion
-        #region UnitNeedsHelp
 
-
-        public bool UnitNeedsHelp
-        {
-            get
-            {
-                return _stats.GetStatValues[BaseStatType.Health].GetPercent <= _callDistressHealth;
-            }
-        }
-
-
-        #endregion
 
         #endregion
     }
